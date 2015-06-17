@@ -1808,6 +1808,18 @@ let
     };
   };
 
+  iso8601 = buildGoPackage rec {
+    rev = "2075bf119b58e5576c6ed9f867b8f3d17f2e54d4";
+    name = "iochan-${stdenv.lib.strings.substring 0 7 rev}";
+    goPackagePath = "github.com/dylanmei/iso8601";
+    src = fetchFromGitHub {
+      inherit rev;
+      owner = "dylanmei";
+      repo = "iso8601";
+      sha256 = "0px5aq4w96yyjii586h3049xm7rvw5r8w7ph3axhyismrqddqgx1";
+    };
+  };
+
   ldap = buildGoPackage rec {
     rev = "83e65426fd1c06626e88aa8a085e5bfed0208e29";
     name = "ldap-${stdenv.lib.strings.substring 0 7 rev}";
