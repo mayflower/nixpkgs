@@ -1,29 +1,28 @@
-{ stdenv, lib, go, gox, fetchgit, fetchhg, fetchbzr, fetchFromGitHub }:
+{ stdenv, lib, goPackages, fetchFromGitHub }:
 
-stdenv.mkDerivation rec {
-  name = "packer-0.7.5";
+with goPackages;
 
-  src = import ./deps.nix {
-    inherit stdenv lib fetchgit fetchhg fetchbzr fetchFromGitHub;
+buildGoPackage rec {
+  name = "packer-0.8.0-git"; #FIXME
+  goPackagePath = "github.com/mitchellh/packer";
+
+  src = fetchFromGitHub {
+    owner = "mayflower";
+    repo = "packer";
+    rev = "c8d66174fe8bdb37395797a48272605ecaa7ae66";
+    sha256 = "1k3s69pvar4cl3dnhy099aqdjx7jfqps9kkv748ipl134w795mzg";
   };
 
-  buildInputs = [ go gox ];
+  propagatedBuildInputs = [ atlas-go panicwrap yamux cli osext mapstructure iochan go-checkpoint
+    prefixedio crypto go-multierror reflectwalk multistep go-fs aws-sdk-go
+    winrmtest winrm iso8601 oauth2 gosshold godo tail google-api-go-client
+    gcloud-golang-compute-metadata gophercloud toolkit go-vnc
+    ugorji.go #FIXME
+    ];
 
-  installPhase = ''
-    export GOPATH=$src
-    XC_ARCH=$(go env GOARCH)
-    XC_OS=$(go env GOOS)
-
-    mkdir -p $out/bin
-
-    cd $src/src/github.com/mitchellh/packer
-    gox \
-        -os="''${XC_OS}" \
-        -arch="''${XC_ARCH}" \
-        -output "$out/bin/packer-{{.Dir}}" \
-        ./...
-    mv $out/bin/packer{*packer*,}
-  '';
+  extraSrcs = [
+    { inherit (winrmcp) src goPackagePath; }
+  ];
 
   meta = with stdenv.lib; {
     description = "A tool for creating identical machine images for multiple platforms from a single source configuration";
