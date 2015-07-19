@@ -9212,7 +9212,9 @@ let
 
   postfix211 = callPackage ../servers/mail/postfix/2.11.nix { };
 
-  postfix = postfix211;
+  postfix30 = callPackage ../servers/mail/postfix/3.0.nix { };
+
+  postfix = postfix30;
 
   pshs = callPackage ../servers/http/pshs { };
 
