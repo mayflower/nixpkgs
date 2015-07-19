@@ -17,6 +17,7 @@ stdenv.mkDerivation rec {
   installPhase = ''
     mkdir -p $out/bin
     cp -a $src/rofi-pass $out/bin/rofi-pass
+    sed -e s,/etc/rofi-pass.conf,$out/share/doc/rofi-pass/config.example, -i $out/bin/rofi-pass
 
     mkdir -p $out/share/doc/rofi-pass/
     cp -a $src/config.example $out/share/doc/rofi-pass/config.example
