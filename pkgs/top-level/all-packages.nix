@@ -2799,6 +2799,8 @@ let
 
   read-edid = callPackage ../os-specific/linux/read-edid { };
 
+  redir = callPackage ../tools/networking/redir { };
+
   redmine = callPackage ../applications/version-management/redmine { };
 
   rtmpdump = callPackage ../tools/video/rtmpdump { };
