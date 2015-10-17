@@ -1,4 +1,4 @@
-{ stdenv, fetchgit, rustPlatform, file, curl, python, pkgconfig, openssl
+{ stdenv, fetchgit, rustPlatform, file, curl, python, pkgconfig, libssl
 , cmake, zlib, makeWrapper }:
 
 with rustPlatform;
@@ -20,7 +20,7 @@ buildRustPackage rec {
 
   depsSha256 = "1m045yywv67sx75idbsny59d3dzbqnhr07k41jial5n5zwp87mb9";
 
-  buildInputs = [ file curl pkgconfig python openssl cmake zlib makeWrapper ];
+  buildInputs = [ file curl pkgconfig python libssl cmake zlib makeWrapper ];
 
   configurePhase = ''
     ./configure --enable-optimize --prefix=$out --local-cargo=${cargo}/bin/cargo

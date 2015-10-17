@@ -20,7 +20,7 @@ stdenv.mkDerivation rec {
   src = mainSrc;
 
   buildInputs =
-    [ openssl zlib pcre libxml2 libxslt gd geoip ]
+    [ libssl zlib pcre libxml2 libxslt gd geoip ]
     ++ concatMap (mod: mod.inputs or []) modules;
 
   configureFlags = [

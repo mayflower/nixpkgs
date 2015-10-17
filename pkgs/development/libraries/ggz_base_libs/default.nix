@@ -1,4 +1,4 @@
-{ stdenv, fetchurl, intltool, openssl, expat, libgcrypt }:
+{ stdenv, fetchurl, intltool, libssl, expat, libgcrypt }:
 
 stdenv.mkDerivation rec {
   version = "0.99.5";
@@ -10,10 +10,10 @@ stdenv.mkDerivation rec {
     sha256 = "1cw1vg0fbj36zyggnzidx9cbjwfc1yr4zqmsipxnvns7xa2awbdk";
   };
 
-  buildInputs = [ intltool openssl expat libgcrypt ];
+  buildInputs = [ intltool libssl expat libgcrypt ];
 
   configureFlags = [
-    "--with-ssl-dir=${openssl}/"
+    "--with-ssl-dir=${libssl}/"
     "--with-tls"
   ];
 

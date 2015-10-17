@@ -1,4 +1,4 @@
-{ stdenv, fetchurl, openssl }:
+{ stdenv, fetchurl, libssl }:
 
 stdenv.mkDerivation rec {
   name    = "stunnel-${version}";
@@ -9,9 +9,9 @@ stdenv.mkDerivation rec {
     sha256 = "09i7gizisa04l0gygwbyd3dnzpjmq3ii6c009z4qvv8y05lx941c";
   };
 
-  buildInputs = [ openssl ];
+  buildInputs = [ libssl ];
   configureFlags = [
-    "--with-ssl=${openssl}"
+    "--with-ssl=${libssl}"
     "--sysconfdir=/etc"
     "--localstatedir=/var"
   ];

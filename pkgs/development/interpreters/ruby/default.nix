@@ -1,5 +1,5 @@
 { stdenv, lib, fetchurl, fetchFromSavannah, fetchFromGitHub
-, zlib, openssl, gdbm, ncurses, readline, groff, libyaml, libffi, autoreconfHook, bison
+, zlib, libssl, gdbm, ncurses, readline, groff, libyaml, libffi, autoreconfHook, bison
 , autoconf, darwin ? null
 } @ args:
 
@@ -23,7 +23,7 @@ let
       { stdenv, lib, fetchurl, fetchFromSavannah, fetchFromGitHub
       , useRailsExpress ? true
       , zlib, zlibSupport ? true
-      , openssl, opensslSupport ? true
+      , libssl, opensslSupport ? true
       , gdbm, gdbmSupport ? true
       , ncurses, readline, cursesSupport ? true
       , groff, docSupport ? false
@@ -55,7 +55,7 @@ let
           ++ (ops cursesSupport [ ncurses readline ])
           ++ (op docSupport groff)
           ++ (op zlibSupport zlib)
-          ++ (op opensslSupport openssl)
+          ++ (op opensslSupport libssl)
           ++ (op gdbmSupport gdbm)
           ++ (op yamlSupport libyaml)
           # Looks like ruby fails to build on darwin without readline even if curses

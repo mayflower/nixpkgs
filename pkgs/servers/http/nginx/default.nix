@@ -1,4 +1,4 @@
-{ stdenv, fetchurl, fetchFromGitHub, openssl, zlib, pcre, libxml2, libxslt, expat
+{ stdenv, fetchurl, fetchFromGitHub, libssl, zlib, pcre, libxml2, libxslt, expat
 , gd, geoip
 , modules ? []
 }:
@@ -19,7 +19,7 @@ stdenv.mkDerivation rec {
   src = mainSrc;
 
   buildInputs =
-    [ openssl zlib pcre libxml2 libxslt gd geoip ]
+    [ libssl zlib pcre libxml2 libxslt gd geoip ]
     ++ concatMap (mod: mod.inputs or []) modules;
 
   configureFlags = [

@@ -1,12 +1,12 @@
 { stdenv, fetchurl
 , ncurses, boehmgc, gettext, zlib
-, sslSupport ? true, openssl ? null
+, sslSupport ? true, libssl ? null
 , graphicsSupport ? true, imlib2 ? null
 , x11Support ? graphicsSupport, libX11 ? null
 , mouseSupport ? true, gpm-ncurses ? null
 }:
 
-assert sslSupport -> openssl != null;
+assert sslSupport -> libssl != null;
 assert graphicsSupport -> imlib2 != null;
 assert x11Support -> graphicsSupport && libX11 != null;
 assert mouseSupport -> gpm-ncurses != null;
@@ -32,12 +32,12 @@ stdenv.mkDerivation rec {
     ++ optional (graphicsSupport && !x11Support) [ ./no-x11.patch ];
 
   buildInputs = [ncurses boehmgc gettext zlib]
-    ++ optional sslSupport openssl
+    ++ optional sslSupport libssl
     ++ optional mouseSupport gpm-ncurses
     ++ optional graphicsSupport imlib2
     ++ optional x11Support libX11;
 
-  configureFlags = "--with-ssl=${openssl} --with-gc=${boehmgc}"
+  configureFlags = "--with-ssl=${libssl} --with-gc=${boehmgc}"
     + optionalString graphicsSupport " --enable-image=${optionalString x11Support "x11,"}fb";
 
   preConfigure = ''

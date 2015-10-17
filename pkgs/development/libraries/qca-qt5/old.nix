@@ -1,4 +1,4 @@
-{ stdenv, fetchurl, cmake, openssl, pkgconfig, qt5 }:
+{ stdenv, fetchurl, cmake, libssl, pkgconfig, qt5 }:
 
 stdenv.mkDerivation rec {
   name = "qca-qt5-2.1.1";
@@ -8,7 +8,7 @@ stdenv.mkDerivation rec {
     sha256 = "10z9icq28fww4qbzwra8d9z55ywbv74qk68nhiqfrydm21wkxplm";
   };
 
-  buildInputs = [ openssl qt5.base ];
+  buildInputs = [ libssl qt5.base ];
   nativeBuildInputs = [ cmake pkgconfig ];
 
   meta = with stdenv.lib; {

@@ -1,4 +1,4 @@
-{ config, stdenv, fetchurl, libevent, openssl
+{ config, stdenv, fetchurl, libevent, libssl
 , bind8Stats       ? false
 , checking         ? false
 , ipv6             ? true
@@ -20,7 +20,7 @@ stdenv.mkDerivation rec {
     sha256 = "0pvpsxhil60m21h3pqlzs0l5m8qd3l6j8fkjyfg8plwmbh2j5xl8";
   };
 
-  buildInputs = [ libevent openssl ];
+  buildInputs = [ libevent libssl ];
 
   configureFlags =
     let edf = c: o: if c then ["--enable-${o}"] else ["--disable-${o}"];
@@ -35,7 +35,7 @@ stdenv.mkDerivation rec {
      ++ edf rootServer       "root-server"
      ++ edf rrtypes          "draft-rrtypes"
      ++ edf zoneStats        "zone-stats"
-     ++ [ "--with-ssl=${openssl}" "--with-libevent=${libevent}" ];
+     ++ [ "--with-ssl=${libssl}" "--with-libevent=${libevent}" ];
 
   meta = with stdenv.lib; {
     homepage = http://www.nlnetlabs.nl;

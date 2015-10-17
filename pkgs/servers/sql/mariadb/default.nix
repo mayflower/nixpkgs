@@ -1,5 +1,5 @@
 { stdenv, fetchurl, cmake, ncurses, zlib, xz, lzo, lz4, bzip2, snappy
-, openssl, pcre, boost, judy, bison, libxml2
+, libssl, pcre, boost, judy, bison, libxml2
 , libaio, libevent, groff, jemalloc, cracklib, systemd, numactl, perl
 , fixDarwinDylibNames, cctools, CoreServices
 }:
@@ -15,7 +15,7 @@ stdenv.mkDerivation rec {
   };
 
   buildInputs = [
-    cmake ncurses openssl zlib xz lzo lz4 bzip2
+    cmake ncurses libssl zlib xz lzo lz4 bzip2
     # temporary due to https://mariadb.atlassian.net/browse/MDEV-9000
     (if stdenv.is64bit then snappy else null)
     pcre libxml2 boost judy bison libevent cracklib
@@ -113,7 +113,7 @@ stdenv.mkDerivation rec {
     # Fix the mysql_config
     sed -i $out/bin/mysql_config \
       -e 's,-lz,-L${zlib}/lib -lz,g' \
-      -e 's,-lssl,-L${openssl}/lib -lssl,g'
+      -e 's,-lssl,-L${libssl}/lib -lssl,g'
 
     # Add mysql_config to libs since configure scripts use it
     mkdir -p $lib/bin
