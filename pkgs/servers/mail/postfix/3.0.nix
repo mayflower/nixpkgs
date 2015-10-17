@@ -1,4 +1,4 @@
-{ stdenv, fetchurl, makeWrapper, gnused, db, openssl, cyrus_sasl, coreutils
+{ stdenv, fetchurl, makeWrapper, gnused, db, libssl, cyrus_sasl, coreutils
 , findutils, gnugrep, gawk
 }:
 
@@ -13,7 +13,7 @@ stdenv.mkDerivation rec {
     sha256 = "0a0ksanlx3pck9gvf3ks0riprj7fs66jyj4zlfqqndp3gx2dcayd";
   };
 
-  buildInputs = [ makeWrapper gnused db openssl cyrus_sasl ];
+  buildInputs = [ makeWrapper gnused db libssl cyrus_sasl ];
 
   preBuild = ''
     sed -e '/^PATH=/d' -i postfix-install
