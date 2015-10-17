@@ -1,4 +1,4 @@
-{avahi, dbus, fetchurl, git, gnutar, gzip, libav, libiconv, openssl, pkgconfig, python
+{avahi, dbus, fetchurl, git, gnutar, gzip, libav, libiconv, libssl, pkgconfig, python
 , stdenv, which, zlib}:
 
 with stdenv.lib;
@@ -22,7 +22,7 @@ stdenv.mkDerivation rec {
   # cannot happen during build.
   configureFlags = [ "--disable-dvbscan" ];
 
-  buildInputs = [ avahi dbus git gnutar gzip libav libiconv openssl pkgconfig python
+  buildInputs = [ avahi dbus git gnutar gzip libav libiconv libssl pkgconfig python
     which zlib ];
 
   preConfigure = ''

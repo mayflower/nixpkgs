@@ -1,4 +1,4 @@
-{stdenv, fetchurl, cmake, flex, bison, openssl, libpcap, perl, zlib, file, curl
+{stdenv, fetchurl, cmake, flex, bison, libssl, libpcap, perl, zlib, file, curl
 , geoip, gperftools }:
 
 stdenv.mkDerivation rec {
@@ -9,7 +9,7 @@ stdenv.mkDerivation rec {
     sha256 = "1xn8qwgnxihlr4lmg7kz2vqjk46aqgwc8878pbv30ih2lmrrdffq";
   };
   
-  buildInputs = [ cmake flex bison openssl libpcap perl zlib file curl geoip
+  buildInputs = [ cmake flex bison libssl libpcap perl zlib file curl geoip
    gperftools ];
 
   enableParallelBuilding = true;
