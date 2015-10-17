@@ -1,4 +1,4 @@
-{ stdenv, fetchurl, perl, openssl, db, zlib, uwimap, html-tidy, pam}:
+{ stdenv, fetchurl, perl, libssl, db, zlib, uwimap, html-tidy, pam}:
 
 let
   ssl = stdenv.lib.optionals uwimap.withSSL
@@ -26,7 +26,7 @@ stdenv.mkDerivation rec {
       --replace buffio.h tidybuffio.h
   '';
 
-  buildInputs = [ openssl db zlib uwimap html-tidy pam ];
+  buildInputs = [ libssl db zlib uwimap html-tidy pam ];
   nativeBuildInputs = [ perl ];
 
   NIX_LDFLAGS = "-lpam";

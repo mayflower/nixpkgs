@@ -901,7 +901,7 @@ let
     gnutls = null;
     libgcrypt = null;
     liblognorm = null;
-    openssl = null;
+    libssl = null;
     librelp = null;
     libgt = null;
     libksi = null;
@@ -2064,7 +2064,7 @@ let
 
   nodejs-4_2 = callPackage ../development/web/nodejs {
     libtool = darwin.cctools;
-    openssl = openssl_1_0_2;
+    libssl = openssl_1_0_2;
   };
 
   nodejs-0_10 = callPackage ../development/web/nodejs/v0_10.nix {
@@ -3061,7 +3061,9 @@ let
 
   sl = callPackage ../tools/misc/sl { };
 
-  socat = callPackage ../tools/networking/socat { };
+  socat = callPackage ../tools/networking/socat {
+    libssl = openssl_1_0_1;
+  };
 
   socat2pre = lowPrio (callPackage ../tools/networking/socat/2.x.nix { });
 
@@ -3363,7 +3365,7 @@ let
   };
 
   openconnect_gnutls = lowPrio (openconnect.override {
-    openssl = null;
+    libssl = null;
     gnutls = gnutls;
   });
 
@@ -5222,7 +5224,7 @@ let
   buildRubyGem = callPackage ../development/interpreters/ruby/gem.nix { };
   bundlerEnv = callPackage ../development/interpreters/ruby/bundler-env { };
 
-  inherit (callPackage ../development/interpreters/ruby {})
+  inherit (callPackage ../development/interpreters/ruby { libssl = openssl; })
     ruby_1_9_3
     ruby_2_0_0
     ruby_2_1_0 ruby_2_1_1 ruby_2_1_2 ruby_2_1_3 ruby_2_1_6
@@ -7961,14 +7963,21 @@ let
 
   libressl_2_2 = callPackage ../development/libraries/libressl/2.2.nix { };
   libressl_2_3 = callPackage ../development/libraries/libressl/2.3.nix { };
+
   # 2.3 breaks some backward-compability
-  libressl = libressl_2_2;
+  libressl = libressl_2_2 {
+    fetchurl = fetchurlBoot;
+  };
+
+  libssl = libressl;
 
   boringssl = callPackage ../development/libraries/boringssl { };
 
   wolfssl = callPackage ../development/libraries/wolfssl { };
 
-  openssl = callPackage ../development/libraries/openssl {
+  openssl = openssl_1_0_1;
+
+  openssl_1_0_1 = callPackage ../development/libraries/openssl {
     fetchurl = fetchurlBoot;
     cryptodevHeaders = linuxPackages.cryptodev.override {
       fetchurl = fetchurlBoot;
@@ -8543,7 +8552,7 @@ let
   };
 
   ucommon_gnutls = lowPrio (ucommon.override {
-    openssl = null;
+    libssl = null;
     zlib = null;
     gnutls = gnutls;
   });
@@ -9118,7 +9127,9 @@ let
 
   sabnzbd = callPackage ../servers/sabnzbd { };
 
-  bind = callPackage ../servers/dns/bind { };
+  bind = callPackage ../servers/dns/bind {
+    libssl = openssl_1_0_1;
+  };
 
   bird = callPackage ../servers/bird { };
 
@@ -9390,8 +9401,8 @@ let
 
   qboot = callPackage ../applications/virtualization/qboot { stdenv = stdenv_32bit; };
 
-  OVMF = callPackage ../applications/virtualization/OVMF { seabios=false; openssl=null; };
-  OVMF-CSM = callPackage ../applications/virtualization/OVMF { openssl=null; };
+  OVMF = callPackage ../applications/virtualization/OVMF { seabios=false; libssl=null; };
+  OVMF-CSM = callPackage ../applications/virtualization/OVMF { libssl=null; };
   #WIP: OVMF-secureBoot = callPackage ../applications/virtualization/OVMF { seabios=false; secureBoot=true; };
 
   seabios = callPackage ../applications/virtualization/seabios { };
@@ -9580,7 +9591,7 @@ let
   xorg = recurseIntoAttrs (lib.callPackagesWith pkgs ../servers/x11/xorg/default.nix {
     inherit clangStdenv fetchurl fetchgit fetchpatch stdenv pkgconfig intltool freetype fontconfig
       libxslt expat libpng zlib perl mesa_drivers spice_protocol libunwind
-      dbus libuuid openssl gperf m4 libevdev tradcpp libinput mcpp makeWrapper autoreconfHook
+      dbus libuuid libssl gperf m4 libevdev tradcpp libinput mcpp makeWrapper autoreconfHook
       autoconf automake libtool xmlto asciidoc flex bison python mtdev pixman;
     inherit (darwin) apple_sdk cf-private libobjc;
     bootstrap_cmds = if stdenv.isDarwin then darwin.bootstrap_cmds else null;
@@ -10608,7 +10619,9 @@ let
 
   wirelesstools = callPackage ../os-specific/linux/wireless-tools { };
 
-  wpa_supplicant = callPackage ../os-specific/linux/wpa_supplicant { };
+  wpa_supplicant = callPackage ../os-specific/linux/wpa_supplicant {
+    libssl = openssl_1_0_1;
+  };
 
   wpa_supplicant_gui = callPackage ../os-specific/linux/wpa_supplicant/gui.nix { };
 
@@ -12697,7 +12710,7 @@ let
   picocom = callPackage ../tools/misc/picocom { };
 
   pidgin = callPackage ../applications/networking/instant-messengers/pidgin {
-    openssl = if config.pidgin.openssl or true then openssl else null;
+    libssl = if config.pidgin.openssl or true then openssl else null;
     gnutls = if config.pidgin.gnutls or false then gnutls else null;
     libgcrypt = if config.pidgin.gnutls or false then libgcrypt else null;
     startupnotification = libstartup_notification;
@@ -13434,6 +13447,7 @@ let
 
   w3m = callPackage ../applications/networking/browsers/w3m {
     graphicsSupport = false;
+    libssl = openssl_1_0_1;
   };
 
   weechat = callPackage ../applications/networking/irc/weechat {

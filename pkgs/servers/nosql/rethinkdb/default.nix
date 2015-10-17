@@ -1,5 +1,5 @@
 { stdenv, fetchurl, which, m4, python
-, protobuf, boost, zlib, curl, openssl, icu, jemalloc, libtool
+, protobuf, boost, zlib, curl, libssl, icu, jemalloc, libtool
 }:
 
 stdenv.mkDerivation rec {
@@ -28,7 +28,7 @@ stdenv.mkDerivation rec {
     "--lib-path=${jemalloc}/lib"
   ];
 
-  buildInputs = [ protobuf boost zlib curl openssl icu ]
+  buildInputs = [ protobuf boost zlib curl libssl icu ]
     ++ stdenv.lib.optional (!stdenv.isDarwin) jemalloc
     ++ stdenv.lib.optional stdenv.isDarwin libtool;
 

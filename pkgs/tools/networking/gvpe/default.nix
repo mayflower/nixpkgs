@@ -1,4 +1,4 @@
-{ stdenv, fetchurl, openssl, gmp, zlib, iproute, nettools }:
+{ stdenv, fetchurl, libssl, gmp, zlib, iproute, nettools }:
 
 stdenv.mkDerivation rec {
   name = "gvpe-${version}";
@@ -9,7 +9,7 @@ stdenv.mkDerivation rec {
     sha256 = "1gsipcysvsk80gvyn9jnk9g0xg4ng9yd5zp066jnmpgs52d2vhvk";
   };
 
-  buildInputs = [ openssl gmp zlib ];
+  buildInputs = [ libssl gmp zlib ];
 
   configureFlags = [
     "--enable-tcp"

@@ -1,4 +1,4 @@
-{ fetchurl, stdenv, openssl, pkgconfig, db, cyrus_sasl }:
+{ fetchurl, stdenv, libssl, pkgconfig, db, cyrus_sasl }:
 
 stdenv.mkDerivation rec {
   name = "isync-1.2.1";
@@ -8,7 +8,7 @@ stdenv.mkDerivation rec {
     sha256 = "1bij6nm06ghkg98n2pdyacam2fyg5y8f7ajw0d5653m0r4ldw5p7";
   };
 
-  buildInputs = [ openssl pkgconfig db cyrus_sasl ];
+  buildInputs = [ libssl pkgconfig db cyrus_sasl ];
 
   meta = with stdenv.lib; {
     homepage = http://isync.sourceforge.net/;

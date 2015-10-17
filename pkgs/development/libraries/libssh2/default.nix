@@ -1,4 +1,4 @@
-{stdenv, fetchurlBoot, openssl, zlib, windows}:
+{stdenv, fetchurlBoot, libssl, zlib, windows}:
 
 stdenv.mkDerivation rec {
   name = "libssh2-1.6.0";
@@ -8,13 +8,13 @@ stdenv.mkDerivation rec {
     sha256 = "05c2is69c50lyikkh29nk6zhghjk4i7hjx0zqfhq47aald1jj82s";
   };
 
-  buildInputs = [ openssl zlib ];
+  buildInputs = [ libssl zlib ];
 
   crossAttrs = {
     # link against cross-built libraries
     configureFlags = [
       "--with-openssl"
-      "--with-libssl-prefix=${openssl.crossDrv}"
+      "--with-libssl-prefix=${libssl.crossDrv}"
       "--with-libz"
       "--with-libz-prefix=${zlib.crossDrv}"
     ];

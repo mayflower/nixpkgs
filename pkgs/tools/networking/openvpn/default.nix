@@ -1,4 +1,4 @@
-{ stdenv, fetchurl, iproute, lzo, openssl, pam, systemd, pkgconfig }:
+{ stdenv, fetchurl, iproute, lzo, libssl, pam, systemd, pkgconfig }:
 
 with stdenv.lib;
 
@@ -12,7 +12,7 @@ stdenv.mkDerivation rec {
 
   patches = optional stdenv.isLinux ./systemd-notify.patch;
 
-  buildInputs = [ lzo openssl pkgconfig ]
+  buildInputs = [ lzo libssl pkgconfig ]
                   ++ optionals stdenv.isLinux [ pam systemd iproute ];
 
   configureFlags = ''
