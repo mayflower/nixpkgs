@@ -1208,6 +1208,10 @@ let
     gssSupport = true;
   };
 
+  curlOpenssl = curl.override {
+    openssl = openssl_1_0_1;
+  };
+
   curl = callPackage ../tools/networking/curl rec {
     fetchurl = fetchurlBoot;
     zlibSupport = true;
