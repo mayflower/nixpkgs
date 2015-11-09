@@ -143,10 +143,10 @@ in
           # Determine how we should generate our keys
           if type tinc >/dev/null 2>&1; then
             # Tinc 1.1+ uses the tinc helper application for key generation
-
+          ${if data.ed25519PrivateKeyFile != null then "  # Keyfile managed by nix" else ''
             # Prefer ED25519 keys (only in 1.1+)
             [ -f "/etc/tinc/${network}/ed25519_key.priv" ] || tinc -n ${network} generate-ed25519-keys
-
+          ''}
             # Otherwise use RSA keys
             [ -f "/etc/tinc/${network}/rsa_key.priv" ] || tinc -n ${network} generate-rsa-keys 4096
           else
