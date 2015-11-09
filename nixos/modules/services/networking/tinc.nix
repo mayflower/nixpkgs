@@ -43,6 +43,14 @@ in
             '';
           };
 
+          ed25519PrivateKeyFile = mkOption {
+            default = null;
+            type = types.nullOr types.path;
+            description = ''
+              Path of the private ed25519 keyfile.
+            '';
+          };
+
           debugLevel = mkOption {
             default = 0;
             type = types.addCheck types.int (l: l >= 0 && l <= 5);
@@ -99,6 +107,7 @@ in
             text = ''
               Name = ${if data.name == null then "$HOST" else data.name}
               DeviceType = ${data.interfaceType}
+              ${if data.ed25519PrivateKeyFile == null then "" else "Ed25519PrivateKeyFile = " + data.ed25519PrivateKeyFile}
               Device = /dev/net/tun
               Interface = tinc.${network}
               ${data.extraConfig}
