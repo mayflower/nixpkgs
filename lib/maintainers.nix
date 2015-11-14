@@ -56,6 +56,7 @@
   bramd = "Bram Duvigneau <bram@bramd.nl>";
   bstrik = "Berno Strik <dutchman55@gmx.com>";
   c0dehero = "CodeHero <codehero@nerdpol.ch>";
+  calbrecht = "Christian Albrecht <christian.albrecht@mayflower.de>";
   calrama = "Moritz Maxeiner <moritz@ucworks.org>";
   campadrenalin = "Philip Horger <campadrenalin@gmail.com>";
   cdepillabout = "Dennis Gosnell <cdep.illabout@gmail.com>";
