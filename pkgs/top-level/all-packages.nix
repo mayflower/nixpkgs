@@ -8537,8 +8537,13 @@ let
 
   wavpack = callPackage ../development/libraries/wavpack { };
 
+  wayland-scanner = callPackage ../development/libraries/wayland {
+    disableLibraries = true;
+  };
+
   wayland = callPackage ../development/libraries/wayland {
     graphviz = graphviz-nox;
+    withHostScanner = wayland-scanner;
   };
 
   webkit = webkitgtk;

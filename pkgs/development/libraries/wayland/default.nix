@@ -1,33 +1,52 @@
-{ lib, stdenv, fetchurl, pkgconfig
-, libffi, docbook_xsl, doxygen, graphviz, libxslt, xmlto
-, expat ? null # Build wayland-scanner (currently cannot be disabled as of 1.7.0)
+{ stdenv, fetchurl, pkgconfig, file, expat
+, disableLibraries ? false, libffi ? null
+, disableDocumentation ? true, doxygen ? null, xmlto ? null, graphviz ? null
+, docbook5_xsl ? null, docbook_xml_xslt ? null, libxslt ? null
+, withHostScanner ? null
 }:
 
-# Require the optional to be enabled until upstream fixes or removes the configure flag
-assert expat != null;
+assert (disableLibraries) -> (withHostScanner == null);
+assert (!disableLibraries) -> (libffi != null);
+assert (!disableDocumentation) -> (doxygen != null && xmlto != null
+&& graphviz != null && docbook5_xsl != null && docbook_xml_xslt != null
+&& libxslt != null);
 
+with stdenv.lib;
 stdenv.mkDerivation rec {
-  name = "wayland-${version}";
-  version = "1.8.1";
+  name = "wayland-${if disableLibraries then "scanner-" else ""}${version}";
+  version = "1.9.0";
 
   src = fetchurl {
-    url = "http://wayland.freedesktop.org/releases/${name}.tar.xz";
-    sha256 = "1j3gfzn8i0xhk3j34mwb2srrscjxfyi279jhyq80mz943j6r6z7i";
+    url = "http://wayland.freedesktop.org/releases/wayland-${version}.tar.xz";
+    sha256 = "1yhy62vkbq8j8c9zaa6yzvn75cd99kfa8n2zfdwl80x019r711ww";
   };
 
-  configureFlags = "--with-scanner --disable-documentation";
+  preConfigure = ''
+    substituteInPlace ./configure --replace /usr/bin/file ${file}/bin/file
+  '';
 
-  nativeBuildInputs = [ pkgconfig ];
+  configureFlags = [ ]
+    ++ optional disableLibraries "--disable-libraries"
+    ++ optional disableDocumentation "--disable-documentation"
+    ++ optional (withHostScanner != null) "--with-host-scanner";
 
-  buildInputs = [ libffi /* docbook_xsl doxygen graphviz libxslt xmlto */ expat ];
+  nativeBuildInputs = [ pkgconfig file ]
+    ++ optional (withHostScanner != null) withHostScanner;
+
+  buildInputs = [ expat ]
+    ++ optional (!disableLibraries) libffi
+    ++ optionals (!disableDocumentation) [
+      doxygen xmlto graphviz docbook5_xsl docbook_xml_xslt libxslt
+    ];
+
+  # there are no tests for wayland-scanner
+  doCheck = (if withHostScanner != null then true else false);
 
   meta = {
     description = "Reference implementation of the wayland protocol";
     homepage    = http://wayland.freedesktop.org/;
-    license     = lib.licenses.mit;
-    platforms   = lib.platforms.linux;
-    maintainers = with lib.maintainers; [ codyopel wkennington ];
+    license     = licenses.mit;
+    platforms   = platforms.linux;
+    maintainers = with maintainers; [ codyopel wkennington calbrecht ];
   };
-
-  passthru.version = version;
 }
