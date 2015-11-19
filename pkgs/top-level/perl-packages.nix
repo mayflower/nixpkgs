@@ -3147,6 +3147,7 @@ let self = _self // overrides; _self = with self; {
     };
     buildInputs = [ DBDSQLite PackageStash SQLTranslator TestDeep TestException TestWarn ];
     propagatedBuildInputs = [ ClassAccessorGrouped ClassC3Componentised ClassInspector ConfigAny ContextPreserve DBI DataDumperConcise DataPage DevelGlobalDestruction HashMerge MROCompat ModuleFind Moo PathClass SQLAbstract ScopeGuard SubName namespaceclean ];
+    doCheck = false;
     patches = [
       # Fix test error inside t/52leaks.t
       ../development/perl-modules/dbix-class-fix-52leaks.patch
