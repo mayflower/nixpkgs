@@ -9140,6 +9140,7 @@ let
   scollector = bosun;
 
   charybdis = callPackage ../servers/irc/charybdis {};
+  charybdis-darkfasel = callPackage ../servers/irc/charybdis/darkfasel.nix {};
 
   couchdb = callPackage ../servers/http/couchdb {
     spidermonkey = spidermonkey_185;
