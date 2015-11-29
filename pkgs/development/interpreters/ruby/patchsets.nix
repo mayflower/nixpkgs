@@ -26,7 +26,9 @@ rec {
     "${patchSet}/patches/ruby/1.9.3/p${patchLevel}/railsexpress/18-fix-missing-c-return-event.patch"
     "${patchSet}/patches/ruby/1.9.3/p${patchLevel}/railsexpress/19-fix-process-daemon-call.patch"
   ];
-  "2.0.0" = ops useRailsExpress [
+  "2.0.0" = [
+    ./ssl_v3.patch
+  ] ++ ops useRailsExpress [
     "${patchSet}/patches/ruby/2.0.0/p${patchLevel}/railsexpress/01-zero-broken-tests.patch"
     "${patchSet}/patches/ruby/2.0.0/p${patchLevel}/railsexpress/02-railsexpress-gc.patch"
     "${patchSet}/patches/ruby/2.0.0/p${patchLevel}/railsexpress/03-display-more-detailed-stack-trace.patch"
