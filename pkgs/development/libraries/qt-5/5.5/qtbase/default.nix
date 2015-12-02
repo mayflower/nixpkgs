@@ -88,9 +88,10 @@ stdenv.mkDerivation {
           inherit mesa;
         };
         nix-profiles-library-paths = ./0011-nix-profiles-library-paths.patch;
+        libressl = ./0012-libressl.patch;
     in [
       dlopen-resolv dlopen-gl tzdir dlopen-libXcursor dlopen-openssl
-      dlopen-dbus xdg-config-dirs nix-profiles-library-paths
+      dlopen-dbus xdg-config-dirs nix-profiles-library-paths libressl
     ]
     ++ optional gtkStyle dlopen-gtkstyle
     ++ optional decryptSslTraffic decrypt-ssl-traffic
