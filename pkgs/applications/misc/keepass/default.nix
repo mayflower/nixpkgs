@@ -9,6 +9,12 @@ buildDotnetPackage rec {
     sha256 = "1r792cikgvzj4hrxiv7xd3gx2zmn16dbh4inj2zi6ny0gchkqg2a";
   };
 
+  httpPlugin = fetchurl {
+    name = "KeePassHttp";
+    url = "https://raw.github.com/pfn/keepasshttp/master/KeePassHttp.plgx";
+    sha256 = "4803ea799962ec3e294691922d6255e63c5a96df36941f99ef633775829e7289";
+  };
+
   sourceRoot = ".";
 
   buildInputs = [ unzip ];
@@ -22,7 +28,7 @@ buildDotnetPackage rec {
     exec = "keepass";
     comment = "Password manager";
     desktopName = "Keepass";
-    genericName = "Password manager";    
+    genericName = "Password manager";
     categories = "Application;Other;";
   };
 
@@ -32,7 +38,9 @@ buildDotnetPackage rec {
 
   postInstall = ''
     mkdir -p "$out/share/applications"
+    mkdir -p "$out/lib/dotnet/keepass/plugins"
     cp ${desktopItem}/share/applications/* $out/share/applications
+    cp ${httpPlugin} $out/lib/dotnet/keepass/plugins/KeePassHttp.plgx
   '';
 
   meta = {
@@ -42,4 +50,6 @@ buildDotnetPackage rec {
     platforms = with stdenv.lib.platforms; all;
     license = stdenv.lib.licenses.gpl2;
   };
+
+
 }
