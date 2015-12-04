@@ -50,6 +50,4 @@ buildDotnetPackage rec {
     platforms = with stdenv.lib.platforms; all;
     license = stdenv.lib.licenses.gpl2;
   };
-
-
 }
