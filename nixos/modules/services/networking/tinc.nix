@@ -78,6 +78,14 @@ in
             '';
           };
 
+          bindToAddress = mkOption {
+            default = null;
+            type = types.nullOr types.str;
+            description = ''
+              The ip adress to bind to.
+            '';
+          };
+
           package = mkOption {
             default = pkgs.tinc_pre;
             description = ''
@@ -108,6 +116,7 @@ in
               Name = ${if data.name == null then "$HOST" else data.name}
               DeviceType = ${data.interfaceType}
               ${if data.ed25519PrivateKeyFile == null then "" else "Ed25519PrivateKeyFile = " + data.ed25519PrivateKeyFile}
+              ${if data.bindToAddress == null then "" else "BindToAddress = " + data.bindToAddress}
               Device = /dev/net/tun
               Interface = tinc.${network}
               ${data.extraConfig}
