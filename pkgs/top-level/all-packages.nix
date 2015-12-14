@@ -12514,6 +12514,8 @@ let
 
   mpc_cli = callPackage ../applications/audio/mpc { };
 
+  multimidicast = callPackage ../applications/audio/multimidicast { };
+
   ncmpc = callPackage ../applications/audio/ncmpc { };
 
   ncmpcpp = callPackage ../applications/audio/ncmpcpp { };
