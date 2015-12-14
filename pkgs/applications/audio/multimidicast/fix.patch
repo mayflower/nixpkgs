@@ -1,0 +1,11 @@
+--- multimidicast-1.3/multimidicast.cpp	2015-12-14 14:20:50.294851076 +0000
++++ multimidicast-1.3/multimidicast.cpp.new	2015-12-14 14:20:14.569165445 +0000
+@@ -125,7 +125,7 @@
+   // Setup Network
+ 
+   int protonum=0;
+-  struct protoent *p=getprotobyname("IP");
++  struct protoent *p=getprotobyname("UDP");
+   if(p)
+     protonum=p->p_proto;
+ 
