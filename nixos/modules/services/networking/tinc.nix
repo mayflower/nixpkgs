@@ -116,7 +116,7 @@ in
               Name = ${if data.name == null then "$HOST" else data.name}
               DeviceType = ${data.interfaceType}
               ${optionalString (data.ed25519PrivateKeyFile != null) "Ed25519PrivateKeyFile = " + data.ed25519PrivateKeyFile}
-              ${optionalString (data.bindToAddress) != null "BindToAddress = " + data.bindToAddress}
+              ${optionalString (data.bindToAddress != null) "BindToAddress = " + data.bindToAddress}
               Device = /dev/net/tun
               Interface = tinc.${network}
               ${data.extraConfig}
