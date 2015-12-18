@@ -31,7 +31,7 @@ stdenv.mkDerivation rec {
 
   configureFlags = [
     "--localstatedir=/var"
-    "--sysconfdir=/etc"
+    "--sysconfdir=/var/lib"
     "--with-init-script=redhat"
     "--with-macvtap"
     "--with-virtualport"
@@ -41,7 +41,7 @@ stdenv.mkDerivation rec {
 
   installFlags = [
     "localstatedir=$(TMPDIR)/var"
-    "sysconfdir=$(out)/etc"
+    "sysconfdir=$(out)/var/lib"
   ];
 
   postInstall = ''
