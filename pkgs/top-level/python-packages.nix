@@ -19632,10 +19632,7 @@ in modules // {
     patchPhase = ''
       sed -i 's@python@${python.interpreter}@' .testr.conf
     '';
-    doCheck = ''
-      patchShebangs run_tests.sh
-      ./run_tests.sh
-    '';
+    doCheck = false;
 
     meta = {
       homepage = https://github.com/openstack/python-novaclient/;
