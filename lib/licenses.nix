@@ -478,6 +478,11 @@ lib.mapAttrs (n: v: v // { shortName = n; }) rec {
     fullName = "Do What The F*ck You Want To Public License";
   };
 
+  x11 = spdx {
+    spdxId = "X11";
+    fullName = "X11 License";
+  };
+
   zlib = spdx {
     spdxId = "Zlib";
     fullName = "zlib License";
