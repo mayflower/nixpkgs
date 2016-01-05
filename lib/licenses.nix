@@ -75,6 +75,11 @@ lib.mapAttrs (n: v: v // { shortName = n; }) rec {
     fullName = "Autoconf exception 3.0";
   };
 
+  bisonException22 = spdx {
+    spdxId = "Bison-exception-2.2";
+    fullName = "Bison exception 2.2";
+  };
+
   boost = spdx {
     spdxId = "BSL-1.0";
     fullName = "Boost Software License 1.0";
