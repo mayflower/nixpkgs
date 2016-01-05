@@ -214,6 +214,11 @@ lib.mapAttrs (n: v: v // { shortName = n; }) rec {
     fullName = "FSF Unlimited License";
   };
 
+  ftl = spdx {
+    spdxId = "FTL";
+    fullName = "Freetype Project License";
+  };
+
   gpl1 = spdx {
     spdxId = "GPL-1.0";
     fullName = "GNU General Public License v1.0 only";
