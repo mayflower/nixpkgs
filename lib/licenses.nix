@@ -60,6 +60,16 @@ lib.mapAttrs (n: v: v // { shortName = n; }) rec {
     fullName = "Apache License 2.0";
   };
 
+  autoconfException2 = spdx {
+    spdxId = "Autoconf-exception-2.0";
+    fullName = "Autoconf exception 2.0";
+  };
+
+  autoconfException3 = spdx {
+    spdxId = "Autoconf-exception-3.0";
+    fullName = "Autoconf exception 3.0";
+  };
+
   boost = spdx {
     spdxId = "BSL-1.0";
     fullName = "Boost Software License 1.0";
