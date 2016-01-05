@@ -55,6 +55,11 @@ lib.mapAttrs (n: v: v // { shortName = n; }) rec {
     fullName = "Artistic License 2.0";
   };
 
+  asl1 = spdx {
+    spdxId = "Apache-1.0";
+    fullName = "Apache License 1.0";
+  };
+
   asl11 = spdx {
     spdxId = "Apache-1.1";
     fullName = "Apache License 1.1";
