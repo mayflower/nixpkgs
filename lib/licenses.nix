@@ -397,6 +397,11 @@ lib.mapAttrs (n: v: v // { shortName = n; }) rec {
     fullName = "Notion modified LGPL";
   };
   
+  npl11 = spdx {
+    spdxId = "NPL-1.1";
+    fullName = "Netscape Public License v1.1";
+  };
+
   ofl = spdx {
     spdxId = "OFL-1.1";
     fullName = "SIL Open Font License 1.1";
