@@ -523,6 +523,11 @@ lib.mapAttrs (n: v: v // { shortName = n; }) rec {
     fullName = "Do What The F*ck You Want To Public License";
   };
 
+  wxException = spdx {
+    spdxId = "WxWindows-exception-3.1";
+    fullName = "WxWindows Library Exception 3.1";
+  };
+
   x11 = spdx {
     spdxId = "X11";
     fullName = "X11 License";
