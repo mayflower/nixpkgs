@@ -185,6 +185,11 @@ lib.mapAttrs (n: v: v // { shortName = n; }) rec {
     fullName  = "CeCILL-C Free Software License Agreement";
   };
 
+  classpathException = spdx {
+    spdxId = "Classpath-exception-2.0";
+    fullName = "Classpath exception 2.0";
+  };
+
   cpl10 = spdx {
     spdxId = "CPL-1.0";
     fullName = "Common Public License 1.0";
