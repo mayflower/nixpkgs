@@ -50,6 +50,11 @@ lib.mapAttrs (n: v: v // { shortName = n; }) rec {
     fullName = "Artistic License 1.0";
   };
 
+  artistic1Perl = spdx {
+    spdxId = "Artistic-1.0-Perl";
+    fullName = "Artistic License 1.0 (Perl)";
+  };
+
   artistic2 = spdx {
     spdxId = "Artistic-2.0";
     fullName = "Artistic License 2.0";
