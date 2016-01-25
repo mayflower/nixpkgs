@@ -11427,6 +11427,34 @@ in modules // {
     };
   };
 
+  pysimplesoap = buildPythonPackage rec {
+    name = "pysimplesoap-${version}";
+    version = "1.16";
+
+    src = pkgs.fetchFromGitHub {
+      owner = "pysimplesoap";
+      repo = "pysimplesoap";
+      rev = version;
+      sha256 = "0pl7h2x1lc79lhvdaz9bs89mwck8a3izvpd7lzxp6228kzv5ai90";
+    };
+
+    disabled = isPy26 || isPy33 || isPyPy;
+
+    prePatch = ''
+      substituteInPlace setup.py \
+        --replace "for name in ('soap2py', 'PySimpleSOAP'):" "" \
+        --replace "name=name" "name='PySimpleSOAP'"
+      sed -i '/^\s\{4\}setup(/,/^\s\{4\})/ s/^\s\{4\}//' setup.py
+    '';
+
+    meta = {
+      description = "Python simple and lightweight SOAP library";
+      homepage = https://github.com/pysimplesoap/pysimplesoap;
+      maintainers = [];
+      license = licenses.lgpl3;
+    };
+  };
+
   monotonic = buildPythonPackage rec {
     name = "monotonic-0.4";
 
