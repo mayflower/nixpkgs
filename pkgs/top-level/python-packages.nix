@@ -11427,6 +11427,37 @@ in modules // {
     };
   };
 
+  pyraumfeld = buildPythonPackage rec {
+    name = "pyraumfeld-git-${version}";
+    version = "2016-01-16";
+
+    src = pkgs.fetchFromGitHub {
+      owner = "maierp";
+      repo = "pyraumfeld";
+      rev = "758c300";
+      sha256 = "1xpbgkyf61nwgkwzdbpsnr0df3ks8zwirap4ji8mdgvx8crybans";
+    };
+
+    phases = [ "unpackPhase" "buildPhase" "installPhase" ];
+
+    buildPhase = ''
+      mv raumfeld/__init__.py raumfeld.py
+      ${python.interpreter} -m compileall raumfeld.py
+    '';
+
+    installPhase = ''
+      mkdir -p $out/${python.sitePackages}
+      cp raumfeld.py* $out/${python.sitePackages}/
+    '';
+
+    meta = {
+      description = "Python library for controlling the Teufel Raumfeld system";
+      homepage = https://github.com/maierp/pyraumfeld;
+      maintainers = [];
+      license = licenses.free;
+    };
+  };
+
   pysimplesoap = buildPythonPackage rec {
     name = "pysimplesoap-${version}";
     version = "1.16";
