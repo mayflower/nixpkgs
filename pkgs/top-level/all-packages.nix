@@ -2828,6 +2828,8 @@ in
 
   openvpn_learnaddress = callPackage ../tools/networking/openvpn/openvpn_learnaddress.nix { };
 
+  openvpn_auth_ldap = callPackage ../tools/networking/openvpn/openvpn_auth_ldap.nix { };
+
   update-resolv-conf = callPackage ../tools/networking/openvpn/update-resolv-conf.nix { };
 
   open-pdf-presenter = callPackage ../applications/misc/open-pdf-presenter { };
@@ -4463,6 +4465,14 @@ in
 
     isl = isl_0_14;
   }));
+
+  gcobjc5 = wrapCC (gcc5.cc.override {
+    name  = "gcobjc";
+    langCC = false;
+    langC = true;
+    langObjC = true;
+    profiledCompiler = false;
+  });
 
   gfortran = if !stdenv.isDarwin then gfortran5
              else callPackage ../development/compilers/gcc/gfortran-darwin.nix {
