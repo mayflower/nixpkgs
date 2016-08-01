@@ -1,5 +1,5 @@
 { stdenv, fetchurl, lib, iasl, dev86, pam, libxslt, libxml2, libX11, xproto, libXext
-, libXcursor, libXmu, qt4, libIDL, SDL, libcap, zlib, libpng, glib, kernel, lvm2
+, libXcursor, libXmu, xorg, qt5, libIDL, SDL, libcap, zlib, libpng, glib, kernel, lvm2
 , which, alsaLib, curl, libvpx, gawk, nettools, dbus
 , xorriso, makeself, perl, pkgconfig, nukeReferences
 , javaBindings ? false, jdk ? null
@@ -18,7 +18,7 @@ let
   # revision/hash as well. See
   # http://download.virtualbox.org/virtualbox/${version}/SHA256SUMS
   # for hashes.
-  version = "5.0.20";
+  version = "5.1.2";
 
   forEachModule = action: ''
     for mod in \
@@ -39,12 +39,12 @@ let
   '';
 
   # See https://github.com/NixOS/nixpkgs/issues/672 for details
-  extpackRevision = "106931";
+  extpackRevision = "108956";
   extensionPack = requireFile rec {
     name = "Oracle_VM_VirtualBox_Extension_Pack-${version}-${extpackRevision}.vbox-extpack";
     # IMPORTANT: Hash must be base16 encoded because it's used as an input to
     # VBoxExtPackHelperApp!
-    sha256 = "11f40842a56ebb17da1bbc82a21543e66108a5330ebd54ded68038a990aa071b";
+    sha256 = "394d933be4022b2b15225670fe6e2a4486f34e5a565a719e0de5984089ccd975";
     message = ''
       In order to use the extension pack, you need to comply with the VirtualBox Personal Use
       and Evaluation License (PUEL) available at:
@@ -63,11 +63,11 @@ in stdenv.mkDerivation {
 
   src = fetchurl {
     url = "http://download.virtualbox.org/virtualbox/${version}/VirtualBox-${version}.tar.bz2";
-    sha256 = "0asc5n9an2dzvrd4isjz3vac2h0sm6dbzvrc36hn8ag2ma3hg75g";
+    sha256 = "03c92e3000d4b905d5b18a6abed757998125a37e5efa7864e62eae2baeabe010";
   };
 
   buildInputs =
-    [ iasl dev86 libxslt libxml2 xproto libX11 libXext libXcursor qt4 libIDL SDL
+    [ iasl dev86 libxslt libxml2 xproto libX11 libXext libXcursor xorg.libXinerama qt5.qtbase.dev libIDL SDL
       libcap glib lvm2 python alsaLib curl libvpx pam xorriso makeself perl
       pkgconfig which libXmu nukeReferences ]
     ++ optional javaBindings jdk
@@ -99,14 +99,8 @@ in stdenv.mkDerivation {
     set +x
   '';
 
-  patches = optional enableHardening ./hardened.patch
-    ++ [
-      (fetchurl rec {
-        name = "fix-detect-gcc-5.4.patch";
-        url = "https://bugs.debian.org/cgi-bin/bugreport.cgi?att=1;bug=827193;filename=${name};msg=5";
-        sha256 = "0y6v5dc6fqj9iv27cl8q2g87v1kxg19129mpas4vjg7g0529v4g9";
-      })
-    ];
+  patches =  optional enableHardening ./hardened.patch
+    ++ [ ./libressl.patch ];
 
   postPatch = ''
     sed -i -e 's|/sbin/ifconfig|${nettools}/bin/ifconfig|' \
@@ -136,7 +130,7 @@ in stdenv.mkDerivation {
     ''}
     LOCAL_CONFIG
 
-    ./configure --with-qt4-dir=${qt4} \
+    ./configure --with-qt-dir=${qt5.qtbase.dev} \
       ${optionalString (!javaBindings) "--disable-java"} \
       ${optionalString (!pythonBindings) "--disable-python"} \
       ${optionalString (!pulseSupport) "--disable-pulse"} \
@@ -147,6 +141,8 @@ in stdenv.mkDerivation {
     sed -e 's@arch/x86/@@' \
         -i Config.kmk
     substituteInPlace Config.kmk --replace "VBOX_WITH_TESTCASES = 1" "#"
+    substituteInPlace Config.kmk --replace "mcmodel=kernel" "mcmodel=kernel -fno-PIC"
+    substituteInPlace src/VBox/Installer/linux/Makefile.include.footer --replace "mcmodel=kernel" "mcmodel=kernel -fno-PIC"
   '';
 
   enableParallelBuilding = true;
