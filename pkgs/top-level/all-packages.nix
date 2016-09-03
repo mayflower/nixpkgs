@@ -170,7 +170,17 @@ in
 
   fetchMavenArtifact = callPackage ../build-support/fetchmavenartifact { };
 
-  packer = callPackage ../development/tools/packer { };
+  packer = callPackage ../development/tools/packer {
+    # Go 1.7 changed the linker flag format
+    buildGoPackage = buildGo16Package;
+    gotools = self.gotools.override {
+      buildGoPackage = buildGo16Package;
+      go = self.go_1_6;
+    };
+    gox = self.gox.override {
+      buildGoPackage = buildGo16Package;
+    };
+  };
 
   fetchpatch = callPackage ../build-support/fetchpatch { };
 
@@ -4128,7 +4138,7 @@ in
 
   wml = callPackage ../development/web/wml { };
 
-  wring = callPackage ../tools/text/wring { };
+  wring = nodePackages.wring;
 
   wrk = callPackage ../tools/networking/wrk { };
 
@@ -8790,7 +8800,7 @@ in
     name = "mesa-${mesa_noglu.version}";
     # FIXME: this causes mesa to have a runtime dependency on
     # mesa_noglu.dev.
-    paths = [ mesa_noglu.dev mesa_noglu.out mesa_glu ];
+    paths = [ mesa_noglu.dev mesa_noglu.out mesa_glu mesa_glu.dev ];
     meta = {
       platforms = lib.platforms.unix;
     };
@@ -16096,7 +16106,7 @@ in
 
   ue4demos = recurseIntoAttrs (callPackage ../games/ue4demos { });
 
-  ut2004demo = callPackage ../games/ut2004demo { };
+  ut2004demo = callPackage_i686 ../games/ut2004demo { };
 
   vapor = callPackage ../games/vapor { love = love_0_8; };
 
