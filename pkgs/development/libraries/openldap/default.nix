@@ -22,8 +22,6 @@ stdenv.mkDerivation rec {
       ++ stdenv.lib.optional (cyrus_sasl == null) "--without-cyrus-sasl"
       ++ stdenv.lib.optional stdenv.isFreeBSD "--with-pic";
 
-  enableParallelBuilding = true;
-
   preBuild = ''
     make ''$makeFlags "''${makeFlagsArray[@]}" ''$buildFlags "''${buildFlagsArray[@]}" depend;
   '';
