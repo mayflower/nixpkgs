@@ -12,7 +12,7 @@ let
     installPhase = ''
       mkdir -p $out/bin
       cp ${./setuid-wrapper.c} setuid-wrapper.c
-      gcc -Wall -O2 -DWRAPPER_DIR=\"${wrapperDir}\" \
+      gcc -Wall -O2 -DWRAPPER_DIR=\"/run/setuid-wrapper-dirs\" \
           setuid-wrapper.c -o $out/bin/setuid-wrapper
     '';
   };
@@ -120,16 +120,22 @@ in
 
           ${concatMapStrings makeSetuidWrapper setuidPrograms}
 
-          if [ -d ${wrapperDir} ]; then
-            mv --no-target-directory ${wrapperDir} ${wrapperDir}-old
-            ln --symbolic $wrapperDir ${wrapperDir}
-            rm --force --recursive ${wrapperDir}-old
-          elif [ -L ${wrapperDir} ]; then
-            ln --symbolic --force --no-dereference $wrapperDir ${wrapperDir}-tmp
+          if [ -L ${wrapperDir} ]; then
+            # Atomically replace the symlink
+            # See https://axialcorps.com/2013/07/03/atomically-replacing-files-and-directories/
             old=$(readlink ${wrapperDir})
+            ln --symbolic --force --no-dereference $wrapperDir ${wrapperDir}-tmp
             mv --no-target-directory ${wrapperDir}-tmp ${wrapperDir}
             rm --force --recursive $old
+          elif [ -d ${wrapperDir} ]; then
+            # Compatibility with old state, just remove the folder and symlink
+            rm -f ${wrapperDir}/*
+            # if it happens to be a tmpfs
+            umount ${wrapperDir} || true
+            rm -d ${wrapperDir}
+            ln -d --symbolic $wrapperDir ${wrapperDir}
           else
+            # For initial setup
             ln --symbolic $wrapperDir ${wrapperDir}
           fi
         '';
