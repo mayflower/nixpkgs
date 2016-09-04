@@ -1,6 +1,4 @@
-{ fetchurl, stdenv, makeWrapper, python, alsaLib
-, libX11, mesa_glu, SDL, lua5, zlib, bam, freetype
-}:
+{ fetchurl, stdenv, python, alsaLib, libX11, mesa, SDL, lua5, zlib, bam, freetype }:
 
 stdenv.mkDerivation rec {
   name = "teeworlds-0.6.1";
@@ -10,9 +8,9 @@ stdenv.mkDerivation rec {
     sha256 = "025rcz59mdqksja4akn888c8avj9j28rk86vw7w1licdp67x8a33";
   };
 
-  buildInputs = [
-    python makeWrapper alsaLib libX11 mesa_glu SDL lua5 zlib bam freetype
-  ];
+  # Note: Teeworlds requires Python 2.x to compile.  Python 3.0 will
+  # not work.
+  buildInputs = [ python alsaLib libX11 mesa SDL lua5 zlib bam freetype ];
 
   buildPhase = ''
     bam -a -v release
