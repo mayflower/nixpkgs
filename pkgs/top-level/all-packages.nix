@@ -285,6 +285,8 @@ in
       inherit kernel rootModules allowMissing;
     };
 
+  nixBufferBuilders = import ../build-support/emacs/buffer.nix { inherit (pkgs) lib writeText; };
+
   pathsFromGraph = ../build-support/kernel/paths-from-graph.pl;
 
   srcOnly = args: callPackage ../build-support/src-only args;
@@ -903,7 +905,9 @@ in
 
   mstflint = callPackage ../tools/misc/mstflint { };
 
-  mcelog = callPackage ../os-specific/linux/mcelog { };
+  mcelog = callPackage ../os-specific/linux/mcelog {
+    utillinux = utillinuxMinimal;
+  };
 
   apparix = callPackage ../tools/misc/apparix { };
 
@@ -4435,7 +4439,7 @@ in
     coq = coq_8_5;
   });
 
-  cryptol = self.haskell.packages.lts.cryptol;
+  cryptol = haskellPackages.cryptol;
 
   devpi-client = callPackage ../development/tools/devpi-client {};
 
@@ -4783,12 +4787,10 @@ in
 
   icedtea7_web = callPackage ../development/compilers/icedtea-web {
     jdk = jdk7;
-    xulrunner = firefox-unwrapped;
   };
 
   icedtea8_web = callPackage ../development/compilers/icedtea-web {
     jdk = jdk8;
-    xulrunner = firefox-unwrapped;
   };
 
   icedtea_web = self.icedtea8_web;
@@ -4983,6 +4985,11 @@ in
   };
 
   mono44 = lowPrio (callPackage ../development/compilers/mono/4.4.nix {
+    inherit (darwin) libobjc;
+    inherit (darwin.apple_sdk.frameworks) Foundation;
+  });
+
+  mono46 = lowPrio (callPackage ../development/compilers/mono/4.6.nix {
     inherit (darwin) libobjc;
     inherit (darwin.apple_sdk.frameworks) Foundation;
   });
@@ -5872,6 +5879,7 @@ in
   };
   octaveFull = (lowPrio (callPackage ../development/interpreters/octave {
     qt = qt4;
+    overridePlatforms = ["x86_64-linux" "x86_64-darwin"];
   }));
 
   ocropus = callPackage ../applications/misc/ocropus { };
@@ -6037,11 +6045,6 @@ in
   tcl-8_6 = callPackage ../development/interpreters/tcl/8.6.nix { };
 
   wasm = callPackage ../development/interpreters/wasm { };
-
-  xulrunner = callPackage ../development/interpreters/xulrunner {
-    inherit (gnome) libIDL;
-    inherit (pythonPackages) pysqlite;
-  };
 
 
   ### DEVELOPMENT / MISC
@@ -7644,13 +7647,13 @@ in
   gtk-sharp-2_0 = callPackage ../development/libraries/gtk-sharp/2.0.nix {
     inherit (gnome) libglade libgtkhtml gtkhtml
               libgnomecanvas libgnomeui libgnomeprint
-              libgnomeprintui GConf gnomepanel;
+              libgnomeprintui GConf;
   };
 
   gtk-sharp-3_0 = callPackage ../development/libraries/gtk-sharp/3.0.nix {
     inherit (gnome) libglade libgtkhtml gtkhtml
               libgnomecanvas libgnomeui libgnomeprint
-              libgnomeprintui GConf gnomepanel;
+              libgnomeprintui GConf;
   };
 
   gtk-sharp = self.gtk-sharp-2_0;
@@ -10729,8 +10732,6 @@ in
 
   systemd-journal2gelf = (callPackage ../tools/system/systemd-journal2gelf { }).bin // { outputs = ["bin"]; };
 
-  tomcat5 = callPackage ../servers/http/tomcat/5.0.nix { };
-
   tomcat6 = callPackage ../servers/http/tomcat/6.0.nix { };
 
   tomcat7 = callPackage ../servers/http/tomcat/7.0.nix { };
@@ -11428,7 +11429,10 @@ in
   linuxPackages_4_6 = recurseIntoAttrs (self.linuxPackagesFor self.linux_4_6 linuxPackages_4_6);
   linuxPackages_4_7 = recurseIntoAttrs (self.linuxPackagesFor self.linux_4_7 linuxPackages_4_7);
   # Don't forget to update linuxPackages_latest!
-  linuxPackages_testing = recurseIntoAttrs (self.linuxPackagesFor self.linux_testing linuxPackages_testing);
+
+  # Intentionally lacks recurseIntoAttrs, as -rc kernels will quite likely break out-of-tree modules and cause failed Hydra builds.
+  linuxPackages_testing = self.linuxPackagesFor self.linux_testing linuxPackages_testing;
+
   linuxPackages_custom = {version, src, configfile}:
                            let linuxPackages_self = (self.linuxPackagesFor (self.linuxManualConfig {inherit version src configfile;
                                                                                                     allowImportFromDerivation=true;})
@@ -12677,7 +12681,7 @@ in
 
   d4x = callPackage ../applications/misc/d4x { };
 
-  darcs = haskell.lib.overrideCabal self.haskell.packages.lts.darcs (drv: {
+  darcs = haskell.lib.overrideCabal haskellPackages.darcs (drv: {
     configureFlags = (stdenv.lib.remove "-flibrary" drv.configureFlags or []) ++ ["-f-library"];
     enableSharedExecutables = false;
     enableSharedLibraries = false;
@@ -13382,6 +13386,7 @@ in
 
   gnash = callPackage ../applications/video/gnash {
     inherit (gnome) gtkglext;
+    xulrunner = firefox-unwrapped;
   };
 
   gnome_mplayer = callPackage ../applications/video/gnome-mplayer {
@@ -14274,7 +14279,7 @@ in
 
   omxplayer = callPackage ../applications/video/omxplayer { };
 
-  oneteam = callPackage ../applications/networking/instant-messengers/oneteam {};
+  oneteam = callPackage ../applications/networking/instant-messengers/oneteam { };
 
   openbox = callPackage ../applications/window-managers/openbox { };
 
@@ -14331,7 +14336,6 @@ in
   pekwm = callPackage ../applications/window-managers/pekwm { };
 
   pencil = callPackage ../applications/graphics/pencil {
-    xulrunner = firefox-unwrapped;
   };
 
   perseus = callPackage ../applications/science/math/perseus {};
@@ -14929,7 +14933,11 @@ in
   teamspeak_client = qt55.callPackage ../applications/networking/instant-messengers/teamspeak/client.nix { };
   teamspeak_server = callPackage ../applications/networking/instant-messengers/teamspeak/server.nix { };
 
-  taskjuggler = callPackage ../applications/misc/taskjuggler { };
+  taskjuggler-2 = callPackage ../applications/misc/taskjuggler/2.x { };
+
+  taskjuggler = callPackage ../applications/misc/taskjuggler/3.x {
+    ruby = ruby_2_0;
+  };
 
   tasknc = callPackage ../applications/misc/tasknc { };
 
@@ -17662,7 +17670,11 @@ in
 
   zoom-us = qt55.callPackage ../applications/networking/instant-messengers/zoom-us {};
 
+<<<<<<< HEAD
   wo-istes-jetzt = callPackage ../tools/misc/wo-istes-jetzt { };
 
   privacyidea = callPackage ../servers/privacyidea { };
+=======
+  xulrunner = firefox-unwrapped;
+>>>>>>> origin/release-16.09
 }
