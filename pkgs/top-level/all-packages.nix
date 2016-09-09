@@ -17670,11 +17670,9 @@ in
 
   zoom-us = qt55.callPackage ../applications/networking/instant-messengers/zoom-us {};
 
-<<<<<<< HEAD
   wo-istes-jetzt = callPackage ../tools/misc/wo-istes-jetzt { };
 
   privacyidea = callPackage ../servers/privacyidea { };
-=======
+
   xulrunner = firefox-unwrapped;
->>>>>>> origin/release-16.09
 }
