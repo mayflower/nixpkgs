@@ -19,6 +19,9 @@ let
       prefixLength = i.ipv6PrefixLength;
     };
 
+  interfaceRoutes = i:
+    i.route4 ++ optionals cfg.enableIPv6 i.route6;
+
   destroyBond = i: ''
     while true; do
       UPDATED=1
@@ -101,6 +104,7 @@ in
         configureAddrs = i:
           let
             ips = interfaceIps i;
+            routes = interfaceRoutes i;
           in
           nameValuePair "network-addresses-${i.name}"
           { description = "Address configuration of ${i.name}";
@@ -130,8 +134,24 @@ in
                     echo "failed to add ${address}"
                     exit 1
                   fi
+                '') + flip concatMapStrings (routes) (route:
+                let
+                  destination = "${route.networkAddress}/${toString route.prefixLength}";
+                  routedef = destination
+                  + " metric ${toString route.metric}"
+                  + optionalString ( route.via != null ) " via ${route.via}";
+                in
+                ''
+                  echo "checking route ${routedef}..."
+                  if out=$(ip route add ${routedef} dev ${i.name} 2>&1); then
+                    echo "added route ${routedef}..."
+                    restart_network_setup=true
+                  elif ! echo "$out" | grep "File exists" >/dev/null 2>&1; then
+                    echo "failed to add ${routedef}"
+                    exit 1
+                  fi
                 '')
-              + optionalString (ips != [ ])
+              + optionalString (ips != [ ] || routes != [ ])
                 ''
                   if [ "$restart_network_setup" = "true" ]; then
                     # Ensure that the default gateway remains set.
@@ -146,6 +166,17 @@ in
                 ''
                   echo -n "deleting ${address}..."
                   ip addr del "${address}" dev "${i.name}" >/dev/null 2>&1 || echo -n " Failed"
+                  echo ""
+                '') + flip concatMapStrings (routes) (route:
+                let
+                  destination = "${route.networkAddress}/${toString route.prefixLength}";
+                  routedef = destination
+                  + " metric ${toString route.metric}"
+                  + optionalString ( route.via != null ) " via ${route.via}";
+                in
+                ''
+                  echo -n "deleting ${routedef}..."
+                  ip route del ${routedef} dev ${i.name} >/dev/null 2>&1 || echo -n " Failed"
                   echo ""
                 '');
           };

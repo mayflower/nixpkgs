@@ -111,6 +111,41 @@ let
       };
     };
 
+  routeOpts = v:
+    assert v == 4 || v == 6;
+    {
+      networkAddress = mkOption {
+        type = types.str;
+        description = ''
+          Base IPv${toString v} network address of the route.
+        '';
+      };
+
+      prefixLength = mkOption {
+        type = types.addCheck types.int (n: n >= 0 && n <= (if v == 4 then 32 else 128));
+        description = ''
+          Subnet mask of the route, specified as the number of
+          bits in the prefix (<literal>${if v == 4 then "24" else "64"}</literal>).
+        '';
+      };
+
+      metric = mkOption {
+        type = types.int;
+        default = 1;
+        description = ''
+          Metric of the route.
+        '';
+      };
+
+      via = mkOption {
+        type = types.nullOr types.str;
+        default = null;
+        description = ''
+          Next hop router for the route, if the route destination is not reachable from the interface directly.
+        '';
+      };
+    };
+
   interfaceOpts = { name, ... }: {
 
     options = {
@@ -154,6 +189,32 @@ let
         options = addrOpts 6;
         description = ''
           List of IPv6 addresses that will be statically assigned to the interface.
+        '';
+      };
+
+      route4 = mkOption {
+        default = [ ];
+        example = [
+          { networkAddress = "10.30.0.0"; prefixLength = 16; }
+          { networkAddress = "10.10.0.0"; prefixLength = 16; metric = 23; via = "10.1.1.1"; }
+        ];
+        type = types.listOf types.optionSet;
+        options = routeOpts 4;
+        description = ''
+          List of additional IPv4 routes that will be statically routed through the interface.
+        '';
+      };
+
+      route6 = mkOption {
+        default = [ ];
+        example = [
+          { networkAddress = "2001:1470:fffd:2222::"; prefixLength = 64; }
+          { networkAddress = "2001:1470:fffd:3333::"; prefixLength = 64; metric = 42; via = "2001:1470:fffd:2098::1"; }
+        ];
+        type = types.listOf types.optionSet;
+        options = routeOpts 6;
+        description = ''
+          List of additional IPv6 routes that will be statically routed through the interface.
         '';
       };
 
