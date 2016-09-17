@@ -14,7 +14,7 @@ in {
         type = types.str;
         default = "root";
         description = ''
-          Username under which Alertmanager shall be run.
+          User name under which Alertmanager shall be run.
         '';
       };
 
@@ -35,15 +35,15 @@ in {
       };
 
       logFormat = mkOption {
-        type = types.str;
-        default = "";
+        type = types.nullOr types.str;
+        default = null;
         description = ''
           If set use a syslog logger or JSON logging.
         '';
       };
 
       logLevel = mkOption {
-        type = types.str;
+        type = types.enum ["debug" "info" "warn" "error" "fatal"];
         default = "warn";
         description = ''
     	    Only log messages with the given severity or above. Valid levels: [debug, info, warn, error, fatal].
@@ -62,8 +62,8 @@ in {
       };
 
       webListenAddress = mkOption {
-        type = types.str;
-        default = "";
+        type = types.nullOr types.str;
+        default = null;
         description = ''
           Address to listen on for the web interface and API.
         '';
@@ -73,7 +73,15 @@ in {
         type = types.int;
         default = 9093;
         description = ''
-          Port to listen on for the web interface and API. (default "9093")
+          Port to listen on for the web interface and API.
+        '';
+      };
+
+      openFirewall = mkOption {
+        type = types.bool;
+        default = false;
+        description = ''
+          Open port ${toString cfg.webListenPort} in firewall for incoming connections.
         '';
       };
     };
@@ -81,7 +89,10 @@ in {
 
 
   config = mkIf cfg.enable {
-    networking.firewall.allowedTCPPorts = [ cfg.port ];
+    networking.firewall = mkIf cfg.openFirewall {
+      allowedTCPPorts = [ cfg.webListenPort ];
+    };
+
     systemd.services.alertmanager = {
       wantedBy = [ "multi-user.target" ];
       after    = [ "network.target" ];
@@ -90,8 +101,8 @@ in {
         -config.file ${mkConfigFile} \
         -web.listen-address ${cfg.webListenAddress}:${toString cfg.webListenPort} \
         -log.level ${cfg.logLevel} \
-        ${optionalString (cfg.webExternalUrl != "") ''-web.external-url ${cfg.webExternalUrl} \''}
-        ${optionalString (cfg.logFormat != "") "-log.format ${cfg.logFormat}"}
+        ${optionalString (cfg.webExternalUrl != null) ''-web.external-url ${cfg.webExternalUrl} \''}
+        ${optionalString (cfg.logFormat != null) "-log.format ${cfg.logFormat}"}
       '';
 
       serviceConfig = {
