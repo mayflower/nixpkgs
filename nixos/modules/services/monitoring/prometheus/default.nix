@@ -31,7 +31,7 @@ let
     "-web.listen-address=${cfg.listenAddress}"
     "-alertmanager.notification-queue-capacity=${toString cfg.alertmanagerNotificationQueueCapacity}"
     "-alertmanager.timeout=${toString cfg.alertmanagerTimeout}s"
-    (optionalString (cfg.alertmanagerURL != "") "-alertmanager.url=${cfg.alertmanagerURL}")
+    (optionalString (cfg.alertmanagerURL != []) "-alertmanager.url=${concatStringsSep "," cfg.alertmanagerURL}")
   ];
 
   promTypes.globalConfig = types.submodule {
@@ -393,10 +393,10 @@ in {
       };
 
       alertmanagerURL = mkOption {
-        type = types.str;
-        default = "";
+        type = types.listOf types.str;
+        default = [];
         description = ''
-          Comma-separated list of Alertmanager URLs to send notifications to.
+          List of Alertmanager URLs to send notifications to.
         '';
       };
 
