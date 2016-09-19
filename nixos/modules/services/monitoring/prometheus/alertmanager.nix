@@ -27,10 +27,10 @@ in {
       };
 
       configuration = mkOption {
-        type = types.str;
-        default = "";
+        type = types.attrs;
+        default = {};
         description = ''
-          Alertmanager configuration.
+          Alertmanager configuration as nix attribute set.
         '';
       };
 
@@ -46,15 +46,15 @@ in {
         type = types.enum ["debug" "info" "warn" "error" "fatal"];
         default = "warn";
         description = ''
-    	    Only log messages with the given severity or above.
+          Only log messages with the given severity or above.
         '';
       };
 
       webExternalUrl = mkOption {
-        type = types.str;
-        default = "";
+        type = types.nullOr types.str;
+        default = null;
         description = ''
-    	    The URL under which Alertmanager is externally reachable (for example, if Alertmanager is served via a reverse proxy).
+          The URL under which Alertmanager is externally reachable (for example, if Alertmanager is served via a reverse proxy).
           Used for generating relative and absolute links back to Alertmanager itself.
           If the URL has a path portion, it will be used to prefix all HTTP endoints served by Alertmanager.
           If omitted, relevant URL components will be derived automatically.
@@ -104,11 +104,11 @@ in {
       '';
 
       serviceConfig = {
-        User = "${cfg.user}";
-        Group = "${cfg.group}";
+        User = cfg.user;
+        Group = cfg.group;
         Restart  = "always";
         PrivateTmp = true;
-        WorkingDirectory = /tmp;
+        WorkingDirectory = "/tmp";
       };
     };
   };
