@@ -3,16 +3,16 @@
 with lib;
 
 let
-  cfg = config.services.alertmanager;
-  mkConfigFile = pkgs.writeText "alertmanager.yml" cfg.configuration;
+  cfg = config.services.prometheus.alertmanager;
+  mkConfigFile = pkgs.writeText "alertmanager.yml" (builtins.toJSON cfg.configuration);
 in {
   options = {
-    services.alertmanager = {
+    services.prometheus.alertmanager = {
       enable = mkEnableOption "Prometheus Alertmanager";
 
       user = mkOption {
         type = types.str;
-        default = "root";
+        default = "nobody";
         description = ''
           User name under which Alertmanager shall be run.
         '';
@@ -20,7 +20,7 @@ in {
 
       group = mkOption {
         type = types.str;
-        default = "root";
+        default = "nogroup";
         description = ''
           Group under which Alertmanager shall be run.
         '';
@@ -46,7 +46,7 @@ in {
         type = types.enum ["debug" "info" "warn" "error" "fatal"];
         default = "warn";
         description = ''
-    	    Only log messages with the given severity or above. Valid levels: [debug, info, warn, error, fatal].
+    	    Only log messages with the given severity or above.
         '';
       };
 
@@ -61,7 +61,7 @@ in {
         '';
       };
 
-      webListenAddress = mkOption {
+      listenAddress = mkOption {
         type = types.nullOr types.str;
         default = null;
         description = ''
@@ -69,7 +69,7 @@ in {
         '';
       };
 
-      webListenPort = mkOption {
+      port = mkOption {
         type = types.int;
         default = 9093;
         description = ''
@@ -81,7 +81,7 @@ in {
         type = types.bool;
         default = false;
         description = ''
-          Open port ${toString cfg.webListenPort} in firewall for incoming connections.
+          Open port in firewall for incoming connections.
         '';
       };
     };
@@ -89,9 +89,7 @@ in {
 
 
   config = mkIf cfg.enable {
-    networking.firewall = mkIf cfg.openFirewall {
-      allowedTCPPorts = [ cfg.webListenPort ];
-    };
+    networking.firewall.allowedTCPPorts = optional cfg.openFirewall cfg.port;
 
     systemd.services.alertmanager = {
       wantedBy = [ "multi-user.target" ];
@@ -99,7 +97,7 @@ in {
       script = ''
         ${pkgs.prometheus-alertmanager.bin}/bin/alertmanager \
         -config.file ${mkConfigFile} \
-        -web.listen-address ${cfg.webListenAddress}:${toString cfg.webListenPort} \
+        -web.listen-address ${cfg.listenAddress}:${toString cfg.port} \
         -log.level ${cfg.logLevel} \
         ${optionalString (cfg.webExternalUrl != null) ''-web.external-url ${cfg.webExternalUrl} \''}
         ${optionalString (cfg.logFormat != null) "-log.format ${cfg.logFormat}"}
