@@ -48,7 +48,7 @@ in
         default = null;
         description = ''
           A set describing default parameters for babeld interfaces.
-          See `babeld(8)' for options.
+          See <citerefentry><refentrytitle>babeld</refentrytitle><manvolnum>8</manvolnum></citerefentry> for options.
         '';
         type = types.nullOr (types.attrsOf types.unspecified);
         example =
@@ -62,7 +62,7 @@ in
         default = {};
         description = ''
           A set describing babeld interfaces.
-          See `babeld(8)' for options.
+          See <citerefentry><refentrytitle>babeld</refentrytitle><manvolnum>8</manvolnum></citerefentry> for options.
         '';
         type = types.attrsOf (types.attrsOf types.unspecified);
         example =
@@ -78,7 +78,7 @@ in
         default = "";
         description = ''
           Options that will be copied to babeld.conf.
-          See `babeld(8)' for details.
+          See <citerefentry><refentrytitle>babeld</refentrytitle><manvolnum>8</manvolnum></citerefentry> for details.
         '';
       };
     };
@@ -96,7 +96,6 @@ in
       description = "Babel routing daemon";
       after = [ "network.target" ];
       wantedBy = [ "multi-user.target" ];
-      path = [ pkgs.babeld ];
       serviceConfig.ExecStart = "${pkgs.babeld}/bin/babeld -c ${configFile}";
     };
 
