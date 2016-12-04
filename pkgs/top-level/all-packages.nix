@@ -10292,6 +10292,13 @@ in
     boost = boost159;
   };
 
+  mariadb_openssl = callPackage ../servers/sql/mariadb {
+    inherit (darwin) cctools;
+    inherit (pkgs.darwin.apple_sdk.frameworks) CoreServices;
+    boost = boost159;
+    openssl = openssl_1_0_2;
+  };
+
   mongodb = callPackage ../servers/nosql/mongodb {
     sasl = cyrus_sasl;
     inherit (darwin.apple_sdk.frameworks) Security;
