@@ -90,8 +90,6 @@ in
 
   config = mkIf config.services.babeld.enable {
 
-    networking.firewall.allowedUDPPorts = [ 6696 ];
-
     systemd.services.babeld = {
       description = "Babel routing daemon";
       after = [ "network.target" ];
