@@ -143,7 +143,7 @@ in
                 in
                 ''
                   echo "checking route ${routedef}..."
-                  if out=$(ip route add ${routedef} dev ${i.name} 2>&1); then
+                  if out=$(ip route add ${routedef} dev ${i.name} proto static 2>&1); then
                     echo "added route ${routedef}..."
                     restart_network_setup=true
                   elif ! echo "$out" | grep "File exists" >/dev/null 2>&1; then
