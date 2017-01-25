@@ -1,4 +1,5 @@
-{ lib, stdenv, glibc, fetchurl, zlib, readline, libossp_uuid, openssl, makeWrapper }:
+{ lib, stdenv, glibc, fetchurl, zlib, readline, libossp_uuid, openssl, makeWrapper
+, systemd }:
 
 let
 
@@ -16,6 +17,7 @@ let
 
     buildInputs =
       [ zlib readline openssl makeWrapper ]
+      ++ lib.optionals (stdenv.isLinux && atLeast "9.6") [ systemd ]
       ++ lib.optionals (!stdenv.isDarwin) [ libossp_uuid ];
 
     enableParallelBuilding = true;
@@ -27,6 +29,7 @@ let
       "--sysconfdir=/etc"
       "--libdir=$(lib)/lib"
     ]
+      ++ lib.optional (stdenv.isLinux && atLeast "9.6") "--with-systemd"
       ++ lib.optional (stdenv.isDarwin)  "--with-uuid=e2fs"
       ++ lib.optional (!stdenv.isDarwin) "--with-ossp-uuid";
 
