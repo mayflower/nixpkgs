@@ -36,8 +36,6 @@ let
       ${cfg.extraConfig}
     '';
 
-  pre84 = versionOlder (builtins.parseDrvName postgresql.name).version "8.4";
-
 in
 
 {
@@ -58,7 +56,7 @@ in
 
       package = mkOption {
         type = types.package;
-        example = literalExample "pkgs.postgresql92";
+        example = literalExample "pkgs.postgresql95";
         description = ''
           PostgreSQL package to use.
         '';
@@ -160,12 +158,14 @@ in
       # Note: when changing the default, make it conditional on
       # ‘system.stateVersion’ to maintain compatibility with existing
       # systems!
-      mkDefault (if versionAtLeast config.system.stateVersion "16.03" then pkgs.postgresql95 else pkgs.postgresql94);
+      mkDefault (if versionAtLeast config.system.stateVersion "17.03" then pkgs.postgresql96
+        else (if versionAtLeast config.system.stateVersion "16.03" then pkgs.postgresql95
+            else pkgs.postgresql94));
 
     services.postgresql.authentication = mkAfter
       ''
         # Generated file; do not edit!
-        local all all              ident ${optionalString pre84 "sameuser"}
+        local all all              ident
         host  all all 127.0.0.1/32 md5
         host  all all ::1/128      md5
       '';
