@@ -23,7 +23,7 @@ in
           postVM =
             ''
               mkdir -p $out
-              ${pkgs.vmTools.qemu-220}/bin/qemu-img convert -f raw -O vpc $diskImage $out/disk.vhd
+              ${pkgs.vmTools.qemu-220}/bin/qemu-img convert -f raw -O vpc -o subformat=fixed $diskImage $out/disk.vhd
               rm $diskImage
             '';
           diskImageBase = "nixos-image-${config.system.nixosLabel}-${pkgs.stdenv.system}.raw";
@@ -59,6 +59,7 @@ in
           mkdir -p /mnt/nix/store
           echo "copying everything (will take a while)..."
           ${pkgs.rsync}/bin/rsync -a $storePaths /mnt/nix/store/
+          chown -R 0:0 /mnt/nix/store
 
           echo Register the paths in the Nix database.
           printRegistration=1 perl ${pkgs.pathsFromGraph} /tmp/xchg/closure | \
