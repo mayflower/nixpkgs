@@ -11641,8 +11641,8 @@ with pkgs;
 
   microcodeIntel = callPackage ../os-specific/linux/microcode/intel.nix { };
 
-  inherit (callPackages ../os-specific/linux/apparmor { pythonPackages = python27Packages; swig = swig2; })
-    libapparmor apparmor-pam apparmor-parser apparmor-profiles apparmor-utils;
+  inherit (callPackages ../os-specific/linux/apparmor { pythonPackages = python3Packages; swig = swig2; })
+    libapparmor apparmor-pam apparmor-parser apparmor-profiles apparmor-utils apparmor-extra-profiles;
 
   atop = callPackage ../os-specific/linux/atop { };
 

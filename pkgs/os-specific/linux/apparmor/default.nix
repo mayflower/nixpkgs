@@ -1,4 +1,4 @@
-{ stdenv, fetchurl, makeWrapper, autoreconfHook
+{ stdenv, pkgs, fetchurl, makeWrapper, autoreconfHook
 , pkgconfig, which
 , flex, bison
 , linuxHeaders ? stdenv.cc.libc.linuxHeaders
@@ -6,11 +6,17 @@
 , perl
 , swig
 , pam
+, ncurses
+, glibc
+, utillinux
+, gettext
+, nettools
 }:
 
 let
-  apparmor-series = "2.10";
+  apparmor-series = "2.11";
   apparmor-version = apparmor-series;
+  apparmor-archive = "2.11.0";
 
   apparmor-meta = component: with stdenv.lib; {
     homepage = http://apparmor.net/;
@@ -21,8 +27,8 @@ let
   };
 
   apparmor-sources = fetchurl {
-    url = "https://launchpad.net/apparmor/${apparmor-series}/${apparmor-version}/+download/apparmor-${apparmor-version}.tar.gz";
-    sha256 = "1x06qmmbha9krx7880pxj2k3l8fxy3nm945xjjv735m2ax1243jd";
+    url = "https://launchpad.net/apparmor/${apparmor-series}/${apparmor-version}/+download/apparmor-${apparmor-archive}.tar.gz";
+    sha256 = "16kkvmdpl6zjb0jhxc1w7rhfdszrzg53458qdf71nxz727m8ki5i";
   };
 
   prePatchCommon = ''
@@ -50,6 +56,7 @@ let
     buildInputs = [
       perl
       pythonPackages.python
+      ncurses
     ];
 
     # required to build apparmor-parser
@@ -77,26 +84,72 @@ let
     name = "apparmor-utils-${apparmor-version}";
     src = apparmor-sources;
 
-    nativeBuildInputs = [ makeWrapper which ];
+    nativeBuildInputs = [
+      makeWrapper
+      which
+      pythonPackages.pyflakes
+      gettext
+    ];
 
     buildInputs = [
       perl
       pythonPackages.python
       libapparmor
       libapparmor.python
+      apparmor-profiles
+      apparmor-parser
+      glibc.bin
+      utillinux.bin
+      nettools
     ];
 
-    prePatch = prePatchCommon;
+    prePatch = prePatchCommon + ''
+      substituteInPlace ./utils/Makefile --replace "/usr/include/linux/capability.h" "${linuxHeaders}/include/linux/capability.h"
+      substituteInPlace ./utils/apparmor/ui.py --replace ", re.LOCALE" ""
+
+      # aa-unconfined calls netstat
+      substituteInPlace ./utils/aa-unconfined --replace "'/bin:/usr/bin:/sbin:/usr/sbin'" "'${nettools}/bin'"
+      
+      substituteInPlace ./utils/logprof.conf \
+        --replace "/etc/apparmor.d" "/etc/apparmor.d ${apparmor-profiles}/etc/apparmor.d" \
+        --replace "/sbin/apparmor_parser" "${apparmor-parser}/bin/apparmor_parser" \
+        --replace "/usr/bin/ldd" "${stdenv.cc.libc_bin}/bin/ldd" \
+        --replace "/usr/bin/logger" "" \
+        --replace "/bin/logger" "${utillinux.bin}/bin/logger"
+    '';
     postPatch = "cd ./utils";
-    makeFlags = ''LANGS='';
+
     installFlags = ''DESTDIR=$(out) BINDIR=$(out)/bin VIM_INSTALL_PATH=$(out)/share PYPREFIX='';
+
+    preCheck = ''
+      for file in ./test/test-* ./test/fake_ldd ; do
+        substituteInPlace $file --replace "/usr/bin/python3" "${pythonPackages.python.interpreter}"
+      done
+
+      #substituteInPlace ./test/test-aa.py \
+      #  --replace "'/usr/lib/ispell/', '/usr/lib{,32,64}/**'" "'/usr/lib{,32,64}/**', '/usr/lib/ispell/'"
+
+      substituteInPlace ./apparmor/aa.py --replace "/etc/apparmor" "$PWD"
+
+      checkFlagsArray=(
+        USE_SYSTEM=1
+        LD_LIBRARY_PATH=${libapparmor}/lib
+        PYTHONPATH=..:$PYTHONPATH
+      )
+    '';
+
+    #doCheck = true;
+
+    postCheck = ''
+      substituteInPlace ./apparmor/aa.py --replace "$PWD" "/etc/apparmor"
+    '';
 
     postInstall = ''
       for prog in aa-audit aa-autodep aa-cleanprof aa-complain aa-disable aa-enforce aa-genprof aa-logprof aa-mergeprof aa-status aa-unconfined ; do
         wrapProgram $out/bin/$prog --prefix PYTHONPATH : "$out/lib/${pythonPackages.python.libPrefix}/site-packages:$PYTHONPATH"
       done
 
-      for prog in aa-exec aa-notify ; do
+      for prog in aa-notify ; do
         wrapProgram $out/bin/$prog --prefix PERL5LIB : "${libapparmor}/lib/perl5:$PERL5LIB"
       done
     '';
@@ -167,9 +220,10 @@ let
     meta = apparmor-meta "kernel patches";
   };
 
+  apparmor-extra-profiles = import ./profiles.nix { inherit stdenv pkgs; };
 in
 
 {
   inherit libapparmor apparmor-utils apparmor-parser apparmor-pam
-  apparmor-profiles apparmor-kernel-patches;
+  apparmor-profiles apparmor-kernel-patches apparmor-extra-profiles;
 }
