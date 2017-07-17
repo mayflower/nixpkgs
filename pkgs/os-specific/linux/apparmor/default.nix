@@ -1,4 +1,4 @@
-{ stdenv, pkgs, fetchurl, makeWrapper, autoreconfHook
+{ stdenv, pkgs, builtins, fetchurl, makeWrapper, autoreconfHook
 , pkgconfig, which
 , flex, bison
 , linuxHeaders ? stdenv.cc.libc.linuxHeaders
@@ -220,7 +220,7 @@ let
     meta = apparmor-meta "kernel patches";
   };
 
-  apparmor-extra-profiles = import ./profiles.nix { inherit stdenv pkgs; };
+  apparmor-extra-profiles = import ./profiles.nix { inherit stdenv pkgs builtins; };
 in
 
 {

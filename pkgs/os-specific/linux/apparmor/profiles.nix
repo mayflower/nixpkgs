@@ -1,5 +1,7 @@
-{ stdenv, pkgs }:
+{ stdenv, pkgs, builtins }:
 
-{
-  ping = import ./profiles/ping.nix { inherit stdenv pkgs; inherit (pkgs) iputils nettle libcap libcap_ng libidn; };
+let
+  storeDir = builtins.storeDir;
+in {
+  ping = import ./profiles/ping.nix { inherit stdenv pkgs storeDir; inherit (pkgs) iputils nettle libcap libcap_ng libidn; };
 }
