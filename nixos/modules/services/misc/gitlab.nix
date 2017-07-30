@@ -527,8 +527,8 @@ in {
         config.services.postgresql.package
         gitAndTools.git
         openssh
-        nodejs
         procps
+        sudo
       ];
       preStart = ''
         mkdir -p ${cfg.backupPath}
@@ -582,14 +582,14 @@ in {
 
         if [ "${cfg.databaseHost}" = "127.0.0.1" ]; then
           if ! test -e "${cfg.statePath}/db-created"; then
-            psql postgres -c "CREATE ROLE ${cfg.databaseUsername} WITH LOGIN NOCREATEDB NOCREATEROLE NOCREATEUSER ENCRYPTED PASSWORD '${cfg.databasePassword}'"
-            ${config.services.postgresql.package}/bin/createdb --owner ${cfg.databaseUsername} ${cfg.databaseName} || true
+            sudo -u postgres psql postgres -c "CREATE ROLE ${cfg.databaseUsername} WITH LOGIN NOCREATEDB NOCREATEROLE ENCRYPTED PASSWORD '${cfg.databasePassword}'"
+            sudo -u postgres ${config.services.postgresql.package}/bin/createdb --owner ${cfg.databaseUsername} ${cfg.databaseName} || true
             touch "${cfg.statePath}/db-created"
           fi
         fi
 
         # enable required pg_trgm extension for gitlab
-        psql gitlab -c "CREATE EXTENSION IF NOT EXISTS pg_trgm"
+        sudo -u postgres psql gitlab -c "CREATE EXTENSION IF NOT EXISTS pg_trgm"
         # Always do the db migrations just to be sure the database is up-to-date
         ${gitlab-rake}/bin/gitlab-rake db:migrate RAILS_ENV=production
 
@@ -597,7 +597,7 @@ in {
         # task above and the db:seed_fu below will do the same for setting
         # up the initial database
         if ! test -e "${cfg.statePath}/db-seeded"; then
-          ${gitlab-rake}/bin/gitlab-rake db:seed_fu RAILS_ENV=production \
+          sudo -u postgres ${gitlab-rake}/bin/gitlab-rake db:seed_fu RAILS_ENV=production \
             GITLAB_ROOT_PASSWORD="${cfg.initialRootPassword}" GITLAB_ROOT_EMAIL="${cfg.initialRootEmail}"
           touch "${cfg.statePath}/db-seeded"
         fi

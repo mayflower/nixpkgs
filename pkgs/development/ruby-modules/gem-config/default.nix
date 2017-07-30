@@ -20,7 +20,7 @@
 { lib, fetchurl, writeScript, ruby, kerberos, libxml2, libxslt, python, stdenv, which
 , libiconv, postgresql, v8_3_16_14, clang, sqlite, zlib, imagemagick
 , pkgconfig , ncurses, xapian_1_2_22, gpgme, utillinux, fetchpatch, tzdata, icu, libffi
-, cmake, libssh2, openssl, mysql, darwin, git, perl, pcre, gecode_3, curl
+, cmake, libssh2, openssl, mysql, darwin, git, perl, pcre, gecode_3, curl, re2
 , libmsgpack, qt48, libsodium, snappy, libossp_uuid, lxc, libpcap, xlibs, gtk2, buildRubyGem
 }@args:
 
@@ -85,6 +85,10 @@ in
 
   gpgme = attrs: {
     buildInputs = [ gpgme ];
+  };
+
+  github-markup = attrs: {
+    meta.priority = 10; # clashes with gitlab-markup in gitlab
   };
 
   gio2 = attrs: { buildInputs = [ gtk2 pcre pkgconfig ]; };
@@ -194,6 +198,10 @@ in
     RBNACL_LIBSODIUM_GEM_LIB_PATH = '${libsodium.out}/lib/libsodium.${if stdenv.isDarwin then "dylib" else "so"}'
     "
     '';
+  };
+
+  re2 = attrs: {
+    buildInputs = [ re2 ];
   };
 
   rmagick = attrs: {
