@@ -18,11 +18,12 @@ runHook() {
 
     local hookName="$1"
     shift
-    # Identity hook as fallback so no old bash empty array problems
-    local -a "var=(\"\${${hookName%Hook}Hooks[@]-true}\")"
+    local hooksSlice="${hookName%Hook}Hooks[@]"
 
     local hook
-    for hook in "_callImplicitHook 0 $hookName" "${var[@]}"; do
+    # Hack around old bash being bad and thinking empty arrays are
+    # undefined with `set -u`
+    for hook in "_callImplicitHook 0 $hookName" ${!hooksSlice+"${!hooksSlice}"}; do
         _eval "$hook" "$@"
         set -u # To balance `_eval`
     done
@@ -40,11 +41,11 @@ runOneHook() {
 
     local hookName="$1"
     shift
-    # Identity hook for reasons given above
-    local -a "var=(\"\${${hookName%Hook}Hooks[@]-false}\")"
+    local hooksSlice="${hookName%Hook}Hooks[@]"
 
     local hook ret=1
-    for hook in "_callImplicitHook 1 $hookName" "${var[@]}"; do
+    # Hack around old bash being bad with empty arrays and `set -u`
+    for hook in "_callImplicitHook 1 $hookName" ${!hooksSlice+"${!hooksSlice}"}; do
         if _eval "$hook" "$@"; then
             ret=0
             break
@@ -305,11 +306,12 @@ findInputs() {
     # nix-shell doesn't use impure bash. This should replace the O(n)
     # case with an O(1) hash map lookup, assuming bash is implemented
     # well :D.
-    local varRef="\${$var[*]}"
-    case "$varRef" in
+    local varSlice="$var[*]"
+    # ${..-} to hack around old bash empty array problem
+    case "${!varSlice:-}" in
         *" $pkg "*) return 0 ;;
     esac
-    unset varRef
+    unset -v varSlice
 
     eval "$var"'+=("$pkg")'
 
@@ -387,7 +389,7 @@ _addToNativeEnv() {
 }
 
 set +u # Old bash thinks empty array == undefined array
-for i in "${nativePkgs[@]}"; do
+for i in ${nativePkgs[@]:-"${nativePkgs[@]}":-}; do
     set -u
     _addToNativeEnv "$i"
 done
@@ -775,10 +777,11 @@ configurePhase() {
     fi
 
     if [ -n "$configureScript" ]; then
-        set +u # Empty array hack
+        # Old bash empty array hack
         # shellcheck disable=SC2086
-        local flagsArray=($configureFlags "${configureFlagsArray[@]}")
-        set -u
+        local flagsArray=(
+            $configureFlags ${configureFlagsArray+"${configureFlagsArray[@]}"}
+        )
         echoCmd 'configure flags' "${flagsArray[@]}"
         # shellcheck disable=SC2086
         $configureScript "${flagsArray[@]}"
@@ -803,13 +806,13 @@ buildPhase() {
         # See https://github.com/NixOS/nixpkgs/pull/1354#issuecomment-31260409
         makeFlags="SHELL=$SHELL $makeFlags"
 
-        set +u # Empty array hack
+        # Old bash empty array hack
         # shellcheck disable=SC2086
         local flagsArray=(
             ${enableParallelBuilding:+-j${NIX_BUILD_CORES} -l${NIX_BUILD_CORES}}
-            $makeFlags "${makeFlagsArray[@]}"
-            $buildFlags "${buildFlagsArray[@]}")
-        set -u
+            $makeFlags ${makeFlagsArray+"${makeFlagsArray[@]}"}
+            $buildFlags ${buildFlagsArray+"${buildFlagsArray[@]}"}
+        )
 
         echoCmd 'build flags' "${flagsArray[@]}"
         make ${makefile:+-f $makefile} "${flagsArray[@]}"
@@ -823,13 +826,14 @@ buildPhase() {
 checkPhase() {
     runHook preCheck
 
-    set +u # Empty array hack
+    # Old bash empty array hack
     # shellcheck disable=SC2086
-    local flagsArray=( \
-        ${enableParallelBuilding:+-j${NIX_BUILD_CORES} -l${NIX_BUILD_CORES}} \
-        $makeFlags "${makeFlagsArray[@]}" \
-        ${checkFlags:-VERBOSE=y} "${checkFlagsArray[@]}" ${checkTarget:-check})
-    set -u
+    local flagsArray=(
+        ${enableParallelBuilding:+-j${NIX_BUILD_CORES} -l${NIX_BUILD_CORES}}
+        $makeFlags ${makeFlagsArray+"${makeFlagsArray[@]}"}
+        ${checkFlags:-VERBOSE=y} ${checkFlagsArray+"${checkFlagsArray[@]}"}
+        ${checkTarget:-check}
+    )
 
     echoCmd 'check flags' "${flagsArray[@]}"
     make ${makefile:+-f $makefile} "${flagsArray[@]}"
@@ -848,12 +852,13 @@ installPhase() {
 
     installTargets="${installTargets:-install}"
 
-    set +u # Empty array hack
+    # Old bash empty array hack
     # shellcheck disable=SC2086
-    local flagsArray=( $installTargets \
-        $makeFlags "${makeFlagsArray[@]}" \
-        $installFlags "${installFlagsArray[@]}")
-    set -u
+    local flagsArray=(
+        $installTargets
+        $makeFlags ${makeFlagsArray+"${makeFlagsArray[@]}"}
+        $installFlags ${installFlagsArray+"${installFlagsArray[@]}"}
+    )
 
     echoCmd 'install flags' "${flagsArray[@]}"
     make ${makefile:+-f $makefile} "${flagsArray[@]}"
@@ -928,13 +933,14 @@ fixupPhase() {
 installCheckPhase() {
     runHook preInstallCheck
 
-    set +u # Empty array hack
+    # Old bash empty array hack
     # shellcheck disable=SC2086
-    local flagsArray=( \
-        ${enableParallelBuilding:+-j${NIX_BUILD_CORES} -l${NIX_BUILD_CORES}} \
-        $makeFlags "${makeFlagsArray[@]}" \
-        $installCheckFlags "${installCheckFlagsArray[@]}" ${installCheckTarget:-installcheck})
-    set -u
+    local flagsArray=(
+        ${enableParallelBuilding:+-j${NIX_BUILD_CORES} -l${NIX_BUILD_CORES}}
+        $makeFlags ${makeFlagsArray+"${makeFlagsArray[@]}"}
+        $installCheckFlags ${installCheckFlagsArray+"${installCheckFlagsArray[@]}"}
+        ${installCheckTarget:-installcheck}
+    )
 
     echoCmd 'installcheck flags' "${flagsArray[@]}"
     make ${makefile:+-f $makefile} "${flagsArray[@]}"
@@ -947,10 +953,11 @@ installCheckPhase() {
 distPhase() {
     runHook preDist
 
-    set +u # Empty array hack
+    # Old bash empty array hack
     # shellcheck disable=SC2086
-    local flagsArray=($distFlags "${distFlagsArray[@]}" ${distTarget:-dist})
-    set -u
+    local flagsArray=(
+        $distFlags ${distFlagsArray+"${distFlagsArray[@]}"} ${distTarget:-dist}
+    )
 
     echo 'dist flags: %q' "${flagsArray[@]}"
     make ${makefile:+-f $makefile} "${flagsArray[@]}"
