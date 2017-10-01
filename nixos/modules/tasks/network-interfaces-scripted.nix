@@ -203,7 +203,7 @@ let
                   ''
                     echo "${cidr}" >> $state
                     echo -n "adding address ${cidr}... "
-                    if out=$(ip addr replace "${cidr}" dev "${i.name}" 2>&1); then
+                    if out=$(ip addr add "${cidr}" dev "${i.name}" ${escapeShellArgs ip.flags} 2>&1); then
                       echo "done"
                     else
                       echo "'ip addr replace "${cidr}" dev "${i.name}"' failed: $out"
