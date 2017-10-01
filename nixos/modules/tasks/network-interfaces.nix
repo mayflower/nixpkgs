@@ -72,6 +72,14 @@ let
             bits in the prefix (`${if v == 4 then "24" else "64"}`).
           '';
         };
+
+        flags = mkOption {
+          default = [];
+          example = [ "nodad" "noprefixroute" ];
+          description = ''
+            Additional configuration flags for the address.
+          '';
+        };
       };
     };
 
