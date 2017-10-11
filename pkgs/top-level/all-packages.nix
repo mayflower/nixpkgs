@@ -1740,7 +1740,6 @@ with pkgs;
   dnsmap = callPackage ../tools/security/dnsmap { };
 
   dnsrecon = callPackage ../tools/security/dnsrecon { };
-
   docbook2odf = callPackage ../tools/typesetting/docbook2odf {
     inherit (perlPackages) PerlMagick;
   };
@@ -4570,6 +4569,8 @@ with pkgs;
 
   talkfilters = callPackage ../misc/talkfilters {};
 
+  teiler = callPackage ../tools/graphics/teiler { };
+
   znapzend = callPackage ../tools/backup/znapzend { };
 
   tarsnap = callPackage ../tools/backup/tarsnap {
@@ -4887,6 +4888,8 @@ with pkgs;
   wbox = callPackage ../tools/networking/wbox {};
 
   welkin = callPackage ../tools/graphics/welkin {};
+
+  xininfo = callPackage ../tools/graphics/xininfo {};
 
   whois = callPackage ../tools/networking/whois { };
 
