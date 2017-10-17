@@ -1,19 +1,19 @@
-{ lib, stdenv, fetchurl, openssl, openldap, kerberos, db, gettext, libkrb5,
+{ lib, stdenv, buildPackages, fetchurl, openssl, openldap, kerberos, db, gettext,
   pam, fixDarwinDylibNames, autoreconfHook, fetchpatch, enableLdap ? false }:
 
 with stdenv.lib;
 stdenv.mkDerivation rec {
-  name = "cyrus-sasl-${version}${optionalString (libkrb5 == null) "-without-kerberos"}";
+  name = "cyrus-sasl-${version}${optionalString (kerberos == null) "-without-kerberos"}";
   version = "2.1.27rc3";
 
   src = fetchurl {
-    url = "ftp://ftp.cyrusimap.org/cyrus-sasl/${name}.tar.gz";
+    url = "ftp://ftp.cyrusimap.org/cyrus-sasl/cyrus-sasl-${version}.tar.gz";
     sha256 = "0aivwvkacfwhblqfl8xj006633dw85pxplgdy6wa64yk5822j3x5";
   };
 
   outputs = [ "bin" "dev" "out" "man" "devdoc" ];
 
-  propagatedBuildInputs = [ libkrb5 ];
+  nativeBuildInputs = [ autoreconfHook buildPackages.stdenv.cc ];
   buildInputs =
     [ openssl db gettext ]
     ++ lib.optional enableLdap openldap
@@ -32,7 +32,9 @@ stdenv.mkDerivation rec {
 
   configureFlags = [
     "--with-openssl=${openssl.dev}"
-  ] ++ lib.optional enableLdap "--with-ldap=${openldap.dev}";
+  ] ++ lib.optional enableLdap "--with-ldap=${openldap.dev}"
+    # The GSSAPI configure checks require runtime checks.
+    ++ lib.optional (stdenv.buildPlatform != stdenv.hostPlatform) "--disable-gssapi";
 
   # Set this variable at build-time to make sure $out can be evaluated.
   preConfigure = ''
