@@ -168,7 +168,8 @@ in
     systemd.services.privacyidea = let
       uwsgi = pkgs.uwsgi.override { plugins = [ "python2" ]; };
       penv = uwsgi.python2.buildEnv.override {
-        extraLibs = [ pkgs.privacyidea ];
+        extraLibs = [ pkgs.privacyidea ] ++ (with pkgs.pythonPackages; [
+          pyopenssl cryptography cffi ]);
       };
       piuwsgi = pkgs.writeText "uwsgi.json" (builtins.toJSON {
         uwsgi = {
