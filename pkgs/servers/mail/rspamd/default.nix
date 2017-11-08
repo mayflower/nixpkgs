@@ -7,13 +7,13 @@ in
 
 stdenv.mkDerivation rec {
   name = "rspamd-${version}";
-  version = "1.6.4";
+  version = "1.6.5";
 
   src = fetchFromGitHub {
     owner = "vstakhov";
     repo = "rspamd";
     rev = version;
-    sha256 = "1mfmafnpcmff0cp16pix32k87k7ydn72qid1clap0jxi7y7xcsrj";
+    sha256 = "1idy81absr5w677d4jlzic33hsrn0zjzbfhhdn6viym9vr8dvjx9";
   };
 
   nativeBuildInputs = [ cmake pkgconfig perl ];
@@ -31,6 +31,7 @@ stdenv.mkDerivation rec {
     -DRUNDIR=/var/run/rspamd
     -DDBDIR=/var/lib/rspamd
     -DLOGDIR=/var/log/rspamd
+    -DLOCAL_CONFDIR=/var/lib/rspamd
   '';
 
   meta = with stdenv.lib; {
