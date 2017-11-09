@@ -248,6 +248,7 @@ in
         serviceConfig = {
           ExecStart = "${cfg.package}/bin/redis-server ${redisConfig}";
           User = cfg.user;
+          LimitNOFILE  = 32768;
         };
       };
 

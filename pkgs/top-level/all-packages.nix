@@ -3573,8 +3573,6 @@ with pkgs;
 
   nitrogen = callPackage ../tools/X11/nitrogen {};
 
-  nixborg = callPackages ../tools/misc/nixborg {};
-
   nkf = callPackage ../tools/text/nkf {};
 
   nlopt = callPackage ../development/libraries/nlopt { octave = null; };

@@ -402,7 +402,6 @@ in
   nix-generate-from-cpan = all;
   nix-repl = all;
   nixUnstable = all;
-  nixborg = all;
   nixops = all;
   nixopsUnstable = all;
   nmap = all;
