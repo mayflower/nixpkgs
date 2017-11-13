@@ -266,6 +266,7 @@
   ./services/mail/freepops.nix
   ./services/mail/mail.nix
   ./services/mail/mailhog.nix
+  ./services/mail/mailman3.nix
   ./services/mail/mlmmj.nix
   ./services/mail/offlineimap.nix
   ./services/mail/opendkim.nix
