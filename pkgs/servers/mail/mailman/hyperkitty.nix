@@ -20,6 +20,8 @@ python3.pkgs.buildPythonApplication rec {
 
   buildInputs = with python3.pkgs; [ mock ];
 
+  doCheck = false;
+
   postPatch = ''
     sed -i 's/python-dateutil < 2.0/python-dateutil/' setup.py
     sed -i 's/Django<1.11/Django/' setup.py
