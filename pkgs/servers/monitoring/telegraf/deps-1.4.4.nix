@@ -482,8 +482,8 @@
     fetch = {
       type = "git";
       url = "https://github.com/shirou/gopsutil";
-      rev = "9a4a9167ad3b4355dbf1c2c7a0f5f0d3fb1e9ab9";
-      sha256 = "0pzvkszga4clj3nqlbs9g9rk7jxb8jdcszhscwgk1chqqwifhyxj";
+      rev = "48fc5612898a1213aa5d6a0fb2d4f7b968e898fb";
+      sha256 = "14mwpxd2v3y4mr0g37g99vhy9jkaaaw29d3j7427rpv568vyb8sd";
     };
   }
   {
@@ -574,6 +574,15 @@
       url = "https://go.googlesource.com/net";
       rev = "f2499483f923065a842d38eb4c7f1927e6fc6e6d";
       sha256 = "0q1ps8igfczfafk39hkp8gs57s6qxjvf2c48hiq00p873agz0x7s";
+    };
+  }
+  {
+    goPackagePath = "golang.org/x/sys";
+    fetch = {
+      type = "git";
+      url = "https://go.googlesource.com/sys";
+      rev = "739734461d1c916b6c72a63d7efda2b27edb369f";
+      sha256 = "0b0yh28ap1q0b8myg0gw4p9d6m71ry0d3n4hiycvd8sgk327379a";
     };
   }
   {

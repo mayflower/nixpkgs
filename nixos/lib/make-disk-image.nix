@@ -33,7 +33,8 @@
 
 , name ? "nixos-disk-image"
 
-, format ? "raw"
+, # Disk image format, one of qcow2, vpc, raw.
+  format ? "raw"
 }:
 
 with lib;
@@ -45,7 +46,7 @@ let
     raw   = "img";
   };
 
-  nixpkgs = lib.cleanSource pkgs.path;
+  nixpkgs = cleanSource pkgs.path;
 
   channelSources = pkgs.runCommand "nixos-${config.system.nixosVersion}" {} ''
     mkdir -p $out
@@ -73,7 +74,7 @@ let
   targets = map (x: x.target) contents;
 
   prepareImage = ''
-    export PATH=${pkgs.lib.makeSearchPathOutput "bin" "bin" prepareImageInputs}
+    export PATH=${makeSearchPathOutput "bin" "bin" prepareImageInputs}
 
     mkdir $out
     diskImage=nixos.raw
@@ -87,7 +88,7 @@ let
     ''}
 
     mkfs.${fsType} -F -L nixos -E offset=$offset $diskImage
-  
+
     root="$PWD/root"
     mkdir -p $root
 
