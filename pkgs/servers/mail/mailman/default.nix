@@ -1,4 +1,4 @@
-{ stdenv, fetchFromGitLab, python3 }:
+{ stdenv, fetchFromGitLab, python3, hyperkitty }:
 
 python3.pkgs.buildPythonApplication rec {
   name = "mailman-${version}";
@@ -21,6 +21,7 @@ python3.pkgs.buildPythonApplication rec {
   propagatedBuildInputs = with python3.pkgs; [
     aiosmtpd alembic atpublic falcon flufl-bounce flufl-i18n flufl-lock flufl-testing dns
     httplib2 lazr-config lazr-smtptest nose nose2 passlib psycopg2 requests zope_component
+    hyperkitty
   ];
 
   # checkPhase = ''
