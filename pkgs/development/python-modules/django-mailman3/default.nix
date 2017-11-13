@@ -1,5 +1,5 @@
-{ stdenv, buildPythonPackage, fetchFromGitLab, mailmanclient, pytz
-, django-gravatar2, django, django-allauth }:
+{ stdenv, buildPythonPackage, fetchFromGitLab, fetchpatch, future
+, mailmanclient, pytz, django-gravatar2, django, django-allauth }:
 
 buildPythonPackage rec {
   pname = "django-mailman3";
@@ -14,8 +14,10 @@ buildPythonPackage rec {
   };
 
   propagatedBuildInputs = [
-    mailmanclient pytz django-gravatar2 django django-allauth
+    mailmanclient pytz django-gravatar2 django django-allauth future
   ];
+
+  patches = [ ./python3.patch ];
 
   doCheck = false;
 
