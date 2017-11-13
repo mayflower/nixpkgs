@@ -1,4 +1,4 @@
-{ stdenv, fetchFromGitLab, python3 }:
+{ stdenv, fetchFromGitLab, fetchpatch, python3 }:
 
 python3.pkgs.buildPythonApplication rec {
   name = "postorius-${version}";
@@ -16,6 +16,19 @@ python3.pkgs.buildPythonApplication rec {
   ];
 
   doCheck = false;
+
+  patches = [
+    (fetchpatch {
+      url = "https://gitlab.com/mailman/postorius/merge_requests/74.patch";
+      sha256 = "00h5psnws16p3vs4mmnp8zyv2q5nax7wd2naxix6f7imyxhsajbz";
+      excludes = [ "tox.ini" ];
+    })
+  ];
+
+  postInstall = ''
+    mkdir -p $out/share/postorius
+    cp -R . $out/share/postorius
+  '';
 
   meta = {
     homepage = "http://www.gnu.org/software/mailman/";
