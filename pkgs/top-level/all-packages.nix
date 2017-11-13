@@ -5213,6 +5213,8 @@ with pkgs;
     libxml2 = libxml2Python;
   };
 
+  xprobe2 = callPackage ../tools/security/xprobe2 { };
+
   xsel = callPackage ../tools/misc/xsel { };
 
   xsv = callPackage ../tools/text/xsv { };
