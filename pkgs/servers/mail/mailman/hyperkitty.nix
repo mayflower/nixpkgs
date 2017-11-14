@@ -2,13 +2,13 @@
 
 python3.pkgs.buildPythonApplication rec {
   name = "hyperkitty-${version}";
-  version = "1.1.1";
+  version = "1.1.4";
 
   src = fetchFromGitLab {
     owner = "mailman";
     repo = "hyperkitty";
     rev = "v${version}";
-    sha256 = "0xy883yn5mlpmkb1yxp942925zdbrzavayqg6a25w46c645a0r6l";
+    sha256 = "1658v8dqdzph2yz4nspkwz30cfna0w66hr3zl6yzha1zhr6w65m5";
   };
 
   propagatedBuildInputs = with python3.pkgs; [
@@ -21,6 +21,10 @@ python3.pkgs.buildPythonApplication rec {
   buildInputs = with python3.pkgs; [ mock ];
 
   doCheck = false;
+
+  patches = [
+    ./hyperkitty.patch
+  ];
 
   postPatch = ''
     sed -i 's/python-dateutil < 2.0/python-dateutil/' setup.py

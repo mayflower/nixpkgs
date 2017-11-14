@@ -1,0 +1,13 @@
+diff --git a/hyperkitty/migrations/0013_mailinglist_id_1.py b/hyperkitty/migrations/0013_mailinglist_id_1.py
+index 7ff19c6..5c2a4e6 100644
+--- a/hyperkitty/migrations/0013_mailinglist_id_1.py
++++ b/hyperkitty/migrations/0013_mailinglist_id_1.py
+@@ -37,7 +37,7 @@ class MailingListPrimaryKey(migrations.AlterField):
+             'db_table': old_model._meta.db_table,
+             'apps': Apps(),
+         }
+-        meta = type(b"Meta", tuple(), meta_contents)
++        meta = type("Meta", tuple(), meta_contents)
+         body['Meta'] = meta
+         body['__module__'] = old_model.__module__
+ 
