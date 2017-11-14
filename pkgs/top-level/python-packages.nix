@@ -6793,6 +6793,8 @@ in {
     };
   };
 
+  mailman-hyperkitty = callPackage ../development/python-modules/mailman-hyperkitty { };
+
   python-mapnik = buildPythonPackage {
     name = "python-mapnik-git-2016-08-30";
 
