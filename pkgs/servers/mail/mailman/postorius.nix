@@ -25,6 +25,11 @@ python3.pkgs.buildPythonApplication rec {
     })
   ];
 
+  postPatch = ''
+    substituteInPlace src/postorius/templatetags/membership_helpers.py \
+      --replace "._client" ""
+  '';
+
   postInstall = ''
     mkdir -p $out/share/postorius
     cp -R . $out/share/postorius
