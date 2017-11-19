@@ -19692,4 +19692,6 @@ with pkgs;
 
     macOSSierraShared = callPackage ../test/macos-sierra-shared {};
   };
+
+  libxl = callPackage ../development/libraries/libxl {};
 }
