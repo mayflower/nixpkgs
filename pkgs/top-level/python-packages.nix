@@ -336,11 +336,11 @@ in {
 
   aiosmtpd = buildPythonPackage rec {
     name = "aiosmtpd-${version}";
-    version = "1.0a5";
+    version = "1.1";
 
     src = pkgs.fetchurl {
       url = "mirror://pypi/a/aiosmtpd/${name}.tar.gz";
-      sha256 = "0185m6aflhpnm4bk5nq0lm4hvxglrlyyb2pxwgsmp84giiz0kk0q";
+      sha256 = "0mx5f0i9k84kfwxjn2q8800mkzmqvgqg2nw39fq8x7s5n8mwvf4a";
     };
 
     propagatedBuildInputs = [ self.atpublic ];
