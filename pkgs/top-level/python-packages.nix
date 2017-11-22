@@ -5559,19 +5559,7 @@ in {
     };
   };
 
-  flufl-i18n = buildPythonPackage rec {
-    name = "flufl.i18n-1.1.3";
-
-    src = pkgs.fetchurl {
-      url = "mirror://pypi/f/flufl.i18n/${name}.tar.gz";
-      sha256 = "0c2i9jfba5px83s0iiiqbxmwlmzifygxvc7nyvnkhqck048kqx5v";
-    };
-
-    meta = with pkgs.stdenv.lib; {
-      homepage = "https://pypi.python.org/pypi/flufl.i18n";
-      license = licenses.lgpl3;
-    };
-  };
+  flufl-i18n = callPackage ../development/python-modules/flufl/i18n.nix { };
 
   flufl-lock = buildPythonPackage rec {
     name = "flufl.lock-3.2";
