@@ -275,6 +275,8 @@ in {
     slurm = pkgs.slurm;
   };
 
+  python-openid = if isPy3k then self.python3-openid else self.python2-openid;
+  python2-openid = callPackage ../development/python-modules/python-openid { };
   python3-openid = callPackage ../development/python-modules/python3-openid { };
 
   python-sql = callPackage ../development/python-modules/python-sql { };
