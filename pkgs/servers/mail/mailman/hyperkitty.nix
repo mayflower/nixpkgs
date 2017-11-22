@@ -15,10 +15,10 @@ python3.pkgs.buildPythonApplication rec {
     robot-detection django_extensions rjsmin cssmin django-mailman3
     django-haystack lockfile networkx dateutil defusedxml
     django-paintstore djangorestframework django django-q
-    django_compressor beautifulsoup4 # mailmanclient vcrpy mock
+    django_compressor beautifulsoup4 six psycopg2
   ];
 
-  buildInputs = with python3.pkgs; [ mock ];
+  buildInputs = with python3.pkgs; [ coverage mock ];
 
   doCheck = false;
 
