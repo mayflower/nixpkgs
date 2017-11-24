@@ -80,6 +80,7 @@ in {
         Restart = "always";
         PrivateTmp = true;
         WorkingDirectory = /tmp;
+        RuntimeDirectory = "prometheus-node-exporter";
         ExecReload = "${pkgs.coreutils}/bin/kill -HUP $MAINPID";
       };
     };
