@@ -1,4 +1,4 @@
-{ stdenv, fetchurl, pkgconfig, perl, texinfo, yasm
+{ stdenv, fetchurl, fetchpatch, pkgconfig, perl, texinfo, yasm
 , hostPlatform
 /*
  *  Licensing options (yes some are listed twice, filters and such are not listed)
@@ -231,14 +231,23 @@ assert nvenc -> nvidia-video-sdk != null && nonfreeLicensing;
 
 stdenv.mkDerivation rec {
   name = "ffmpeg-full-${version}";
-  version = "3.3.4";
+  version = "3.3.5";
 
   src = fetchurl {
     url = "https://www.ffmpeg.org/releases/ffmpeg-${version}.tar.xz";
-    sha256 = "0mx9dvad3lkyhvsrblf280x2bz6dxajya1ylnspbdzldj0dpxfcq";
+    sha256 = "00nq8ng2p16yb48acargaz1hlp9kq24vfwvkqjlslz4a7864k4x8";
   };
 
-  patchPhase = ''patchShebangs .
+  patches = [
+    (fetchurl {
+      name = "CVE-2017-16840.patch";
+      url = "http://git.videolan.org/?p=ffmpeg.git;a=patch;h=a94cb36ab2ad99d3a1331c9f91831ef593d94f74";
+      sha256 = "0zx0vh110hrykk7j863j04bx6igm2q8dlkv25mf5g4rbxafpqig3";
+    })
+  ];
+
+  prePatch = ''
+    patchShebangs .
   '' + stdenv.lib.optionalString stdenv.isDarwin ''
     sed -i 's/#ifndef __MAC_10_11/#if 1/' ./libavcodec/audiotoolboxdec.c
   '' + stdenv.lib.optionalString (frei0r != null) ''

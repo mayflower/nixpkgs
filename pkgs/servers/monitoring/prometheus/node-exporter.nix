@@ -14,10 +14,6 @@ buildGoPackage rec {
     sha256 = "01xxy05g11gim4jzk6cm6kh35yn6gaxqmw8gxxn0jdcg0jgmy6v2";
   };
 
-  preFixup = stdenv.lib.optionalString stdenv.isDarwin ''
-    install_name_tool -delete_rpath $out/lib $bin/bin/node_exporter
-  '';
-
   # FIXME: megacli test fails
   doCheck = false;
 
