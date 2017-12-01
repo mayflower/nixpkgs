@@ -9110,9 +9110,7 @@ with pkgs;
     fetchurl = fetchurlBoot;
   };
 
-  libevent = callPackage ../development/libraries/libevent {
-    openssl = openssl_1_0_2;
-  };
+  libevent = callPackage ../development/libraries/libevent { };
 
   libewf = callPackage ../development/libraries/libewf { };
 
