@@ -23,7 +23,7 @@ in buildRustPackage rec {
   name = "exa-${version}";
   version = "0.7.0";
 
-  depsSha256 = "0j320hhf2vqaha137pjj4pyiw6d3p5h3nhy3pl9vna1g5mnl1sn7";
+  cargoSha256 = "0j320hhf2vqaha137pjj4pyiw6d3p5h3nhy3pl9vna1g5mnl1sn7";
 
   src = fetchFromGitHub {
     owner = "ogham";

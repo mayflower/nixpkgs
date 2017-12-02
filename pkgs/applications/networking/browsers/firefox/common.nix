@@ -19,6 +19,7 @@
 , pulseaudioSupport ? true, libpulseaudio
 , ffmpegSupport ? true, gstreamer, gst-plugins-base
 , gtk3Support ? !isTorBrowserLike, gtk2, gtk3, wrapGAppsHook
+, gssSupport ? true, kerberos
 
 ## privacy-related options
 
@@ -28,11 +29,9 @@
 # Set to `privacySupport` or `false`.
 
 , webrtcSupport ? !privacySupport
-, geolocationSupport ? !privacySupport
-, googleAPISupport ? geolocationSupport
+, googleAPISupport ? !privacySupport
 , crashreporterSupport ? false
 
-, safeBrowsingSupport ? false
 , drmSupport ? false
 
 ## other
@@ -72,7 +71,8 @@ stdenv.mkDerivation (rec {
   ++ lib.optional  alsaSupport alsaLib
   ++ lib.optional  pulseaudioSupport libpulseaudio # only headers are needed
   ++ lib.optionals ffmpegSupport [ gstreamer gst-plugins-base ]
-  ++ lib.optional  gtk3Support gtk3;
+  ++ lib.optional  gtk3Support gtk3
+  ++ lib.optional  gssSupport kerberos;
 
   NIX_CFLAGS_COMPILE = "-I${nspr.dev}/include/nspr -I${nss.dev}/include/nss";
 
@@ -156,12 +156,11 @@ stdenv.mkDerivation (rec {
   ++ flag alsaSupport "alsa"
   ++ flag pulseaudioSupport "pulseaudio"
   ++ flag ffmpegSupport "ffmpeg"
+  ++ flag gssSupport "negotiateauth"
   ++ lib.optional (!ffmpegSupport) "--disable-gstreamer"
   ++ flag webrtcSupport "webrtc"
-  ++ flag geolocationSupport "mozril-geoloc"
   ++ lib.optional googleAPISupport "--with-google-api-keyfile=ga"
   ++ flag crashreporterSupport "crashreporter"
-  ++ flag safeBrowsingSupport "safe-browsing"
   ++ lib.optional drmSupport "--enable-eme=widevine"
 
   ++ (if debugBuild then [ "--enable-debug" "--enable-profiling" ]
@@ -220,6 +219,7 @@ stdenv.mkDerivation (rec {
     gtk = gtk2;
     inherit nspr;
     inherit ffmpegSupport;
+    inherit gssSupport;
   } // lib.optionalAttrs gtk3Support { inherit gtk3; };
 
 } // overrides)

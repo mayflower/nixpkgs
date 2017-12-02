@@ -6197,33 +6197,9 @@ with pkgs;
     inherit (darwin) apple_sdk;
   };
 
-  rustRegistry = callPackage ./rust-packages.nix { };
-
-  rust = rustStable;
-  rustStable = callPackage ../development/compilers/rust {
-    inherit (llvmPackages_4) llvm;
-  };
-  rustBeta = lowPrio (recurseIntoAttrs (callPackage ../development/compilers/rust/beta.nix {}));
-
-  rustNightly = rustBeta;
-
-  # rust support in nixpkgs isn't yet well maintained enough for us to
-  # pretend to support nightlies in a meaningful way.
-
-  # rustNightly = lowPrio (recurseIntoAttrs (callPackage ../development/compilers/rust/nightly.nix {
-  #   rustPlatform = recurseIntoAttrs (makeRustPlatform rustBeta);
-  # }));
-
-  rustNightlyBin = lowPrio (callPackage ../development/compilers/rust/nightlyBin.nix {
-     buildRustPackage = callPackage ../build-support/rust {
-       rust = rustNightlyBin;
-     };
-  });
-
-  cargo = rust.cargo;
-  rustc = rust.rustc;
-
-  cargo-edit = callPackage ../tools/package-management/cargo-edit { };
+  # For beta and nightly releases use the nixpkgs-mozilla overlay
+  rust = callPackage ../development/compilers/rust { };
+  inherit (rust) cargo rustc;
 
   rustPlatform = recurseIntoAttrs (makeRustPlatform rust);
 
@@ -6237,14 +6213,12 @@ with pkgs;
         inherit rust;
       };
 
-      rustcSrc = stdenv.mkDerivation {
-        name = "rust-src";
-        src = rust.rustc.src;
-        phases = ["unpackPhase" "installPhase"];
-        installPhase = "mv src $out";
+      rustcSrc = callPackage ../development/compilers/rust/rust-src.nix {
+        inherit (rust) rustc;
       };
-
     });
+
+  cargo-edit = callPackage ../tools/package-management/cargo-edit { };
 
   rainicorn = callPackage ../development/tools/rust/rainicorn { };
   rustfmt = callPackage ../development/tools/rust/rustfmt { };

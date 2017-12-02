@@ -54,7 +54,7 @@ EOF
         echo
         echo "ERROR: The Cargo.lock file doesn't exist"
         echo
-        echo "Cargo.lock is needed to make sure that depsSha256 doesn't change"
+        echo "Cargo.lock is needed to make sure that cargoSha256 doesn't change"
         echo "when the registry is updated."
         echo
 

@@ -11,7 +11,7 @@ rustPlatform.buildRustPackage rec {
     sha256 = "1bzs3mr6f9bna39b9ddwwq0raas07nbn106mnq3widxg59i0gxhd";
   };
 
-  depsSha256 = "1cz93mrpxmyrza0ipdyg2a6mynl66plpsb446wxnmmy7y7zd6xbf";
+  cargoSha256 = "1cz93mrpxmyrza0ipdyg2a6mynl66plpsb446wxnmmy7y7zd6xbf";
 
   installPhase = ''
     mkdir -p $out/bin

@@ -11,7 +11,7 @@ rustPlatform.buildRustPackage rec {
     sha256 = "0sv7iwl44a86n92i3mib2vlzd44q9ncif34yh1s0vqffai5s1rr6";
   };
 
-  depsSha256 = "1irfx78k899qphzj8i8vr34pb6zaf9p5nx5c4zpgsrbknvn0ag5l";
+  cargoSha256 = "1irfx78k899qphzj8i8vr34pb6zaf9p5nx5c4zpgsrbknvn0ag5l";
 
   meta = {
     description = "A simple, fast and user-friendly alternative to find";

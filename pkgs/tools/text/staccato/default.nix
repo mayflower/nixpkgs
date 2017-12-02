@@ -11,7 +11,7 @@ rustPlatform.buildRustPackage rec {
     sha256 = "1zbd1gx0ik2r7bavcid776j37g6rzd3f6cs94kq1qar4gyf1gqjm";
   };
 
-  depsSha256 = "1gwfkh3ck8n3zcy43ch2mnc28a6y10p3srhnx9dh8gwnwbpb733c";
+  cargoSha256 = "1gwfkh3ck8n3zcy43ch2mnc28a6y10p3srhnx9dh8gwnwbpb733c";
 
   meta = {
     description = "A command line program that lets you compute statistics from values from a file or standard input";

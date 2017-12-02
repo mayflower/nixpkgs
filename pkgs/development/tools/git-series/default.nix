@@ -13,7 +13,7 @@ buildRustPackage rec {
     sha256 = "07mgq5h6r1gf3jflbv2khcz32bdazw7z1s8xcsafdarnm13ps014";
   };
 
-  depsSha256 = "1xypk9ck7znca0nqm61m5ngpz6q7c0wydlpwxq4mnkd1np27xn53";
+  cargoSha256 = "1xypk9ck7znca0nqm61m5ngpz6q7c0wydlpwxq4mnkd1np27xn53";
 
   nativeBuildInputs = [ cmake pkgconfig perl ];
   buildInputs = [ openssl zlib ];

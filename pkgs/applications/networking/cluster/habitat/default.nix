@@ -14,7 +14,7 @@ buildRustPackage rec {
     sha256 = "0pqrm85pd9hqn5fwqjbyyrrfh4k7q9mi9qy9hm8yigk5l8mw44y1";
   };
 
-  depsSha256 = "1ahfm5agvabqqqgjsyjb95xxbc7mng1mdyclcakwp1m1qdkxx9py";
+  cargoSha256 = "1ahfm5agvabqqqgjsyjb95xxbc7mng1mdyclcakwp1m1qdkxx9py";
 
   buildInputs = [ libsodium libarchive openssl ];
 

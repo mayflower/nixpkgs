@@ -12,7 +12,7 @@ buildRustPackage rec {
     sha256 = "0qy1g4crhfgs2f5cmrsjv6qscg3r66gb8n6sxhimm9ksivhjyyjp";
   };
 
-  depsSha256 = "04jlz7nzsmg86i73w75i8rmlbk635xrg8m1dfac8h17dwb29yj6a";
+  cargoSha256 = "04jlz7nzsmg86i73w75i8rmlbk635xrg8m1dfac8h17dwb29yj6a";
 
   buildInputs = [ lzo zlib ];
 
