@@ -15,7 +15,7 @@ buildRustPackage rec {
 
   buildInputs = [ zlib openssl ];
 
-  cargoSha256 = "1v7ir56j6biximnnhyvadd98azcj3i5hc8aky0am2nf0swq0jimq";
+  cargoSha256 = "1m4yb7472g1n900dh3xqvdcywk3v01slj3bkk7bk7a9p5x1kyjfn";
 
   meta = with stdenv.lib; {
     description = "A utility for managing cargo dependencies from the command line";

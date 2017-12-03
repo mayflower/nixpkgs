@@ -9,7 +9,7 @@ rustPlatform.buildRustPackage rec {
     sha256 = "1r74nhcwiy2rmifzjhdal3jcqz4jz48nfvhdyw4gasa6nxp3msdl";
   };
 
-  cargoSha256 = "0z7h8ybh2db3xl8qxbzby5lncdaijixzmbn1j8a45lbky1xiix71";
+  cargoSha256 = "0z92ml84b5652zgwzn08a8vvxksaa54jql66sfpdz1mvjwhgdmvn";
 
   buildInputs = [ libXinerama libX11 pkgconfig ];
   libPath = stdenv.lib.makeLibraryPath [ libXinerama libX11 ];
