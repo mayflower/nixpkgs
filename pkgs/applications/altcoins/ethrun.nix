@@ -20,6 +20,5 @@ buildRustPackage rec {
     homepage = https://github.com/dapphub/ethrun/;
     maintainers = [stdenv.lib.maintainers.dbrock];
     inherit version;
-    broken = true;
   };
 }

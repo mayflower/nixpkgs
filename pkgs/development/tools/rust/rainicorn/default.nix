@@ -16,7 +16,6 @@ buildRustPackage rec {
   cargoSha256 = "14kd25mw6m20blqcr221cclcqxw0j229zxq8hsaay6q7jgv0c7a0";
 
   meta = with stdenv.lib; {
-    broken = true;
     description = "Rust IDEs.  parse-analysis";
     homepage = https://github.com/RustDT/Rainicorn;
     license = with licenses; [ mit asl20 ];

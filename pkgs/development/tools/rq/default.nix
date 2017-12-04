@@ -28,6 +28,5 @@ buildRustPackage rec {
     license = with licenses; [ asl20 ];
     maintainers = [ maintainers.aristid ];
     platforms = platforms.all;
-    broken = true;
   };
 }

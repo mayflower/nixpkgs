@@ -27,6 +27,5 @@ buildRustPackage rec {
     license = stdenv.lib.licenses.mit;
     maintainers = with maintainers; [ colemickens ];
     platforms = with platforms; linux;
-    broken = true;
   };
 }
