@@ -16,6 +16,10 @@ buildRustPackage rec {
 
   buildInputs = [ makeWrapper openssl ];
 
+  preBuild = ''
+    cargo update
+  '';
+
   installPhase = ''
     mkdir -p $out/bin
     cp -p target/release/cfdyndns $out/bin/
