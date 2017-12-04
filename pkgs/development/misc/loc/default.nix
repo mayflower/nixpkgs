@@ -15,6 +15,10 @@ buildRustPackage rec {
 
   cargoSha256 = "1z0jjfqpgjrn3y9x7z2z5abifqbmfqdr8y0ahg4xab6swpnq55hp";
 
+  preBuild = ''
+    cargo update
+  '';
+
   meta = {
     homepage = http://github.com/cgag/loc;
     description = "Count lines of code quickly";
