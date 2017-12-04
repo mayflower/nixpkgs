@@ -14,7 +14,7 @@ rustPlatform.buildRustPackage rec {
   buildInputs = [ libXinerama libX11 pkgconfig ];
   libPath = stdenv.lib.makeLibraryPath [ libXinerama libX11 ];
 
-  preInstall = ''
+  preBuild = ''
     cargo update
   '';
 
