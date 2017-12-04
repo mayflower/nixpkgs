@@ -12,7 +12,7 @@ buildRustPackage rec {
     sha256 = "1mcdjykrgh0jq6k6y664lai8sbgzk6j7k0r944f43vg63d1jql5b";
   };
 
-  cargoSha256 = "0whs3fgmpb6g1mjajs3qs9g613x5dal4x6ghzzkpl73a9pgydkpn";
+  cargoSha256 = "13m7q7d0mr9k22v756mmvhbsp9hcc4y9bklj88yzc2ja881casaw";
 
   buildInputs = [ makeWrapper openssl ];
 
