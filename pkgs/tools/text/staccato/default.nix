@@ -13,6 +13,10 @@ rustPlatform.buildRustPackage rec {
 
   cargoSha256 = "074mfyanwdykg6wci2ia63wcnnyik741g8n624pac215sg4i95h7";
 
+  preBuild = ''
+    cargo update
+  '';
+
   meta = {
     description = "A command line program that lets you compute statistics from values from a file or standard input";
     longDescription = ''
