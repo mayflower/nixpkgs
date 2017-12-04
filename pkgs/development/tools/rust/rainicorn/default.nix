@@ -20,5 +20,6 @@ buildRustPackage rec {
     homepage = https://github.com/RustDT/Rainicorn;
     license = with licenses; [ mit asl20 ];
     platforms = platforms.all;
+    broken = true;
   };
 }
