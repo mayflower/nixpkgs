@@ -35,5 +35,6 @@ buildRustPackage rec {
     license = licenses.asl20;
     maintainers = [ maintainers.rushmorem ];
     platforms = [ "x86_64-linux" "x86_64-darwin" ];
+    broken = true;
   };
 }
