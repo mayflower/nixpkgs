@@ -22,5 +22,6 @@ rustPlatform.buildRustPackage rec {
     license = licenses.bsd3;
     maintainers = with maintainers; [ vmchale ];
     platforms = platforms.all;
+    broken = true;
   };
 }
