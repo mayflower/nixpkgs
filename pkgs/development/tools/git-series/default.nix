@@ -18,6 +18,10 @@ buildRustPackage rec {
   nativeBuildInputs = [ cmake pkgconfig perl ];
   buildInputs = [ openssl zlib ];
 
+  preBuild = ''
+    cargo update
+  '';
+
   postBuild = ''
     mkdir -p "$out/man/man1"
     cp "$src/git-series.1" "$out/man/man1"
