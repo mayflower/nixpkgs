@@ -13,6 +13,10 @@ rustPlatform.buildRustPackage rec {
 
   cargoSha256 = "0y0rkxhkv31v5sa0425dwskd80i6srwbqhqkrw1g1kbmbs9y0vxz";
 
+  preBuild = ''
+    cargo update
+  '';
+
   installPhase = ''
     mkdir -p $out/bin
     cp -p target/release/tokei $out/bin/
