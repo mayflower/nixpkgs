@@ -74,5 +74,6 @@ buildRustPackage rec {
     license = with licenses; [ asl20 ];
     maintainers = with maintainers; [ mic92 ];
     platforms = platforms.linux;
+    broken = true;
   };
 }
