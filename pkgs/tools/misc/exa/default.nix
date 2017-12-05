@@ -60,6 +60,5 @@ in buildRustPackage rec {
     homepage = http://the.exa.website;
     license = licenses.mit;
     maintainer = [ maintainers.ehegnes ];
-    broken = true;
   };
 }
