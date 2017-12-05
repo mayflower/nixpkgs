@@ -5,16 +5,16 @@ with rustPlatform;
 
 buildRustPackage rec {
   name = "way-cooler-${version}";
-  version = "0.5.2";
+  version = "0.6.2";
 
   src = fetchFromGitHub {
     owner = "way-cooler";
     repo = "way-cooler";
     rev = "v${version}";
-    sha256 = "10s01x54kwjm2c85v57i6g3pvj5w3wpkjblj036mmd865fla1brb";
+    sha256 = "16zswn17c11piby899ciq386m7h7vjvr96f75l35qiswkmwb83kj";
   };
 
-  cargoSha256 = "06qivlybmmc49ksv4232sm1r4hp923xsq4c2ksa4i2azdzc1csdc";
+  cargoSha256 = "1b1mzjicgz1s0gvxq0d54l7r8jnyl0yzmv801n78yl4hwmmf7clv";
 
   buildInputs = [ wlc dbus_libs dbus_glib cairo libxkbcommon ];
 
