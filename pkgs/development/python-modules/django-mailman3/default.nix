@@ -1,25 +1,29 @@
-{ stdenv, buildPythonPackage, fetchFromGitLab, fetchpatch, future
-, mailmanclient, pytz, django-gravatar2, django, django-allauth }:
+{ stdenv, buildPythonPackage, fetchFromGitLab, future
+, mailmanclient, pytz, django-gravatar2, django, django-allauth
+, django_compressor, mock
+}:
 
 buildPythonPackage rec {
   pname = "django-mailman3";
   name = "${pname}-${version}";
-  version = "1.1.0";
+  version = "1.1.0+python3-patch";
 
   src = fetchFromGitLab {
     owner = "mailman";
     repo = "django-mailman3";
-    rev = version;
-    sha256 = "0ac3yms7b9s50y9b4xvx0yxmj2dmibd0pb61j4rhqf7qb4mbs28k";
+    rev = "a4e1c5d366d44ea3de13d80b14716b91d624fd5f";
+    sha256 = "0l6x0j6cs3zkibfc3k5mll2zaqjg49sps5qhhq38067p0rw9anyp";
   };
 
   propagatedBuildInputs = [
-    mailmanclient pytz django-gravatar2 django django-allauth future
+    mailmanclient pytz django-gravatar2 django django-allauth future django_compressor
   ];
+  checkInputs = [ mock ];
 
-  patches = [ ./python3.patch ];
-
-  doCheck = false;
+  checkPhase = ''
+    cd $NIX_BUILD_TOP/$sourceRoot
+    PYTHONPATH=.:$PYTHONPATH django-admin.py test --settings=django_mailman3.tests.settings_test
+  '';
 
   meta = with stdenv.lib; {
     description = "Django library for Mailman UIs";
