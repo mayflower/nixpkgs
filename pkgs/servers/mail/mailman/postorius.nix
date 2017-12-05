@@ -5,24 +5,14 @@ python3.pkgs.buildPythonApplication rec {
   version = "1.1.1";
 
   src = fetchFromGitLab {
-    owner = "mailman";
+    owner = "globin";
     repo = "postorius";
-    rev = version;
-    sha256 = "19d9lckp866w1l0hfkv4w3bl1d5ar2ahrnj1ms5agid2rjv2pcc7";
+    rev = "fb6fbe891f022ccc5fa2aad1e8ef3577d7b50ffb";
+    sha256 = "0jfcpb2781aqgiyzavxv58sn783pg75vmjlaczkpj4xpaszbffjs";
   };
 
   propagatedBuildInputs = with python3.pkgs; [
     mailmanclient django django-mailman3 beautifulsoup4 vcrpy mock psycopg2
-  ];
-
-  doCheck = false;
-
-  patches = [
-    (fetchpatch {
-      url = "https://gitlab.com/mailman/postorius/merge_requests/74.patch";
-      sha256 = "158a8zkm0x8x5c6bhrc22f8i3zyaasqflcv7z1cys3j189f7sizr";
-      excludes = [ "tox.ini" ".gitlab-ci.yml" ];
-    })
   ];
 
   postPatch = ''
@@ -33,6 +23,11 @@ python3.pkgs.buildPythonApplication rec {
   postInstall = ''
     mkdir -p $out/share/postorius
     cp -R . $out/share/postorius
+  '';
+
+  checkPhase = ''
+    cd $NIX_BUILD_TOP/$sourceRoot
+    PYTHONPATH=.:$PYTHONPATH python example_project/manage.py test --settings=test_settings postorius
   '';
 
   meta = {
