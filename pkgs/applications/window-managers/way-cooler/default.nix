@@ -36,6 +36,5 @@ buildRustPackage rec {
     license = with licenses; [ mit ];
     maintainers = [ maintainers.miltador ];
     platforms = platforms.all;
-    broken = true;
   };
 }
