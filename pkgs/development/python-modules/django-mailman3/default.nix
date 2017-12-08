@@ -11,8 +11,8 @@ buildPythonPackage rec {
   src = fetchFromGitLab {
     owner = "mailman";
     repo = "django-mailman3";
-    rev = "a4e1c5d366d44ea3de13d80b14716b91d624fd5f";
-    sha256 = "0l6x0j6cs3zkibfc3k5mll2zaqjg49sps5qhhq38067p0rw9anyp";
+    rev = "439d8256ba97c15165e5ce2f2ab3bffe2efaa940";
+    sha256 = "1barbvwkv0pwzzzqjl6bdblj44kfmkl07ffbz5bcqhsj3gpdzpjb";
   };
 
   propagatedBuildInputs = [
