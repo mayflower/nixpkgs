@@ -7,8 +7,8 @@ python3.pkgs.buildPythonApplication rec {
   src = fetchFromGitLab {
     owner = "globin";
     repo = "hyperkitty";
-    rev = "bd1ed09e3a714eb85bc5338503e77c3e219420a2";
-    sha256 = "08lj9h08pdh7r8h6v655mfdipi3nmn050fva36wjms8h7392c5xy";
+    rev = "b26bcb030fb460564494d301f8f9bfc5ddbc0e26";
+    sha256 = "0ybz9dnq8dmhr04wplmcnld2jwd2pa6p0nl3f5mch1q4dsky06d8";
   };
 
   propagatedBuildInputs = with python3.pkgs; [
@@ -23,9 +23,7 @@ python3.pkgs.buildPythonApplication rec {
   doCheck = false;
 
   postPatch = ''
-    sed -i 's/python-dateutil < 2.0/python-dateutil/' setup.py
     sed -i 's/Django<1.11/Django/' setup.py
-    sed -i '/enum34/d' setup.py
   '';
 
   meta = {
