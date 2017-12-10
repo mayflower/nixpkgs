@@ -4,11 +4,11 @@
 with stdenv.lib;
 stdenv.mkDerivation rec {
   name = "cyrus-sasl-${version}${optionalString (kerberos == null) "-without-kerberos"}";
-  version = "2.1.27rc3";
+  version = "2.1.27-rc5";
 
   src = fetchurl {
     url = "ftp://ftp.cyrusimap.org/cyrus-sasl/cyrus-sasl-${version}.tar.gz";
-    sha256 = "0aivwvkacfwhblqfl8xj006633dw85pxplgdy6wa64yk5822j3x5";
+    sha256 = "0pnkp00xlqrh5ph7j8m4xwfgcca5hr9xvrpvn8k1lxa8xhnh8d6p";
   };
 
   outputs = [ "bin" "dev" "out" "man" "devdoc" ];
@@ -45,6 +45,9 @@ stdenv.mkDerivation rec {
   '';
 
   installFlags = lib.optional stdenv.isDarwin [ "framedir=$(out)/Library/Frameworks/SASL2.framework" ];
+
+  # Due to format warnings in plugins/scram.c
+  hardeningDisable = [ "format" ];
 
   postInstall = ''
     for f in $out/lib/*.la $out/lib/sasl2/*.la; do
