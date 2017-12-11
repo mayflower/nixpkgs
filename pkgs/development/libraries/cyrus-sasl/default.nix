@@ -14,6 +14,7 @@ stdenv.mkDerivation rec {
   outputs = [ "bin" "dev" "out" "man" "devdoc" ];
 
   nativeBuildInputs = [ autoreconfHook buildPackages.stdenv.cc ];
+  propagatedBuildInputs = [ kerberos ];
   buildInputs =
     [ openssl db gettext ]
     ++ lib.optional enableLdap openldap
