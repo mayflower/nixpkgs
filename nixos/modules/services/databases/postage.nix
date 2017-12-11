@@ -178,6 +178,11 @@ in {
   };
 
   config = mkIf cfg.enable {
+    warnings = [
+      ''postage has been deprecated in favour of pgmanage and will be removed in NixOS-18.03.
+        To get rid of this warning change your 'services.postage' options to 'services.pgmanage'.''
+    ];
+
     systemd.services.postage = {
       description = "postage - PostgreSQL Administration for the web";
       wants    = [ "postgresql.service" ];

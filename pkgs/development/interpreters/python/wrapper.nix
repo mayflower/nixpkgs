@@ -1,5 +1,6 @@
 { stdenv, python, buildEnv, makeWrapper
 , extraLibs ? []
+, extraOutputsToInstall ? []
 , postBuild ? ""
 , ignoreCollisions ? false }:
 
@@ -13,6 +14,7 @@ let
 
     inherit paths;
     inherit ignoreCollisions;
+    extraOutputsToInstall = [ "out" ] ++ extraOutputsToInstall;
 
     postBuild = ''
       . "${makeWrapper}/nix-support/setup-hook"

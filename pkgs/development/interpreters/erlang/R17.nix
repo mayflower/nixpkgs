@@ -34,4 +34,5 @@ mkDerivation rec {
   '';
 
   meta.broken = true; # broken with openssl 1.1
+  meta.knownVulnerabilities = [ "CVE-2017-1000385" ];
 }

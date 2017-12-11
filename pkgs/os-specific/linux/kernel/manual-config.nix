@@ -1,4 +1,6 @@
 { runCommand, nettools, bc, perl, gmp, libmpc, mpfr, kmod, openssl
+, libelf ? null
+, utillinux ? null
 , writeTextFile, ubootChooser
 , hostPlatform
 }:
@@ -37,6 +39,8 @@ in {
   config ? stdenv.lib.optionalAttrs allowImportFromDerivation (readConfig configfile),
   # Cross-compiling config
   crossConfig ? if allowImportFromDerivation then (readConfig crossConfigfile) else config,
+  # Use defaultMeta // extraMeta
+  extraMeta ? {},
   # Whether to utilize the controversial import-from-derivation feature to parse the config
   allowImportFromDerivation ? false
 }:
@@ -215,17 +219,22 @@ let
           maintainers.thoughtpolice
         ];
         platforms = platforms.linux;
-      };
+      } // extraMeta;
     };
 in
 
+assert stdenv.lib.versionAtLeast version "4.15" -> libelf != null;
+assert stdenv.lib.versionAtLeast version "4.15" -> utillinux != null;
 stdenv.mkDerivation ((drvAttrs config stdenv.platform (kernelPatches ++ nativeKernelPatches) configfile) // {
   name = "linux-${version}";
 
   enableParallelBuilding = true;
 
-  nativeBuildInputs = [ perl bc nettools openssl gmp libmpc mpfr ] ++ optional (stdenv.platform.uboot != null)
-    (ubootChooser stdenv.platform.uboot);
+  nativeBuildInputs = [ perl bc nettools openssl gmp libmpc mpfr ]
+      ++ optional (stdenv.platform.uboot != null) (ubootChooser stdenv.platform.uboot)
+      ++ optional (stdenv.lib.versionAtLeast version "4.15") libelf
+      ++ optional (stdenv.lib.versionAtLeast version "4.15") utillinux
+      ;
 
   hardeningDisable = [ "bindnow" "format" "fortify" "stackprotector" "pic" ];
 

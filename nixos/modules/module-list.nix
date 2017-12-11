@@ -192,6 +192,7 @@
   ./services/databases/openldap.nix
   ./services/databases/opentsdb.nix
   ./services/databases/postage.nix
+  ./services/databases/pgmanage.nix
   ./services/databases/postgresql.nix
   ./services/databases/redis.nix
   ./services/databases/riak.nix
@@ -591,6 +592,7 @@
   ./services/system/cloud-init.nix
   ./services/system/dbus.nix
   ./services/system/earlyoom.nix
+  ./services/system/localtime.nix
   ./services/system/kerberos.nix
   ./services/system/nscd.nix
   ./services/system/saslauthd.nix
