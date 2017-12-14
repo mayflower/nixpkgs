@@ -6417,7 +6417,7 @@ in {
     meta = {
       description = "A Task-Based Parallelization Framework";
       license = licenses.mit;
-      url = https://jug.readthedocs.io/;
+      homepage = https://jug.readthedocs.io/;
       maintainers = with maintainers; [ luispedro ];
     };
   };
@@ -18740,7 +18740,7 @@ in {
       description = "Download files using requests and save them to a target path";
       homepage = https://www.github.com/takluyver/requests_download;
       license = licenses.mit;
-      maintainer = maintainers.fridh;
+      maintainers = [ maintainers.fridh ];
     };
   };
 
@@ -22319,7 +22319,7 @@ in {
       description = "Collection of utilities for interacting with PyPI";
       homepage = https://github.com/pypa/twine;
       license = licenses.asl20;
-      maintainer = with maintainers; [ fridh ];
+      maintainers = with maintainers; [ fridh ];
     };
   };
 
@@ -27178,7 +27178,7 @@ EOF
       description = "Read and write ZIP files - backport of the zipfile module from Python 3.6";
       homepage = https://gitlab.com/takluyver/zipfile36;
       license = licenses.psfl;
-      maintainer = maintainers.fridh;
+      maintainers = [ maintainers.fridh ];
     };
   };
 
@@ -27220,7 +27220,7 @@ EOF
 
   preshed = callPackage ../development/python-modules/preshed { };
 
-  backports_weakref = callPackage ../development/python-modules/backports_weakref { }; 
+  backports_weakref = callPackage ../development/python-modules/backports_weakref { };
 
   thinc = callPackage ../development/python-modules/thinc { };
 
@@ -27229,7 +27229,7 @@ EOF
   behave = callPackage ../development/python-modules/behave { };
 
   pyhamcrest = callPackage ../development/python-modules/pyhamcrest { };
- 
+
   parse = callPackage ../development/python-modules/parse { };
 
   parse-type = callPackage ../development/python-modules/parse-type { };
