@@ -67,12 +67,6 @@ with lib;
       '';
     };
 
-    acmeRoot = mkOption {
-      type = types.str;
-      default = "/var/lib/acme/acme-challenge";
-      description = "Directory for the acme challenge which is PUBLIC, don't put certs or keys in here";
-    };
-
     acmeFallbackHost = mkOption {
       type = types.nullOr types.str;
       default = null;

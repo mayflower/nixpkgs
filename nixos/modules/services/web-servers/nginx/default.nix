@@ -206,10 +206,10 @@ let
 
         redirectListen = filter (x: !x.ssl) defaultListen;
 
-        acmeLocation = optionalString (vhost.enableACME || vhost.useACMEHost != null) ''
+        acmeLocation = name: optionalString (vhost.enableACME || vhost.useACMEHost != null) ''
           location /.well-known/acme-challenge {
             ${optionalString (vhost.acmeFallbackHost != null) "try_files $uri @acme-fallback;"}
-            root ${vhost.acmeRoot};
+            root ${config.security.acme.certs.${name}.http.webroot};
             auth_basic off;
           }
           ${optionalString (vhost.acmeFallbackHost != null) ''
@@ -226,7 +226,7 @@ let
             ${concatMapStringsSep "\n" listenString redirectListen}
 
             server_name ${vhost.serverName} ${concatStringsSep " " vhost.serverAliases};
-            ${acmeLocation}
+            ${acmeLocation vhost.serverName}
             location / {
               return 301 https://$host$request_uri;
             }
@@ -236,7 +236,7 @@ let
         server {
           ${concatMapStringsSep "\n" listenString hostListen}
           server_name ${vhost.serverName} ${concatStringsSep " " vhost.serverAliases};
-          ${acmeLocation}
+          ${acmeLocation vhost.serverName}
           ${optionalString (vhost.root != null) "root ${vhost.root};"}
           ${optionalString (vhost.globalRedirect != null) ''
             return 301 http${optionalString hasSSL "s"}://${vhost.globalRedirect}$request_uri;
@@ -244,6 +244,7 @@ let
           ${optionalString hasSSL ''
             ssl_certificate ${vhost.sslCertificate};
             ssl_certificate_key ${vhost.sslCertificateKey};
+            ssl_trusted_certificate ${vhost.sslTrustedCertificate};
           ''}
           ${optionalString (hasSSL && vhost.sslTrustedCertificate != null) ''
             ssl_trusted_certificate ${vhost.sslTrustedCertificate};
@@ -674,8 +675,8 @@ in
     systemd.services.nginx = {
       description = "Nginx Web Server";
       wantedBy = [ "multi-user.target" ];
-      wants = concatLists (map (vhostConfig: ["acme-${vhostConfig.serverName}.service" "acme-selfsigned-${vhostConfig.serverName}.service"]) acmeEnabledVhosts);
-      after = [ "network.target" ] ++ map (vhostConfig: "acme-selfsigned-${vhostConfig.serverName}.service") acmeEnabledVhosts;
+      wants = [ "acme-selfsigned-certificates.target" "acme-certificates.target" ];
+      after = [ "acme-selfsigned-certificates.target" "network.target" ];
       stopIfChanged = false;
       preStart =
         ''
@@ -685,37 +686,24 @@ in
       serviceConfig = {
         ExecStart = "${cfg.package}/bin/nginx -c ${configPath} -p ${cfg.stateDir}";
         ExecReload = "${pkgs.coreutils}/bin/kill -HUP $MAINPID";
-        Restart = "always";
-        RestartSec = "10s";
-        StartLimitInterval = "1min";
+        Restart = "on-failure";
+        StartLimitInterval = "10s";
       };
     };
 
-    environment.etc."nginx/nginx.conf" = mkIf cfg.enableReload {
-      source = configFile;
-    };
-
-    systemd.services.nginx-config-reload = mkIf cfg.enableReload {
-      wantedBy = [ "nginx.service" ];
-      restartTriggers = [ configFile ];
-      script = ''
-        if ${pkgs.systemd}/bin/systemctl -q is-active nginx.service ; then
-          ${pkgs.systemd}/bin/systemctl reload nginx.service
-        fi
-      '';
-      serviceConfig.RemainAfterExit = true;
-    };
-
+    security.acme.hooks.deploy.nginx_reload = pkgs.writeScript "nginx-reload" ''
+      nginx_reload_deploy() {
+        ${pkgs.systemd}/bin/systemctl reload nginx.service
+      }
+    '';
     security.acme.certs = filterAttrs (n: v: v != {}) (
       let
         acmePairs = map (vhostConfig: { name = vhostConfig.serverName; value = {
-            user = cfg.user;
+            owner = cfg.user;
             group = lib.mkDefault cfg.group;
-            webroot = vhostConfig.acmeRoot;
-            extraDomains = genAttrs vhostConfig.serverAliases (alias: null);
-            postRun = ''
-              systemctl reload nginx
-            '';
+            http.enable = true;
+            deployHooks = [ "nginx_reload" ];
+            extraDomains = vhostConfig.serverAliases or [];
           }; }) acmeEnabledVhosts;
       in
         listToAttrs acmePairs

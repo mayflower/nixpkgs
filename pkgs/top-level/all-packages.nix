@@ -1474,6 +1474,7 @@ in
   dedup = callPackage ../tools/backup/dedup { };
 
   dehydrated = callPackage ../tools/admin/dehydrated { };
+  acme-sh = callPackage ../tools/admin/acme-sh { };
 
   deis = callPackage ../development/tools/deis {};
 
