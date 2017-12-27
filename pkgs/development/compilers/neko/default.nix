@@ -1,5 +1,5 @@
 { stdenv, fetchurl, fetchpatch, boehmgc, zlib, sqlite, pcre, cmake, pkgconfig
-, git, apacheHttpd, apr, aprutil, mariadb, mbedtls, openssl, pkgs, gtk2
+, git, apacheHttpd, apr, aprutil, mysql, mbedtls, openssl, pkgs, gtk2
 }:
 
 stdenv.mkDerivation rec {
@@ -34,7 +34,7 @@ stdenv.mkDerivation rec {
 
   buildInputs =
     [ boehmgc zlib sqlite pcre cmake pkgconfig git apacheHttpd apr aprutil
-      mariadb.client mbedtls openssl ]
+      mysql.connector-c mbedtls openssl ]
       ++ stdenv.lib.optional stdenv.isLinux gtk2
       ++ stdenv.lib.optionals stdenv.isDarwin [ pkgs.darwin.apple_sdk.frameworks.Security
                                                 pkgs.darwin.apple_sdk.frameworks.Carbon];
