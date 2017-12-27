@@ -1,6 +1,6 @@
 { stdenv, fetchurl, pkgconfig,
   boost, libyamlcpp, libsodium, sqlite, protobuf,
-  libmysql, postgresql, lua, openldap, geoip, curl
+  mysql57, postgresql, lua, openldap, geoip, curl
 }:
 
 stdenv.mkDerivation rec {
@@ -12,7 +12,7 @@ stdenv.mkDerivation rec {
     sha256 = "097ci4s2c63gl0bil8yh87dsy0sk3fds4w8cpyjh5kns6zazmj2v";
   };
 
-  buildInputs = [ boost libmysql postgresql lua openldap sqlite protobuf geoip libyamlcpp pkgconfig libsodium curl ];
+  buildInputs = [ boost mysql57.connector-c postgresql lua openldap sqlite protobuf geoip libyamlcpp pkgconfig libsodium curl ];
 
   # nix destroy with-modules arguments, when using configureFlags
   preConfigure = ''
