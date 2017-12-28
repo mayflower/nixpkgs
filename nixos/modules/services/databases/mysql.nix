@@ -8,8 +8,6 @@ let
 
   mysql = cfg.package;
 
-  atLeast55 = versionAtLeast mysql.mysqlVersion "5.5";
-
   pidFile = "${cfg.pidDir}/mysqld.pid";
 
   mysqldOptions =
@@ -23,13 +21,6 @@ let
     ${optionalString (cfg.bind != null) "bind-address = ${cfg.bind}" }
     ${optionalString (cfg.replication.role == "master" || cfg.replication.role == "slave") "log-bin=mysql-bin"}
     ${optionalString (cfg.replication.role == "master" || cfg.replication.role == "slave") "server-id = ${toString cfg.replication.serverId}"}
-    ${optionalString (cfg.replication.role == "slave" && !atLeast55)
-    ''
-      master-host = ${cfg.replication.masterHost}
-      master-user = ${cfg.replication.masterUser}
-      master-password = ${cfg.replication.masterPassword}
-      master-port = ${toString cfg.replication.masterPort}
-    ''}
     ${optionalString (cfg.ensureUsers != [] || cfg.enableSocketAuth)
     ''
       plugin-load-add = auth_socket.so
@@ -317,7 +308,7 @@ in
                     fi
                   '') cfg.initialDatabases}
 
-                ${optionalString (cfg.replication.role == "master" && atLeast55)
+                ${optionalString (cfg.replication.role == "master")
                   ''
                     # Set up the replication master
 
@@ -328,7 +319,7 @@ in
                     ) | ${mysql}/bin/mysql -u root -N
                   ''}
 
-                ${optionalString (cfg.replication.role == "slave" && atLeast55)
+                ${optionalString (cfg.replication.role == "slave")
                   ''
                     # Set up the replication slave
 
