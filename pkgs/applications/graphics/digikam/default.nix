@@ -71,7 +71,6 @@ mkDerivation rec {
     liblqr1
     libqtav
     libusb1
-    mysql
     opencv
   ];
 
