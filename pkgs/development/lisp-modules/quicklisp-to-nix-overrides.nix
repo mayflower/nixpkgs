@@ -124,7 +124,7 @@ in
   cl-async-util = addDeps (with qlnp; [ cl-async-base ]);
   css-lite = addDeps (with qlnp; [parenscript]);
   clsql = x: {
-    propagatedBuildInputs = with pkgs; [mysql postgresql sqlite zlib];
+    propagatedBuildInputs = with pkgs; [mysql.connector-c postgresql sqlite zlib];
     overrides = y: (x.overrides y) // {
       preConfigure = ((x.overrides y).preConfigure or "") + ''
         export NIX_CFLAGS_COMPILE="$NIX_CFLAGS_COMPILE -I${pkgs.mysql.connector-c}/include/mysql"
