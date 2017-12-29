@@ -2,6 +2,7 @@
 , openssl, pcre, boost, judy, bison, libxml2
 , libaio, libevent, groff, jemalloc, cracklib, systemd, numactl, perl
 , fixDarwinDylibNames, cctools, CoreServices
+, scons, buildEnv, check, qt4
 }:
 
 with stdenv.lib;
@@ -12,6 +13,12 @@ mariadb = everything // {
   inherit client; # mysql binary
   server = everything; # a full single-output build, including everything in `client` again
   inherit connector-c; # libmysqlclient.so
+  inherit galera;
+};
+
+galeraLibs = buildEnv {
+  name = "galera-lib-inputs-united";
+  paths = [ openssl.out boost check ];
 };
 
 common = rec { # attributes common to both builds
@@ -147,6 +154,7 @@ everything = stdenv.mkDerivation (common // {
     "-DWITHOUT_EXAMPLE_STORAGE_ENGINE=1"
     "-DWITHOUT_FEDERATED_STORAGE_ENGINE=1"
     "-DWITH_WSREP=ON"
+    "-DWITH_INNODB_DISALLOW_WRITES=ON"
   ] ++ stdenv.lib.optionals stdenv.isDarwin [
     "-DWITHOUT_OQGRAPH_STORAGE_ENGINE=1"
     "-DWITHOUT_TOKUDB=1"
@@ -197,4 +205,51 @@ connector-c = stdenv.mkDerivation rec {
   };
 };
 
+galera = stdenv.mkDerivation rec {
+  name = "mariadb-galera-${version}";
+  version = "25.3.22";
+
+  src = fetchurl {
+    url = "https://mirrors.nxthost.com/mariadb/mariadb-10.1.29/galera-${version}/src/galera-${version}.tar.gz";
+    sha256 = "01qmrik3q89znzsrn477xk4n8m6jrvrnqriryxvkkf1y1xmjsaz3";
+  };
+
+  buildInputs = [ scons boost openssl check qt4 ];
+
+  patchPhase = ''
+    substituteInPlace SConstruct \
+      --replace "boost_library_path = '''" "boost_library_path = '${boost}/lib'"
+  '';
+
+  preConfigure = ''
+    export CPPFLAGS="-I${boost.dev}/include -I${openssl.dev}/include -I${check}/include"
+    export LIBPATH="${galeraLibs}/lib"
+  '';
+
+  buildPhase = ''
+     scons -j$NIX_BUILD_CORES ssl=1 system_asio=0 strict_build_flags=0
+  '';
+
+  installPhase = ''
+    # copied with modifications from scripts/packages/freebsd.sh
+    GALERA_LICENSE_DIR="$share/licenses/${name}"
+    install -d $out/{bin,lib/galera,share/doc/galera,$GALERA_LICENSE_DIR}
+    install -m 555 "garb/garbd"                       "$out/bin/garbd"
+    install -m 444 "libgalera_smm.so"                 "$out/lib/galera/libgalera_smm.so"
+    install -m 444 "scripts/packages/README"          "$out/share/doc/galera/"
+    install -m 444 "scripts/packages/README-MySQL"    "$out/share/doc/galera/"
+    install -m 444 "scripts/packages/freebsd/LICENSE" "$out/$GALERA_LICENSE_DIR"
+    install -m 444 "LICENSE"                          "$out/$GALERA_LICENSE_DIR/GPLv2"
+    install -m 444 "asio/LICENSE_1_0.txt"             "$out/$GALERA_LICENSE_DIR/LICENSE.asio"
+    install -m 444 "www.evanjones.ca/LICENSE"         "$out/$GALERA_LICENSE_DIR/LICENSE.crc32c"
+    install -m 444 "chromium/LICENSE"                 "$out/$GALERA_LICENSE_DIR/LICENSE.chromium"
+  '';
+
+  meta = {
+    description = "Galera 3 wsrep provider library";
+    homepage = http://galeracluster.com/;
+    license = licenses.lgpl2;
+    platforms = platforms.all;
+  };
+};
 in mariadb
