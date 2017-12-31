@@ -164,6 +164,7 @@ everything = stdenv.mkDerivation (common // {
     rm -r "$out"/{mysql-test,sql-bench,data} # Don't need testing data
     rm "$out"/share/man/man1/mysql-test-run.pl.1
     rm "$out"/bin/rcmysql
+    sed -i 's/-mariadb/-mysql/' "$out"/bin/galera_new_cluster
   '';
 
   CXXFLAGS = optionalString stdenv.isi686 "-fpermissive";
