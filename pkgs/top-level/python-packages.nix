@@ -4119,23 +4119,7 @@ in {
     doCheck = false;
   };
 
-  pytestquickcheck = buildPythonPackage rec {
-    name = "pytest-quickcheck-0.8.2";
-
-    src = pkgs.fetchurl {
-      url = "mirror://pypi/p/pytest-quickcheck/pytest-quickcheck-0.8.2.tar.gz";
-      sha256 = "047w4zwdsnlzmsc5f3rapzbzd2frlvz9nnp8v4b48fjmqmxassh3";
-    };
-
-    buildInputs = with self; [ pytest ];
-    propagatedBuildInputs = with self; [ pytestflakes pytestpep8 tox ];
-
-    meta = {
-      license = licenses.asl20;
-      homepage = "https://pypi.python.org/pypi/pytest-quickcheck";
-      description = "pytest plugin to generate random data inspired by QuickCheck";
-    };
-  };
+  pytestquickcheck = callPackage ../development/python-modules/pytest-quickcheck { };
 
   pytest-server-fixtures = buildPythonPackage rec {
     name = "${pname}-${version}";
@@ -7641,37 +7625,7 @@ in {
 
   pysrt = callPackage ../development/python-modules/pysrt { };
 
-  pytools = buildPythonPackage rec {
-    name = "pytools-${version}";
-    version = "2017.4";
-
-    src = pkgs.fetchFromGitHub {
-      owner = "inducer";
-      repo = "pytools";
-      rev = "8078e74265bb5a3c9676c698595ab5450cd2bfe7";
-      sha256 = "17q61l79fcxkj5jxg3fnymi652sdjp5s6kpsabgxp22kma9crr28";
-    };
-
-    buildInputs = with self; [
-      decorator
-      appdirs
-      six
-      numpy
-      pytest
-    ];
-
-    checkPhase = ''
-      py.test -k 'not test_persistent_dict'
-    '';
-
-    meta = {
-      homepage = https://github.com/inducer/pytools/;
-      description = "Miscellaneous Python lifesavers.";
-      license = licenses.mit;
-      maintainers = with maintainers; [ artuuge ];
-    };
-
-  };
+  pytools = callPackage ../development/python-modules/pytools { };
 
   pytun = buildPythonPackage rec {
     name = "pytun-${version}";
@@ -8480,6 +8434,8 @@ in {
   # Override the package set and set e.g. `django = super.django_1_9`.
   # See the Nixpkgs manual for examples on how to override the package set.
   django_hijack = callPackage ../development/python-modules/django-hijack { };
+
+  django_hijack_admin = callPackage ../development/python-modules/django-hijack-admin { };
 
   django-mailman3 = callPackage ../development/python-modules/django-mailman3 { };
 

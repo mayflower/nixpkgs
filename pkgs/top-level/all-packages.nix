@@ -3051,6 +3051,10 @@ with pkgs;
     enableNpm = false;
   };
 
+  nodePackages_8_x = callPackage ../development/node-packages/default-v8.nix {
+    nodejs = pkgs.nodejs-8_x;
+  };
+
   nodePackages_6_x = callPackage ../development/node-packages/default-v6.nix {
     nodejs = pkgs.nodejs-6_x;
   };
@@ -6207,6 +6211,12 @@ with pkgs;
   rustStable = callPackage ../development/compilers/rust {
     inherit (llvmPackages_4) llvm;
   };
+
+  rust119bin = lowPrio (callPackage ../development/compilers/rust/1.19.0-bin.nix {
+     buildRustPackage = callPackage ../build-support/rust {
+       rust = rust119bin;
+     };
+  });
   rustBeta = lowPrio (recurseIntoAttrs (callPackage ../development/compilers/rust/beta.nix {}));
 
   rustNightly = rustBeta;
@@ -12632,10 +12642,8 @@ with pkgs;
 
     sch_cake = callPackage ../os-specific/linux/sch_cake { };
 
-    inherit (callPackage ../os-specific/linux/spl {
-      configFile = "kernel";
-      inherit kernel;
-    }) splStable splUnstable;
+    inherit (callPackage ../os-specific/linux/spl {})
+      splStable splUnstable;
 
     spl = splStable;
 
@@ -12970,10 +12978,6 @@ with pkgs;
   smem = callPackage ../os-specific/linux/smem { };
 
   statifier = callPackage ../os-specific/linux/statifier { };
-
-  inherit (callPackage ../os-specific/linux/spl {
-    configFile = "user";
-  }) splStable splUnstable;
 
   sysdig = callPackage ../os-specific/linux/sysdig {
     kernel = null;
@@ -14654,6 +14658,8 @@ with pkgs;
       python = python2;
       gnused = gnused_422;
       icu = icu59;
+      cargo = rust119bin.cargo;
+      rustc = rust119bin.rustc;
     };
   });
 
@@ -19356,6 +19362,7 @@ with pkgs;
     terraform_0_8
     terraform_0_9
     terraform_0_10
+    terraform_0_11
     ;
 
   # Terraform with all the plugins, both to get Hydra to build all plugins for us and for
