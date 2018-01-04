@@ -13,7 +13,7 @@ let
   '';
   hyperkittyConfigFile = pkgs.writeText "mailman-hyperkitty.cfg" ''
     [general]
-    base_url: https://lists.yflower.de/hyperkitty/
+    base_url: ${cfg.baseURL}
     api_key: ${cfg.hyperkittyApiKey}
   '';
   configFile = pkgs.writeText "mailman.cfg" ''
@@ -32,6 +32,9 @@ let
     class: mailman_hyperkitty.Archiver
     enable: yes
     configuration: ${hyperkittyConfigFile}
+    [webservice]
+    admin_user: ${cfg.restApiUser}
+    admin_pass: ${cfg.restApiPassword}
   '';
   uwsgi = pkgs.uwsgi.override { plugins = [ "python3" ]; };
   configModule = python.pkgs.buildPythonPackage {
@@ -47,7 +50,10 @@ let
       SECRET_KEY = '${cfg.webSecretKey}'
       DEBUG = False
 
-      ALLOWED_HOSTS = [ '::1', '127.0.0.1', 'localhost', 'lists.yflower.de' ]
+      ALLOWED_HOSTS = [
+        '::1', '127.0.0.1', 'localhost', '${cfg.baseURL}',
+        ${concatMapStringsSep "," (s: "'${s}'") cfg.allowedHosts}
+      ]
 
       ROOT_URLCONF = 'mailman_web_config.urls'
 
@@ -55,10 +61,11 @@ let
       DEFAULT_FROM_EMAIL = '${cfg.fromEmail}'
 
       MAILMAN_REST_API_URL = 'http://localhost:8001'
-      MAILMAN_REST_API_USER = 'restadmin'
-      MAILMAN_REST_API_PASS = 'restpass'
+      MAILMAN_REST_API_USER = '${cfg.restApiUser}'
+      MAILMAN_REST_API_PASS = '${cfg.restApiPassword}'
       MAILMAN_ARCHIVER_KEY = '${cfg.hyperkittyApiKey}'
-      MAILMAN_ARCHIVER_FROM = ('127.0.0.1', '::1', '2a01:4f8:10a:b0e::1')
+      MAILMAN_ARCHIVER_FROM = ('127.0.0.1', '::1',
+        ${concatMapStringsSep "," (s: "'${s}'") cfg.allowedArchivingHosts})
 
       TEMPLATES = [
           {
@@ -105,14 +112,16 @@ let
         'allauth',
         'allauth.account',
         'allauth.socialaccount',
-        #'allauth.socialaccount.providers.openid',
-        #'django_mailman3.lib.auth.fedora',
-        #'allauth.socialaccount.providers.github',
-        #'allauth.socialaccount.providers.gitlab',
-        #'allauth.socialaccount.providers.google',
-        #'allauth.socialaccount.providers.facebook',
-        #'allauth.socialaccount.providers.twitter',
-        #'allauth.socialaccount.providers.stackexchange',
+        ${optionalString cfg.externalAuthProviders ''
+          'allauth.socialaccount.providers.openid',
+          'django_mailman3.lib.auth.fedora',
+          'allauth.socialaccount.providers.github',
+          'allauth.socialaccount.providers.gitlab',
+          'allauth.socialaccount.providers.google',
+          'allauth.socialaccount.providers.facebook',
+          'allauth.socialaccount.providers.twitter',
+          'allauth.socialaccount.providers.stackexchange',
+        ''}
       )
 
       MIDDLEWARE_CLASSES += ('django_mailman3.middleware.TimezoneMiddleware',)
@@ -238,10 +247,57 @@ in {
         description = "Default e-mail address to send from.";
       };
 
+      baseURL = mkOption {
+        type = types.str;
+        example = "lists.example.com";
+        description = "Base URL for the webservice to run on.";
+      };
+
+      restApiUser = mkOption {
+        type = types.str;
+        default = "admin";
+        description = ''
+          Username of the mailman REST API.
+        '';
+      };
+
+      restApiPassword = mkOption {
+        type = types.str;
+        description = ''
+          Password of the mailman REST API.
+        '';
+      };
+
+      allowedHosts = mkOption {
+        type = types.listOf types.str;
+        default = [];
+        example = [ "lists.example.com" ];
+        description = ''
+          Hosts to allow requests from apart from localhost.
+        '';
+      };
+
+      allowedArchivingHosts = mkOption {
+        type = types.listOf types.str;
+        default = [];
+        example = [ "lists.example.com" ];
+        description = ''
+          Hosts to allow archiving from.
+        '';
+      };
+
       dataDir = mkOption {
         type = types.str;
         default = "/var/lib/mailman";
         description = "Data directory for mailman, hyperkitty and postorius.";
+      };
+
+      externalAuthProviders = mkOption {
+        type = types.bool;
+        default = false;
+        description = ''
+          Enable a range of django-allauth providers.
+        '';
       };
     };
   };
