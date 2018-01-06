@@ -1052,6 +1052,8 @@ with pkgs;
 
   filebench = callPackage ../tools/misc/filebench { };
 
+  fileshelter = callPackage ../servers/web-apps/fileshelter { };
+
   fsmon = callPackage ../tools/misc/fsmon { };
 
   fsql = callPackage ../tools/misc/fsql { };
