@@ -21,6 +21,8 @@ stdenv.mkDerivation {
 
   hardeningDisable = [ "pic" ];
 
+  nativeBuildInputs = kernel.moduleBuildDependencies;
+
   patches = [
     ./i686-build-failure.patch
     ./license.patch
@@ -36,8 +38,6 @@ stdenv.mkDerivation {
   ];
 
   makeFlags = "KBASE=${kernel.dev}/lib/modules/${kernel.modDirVersion}";
-
-  nativeBuildInputs = kernel.moduleBuildDependencies;
 
   unpackPhase = ''
     sourceRoot=broadcom-sta
