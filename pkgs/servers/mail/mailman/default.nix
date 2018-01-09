@@ -17,6 +17,8 @@ python3.pkgs.buildPythonApplication rec {
     zope_component
   ];
 
+  patches = [ ./log-to-syslog.patch ];
+
   postPatch = ''
     substituteInPlace src/mailman/commands/cli_control.py \
       --replace "config.BIN_DIR, 'master'" "config.BIN_DIR, '.master-wrapped'"
