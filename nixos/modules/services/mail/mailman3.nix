@@ -13,7 +13,7 @@ let
   '';
   hyperkittyConfigFile = pkgs.writeText "mailman-hyperkitty.cfg" ''
     [general]
-    base_url: ${cfg.baseURL}
+    base_url: ${cfg.baseURLScheme}://${cfg.baseURL}/hyperkitty
     api_key: ${cfg.hyperkittyApiKey}
   '';
   configFile = pkgs.writeText "mailman.cfg" ''
@@ -250,7 +250,25 @@ in {
       baseURL = mkOption {
         type = types.str;
         example = "lists.example.com";
-        description = "Base URL for the webservice to run on.";
+        description = ''
+          Base URL for the webservice to run on. This module also creates
+          an nginx virtual host on this domain with preconfigured locations
+          and forceSSL and enableACME defaulting to true. If you want to disable
+          this in case you have a reverse proxy terminating SSL connections,
+          you can set <literal>services.nginx.virtualHosts."''${baseURL}".enableACME</literal>
+          and <literal>services.nginx.virtualHosts."''${baseURL}".forceSSL</literal> to
+          <literal>false</literal>.
+        '';
+      };
+
+      baseURLScheme = mkOption {
+        type = types.str;
+        default = "https";
+        description = ''
+          URL scheme for the baseURL, normally "https", but you might want to override
+          this if you have a special configuration terminating your SSL connections on
+          another host.
+        '';
       };
 
       restApiUser = mkOption {
@@ -380,6 +398,19 @@ in {
         ExecStart = "${mailmanWebEnv}/bin/django-admin qcluster --pythonpath ${pkgs.postorius}/share/postorius/example_project";
         User = "mailman";
         Restart = "always";
+      };
+    };
+    services.nginx = {
+      enable = mkDefault true;
+      virtualHosts.${cfg.baseURL} = {
+        enableACME = mkDefault true;
+        forceSSL = mkDefault true;
+        locations = {
+          "/".extraConfig = ''
+            uwsgi_pass unix:/run/mailman/web.socket;
+          '';
+          "/static".root = "/var/lib/mailman/web";
+        };
       };
     };
   };
