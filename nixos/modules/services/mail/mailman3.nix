@@ -351,8 +351,8 @@ in {
         pgSuperUser = config.services.postgresql.superUser;
       in ''
         if ! test -e "${cfg.dataDir}/db-created"; then
-            sudo -u ${pgSuperUser} ${pkgs.postgresql}/bin/createuser --no-superuser --no-createdb --no-createrole mailman
-            sudo -u ${pgSuperUser} ${pkgs.postgresql}/bin/createdb --owner mailman mailman
+            ${pkgs.sudo}/bin/sudo -u ${pgSuperUser} ${pkgs.postgresql}/bin/createuser --no-superuser --no-createdb --no-createrole mailman
+            ${pkgs.sudo}/bin/sudo -u ${pgSuperUser} ${pkgs.postgresql}/bin/createdb --owner mailman mailman
             touch "${cfg.dataDir}/db-created"
         fi
       '';
