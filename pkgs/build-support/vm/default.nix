@@ -1311,6 +1311,30 @@ rec {
       packages = commonCentOSPackages ++ [ "procps-ng" ];
     };
 
+    centos73x86_64 = {
+      name = "centos-7.3-x86_64";
+      fullName = "CentOS 7.3 (x86_64)";
+      packagesList = fetchurl {
+        url = http://vault.centos.org/7.3.1611/os/x86_64/repodata/dd86df27191d231cc6b7c5828fadb63b08db4725aef8e2613351667e649c9ca3-primary.xml.gz;
+        sha256 = "18wwkij7wrji6dhy5y5f4m3xn21vnsnqz0n5nz31q8qx34kxz1nx";
+      };
+      urlPrefix = http://vault.centos.org/7.3.1611/os/x86_64;
+      archs = ["noarch" "x86_64"];
+      packages = commonCentOSPackages ++ [ "procps-ng" ];
+    };
+
+    centos74x86_64 = rec {
+      name = "centos-7.4-x86_64";
+      fullName = "CentOS 7.4 (x86_64)";
+      # N.B. Switch to vault.centos.org when the next release comes out
+      urlPrefix = http://mirror.centos.org/centos-7/7.4.1708/os/x86_64;
+      packagesList = fetchurl {
+        url = "${urlPrefix}/repodata/b686d3a0f337323e656d9387b9a76ce6808b26255fc3a138b1a87d3b1cb95ed5-primary.xml.gz";
+        sha256 = "1mayp4f3nzd8n4wa3hsz4lk8p076djkvk1wkdmjkwcipyfhd71mn";
+      };
+      archs = ["noarch" "x86_64"];
+      packages = commonCentOSPackages ++ [ "procps-ng" ];
+    };
   };
 
 

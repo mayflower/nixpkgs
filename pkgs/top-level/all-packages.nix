@@ -6750,17 +6750,17 @@ with pkgs;
   inherit (callPackage ../development/interpreters/ruby {})
     ruby_2_0_0
     ruby_2_1_10
-    ruby_2_2_8
-    ruby_2_3_5
-    ruby_2_4_2;
+    ruby_2_2_9
+    ruby_2_3_6
+    ruby_2_4_3;
 
   # Ruby aliases
   ruby = ruby_2_4;
   ruby_2_0 = ruby_2_0_0;
   ruby_2_1 = ruby_2_1_10;
-  ruby_2_2 = ruby_2_2_8;
-  ruby_2_3 = ruby_2_3_5;
-  ruby_2_4 = ruby_2_4_2;
+  ruby_2_2 = ruby_2_2_9;
+  ruby_2_3 = ruby_2_3_6;
+  ruby_2_4 = ruby_2_4_3;
 
   scsh = callPackage ../development/interpreters/scsh { };
 
@@ -6770,7 +6770,7 @@ with pkgs;
 
   spark = spark_21;
   spark_16 = callPackage ../applications/networking/cluster/spark { version = "1.6.3"; };
-  spark_21 = callPackage ../applications/networking/cluster/spark { version = "2.1.0"; };
+  spark_21 = callPackage ../applications/networking/cluster/spark { version = "2.1.2"; };
 
   spidermonkey_1_8_5 = callPackage ../development/interpreters/spidermonkey/1.8.5.nix { };
   spidermonkey_17 = callPackage ../development/interpreters/spidermonkey/17.nix { };
@@ -14221,7 +14221,7 @@ with pkgs;
 
   ekho = callPackage ../applications/audio/ekho { };
 
-  electron-cash = callPackage ../applications/misc/electron-cash { };
+  electron-cash = libsForQt5.callPackage ../applications/misc/electron-cash { };
 
   electrum = callPackage ../applications/misc/electrum { };
 
