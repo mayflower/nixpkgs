@@ -12,6 +12,9 @@ let
     ''
       .include "$CONFDIR/common.conf"
 
+      .include(try=true,priority=1,duplicate=merge) "${pkgs.writeText "rspamd.conf.local" cfg.localConfig}"
+      .include(try=true,priority=10) "${pkgs.writeText "rspamd.conf.local" cfg.overrideConfig}"
+
       options {
         pidfile = "$RUNDIR/rspamd.pid";
         .include "$CONFDIR/options.inc"
@@ -118,7 +121,23 @@ in
         description = ''
           Group to use when no root privileges are required.
         '';
-       };
+      };
+
+      localConfig = mkOption {
+        type = types.lines;
+        default = "";
+        description = ''
+          Rspamd config that merges with the defaults.
+        '';
+      };
+
+      overrideConfig = mkOption {
+        type = types.lines;
+        default = "";
+        description = ''
+          Rspamd config that overrides the defaults.
+        '';
+      };
     };
   };
 
