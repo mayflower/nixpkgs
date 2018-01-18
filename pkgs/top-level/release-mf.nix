@@ -555,7 +555,6 @@ in
   ripgrep = all;
   rkt = all;
   rlwrap = all;
-  rmilter = all;
   roxterm = all;
   rpm = all;
   rrdtool = all;
