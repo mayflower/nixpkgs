@@ -198,6 +198,18 @@ let
   };
   mailmanWebEnv = uwsgi.python3.withPackages (ps: [ configModule pkgs.postorius pkgs.hyperkitty ]);
   mailmanWebPythonPath = "${mailmanWebEnv}/${mailmanWebEnv.python.sitePackages}:${pkgs.postorius}/share/postorius";
+  mailmanWebAdminWrapper = pkgs.stdenv.mkDerivation rec {
+    name = "mailman-web-admin";
+    buildInputs = [ pkgs.makeWrapper ];
+    unpackPhase = ":";
+    installPhase = ''
+      mkdir -p $out/bin
+      makeWrapper ${pkgs.sudo}/bin/sudo $out/bin/mailman-web-admin \
+          --set DJANGO_SETTINGS_MODULE mailman_web_config \
+          --add-flags "-E -u mailman PYTHONPATH="${mailmanWebPythonPath}" \
+            ${pkgs.postorius}/share/postorius/example_project/manage.py"
+     '';
+  };
   mailmanUwsgi = pkgs.writeText "uwsgi.json" (builtins.toJSON {
     uwsgi = {
       plugins = [ "python3" ];
@@ -326,6 +338,8 @@ in {
     };
 
     users.extraGroups.mailman = { };
+
+    environment.systemPackages = [ mailmanWebAdminWrapper ];
 
     services.postgresql.enable = mkDefault true;
 
