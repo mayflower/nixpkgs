@@ -242,7 +242,7 @@
       gale = 223;
       matrix-synapse = 224;
       rspamd = 225;
-      rmilter = 226;
+      # rmilter = 226; # unused, removed 2018-01-18
       cfdyndns = 227;
       gammu-smsd = 228;
       pdnsd = 229;
@@ -517,7 +517,7 @@
       gale = 223;
       matrix-synapse = 224;
       rspamd = 225;
-      rmilter = 226;
+      # rmilter = 226; # unused, removed 2018-01-18
       cfdyndns = 227;
       pdnsd = 229;
       octoprint = 230;

@@ -198,6 +198,18 @@ let
   };
   mailmanWebEnv = uwsgi.python3.withPackages (ps: [ configModule pkgs.postorius pkgs.hyperkitty ]);
   mailmanWebPythonPath = "${mailmanWebEnv}/${mailmanWebEnv.python.sitePackages}:${pkgs.postorius}/share/postorius";
+  mailmanWebAdminWrapper = pkgs.stdenv.mkDerivation rec {
+    name = "mailman-web-admin";
+    buildInputs = [ pkgs.makeWrapper ];
+    unpackPhase = ":";
+    installPhase = ''
+      mkdir -p $out/bin
+      makeWrapper ${pkgs.sudo}/bin/sudo $out/bin/mailman-web-admin \
+          --set DJANGO_SETTINGS_MODULE mailman_web_config \
+          --add-flags "-E -u mailman PYTHONPATH="${mailmanWebPythonPath}" \
+            ${pkgs.postorius}/share/postorius/example_project/manage.py"
+     '';
+  };
   mailmanUwsgi = pkgs.writeText "uwsgi.json" (builtins.toJSON {
     uwsgi = {
       plugins = [ "python3" ];
@@ -327,6 +339,8 @@ in {
 
     users.extraGroups.mailman = { };
 
+    environment.systemPackages = [ mailmanWebAdminWrapper ];
+
     services.postgresql.enable = mkDefault true;
 
     systemd.tmpfiles.rules = [
@@ -398,6 +412,17 @@ in {
         ExecStart = "${mailmanWebEnv}/bin/django-admin qcluster --pythonpath ${pkgs.postorius}/share/postorius/example_project";
         User = "mailman";
         Restart = "always";
+      };
+    };
+    services.postfix = {
+      enable = mkDefault true;
+      recipientDelimiter = mkDefault "+";
+      config = {
+        unknown_local_recipient_reject_code = mkDefault "550";
+        owner_request_special = mkDefault "no";
+        transport_maps = [ "hash:/var/lib/mailman/data/postfix_lmtp" ];
+        local_recipient_maps = [ "hash:/var/lib/mailman/data/postfix_lmtp" ];
+        relay_domains = [ "hash:/var/lib/mailman/data/postfix_domains" ];
       };
     };
     services.nginx = {
