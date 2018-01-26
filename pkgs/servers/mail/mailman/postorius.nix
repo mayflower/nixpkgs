@@ -7,8 +7,8 @@ python3.pkgs.buildPythonApplication rec {
   src = fetchFromGitLab {
     owner = "globin";
     repo = "postorius";
-    rev = "fb6fbe891f022ccc5fa2aad1e8ef3577d7b50ffb";
-    sha256 = "0jfcpb2781aqgiyzavxv58sn783pg75vmjlaczkpj4xpaszbffjs";
+    rev = "884a8bf24396d1aafcbe70985f0465e1e4121d09";
+    sha256 = "0zl0syi2f9gdilc8vp3vgdavz75dbaagq1rdsgj8ldddkzdylnd6";
   };
 
   propagatedBuildInputs = with python3.pkgs; [

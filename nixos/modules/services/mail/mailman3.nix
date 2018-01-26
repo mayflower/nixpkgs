@@ -419,7 +419,6 @@ in {
       recipientDelimiter = mkDefault "+";
       config = {
         unknown_local_recipient_reject_code = mkDefault "550";
-        owner_request_special = mkDefault "no";
         transport_maps = [ "hash:/var/lib/mailman/data/postfix_lmtp" ];
         local_recipient_maps = [ "hash:/var/lib/mailman/data/postfix_lmtp" ];
         relay_domains = [ "hash:/var/lib/mailman/data/postfix_domains" ];
