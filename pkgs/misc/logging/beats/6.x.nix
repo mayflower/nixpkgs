@@ -1,14 +1,14 @@
-{ stdenv, fetchFromGitHub, elk5Version, buildGoPackage, libpcap }:
+{ stdenv, fetchFromGitHub, elk6Version, buildGoPackage, libpcap }:
 
 let beat = package : extraArgs : buildGoPackage (rec {
       name = "${package}-${version}";
-      version = elk5Version;
+      version = elk6Version;
 
       src = fetchFromGitHub {
         owner = "elastic";
         repo = "beats";
         rev = "v${version}";
-        sha256 = "1lbdi4c0y4bfkmim9q98ravknv4yw0dl3z57c3w5aqhi2sx0w23h";
+        sha256 = "05ay6hdc1jgi6b00bd998zc39ca8jhnk7i6m3mw70s0baqv1scik";
       };
 
       goPackagePath = "github.com/elastic/beats";

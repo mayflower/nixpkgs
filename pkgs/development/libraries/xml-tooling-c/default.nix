@@ -2,12 +2,12 @@
 
 stdenv.mkDerivation rec {
   name = "xml-tooling-c-${version}";
-  version = "1.6.0+git-2017-05-31"; # many openssl 1.1 compatibility fixes
+  version = "1.6.3";
 
   src = fetchgit {
     url = "https://git.shibboleth.net/git/cpp-xmltooling.git";
-    rev = "a31cae0d2e327011e3a67a576bfdff69911bf3c5";
-    sha256 = "1340j2fgkj6ai4sdnqjqfa4qf7srjn8425a25lyz7m10pxmy8ysm";
+    rev = version;
+    sha256 = "09z2pp3yy3kqx22vwgxyi3s0vlpdv9camw8dpi3q8piff6zxak3q";
   };
 
   buildInputs = [ boost curl openssl log4shib xercesc xml-security-c ];
