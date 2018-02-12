@@ -3,6 +3,8 @@ set -o pipefail
 
 : ${outputs:=out}
 
+# DUMMY FULL REBUILD
+
 
 ######################################################################
 # Hook handling.
