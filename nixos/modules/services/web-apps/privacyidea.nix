@@ -236,6 +236,7 @@ in
             ${pi-manage} createdb
             ${pi-manage} admin add admin -e ${cfg.adminEmail} -p ${cfg.adminPassword}
             touch "${cfg.stateDir}/db-created"
+            chmod g+r "${cfg.stateDir}/enckey" "${cfg.stateDir}/private.pem"
           fi
         '';
         serviceConfig = {
