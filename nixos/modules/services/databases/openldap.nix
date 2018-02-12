@@ -184,7 +184,7 @@ in {
       script = ''
         ${openldap.out}/libexec/slapd \
           -u ${cfg.user} -g ${cfg.group} -d 0 \
-          -h ${concatStringsSep " " cfg.urlList} \
+          -h "${concatStringsSep " " cfg.urlList}" \
           ${if cfg.configDir == null
             then "-f " + configFile
             else "-F " + cfg.configDir}
