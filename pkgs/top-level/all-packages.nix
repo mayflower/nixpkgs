@@ -3038,10 +3038,12 @@ with pkgs;
 
   nodejs-4_x = callPackage ../development/web/nodejs/v4.nix {
     libtool = darwin.cctools;
+    openssl = openssl_1_0_2;
   };
 
   nodejs-slim-4_x = callPackage ../development/web/nodejs/v4.nix {
     libtool = darwin.cctools;
+    openssl = openssl_1_0_2;
     enableNpm = false;
   };
 
@@ -3052,15 +3054,18 @@ with pkgs;
 
   nodejs-slim-6_x = callPackage ../development/web/nodejs/v6.nix {
     libtool = darwin.cctools;
+    openssl = openssl_1_0_2;
     enableNpm = false;
   };
 
   nodejs-8_x = callPackage ../development/web/nodejs/v8.nix {
     libtool = darwin.cctools;
+    openssl = openssl_1_0_2;
   };
 
   nodejs-slim-8_x = callPackage ../development/web/nodejs/v8.nix {
     libtool = darwin.cctools;
+    openssl = openssl_1_0_2;
     enableNpm = false;
   };
 
