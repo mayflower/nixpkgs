@@ -178,10 +178,6 @@ in stdenv.mkDerivation rec {
     postPatch = ''
       substituteInPlace xbmc/linux/LinuxTimezone.cpp \
         --replace 'usr/share/zoneinfo' 'etc/zoneinfo'
-      substituteInPlace xbmc/dbwrappers/mysqldataset.h \
-        --replace "mysql/mysql.h" "mysql.h"
-      substituteInPlace xbmc/dbwrappers/mysqldataset.cpp \
-        --replace "mysql/errmsg.h" "errmsg.h"
     '';
 
     preConfigure = ''

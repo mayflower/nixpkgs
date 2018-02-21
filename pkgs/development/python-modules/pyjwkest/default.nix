@@ -5,7 +5,7 @@
 buildPythonPackage rec {
   pname = "pyjwkest";
   name = "${pname}-${version}";
-  version = "1.3.6";
+  version = "1.4.0";
 
   meta = {
     description = "Implementation of JWT, JWS, JWE and JWK";
@@ -15,7 +15,7 @@ buildPythonPackage rec {
 
   src = fetchPypi {
     inherit pname version;
-    sha256 = "60e1369db5fe67014450877f9933ff587be404a2be9eebccc0cadd4ec6236f78";
+    sha256 = "128e3c81d02993ac4cd7e29ef7aac767d91daa59380e6883ae589092945e4aad";
   };
 
   buildInputs = [ pytest ];

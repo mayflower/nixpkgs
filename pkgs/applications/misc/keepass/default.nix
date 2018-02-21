@@ -8,11 +8,11 @@
 # plugin derivations in the Nix store and nowhere else.
 with builtins; buildDotnetPackage rec {
   baseName = "keepass";
-  version = "2.36";
+  version = "2.38";
 
   src = fetchurl {
     url = "mirror://sourceforge/keepass/KeePass-${version}-Source.zip";
-    sha256 = "1j6qhy8h3z6higbpq3q9v04amvgbn90yj3kbsvj17azdkffkwzny";
+    sha256 = "0m33gfpvv01xc28k4rrc8llbyk6qanm9rsqcnv8ydms0cr78dbbk";
   };
 
   httpPlugin = fetchurl {
@@ -23,23 +23,6 @@ with builtins; buildDotnetPackage rec {
   sourceRoot = ".";
 
   buildInputs = [ unzip makeWrapper icoutils ];
-
-  pluginLoadPathsPatch =
-    let outputLc = toString (add 7 (length plugins));
-        patchTemplate = readFile ./keepass-plugins.patch;
-        loadTemplate  = readFile ./keepass-plugins-load.patch;
-        loads =
-          lib.concatStrings
-            (map
-              (p: replaceStrings ["$PATH$"] [ (unsafeDiscardStringContext (toString p)) ] loadTemplate)
-              plugins);
-    in replaceStrings ["$OUTPUT_LC$" "$DO_LOADS$"] [outputLc loads] patchTemplate;
-
-  passAsFile = [ "pluginLoadPathsPatch" ];
-  postPatch = ''
-    sed -i 's/\r*$//' KeePass/Forms/MainForm.cs
-    patch -p1 <$pluginLoadPathsPatchPath
-  '';
 
   preConfigure = ''
     rm -rvf Build/*
@@ -105,7 +88,7 @@ with builtins; buildDotnetPackage rec {
   meta = {
     description = "GUI password manager with strong cryptography";
     homepage = http://www.keepass.info/;
-    maintainers = with stdenv.lib.maintainers; [ amorsillo obadz jraygauthier ];
+    maintainers = with stdenv.lib.maintainers; [ amorsillo obadz joncojonathan jraygauthier ];
     platforms = with stdenv.lib.platforms; all;
     license = stdenv.lib.licenses.gpl2;
   };

@@ -9,11 +9,11 @@
 
 stdenv.mkDerivation rec {
   name    = "sbcl-${version}";
-  version = "1.3.20";
+  version = "1.4.3";
 
   src = fetchurl {
     url    = "mirror://sourceforge/project/sbcl/sbcl/${version}/${name}-source.tar.bz2";
-    sha256 = "0qhzrl2msdyzqp3165qlh9s6jrif5rddsmj9q50z0bxnaf0330jj";
+    sha256 = "1z8d11k6vc6jhmpwzy0nawj84qdd2jvibrvqmb1nmq3h8w64hlam";
   };
 
   patchPhase = ''
@@ -35,7 +35,7 @@ stdenv.mkDerivation rec {
     # SBCL checks whether files are up-to-date in many places..
     # Unfortunately, same timestamp is not good enough
     sed -e 's@> x y@>= x y@' -i contrib/sb-aclrepl/repl.lisp
-    sed -e '/(date)/i((= date 2208988801) 2208988800)' -i contrib/asdf/asdf.lisp
+    #sed -e '/(date)/i((= date 2208988801) 2208988800)' -i contrib/asdf/asdf.lisp
     sed -i src/cold/slam.lisp -e \
       '/file-write-date input/a)'
     sed -i src/cold/slam.lisp -e \
@@ -91,7 +91,7 @@ stdenv.mkDerivation rec {
 
   # Specifying $SBCL_HOME is only truly needed with `purgeNixReferences = true`.
   setupHook = writeText "setupHook.sh" ''
-    envHooks+=(_setSbclHome)
+    addEnvHooks "$targetOffset" _setSbclHome
     _setSbclHome() {
       export SBCL_HOME='@out@/lib/sbcl/'
     }

@@ -1,6 +1,6 @@
 { stdenv, fetchurl, python, buildPythonPackage
 , numpy, hdf5, cython, six, pkgconfig
-, mpi4py ? null }:
+, mpi4py ? null, openssh }:
 
 assert hdf5.mpiSupport -> mpi4py != null && hdf5.mpi == mpi4py.mpi;
 
@@ -24,15 +24,20 @@ in buildPythonPackage rec {
 
   postConfigure = ''
     ${python.executable} setup.py configure ${configure_flags}
+
+    # Needed to run the tests reliably. See:
+    # https://bitbucket.org/mpi4py/mpi4py/issues/87/multiple-test-errors-with-openmpi-30
+    ${optionalString mpiSupport "export OMPI_MCA_rmaps_base_oversubscribe=yes"}
   '';
 
   preBuild = if mpiSupport then "export CC=${mpi}/bin/mpicc" else "";
 
-  buildInputs = [ hdf5 cython pkgconfig ]
+  nativeBuildInputs = [ pkgconfig ];
+  buildInputs = [ hdf5 cython ]
     ++ optional mpiSupport mpi
     ;
   propagatedBuildInputs = [ numpy six]
-    ++ optional mpiSupport mpi4py
+    ++ optionals mpiSupport [ mpi4py openssh ]
     ;
 
   meta = {

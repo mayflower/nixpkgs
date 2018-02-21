@@ -1,4 +1,4 @@
-{ stdenv, fetchurl, pkgconfig, gnutls, jansson, liburcu, lmdb, libcap_ng, libidn
+{ stdenv, fetchurl, pkgconfig, gnutls, liburcu, lmdb, libcap_ng, libidn
 , systemd, nettle, libedit, zlib, libiconv, libintlOrEmpty
 , fetchpatch
 }:
@@ -8,43 +8,25 @@ let inherit (stdenv.lib) optional optionals; in
 # Note: ATM only the libraries have been tested in nixpkgs.
 stdenv.mkDerivation rec {
   name = "knot-dns-${version}";
-  version = "2.6.0";
+  version = "2.6.5";
 
   src = fetchurl {
     url = "http://secure.nic.cz/files/knot-dns/knot-${version}.tar.xz";
-    sha256 = "68e04961d0bf6ba193cb7ec658b295c4ff6e60b3754d64bcd77ebdcee0f283fd";
+    sha256 = "33cd676706e2baeb37cf3879ccbc91a1e1cd1ee5d7a082adff4d1e753ce49d46";
   };
-
-  patches = [
-    # remove both for >= 2.6.1
-    (fetchpatch {
-      name = "kdig-tls.patch";
-      url = "https://gitlab.labs.nic.cz/knot/knot-dns/commit/b72d5cd032795.diff";
-      sha256 = "0ig31rp82j49jh8n3s0dcf5abhh35mcp2k2wii7bh0c60ngb29k6";
-    })
-    (fetchpatch {
-      name = "kdig-tls-sni.patch";
-      url = "https://gitlab.labs.nic.cz/knot/knot-dns/commit/2e94ccee671ec70e.diff";
-      sha256 = "0psl6650v7g240i8w196v7zxy6j11d0aa6hm11b7vnaimjshgibv";
-    })
-  ];
 
   outputs = [ "bin" "out" "dev" ];
 
   nativeBuildInputs = [ pkgconfig ];
   buildInputs = [
-    gnutls jansson liburcu libidn
+    gnutls liburcu libidn
     nettle libedit
-    libiconv
+    libiconv lmdb
     # without sphinx &al. for developer documentation
   ]
-    # Use embedded lmdb there for now, as detection is broken on Darwin somehow.
-    ++ optionals stdenv.isLinux [ libcap_ng systemd lmdb ]
+    ++ optionals stdenv.isLinux [ libcap_ng systemd ]
     ++ libintlOrEmpty
     ++ optional stdenv.isDarwin zlib; # perhaps due to gnutls
-
-  # Not ideal but seems to work on Linux.
-  configureFlags = optional stdenv.isLinux "--with-lmdb=${stdenv.lib.getLib lmdb}";
 
   enableParallelBuilding = true;
 

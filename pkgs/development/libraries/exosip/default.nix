@@ -10,15 +10,8 @@ stdenv.mkDerivation rec {
   };
 
   nativeBuildInputs = [ pkgconfig ];
-  buildInputs = [ libosip openssl pkgconfig ];
-
-  patches = [
-    (fetchpatch {
-      url = "https://sources.debian.net/data/main/libe/libexosip2/4.1.0-2.1/debian/patches/openssl110.patch";
-      sha256 = "01q2dax7pwh197mn18r22y38mrsky85mvs9vbkn9fpcilrdayal6";
-    })
-  ];
-
+  buildInputs = [ libosip openssl ];
+      
   meta = with stdenv.lib; {
     license = licenses.gpl2Plus;
     description = "Library that hides the complexity of using the SIP protocol";

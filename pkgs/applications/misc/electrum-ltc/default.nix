@@ -20,8 +20,8 @@ python3Packages.buildPythonApplication rec {
     qrcode
     py_scrypt
     pyqt5
-    protobuf3_2
-    dns
+    protobuf
+    dnspython
     jsonrpclib-pelix
     pysocks
   ];

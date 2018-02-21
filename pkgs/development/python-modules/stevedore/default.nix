@@ -1,18 +1,17 @@
-{ stdenv, buildPythonPackage, fetchPypi, oslosphinx, pbr, six, argparse }:
+{ stdenv, buildPythonPackage, fetchPypi, pbr, six, argparse }:
 
 buildPythonPackage rec {
   pname = "stevedore";
-  version = "1.25.1";
+  version = "1.28.0";
   name = "${pname}-${version}";
 
   src = fetchPypi {
     inherit pname version;
-    sha256 = "4def435de90ba69c69954e641cdf877f5e5d660568c355c5c6805710c15d8504";
+    sha256 = "f1c7518e7b160336040fee272174f1f7b29a46febb3632502a8f2055f973d60b";
   };
 
   doCheck = false;
 
-  buildInputs = [ oslosphinx ];
   propagatedBuildInputs = [ pbr six argparse ];
 
   meta = with stdenv.lib; {

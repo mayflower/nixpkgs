@@ -1,8 +1,9 @@
 { lib, fetchFromGitHub, buildPythonPackage, cython, slurm }:
 
 buildPythonPackage rec {
-  name = "pyslurm-${version}";
+  pname = "pyslurm";
   version = "20171102";
+  name = pname + "-" + version;
 
   src = fetchFromGitHub {
     repo = "pyslurm";

@@ -1,5 +1,5 @@
 { stdenv, lib, janePackage, ocaml, ocamlbuild, cryptokit, ctypes, magic-mime,
-  ocaml-migrate-parsetree, octavius, ounit, ppx_deriving, re, zarith,
+  ocaml-migrate-parsetree, octavius, ounit, ppx_deriving, re, zarith, num,
   openssl }:
 
 rec {
@@ -8,15 +8,16 @@ rec {
 
   sexplib = janePackage {
     name = "sexplib";
-    version = "0.9.2";
-    hash = "0szj7gi5ksy7kif5g71rkr6xhxc41xl8hq6s5zz610cjyngzyzjl";
     meta.description = "Automated S-expression conversion";
+    version = "0.10.0";
+    hash = "1agw649n0rnf6h4y2dr1zs1970nncxgjmf90848vbxv8y9im4yy2";
+    buildInputs = [ num ];
   };
 
   base = janePackage {
     name = "base";
-    version = "0.9.3";
-    hash = "14v3zsr7za9h1gkxdmkk1yagnrfjk3y9snraywv9hsqbhv39ajvv";
+    version = "0.9.4";
+    hash = "0x85xi66b4zwlbdwmyc99zcmawgpp75gxqbl55rr67awavw162rw";
     propagatedBuildInputs = [ sexplib ];
     meta.description = "Full standard library replacement for OCaml";
   };
@@ -27,12 +28,19 @@ rec {
     meta.description = "OCaml compiler libraries repackaged";
   };
 
-  ppx_ast = janePackage {
+  ppx_ast = janePackage ({
     name = "ppx_ast";
-    hash = "0p9v4q3cjz8wwdrh6bjidani2npzvhdy8isnqwigqkl6n326dba9";
     propagatedBuildInputs = [ ocaml-compiler-libs ocaml-migrate-parsetree ];
     meta.description = "OCaml AST used by Jane Street ppx rewriters";
-  };
+  } // (if lib.versionAtLeast ocaml.version "4.06"
+    then {
+      version = "0.9.2";
+      hash = "1h4qf26rg23z21rrw83fakiavw9km7174p3830pg0gg4bwakvba0";
+    } else {
+      version = "0.9.1";
+      hash = "0a9rxwavy2748k0yd4db3hg1ypq7mpqnwq9si5a5qdiclgkhcggw";
+    }
+  ));
 
   ppx_traverse_builtins = janePackage {
     name = "ppx_traverse_builtins";
@@ -42,7 +50,8 @@ rec {
 
   stdio = janePackage {
     name = "stdio";
-    hash = "1c08jg930j7yxn0sjvlm3fs2fvwaf15sn9513yf1rb7y1lxrgwc4";
+    version = "0.9.1";
+    hash = "13rj3ii0rvmklfim9ild0ib44ssdadig7a9ccjbz22m0pw84a1sx";
     propagatedBuildInputs = [ base ];
     meta.description = "Standard IO library for OCaml";
   };

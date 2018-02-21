@@ -14,15 +14,12 @@ assert selinuxSupport -> libselinux != null && libsepol != null;
 with lib;
 
 stdenv.mkDerivation rec {
-  name = "coreutils-8.28";
+  name = "coreutils-8.29";
 
   src = fetchurl {
     url = "mirror://gnu/coreutils/${name}.tar.xz";
-    sha256 = "0r8c1bgm68kl70j1lgd0rv12iykw6143k4m9a56xip9rc2hv25qi";
+    sha256 = "0plm1zs9il6bb5mk881qvbghq4glc8ybbgakk2lfzb0w64fgml4j";
   };
-
-  # FIXME needs gcc 4.9 in bootstrap tools
-  hardeningDisable = [ "stackprotector" ];
 
   patches = optional hostPlatform.isCygwin ./coreutils-8.23-4.cygwin.patch;
 
@@ -78,8 +75,6 @@ stdenv.mkDerivation rec {
 
   NIX_LDFLAGS = optionalString selinuxSupport "-lsepol";
   FORCE_UNSAFE_CONFIGURE = optionalString hostPlatform.isSunOS "1";
-
-  makeFlags = optionalString hostPlatform.isDarwin "CFLAGS=-D_FORTIFY_SOURCE=0";
 
   # Works around a bug with 8.26:
   # Makefile:3440: *** Recursive variable 'INSTALL' references itself (eventually).  Stop.

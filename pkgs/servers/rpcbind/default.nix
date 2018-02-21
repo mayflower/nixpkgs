@@ -1,4 +1,4 @@
-{ fetchurl, stdenv, pkgconfig, libtirpc, fetchpatch
+{ fetchurl, stdenv, pkgconfig, libnsl, libtirpc, fetchpatch
 , useSystemd ? true, systemd }:
 
 stdenv.mkDerivation rec {
@@ -19,7 +19,7 @@ stdenv.mkDerivation rec {
     })
   ];
 
-  buildInputs = [ libtirpc ]
+  buildInputs = [ libnsl libtirpc ]
              ++ stdenv.lib.optional useSystemd systemd;
 
   configureFlags = [
@@ -34,7 +34,7 @@ stdenv.mkDerivation rec {
     description = "ONC RPC portmapper";
     license = licenses.bsd3;
     platforms = platforms.unix;
-    homepage = http://sourceforge.net/projects/rpcbind/;
+    homepage = https://sourceforge.net/projects/rpcbind/;
     maintainers = with maintainers; [ abbradar ];
     longDescription = ''
       Universal addresses to RPC program number mapper.

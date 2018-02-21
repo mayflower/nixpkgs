@@ -139,17 +139,17 @@ in {
       description = "Graylog input plugin that reads MongoDB profiler data";
     };
   };
-  netflow = glPlugin rec {
-    name = "graylog-netflow-${version}";
-    pluginName = "graylog-plugin-netflow";
-    version = "0.1.1";
+  pagerduty = glPlugin rec {
+    name = "graylog-pagerduty-${version}";
+    pluginName = "graylog-plugin-pagerduty";
+    version = "1.3.0";
     src = fetchurl {
-      url = "https://github.com/Graylog2/${pluginName}/releases/download/${version}/${pluginName}-${version}.jar";
-      sha256 = "1pdv12f9dca1rxf62ds51n79cjhkkyj0gjny8kj1cq64vlayc9x9";
+      url = "https://github.com/graylog-labs/${pluginName}/releases/download/${version}/${pluginName}-${version}.jar";
+      sha256 = "1g63c6rm5pkz7f0d73wb2lmk4zm430jqnhihbyq112cm4i7ymglh";
     };
     meta = {
-      homepage = https://github.com/Graylog2/graylog-plugin-netflow;
-      description = "Graylog NetFlow plugin";
+      homepage = https://github.com/graylog-labs/graylog-plugin-pagerduty;
+      description = "An alarm callback plugin for integrating PagerDuty into Graylog";
     };
   };
   pagerduty = glPlugin rec {
@@ -204,17 +204,17 @@ in {
       description = "Correlate proton density to the response time of your app and the ion temperature to your exception rate.";
     };
   };
-  threatintel = glPlugin rec {
-    name = "graylog-threatintel-${version}";
-    pluginName = "graylog-plugin-threatintel";
-    version = "0.10.0";
+  twiliosms = glPlugin rec {
+    name = "graylog-twiliosms-${version}";
+    pluginName = "graylog-plugin-twiliosms";
+    version = "1.0.0";
     src = fetchurl {
-      url = "https://github.com/Graylog2/${pluginName}/releases/download/${version}/${pluginName}-${version}.jar";
-      sha256 = "0clg0vy8aipw122rfqww1lnjriazlnnh77pqiy5vnmv6ycjw0y4i";
+      url = "https://github.com/graylog-labs/${pluginName}/releases/download/${version}/${pluginName}-${version}.jar";
+      sha256 = "0kwfv1zfj0fmxh9i6413bcsaxrn1vdwrzb6dphvg3dx27wxn1j1a";
     };
     meta = {
-      homepage = https://github.com/Graylog2/graylog-plugin-threatintel;
-      description = "Graylog Processing Pipeline functions to enrich log messages with IoC information from threat intelligence databases";
+      homepage = https://github.com/graylog-labs/graylog-plugin-twiliosms;
+      description = "An alarm callback plugin for integrating the Twilio SMS API into Graylog";
     };
   };
   twiliosms = glPlugin rec {

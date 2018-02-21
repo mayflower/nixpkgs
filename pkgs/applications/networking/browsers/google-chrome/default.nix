@@ -38,13 +38,12 @@
 
 with stdenv.lib;
 
-with chromium.upstream-info;
-
 let
   opusWithCustomModes = libopus.override {
     withCustomModes = true;
   };
 
+  version = chromium.upstream-info.version;
   gtk = if (versionAtLeast version "59.0.0.0") then gtk3 else gtk2;
   gnome = if (versionAtLeast version "59.0.0.0") then gnome3 else gnome2;
 
@@ -68,7 +67,7 @@ in stdenv.mkDerivation rec {
 
   name = "google-chrome${suffix}-${version}";
 
-  src = binary;
+  src = chromium.upstream-info.binary;
 
   buildInputs = [
     patchelf
@@ -139,6 +138,6 @@ in stdenv.mkDerivation rec {
     homepage = https://www.google.com/chrome/browser/;
     license = licenses.unfree;
     maintainers = [ maintainers.msteen ];
-    platforms = platforms.linux;
+    platforms = [ "x86_64-linux" ];
   };
 }

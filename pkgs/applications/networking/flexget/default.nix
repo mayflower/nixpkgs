@@ -24,9 +24,6 @@ buildPythonApplication rec {
   # unicode-capable filesystem (and setting LC_ALL doesn't work).
   # setlocale: LC_ALL: cannot change locale (en_US.UTF-8)
   postPatch = ''
-    sed -i '/def test_non_ascii/i\    import pytest\
-        @pytest.mark.skip' flexget/tests/test_filesystem.py
-
     substituteInPlace requirements.txt \
       --replace "chardet==3.0.3" "chardet" \
       --replace "rebulk==0.8.2" "rebulk" \
@@ -36,8 +33,12 @@ buildPythonApplication rec {
       --replace "zxcvbn-python==4.4.15" "zxcvbn-python" \
       --replace "flask-cors==3.0.2" "flask-cors" \
       --replace "certifi==2017.4.17" "certifi" \
+      --replace "apscheduler==3.3.1" "apscheduler" \
+      --replace "path.py==10.3.1" "path.py" \
+      --replace "tempora==1.8" "tempora" \
       --replace "cheroot==5.5.0" "cheroot" \
-      --replace "plumbum==1.6.3" "plumbum" \
+      --replace "six==1.10.0" "six" \
+      --replace "aniso8601==1.2.1" "aniso8601"
   '';
 
   checkPhase = ''
@@ -49,7 +50,8 @@ buildPythonApplication rec {
                                           and not test_double_episodes \
                                           and not test_inject_force \
                                           and not test_double_prefered \
-                                          and not test_double"
+                                          and not test_double \
+                                          and not test_non_ascii"
   '';
 
   buildInputs = [ pytest mock vcrpy pytest-catchlog boto3 ];
@@ -73,5 +75,6 @@ buildPythonApplication rec {
     description = "Multipurpose automation tool for content like torrents";
     license = lib.licenses.mit;
     maintainers = with lib.maintainers; [ domenkozar tari ];
+    broken = true; # as of 2018-02-09
   };
 }

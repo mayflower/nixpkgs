@@ -1,36 +1,27 @@
 args @ { fetchurl, ... }:
 rec {
   baseName = ''babel'';
-  version = ''20170630-git'';
+  version = ''20171227-git'';
 
   description = ''Babel, a charset conversion library.'';
 
-  deps = [ args."trivial-features" args."alexandria" ];
+  deps = [ args."alexandria" args."trivial-features" ];
 
   src = fetchurl {
-    url = ''http://beta.quicklisp.org/archive/babel/2017-06-30/babel-20170630-git.tgz'';
-    sha256 = ''0w1jfzdklk5zz9vgplr2a0vc6gybrwl8wa72nj6xs4ihp7spf0lx'';
+    url = ''http://beta.quicklisp.org/archive/babel/2017-12-27/babel-20171227-git.tgz'';
+    sha256 = ''166y6j9ma1vxzy5bcwnbi37zwgn2zssx5x1q7zr63kyj2caiw2rf'';
   };
-    
+
   packageName = "babel";
 
-  overrides = x: {
-    postInstall = ''
-      find "$out/lib/common-lisp/" -name '*.asd' | grep -iv '/babel[.]asd${"$"}' |
-        while read f; do
-          env -i \
-          NIX_LISP="$NIX_LISP" \
-          NIX_LISP_PRELAUNCH_HOOK="nix_lisp_run_single_form '(progn
-            (asdf:load-system :$(basename "$f" .asd))
-            (asdf:perform (quote asdf:compile-bundle-op) :$(basename "$f" .asd))
-            (ignore-errors (asdf:perform (quote asdf:deliver-asd-op) :$(basename "$f" .asd)))
-            )'" \
-            "$out"/bin/*-lisp-launcher.sh ||
-          mv "$f"{,.sibling}; done || true
-    '';
-  };
+  asdFilesToKeep = ["babel.asd"];
+  overrides = x: x;
 }
-/* (SYSTEM babel DESCRIPTION Babel, a charset conversion library. SHA256 0w1jfzdklk5zz9vgplr2a0vc6gybrwl8wa72nj6xs4ihp7spf0lx URL
-    http://beta.quicklisp.org/archive/babel/2017-06-30/babel-20170630-git.tgz MD5 aa7eff848b97bb7f7aa6bdb43a081964 NAME babel TESTNAME NIL FILENAME babel DEPS
-    ((NAME trivial-features FILENAME trivial-features) (NAME alexandria FILENAME alexandria)) DEPENDENCIES (trivial-features alexandria) VERSION 20170630-git
-    SIBLINGS (babel-streams babel-tests)) */
+/* (SYSTEM babel DESCRIPTION Babel, a charset conversion library. SHA256
+    166y6j9ma1vxzy5bcwnbi37zwgn2zssx5x1q7zr63kyj2caiw2rf URL
+    http://beta.quicklisp.org/archive/babel/2017-12-27/babel-20171227-git.tgz
+    MD5 8ea39f73873847907a8bb67f99f16ecd NAME babel FILENAME babel DEPS
+    ((NAME alexandria FILENAME alexandria)
+     (NAME trivial-features FILENAME trivial-features))
+    DEPENDENCIES (alexandria trivial-features) VERSION 20171227-git SIBLINGS
+    (babel-streams babel-tests) PARASITES NIL) */

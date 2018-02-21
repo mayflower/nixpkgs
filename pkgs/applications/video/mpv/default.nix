@@ -1,4 +1,4 @@
-{ stdenv, fetchurl, fetchpatch, fetchFromGitHub, makeWrapper
+{ stdenv, fetchurl, fetchFromGitHub, fetchpatch, makeWrapper
 , docutils, perl, pkgconfig, python3, which, ffmpeg
 , freefont_ttf, freetype, libass, libpthreadstubs
 , lua, lua5_sockets, libuchardet, libiconv ? null, darwin
@@ -173,7 +173,7 @@ in stdenv.mkDerivation rec {
   '' + optionalString youtubeSupport ''
       --prefix PATH : "${youtube-dl}/bin" \
   '' + optionalString vapoursynthSupport ''
-      --prefix PYTHONPATH : "$(toPythonPath ${vapoursynth}):$PYTHONPATH"
+      --prefix PYTHONPATH : "${vapoursynth}/lib/${python3.libPrefix}/site-packages:$PYTHONPATH"
   '' + ''
 
     cp TOOLS/umpv $out/bin

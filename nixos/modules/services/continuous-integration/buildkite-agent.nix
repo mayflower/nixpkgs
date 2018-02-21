@@ -15,12 +15,33 @@ in
     services.buildkite-agent = {
       enable = mkEnableOption "buildkite-agent";
 
-      token = mkOption {
-        type = types.either types.str types.path;
+      package = mkOption {
+        default = pkgs.buildkite-agent;
+        defaultText = "pkgs.buildkite-agent";
+        description = "Which buildkite-agent derivation to use";
+        type = types.package;
+      };
+
+      dataDir = mkOption {
+        default = "/var/lib/buildkite-agent";
+        description = "The workdir for the agent";
+        type = types.str;
+      };
+
+      runtimePackages = mkOption {
+        default = [ pkgs.bash pkgs.nix ];
+        defaultText = "[ pkgs.bash pkgs.nix ]";
+        description = "Add programs to the buildkite-agent environment";
+        type = types.listOf types.package;
+      };
+
+      tokenPath = mkOption {
+        type = types.path;
         description = ''
           The token from your Buildkite "Agents" page.
 
-          Either a literal string value, or a path to the token file.
+          A run-time path to the token file, which is supposed to be provisioned
+          outside of Nix store.
         '';
       };
 
@@ -49,20 +70,22 @@ in
       };
 
       openssh =
-        { privateKey = mkOption {
-            type = types.either types.str types.path;
+        { privateKeyPath = mkOption {
+            type = types.path;
             description = ''
               Private agent key.
 
-              Either a literal string value, or a path to the token file.
+              A run-time path to the key file, which is supposed to be provisioned
+              outside of Nix store.
             '';
           };
-          publicKey = mkOption {
-            type = types.either types.str types.path;
+          publicKeyPath = mkOption {
+            type = types.path;
             description = ''
               Public agent key.
 
-              Either a literal string value, or a path to the token file.
+              A run-time path to the key file, which is supposed to be provisioned
+              outside of Nix store.
             '';
           };
         };
@@ -72,43 +95,40 @@ in
   config = mkIf config.services.buildkite-agent.enable {
     users.extraUsers.buildkite-agent =
       { name = "buildkite-agent";
-        home = "/var/lib/buildkite-agent";
+        home = cfg.dataDir;
         createHome = true;
         description = "Buildkite agent user";
         extraGroups = [ "keys" ];
       };
 
-    environment.systemPackages = [ pkgs.buildkite-agent ];
+    environment.systemPackages = [ cfg.package ];
 
     systemd.services.buildkite-agent =
-      let copyOrEcho       = x: target: perms:
-                             (if isPath x
-                              then "cp -f ${x} ${target}; "
-                              else "echo '${x}' > ${target}; ")
-                             + "${pkgs.coreutils}/bin/chmod ${toString perms} ${target}; ";
-          catOrLiteral     = x:
-                             (if isPath x
-                              then "$(cat ${toString x})"
-                              else "${x}");
+      let copy = x: target: perms:
+                 "cp -f ${x} ${target}; ${pkgs.coreutils}/bin/chmod ${toString perms} ${target}; ";
       in
       { description = "Buildkite Agent";
         wantedBy = [ "multi-user.target" ];
         after = [ "network.target" ];
-        environment.HOME = "/var/lib/buildkite-agent";
+        path = cfg.runtimePackages;
+        environment = config.networking.proxy.envVars // {
+          HOME = cfg.dataDir;
+          NIX_REMOTE = "daemon";
+        };
 
         ## NB: maximum care is taken so that secrets (ssh keys and the CI token)
         ##     don't end up in the Nix store.
         preStart = ''
-            ${pkgs.coreutils}/bin/mkdir -m 0700 -p /var/lib/buildkite-agent/.ssh
-            ${copyOrEcho (toString cfg.openssh.privateKey) "/var/lib/buildkite-agent/.ssh/id_rsa"     600}
-            ${copyOrEcho (toString cfg.openssh.publicKey)  "/var/lib/buildkite-agent/.ssh/id_rsa.pub" 600}
+            ${pkgs.coreutils}/bin/mkdir -m 0700 -p ${cfg.dataDir}/.ssh
+            ${copy (toString cfg.openssh.privateKeyPath) "${cfg.dataDir}/.ssh/id_rsa"     600}
+            ${copy (toString cfg.openssh.publicKeyPath)  "${cfg.dataDir}/.ssh/id_rsa.pub" 600}
 
-            cat > "/var/lib/buildkite-agent/buildkite-agent.cfg" <<EOF
-            token="${catOrLiteral cfg.token}"
+            cat > "${cfg.dataDir}/buildkite-agent.cfg" <<EOF
+            token="$(cat ${toString cfg.tokenPath})"
             name="${cfg.name}"
             meta-data="${cfg.meta-data}"
-            hooks-path="${toString cfg.hooksPath}"
-            build-path="/var/lib/buildkite-agent/builds"
+            build-path="${cfg.dataDir}/builds"
+            hooks-path="${cfg.hooksPath}"
             bootstrap-script="${pkgs.buildkite-agent}/share/bootstrap.sh"
             EOF
           '';
@@ -122,4 +142,9 @@ in
           };
       };
   };
+  imports = [
+    (mkRenamedOptionModule [ "services" "buildkite-agent" "token" ]                [ "services" "buildkite-agent" "tokenPath" ])
+    (mkRenamedOptionModule [ "services" "buildkite-agent" "openssh" "privateKey" ] [ "services" "buildkite-agent" "openssh" "privateKeyPath" ])
+    (mkRenamedOptionModule [ "services" "buildkite-agent" "openssh" "publicKey" ]  [ "services" "buildkite-agent" "openssh" "publicKeyPath" ])
+  ];
 }

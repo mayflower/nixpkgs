@@ -23,11 +23,11 @@ let
 
 in
 stdenv.mkDerivation rec {
-  name = "gst-plugins-bad-1.10.4";
+  name = "gst-plugins-bad-1.12.3";
 
   meta = with stdenv.lib; {
     description = "Gstreamer Bad Plugins";
-    homepage    = "http://gstreamer.freedesktop.org";
+    homepage    = "https://gstreamer.freedesktop.org";
     longDescription = ''
       a set of plug-ins that aren't up to par compared to the
       rest.  They might be close to being good quality, but they're missing
@@ -39,12 +39,12 @@ stdenv.mkDerivation rec {
   };
 
   patchPhase = ''
-    sed -i 's/openjpeg-2.1/openjpeg-${openJpegVersion}/' ext/openjpeg/*
+    sed -i 's/openjpeg-2.2/openjpeg-${openJpegVersion}/' ext/openjpeg/*
   '';
 
   src = fetchurl {
     url = "${meta.homepage}/src/gst-plugins-bad/${name}.tar.xz";
-    sha256 = "0rk9rlzf2b0hjw5hwbadz53yh4ls7vm3w3cshsa3n8isdd8axp93";
+    sha256 = "1v5z3i5ha20gmbb3r9dwsaaspv5fm1jfzlzwlzqx1gjj31v5kl1n";
   };
 
   outputs = [ "out" "dev" ];
@@ -70,4 +70,6 @@ stdenv.mkDerivation rec {
     ++ optional (!stdenv.isDarwin) wildmidi;
 
   LDFLAGS = optionalString stdenv.isDarwin "-lintl";
+
+  enableParallelBuilding = true;
 }

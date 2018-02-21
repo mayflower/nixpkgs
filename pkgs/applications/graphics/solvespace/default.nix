@@ -15,7 +15,6 @@ stdenv.mkDerivation rec {
   nativeBuildInputs = [
     pkgconfig cmake wrapGAppsHook
   ];
-
   buildInputs = [
     zlib libpng cairo freetype
     json_c fontconfig gtkmm3 pangomm glew mesa_glu

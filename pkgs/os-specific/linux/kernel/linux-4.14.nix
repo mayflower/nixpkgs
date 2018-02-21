@@ -1,8 +1,8 @@
-{ stdenv, hostPlatform, fetchurl, perl, buildLinux, ... } @ args:
+{ stdenv, buildPackages, hostPlatform, fetchurl, perl, buildLinux, ... } @ args:
 
 with stdenv.lib;
 
-import ./generic.nix (args // rec {
+buildLinux (args // rec {
   version = "4.14.18";
 
   # branchVersion needs to be x.y

@@ -1,4 +1,4 @@
-{pkgs, system, nodejs}:
+{pkgs, system, nodejs, stdenv}:
 
 let
   nodePackages = import ./composition-v4.nix {

@@ -1,4 +1,5 @@
 { stdenv, callPackage, fetchurl, fetchpatch, fetchgit
+, ocamlPackages_4_02
 , withInternalQemu ? true
 , withInternalTraditionalQemu ? true
 , withInternalSeabios ? true
@@ -247,4 +248,10 @@ callPackage (import ./generic.nix (rec {
       -i tools/libxl/libxl_device.c
   '';
 
-})) args
+  passthru = {
+    qemu-system-i386 = if withInternalQemu
+      then "lib/xen/bin/qemu-system-i386"
+      else throw "this xen has no qemu builtin";
+  };
+
+})) ({ ocamlPackages = ocamlPackages_4_02; } // args)

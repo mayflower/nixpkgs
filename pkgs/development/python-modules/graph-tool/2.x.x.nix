@@ -12,7 +12,6 @@ stdenv.mkDerivation rec {
     license     = licenses.gpl3;
     platforms   = platforms.all;
     maintainers = [ stdenv.lib.maintainers.joelmo ];
-    broken = true;
   };
 
   src = fetchurl {
@@ -25,7 +24,8 @@ stdenv.mkDerivation rec {
     "--enable-openmp"
   ];
 
-  buildInputs = [ pkgconfig autoreconfHook ];
+  nativeBuildInputs = [ autoreconfHook pkgconfig ];
+  buildInputs = [ ];
 
   propagatedBuildInputs = [
     boost

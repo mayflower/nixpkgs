@@ -22,7 +22,8 @@ stdenv.mkDerivation {
     ./pselect.patch
   ];
 
-  buildInputs = stdenv.lib.optionals guileSupport [ guile pkgconfig ];
+  nativeBuildInputs = [ pkgconfig ];
+  buildInputs = stdenv.lib.optionals guileSupport [ guile ];
 
   configureFlags = stdenv.lib.optional guileSupport "--with-guile";
 

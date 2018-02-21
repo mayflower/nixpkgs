@@ -25,17 +25,23 @@ cl-dbi
 cl-emb
 cl-fuse
 cl-fuse-meta-fs
+cl-html-parse
 cl-json
 cl-l10n
 cl-libuv
 cl-mysql
 closer-mop
+closure-html
 cl-ppcre
 cl-ppcre-template
 cl-ppcre-unicode
+cl-protobufs
 cl-reexport
 cl-smtp
 clsql
+clsql-postgresql
+clsql-postgresql-socket
+clsql-sqlite3
 clss
 cl+ssl
 cl-syntax-annot
@@ -59,6 +65,7 @@ dexador
 documentation-utils
 drakma
 esrap
+esrap-peg
 external-program
 fast-http
 fast-io
@@ -68,7 +75,6 @@ form-fiddle
 fset
 http-body
 hu.dwim.asdf
-hu.dwim.def
 hunchentoot
 idna
 ieee-floats
@@ -110,6 +116,7 @@ uffi
 usocket
 woo
 wookie
+xkeyboard
 xmls
 xsubseq
 yason

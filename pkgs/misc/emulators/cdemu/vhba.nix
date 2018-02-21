@@ -1,4 +1,4 @@
-{ stdenv, fetchurl, kernel }:
+{ stdenv, fetchurl, kernel, libelf }:
 
 stdenv.mkDerivation rec {
   name = "vhba-${version}";
@@ -10,6 +10,7 @@ stdenv.mkDerivation rec {
   };
 
   makeFlags = [ "KDIR=${kernel.dev}/lib/modules/${kernel.modDirVersion}/build" "INSTALL_MOD_PATH=$(out)" ];
+  nativeBuildInputs = kernel.moduleBuildDependencies;
 
   nativeBuildInputs = kernel.moduleBuildDependencies;
 
@@ -20,5 +21,6 @@ stdenv.mkDerivation rec {
     homepage = http://cdemu.sourceforge.net/about/vhba/;
     platforms = platforms.linux;
     license = licenses.gpl2Plus;
+    maintainers = with stdenv.lib.maintainers; [ bendlas ];
   };
 }

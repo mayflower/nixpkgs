@@ -18,7 +18,8 @@ stdenv.mkDerivation rec {
   patches = [ ./dont-keep-configure-flags.patch ./remove-mkdir-var.patch ] ++
     stdenv.lib.optional stdenv.isDarwin ./darwin-openssl-linking-fix.patch;
 
-  buildInputs = [ openssl libtool perl libxml2 ] ++
+  nativeBuildInputs = [ perl ];
+  buildInputs = [ openssl libtool libxml2 ] ++
     stdenv.lib.optional enableSeccomp libseccomp;
 
   STD_CDEFINES = [ "-DDIG_SIGCHASE=1" ]; # support +sigchase
@@ -34,6 +35,7 @@ stdenv.mkDerivation rec {
     "--without-gssapi"
     "--without-idn"
     "--without-idnlib"
+    "--without-lmdb"
     "--without-pkcs11"
     "--without-purify"
     "--without-python"

@@ -12,7 +12,8 @@ stdenv.mkDerivation rec {
     sha256 = "097ci4s2c63gl0bil8yh87dsy0sk3fds4w8cpyjh5kns6zazmj2v";
   };
 
-  buildInputs = [ boost mysql57.connector-c postgresql lua openldap sqlite protobuf geoip libyamlcpp pkgconfig libsodium curl ];
+  nativeBuildInputs = [ pkgconfig ];
+  buildInputs = [ boost mysql57.connector-c postgresql lua openldap sqlite protobuf geoip libyamlcpp libsodium curl ];
 
   # nix destroy with-modules arguments, when using configureFlags
   preConfigure = ''

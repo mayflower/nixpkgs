@@ -1,7 +1,7 @@
 { stdenv, fetchurl, pkgconfig, intltool, gtk, libxfce4util, libxfce4ui
 , libxfce4ui_gtk3, libwnck, exo, garcon, xfconf, libstartup_notification
 , wrapGAppsHook, xfce4mixer, hicolor_icon_theme
-, withGtk3 ? false, gtk3
+, withGtk3 ? false, gtk3, gettext, glib_networking
 }:
 let
   inherit (stdenv.lib) optional;
@@ -20,6 +20,12 @@ stdenv.mkDerivation rec {
   patches = [ ./xfce4-panel-datadir.patch ];
   patchFlags = "-p1";
 
+  postPatch = ''
+    for f in $(find . -name \*.sh); do
+      substituteInPlace $f --replace gettext ${gettext}/bin/gettext
+    done
+  '';
+
   outputs = [ "out" "dev" "devdoc" ];
 
   nativeBuildInputs = [ pkgconfig intltool wrapGAppsHook ];
@@ -36,7 +42,8 @@ stdenv.mkDerivation rec {
 
   postInstall = ''
     wrapProgram "$out/bin/xfce4-panel" \
-      --prefix GST_PLUGIN_SYSTEM_PATH : "$GST_PLUGIN_SYSTEM_PATH"
+      --prefix GST_PLUGIN_SYSTEM_PATH : "$GST_PLUGIN_SYSTEM_PATH" \
+      --prefix GIO_EXTRA_MODULES : "${glib_networking}/lib/gio/modules"
   '';
 
   enableParallelBuilding = true;
@@ -49,4 +56,3 @@ stdenv.mkDerivation rec {
     maintainers = [ maintainers.eelco ];
   };
 }
-

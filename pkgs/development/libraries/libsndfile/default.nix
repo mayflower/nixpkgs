@@ -38,7 +38,8 @@ stdenv.mkDerivation rec {
     })
   ];
 
-  buildInputs = [ pkgconfig flac libogg libvorbis ]
+  nativeBuildInputs = [ pkgconfig ];
+  buildInputs = [ flac libogg libvorbis ]
     ++ stdenv.lib.optionals stdenv.isDarwin [ Carbon AudioToolbox ];
 
   enableParallelBuilding = true;

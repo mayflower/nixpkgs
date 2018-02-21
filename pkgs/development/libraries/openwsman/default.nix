@@ -1,19 +1,20 @@
-{ fetchFromGitHub, fetchpatch, stdenv, autoconf, automake, libtool, pkgconfig
-, libxml2, curl, cmake, pam, sblim-sfcc, python
-}:
+{ stdenv, fetchFromGitHub, cmake, pkgconfig
+, curl, libxml2, pam, sblim-sfcc }:
 
 stdenv.mkDerivation rec {
-  version = "2.6.3+git2017-04-20";
   name = "openwsman-${version}";
+  version = "2.6.5";
 
   src = fetchFromGitHub {
-    owner = "Openwsman";
-    repo = "openwsman";
-    rev = "032d85704ac630d4c6bc59961867cd1428d3ab1e";
-    sha256 = "1z8gsm213k5vsjg67smydm9f2m3jccayd2rjiik11prz0w8ixvig";
+    owner  = "Openwsman";
+    repo   = "openwsman";
+    rev    = "v${version}";
+    sha256 = "1r0zslgpcr4m20car4s3hsccy10xcb39qhpw3dhpjv42xsvvs5xv";
   };
 
-  buildInputs = [ autoconf automake libtool pkgconfig libxml2 curl cmake pam sblim-sfcc python ];
+  nativeBuildInputs = [ cmake pkgconfig ];
+
+  buildInputs = [ curl libxml2 pam sblim-sfcc ];
 
   cmakeFlags = [
     "-DCMAKE_BUILD_RUBY_GEM=no"
@@ -25,19 +26,13 @@ stdenv.mkDerivation rec {
 
   configureFlags = "--disable-more-warnings";
 
-  patches = [
-    (fetchpatch {
-      url = "https://github.com/Openwsman/openwsman/pull/99.patch";
-      sha256 = "1dig0fm05qdfji5h7615g0yyvrdcvncwfqj94caqv8dzrpxi8ija";
-    })
-  ];
-
-  meta = {
-    description = "Openwsman server implementation and client api with bindings";
-    homepage = https://github.com/Openwsman/openwsman;
-    downloadPage = "https://github.com/Openwsman/openwsman/releases";
-    maintainers = [ stdenv.lib.maintainers.deepfire ];
-    license = stdenv.lib.licenses.bsd3;
-    platforms = stdenv.lib.platforms.gnu;  # arbitrary choice
+  meta = with stdenv.lib; {
+    description  = "Openwsman server implementation and client API with bindings";
+    downloadPage = https://github.com/Openwsman/openwsman/releases;
+    homepage     = https://openwsman.github.io;
+    license      = licenses.bsd3;
+    maintainers  = with maintainers; [ deepfire ];
+    platforms    = platforms.linux; # PAM is not available on Darwin
+    inherit version;
   };
 }

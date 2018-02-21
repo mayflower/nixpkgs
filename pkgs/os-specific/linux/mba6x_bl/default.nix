@@ -15,6 +15,8 @@ stdenv.mkDerivation rec {
   
   nativeBuildInputs = kernel.moduleBuildDependencies;
 
+  nativeBuildInputs = kernel.moduleBuildDependencies;
+
   makeFlags = [
     "KDIR=${kernel.dev}/lib/modules/${kernel.modDirVersion}/build"
     "INSTALL_MOD_PATH=$(out)"

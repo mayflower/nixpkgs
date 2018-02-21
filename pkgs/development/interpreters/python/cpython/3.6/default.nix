@@ -153,7 +153,7 @@ in stdenv.mkDerivation {
   in rec {
     inherit libPrefix sitePackages x11Support;
     executable = "${libPrefix}m";
-    buildEnv = callPackage ../../wrapper.nix { python = self; };
+    buildEnv = callPackage ../../wrapper.nix { python = self; inherit (pythonPackages) requiredPythonModules; };
     withPackages = import ../../with-packages.nix { inherit buildEnv pythonPackages;};
     pkgs = pythonPackages;
     isPy3 = true;
@@ -178,6 +178,6 @@ in stdenv.mkDerivation {
     '';
     license = licenses.psfl;
     platforms = with platforms; linux ++ darwin;
-    maintainers = with maintainers; [ chaoflow domenkozar cstrahan kragniz ];
+    maintainers = with maintainers; [ fridh kragniz ];
   };
 }

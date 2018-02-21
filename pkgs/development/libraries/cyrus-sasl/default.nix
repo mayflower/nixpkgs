@@ -1,5 +1,5 @@
-{ lib, stdenv, fetchurl, openssl, openldap, kerberos, db, gettext, libkrb5
-, pam, fixDarwinDylibNames, autoreconfHook, fetchpatch, enableLdap ? false }:
+{ lib, stdenv, fetchurl, openssl, openldap, kerberos, db, gettext, libkrb5,
+  pam, fixDarwinDylibNames, autoreconfHook, fetchpatch, enableLdap ? false }:
 
 with stdenv.lib;
 stdenv.mkDerivation rec {

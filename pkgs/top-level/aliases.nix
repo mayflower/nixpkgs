@@ -24,7 +24,11 @@ in
   ### Deprecated aliases - for backward compatibility
 
 mapAliases (rec {
-  accounts-qt = libsForQt5.accounts-qt;  # added 2015-12-19
+  _2048-in-terminal = "2048-in-terminal"; # added 2017-01-16
+  _2bwm = "2bwm"; # added 2017-01-16
+  _389-ds-base = "389-ds-base"; # added 2017-01-16
+  _90secondportraits = "90secondsportraits"; # added 2017-01-16
+  accounts-qt = libsForQt5.accounts-qt; # added 2015-12-19
   adobeReader = adobe-reader; # added 2013-11-04
   aircrackng = aircrack-ng; # added 2016-01-14
   ammonite-repl = ammonite; # added 2017-05-02
@@ -47,6 +51,7 @@ mapAliases (rec {
   cv = progress; # added 2015-09-06
   debian_devscripts = debian-devscripts; # added 2016-03-23
   digikam5 = digikam; # added 2017-02-18
+  double_conversion = double-conversion; # 2017-11-22
   dwarf_fortress = dwarf-fortress; # added 2016-01-23
   dwbWrapper = dwb; # added 2015-01
   enblendenfuse = enblend-enfuse; # 2015-09-30
@@ -57,7 +62,9 @@ mapAliases (rec {
   foomatic_filters = foomatic-filters;  # 2016-08
   fuse_exfat = exfat;                   # 2015-09-11
   gettextWithExpat = gettext; # 2016-02-19
+  gdb-multitarget = gdb; # added 2017-11-13
   git-hub = gitAndTools.git-hub; # added 2016-04-29
+  go-pup = pup; # added 2017-12-19
   googleAuthenticator = google-authenticator; # added 2016-10-16
   grantlee5 = libsForQt5.grantlee;  # added 2015-12-19
   gst_ffmpeg = gst-ffmpeg;  # added 2017-02
@@ -66,18 +73,23 @@ mapAliases (rec {
   gst_plugins_bad = gst-plugins-bad;  # added 2017-02
   gst_plugins_ugly = gst-plugins-ugly;  # added 2017-02
   gst_python = gst-python;  # added 2017-02
+  guileCairo = guile-cairo; # added 2017-09-24
+  guileGnome = guile-gnome; # added 2017-09-24
+  guile_lib = guile-lib; # added 2017-09-24
+  guileLint = guile-lint; # added 2017-09-27
+  guile_ncurses = guile-ncurses; # added 2017-09-24
   gupnptools = gupnp-tools;  # added 2015-12-19
   gnustep-make = gnustep.make; # added 2016-7-6
   htmlTidy = html-tidy;  # added 2014-12-06
   iana_etc = iana-etc;  # added 2017-03-08
   idea = jetbrains; # added 2017-04-03
-  inherit (haskell.compiler) jhc uhc;   # 2015-05-15
   inotifyTools = inotify-tools;
   joseki = apache-jena-fuseki; # added 2016-02-28
   jquery_ui = jquery-ui;  # added 2014-09-07
   kdiff3-qt5 = kdiff3; # added 2017-02-18
   keepassx2-http = keepassx-reboot; # added 2016-10-17
   keepassx-reboot = keepassx-community; # added 2017-02-01
+  keepassx-community = keepassxc; # added 2017-11
   keybase-go = keybase;  # added 2016-08-24
   krename-qt5 = krename; # added 2017-02-18
   letsencrypt = certbot; # added 2016-05-16
@@ -85,6 +97,7 @@ mapAliases (rec {
   libcap_manpages = libcap.doc; # added 2016-04-29
   libcap_pam = if stdenv.isLinux then libcap.pam else null; # added 2016-04-29
   libcap_progs = libcap.out; # added 2016-04-29
+  libgumbo = gumbo; # added 2018-01-21
   libjson_rpc_cpp = libjson-rpc-cpp; # added 2017-02-28
   libmysql = mysql.connector-c; # added # 2017-12-28, this was a misnomer refering to libmysqlclient
   libtidy = html-tidy;  # added 2014-12-21
@@ -98,6 +111,7 @@ mapAliases (rec {
   manpages = man-pages; # added 2015-12-06
   man_db = man-db; # added 2016-05
   midoriWrapper = midori; # added 2015-01
+  minc_tools = minc-tools; # 2017-12
   mlt-qt5 = libsForQt5.mlt;  # added 2015-12-19
   module_init_tools = kmod; # added 2016-04-22
   mssys = ms-sys; # added 2015-12-13
@@ -111,7 +125,14 @@ mapAliases (rec {
   owncloudclient = owncloud-client;  # added 2016-08
   pgp-tools = signing-party; # added 2017-03-26
   pidgin-with-plugins = pidgin; # added 2016-06
-  pidginlatexSF = pidginlatex; # added 2014-11-02
+  pidginlatexSF = pidgin-latex; # added 2014-11-02
+  pidginlatex = pidgin-latex; # added 2018-01-08
+  pidginmsnpecan = pidgin-msn-pecan; # added 2018-01-08
+  pidginotr = pidgin-otr; # added 2018-01-08
+  pidginosd = pidgin-osd; # added 2018-01-08
+  pidginsipe = pidgin-sipe; # added 2018-01-08
+  pidginwindowmerge = pidgin-window-merge; # added 2018-01-08
+  postage = pgmanage; # added 2017-11-03
   poppler_qt5 = libsForQt5.poppler;  # added 2015-12-19
   PPSSPP = ppsspp; # added 2017-10-01
   prometheus-statsd-bridge = prometheus-statsd-exporter;  # added 2017-08-27
@@ -123,9 +144,10 @@ mapAliases (rec {
   qwt6 = libsForQt5.qwt;  # added 2015-12-19
   rdiff_backup = rdiff-backup;  # added 2014-11-23
   rdmd = dtools;  # added 2017-08-19
+  robomongo = robo3t; #added 2017-09-28
   rssglx = rss-glx; #added 2015-03-25
+  openssh_with_kerberos = openssh; # added 2018-01-28
   rubygems = throw "deprecated 2016-03-02: rubygems is now bundled with ruby";
-  rustUnstable = rustNightly; # added 2016-11-29
   rxvt_unicode_with-plugins = rxvt_unicode-with-plugins; # added 2015-04-02
   samsungUnifiedLinuxDriver = samsung-unified-linux-driver; # added 2016-01-25
   saneBackends = sane-backends; # added 2016-01-02
@@ -143,6 +165,8 @@ mapAliases (rec {
   system_config_printer = system-config-printer;  # added 2016-01-03
   telepathy_qt5 = libsForQt5.telepathy;  # added 2015-12-19
   tftp_hpa = tftp-hpa; # added 2015-04-03
+  transmission_gtk = transmission-gtk; # added 2018-01-06
+  transmission_remote_gtk = transmission-remote-gtk; # added 2018-01-06
   ucsFonts = ucs-fonts; # added 2016-07-15
   ultrastardx-beta = ultrastardx; # added 2017-08-12
   usb_modeswitch = usb-modeswitch; # added 2016-05-10
@@ -150,6 +174,7 @@ mapAliases (rec {
   vimprobable2Wrapper = vimprobable2; # added 2015-01
   virtviewer = virt-viewer; # added 2015-12-24
   vorbisTools = vorbis-tools; # added 2016-01-26
+  winusb = woeusb; # added 2017-12-22
   x11 = xlibsWrapper; # added 2015-09
   xf86_video_nouveau = xorg.xf86videonouveau; # added 2015-09
   xlibs = xorg; # added 2015-09

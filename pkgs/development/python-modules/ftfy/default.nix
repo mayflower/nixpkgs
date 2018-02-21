@@ -11,11 +11,11 @@ buildPythonPackage rec {
   name = "${pname}-${version}";
   pname = "ftfy";
   # latest is 5.1.1, buy spaCy requires 4.4.3
-  version = "4.4.3";
+  version = "5.3.0";
 
   src = fetchPypi {
     inherit pname version;
-    sha256 = "152xdb56rhs1q4r0ck1n557sbphw7zq18r75a7kkd159ckdnc01w";
+    sha256 = "0ba702d5138f9b35df32b55920c9466208608108f1f3d5de1a68c17e3d68cb7f";
   };
 
   propagatedBuildInputs = [ html5lib wcwidth];

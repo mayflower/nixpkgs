@@ -1,17 +1,26 @@
 { stdenv, fetchurl, libidn, openssl, makeWrapper, fetchhg
 , lua5, luasocket, luasec, luaexpat, luafilesystem, luabitop
-, lualdap, luadbi, luaevent ? null, luazlib ? null
-, withLibevent ? true, withZlib ? true }:
+, lualdap
+, withLibevent ? true, luaevent ? null
+, withZlib ? true, luazlib ? null
+, withDBI ? true, luadbi ? null
+# use withExtraLibs to add additional dependencies of community modules
+, withExtraLibs ? [ ]
+# FIXME , withCommunityModules ? [ ] }:
+}:
 
 assert withLibevent -> luaevent != null;
 assert withZlib -> luazlib != null;
+assert withDBI -> luadbi != null;
 
 with stdenv.lib;
 
 let
-  libs        = [ luasocket luasec luaexpat luafilesystem luabitop lualdap luadbi ]
+  libs        = [ luasocket luasec luaexpat luafilesystem luabitop lualdap ]
                 ++ optional withLibevent luaevent
-                ++ optional withZlib luazlib;
+                ++ optional withZlib luazlib
+                ++ optional withDBI luadbi
+                ++ withExtraLibs;
   getPath     = lib : type : "${lib}/lib/lua/${lua5.luaversion}/?.${type};${lib}/share/lua/${lua5.luaversion}/?.${type}";
   getLuaPath  = lib : getPath lib "lua";
   getLuaCPath = lib : getPath lib "so";
@@ -31,9 +40,9 @@ stdenv.mkDerivation rec {
   };
 
   communityModules = fetchhg {
-    url = "https://hg.prosody.im/prosody-modules/";
-    rev = "05248d5a7166";
-    sha256 = "1jpkplv1ifp5ikhp8y6nb11j827wgk9qc1wwg0nghkspkrpln9dg";
+    url = "https://hg.prosody.im/prosody-modules";
+    rev = "9a3e51f348fe";
+    sha256 = "09g4vi52rv0r3jzcm0bsgp4ngqq6iapfbxfh0l7qj36qnajp4vm6";
   };
 
   buildInputs = [ lua5 luasocket luasec luaexpat luabitop lualdap luadbi libidn openssl makeWrapper ]
@@ -46,6 +55,10 @@ stdenv.mkDerivation rec {
     "--with-lua=${lua5}"
   ];
 
+  # FIXME
+  #     ${concatMapStringsSep "\n" (module: ''
+  #       cp -r $communityModules/mod_${module} $out/lib/prosody/modules/
+  #     '') withCommunityModules}
   postInstall = ''
       mkdir $modules
       cp -r $communityModules/* $modules
@@ -67,6 +80,6 @@ stdenv.mkDerivation rec {
     license = licenses.mit;
     homepage = http://www.prosody.im;
     platforms = platforms.linux;
-    maintainers = with maintainers; [ flosse fpletz ];
+    maintainers = with maintainers; [ fpletz ];
   };
 }

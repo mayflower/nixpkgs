@@ -1,6 +1,6 @@
-{ stdenv, fetchFromGitHub, cmake, perl, pkgconfig
-, file, glib, icu, libevent, luajit, openssl, pcre, sqlite, ragel
-, libfann, gd }:
+{ stdenv, fetchFromGitHub, cmake, perl
+, file, glib, gmime, libevent, luajit, openssl, pcre, pkgconfig, sqlite, ragel
+, icu, libfann, gd }:
 
 let libmagic = file;  # libmagic provided by file package ATM
 in
@@ -18,7 +18,7 @@ stdenv.mkDerivation rec {
 
   nativeBuildInputs = [ cmake pkgconfig perl ];
   buildInputs = [
-    glib icu libevent libmagic luajit openssl pcre sqlite ragel libfann gd
+    glib gmime libevent libmagic luajit openssl pcre sqlite ragel icu libfann gd
   ];
 
   postPatch = ''

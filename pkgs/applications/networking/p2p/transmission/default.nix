@@ -20,16 +20,14 @@ stdenv.mkDerivation rec {
     sha256 = "0pykmhi7pdmzq47glbj8i2im6iarp4wnj4l1pyvsrnba61f0939s";
   };
 
-  buildInputs = [ pkgconfig intltool file openssl curl libevent zlib ]
-    ++ optionals enableGTK3 [ gtk3 wrapGAppsHook hicolor_icon_theme ]
+  nativeBuildInputs = [ pkgconfig ]
+    ++ optionals enableGTK3 [ wrapGAppsHook ];
+  buildInputs = [ intltool file openssl curl libevent zlib ]
+    ++ optionals enableGTK3 [ gtk3 ]
     ++ optionals enableSystemd [ systemd ]
     ++ optionals stdenv.isLinux [ inotify-tools ];
 
   patches = [
-    (fetchpatch {
-      url = "https://github.com/transmission/transmission/commit/eb8f5004e01e054c7dd4f5b93e7c0a4daed957f4.patch";
-      sha256 = "0kxyzd5b9p6bjznp5mh87108bc8h3mn3n4fyp8brcqvxm7c527xv";
-    })
     (fetchpatch {
       # See https://github.com/transmission/transmission/pull/468
       # Patch from: https://github.com/transmission/transmission/pull/468#issuecomment-357098126
@@ -54,9 +52,9 @@ stdenv.mkDerivation rec {
     ++ optional enableSystemd "--with-systemd-daemon"
     ++ optional enableGTK3 "--with-gtk";
 
-#  preFixup = optionalString enableGTK3 /* gsettings schemas for file dialogues */ ''
-#    rm "$out/share/icons/hicolor/icon-theme.cache"
-#  '';
+  preFixup = optionalString enableGTK3 ''
+    rm "$out/share/icons/hicolor/icon-theme.cache"
+  '';
 
   NIX_LDFLAGS = optionalString stdenv.isDarwin "-framework CoreFoundation";
 

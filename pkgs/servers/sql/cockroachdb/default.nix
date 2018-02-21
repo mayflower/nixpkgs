@@ -1,17 +1,17 @@
-{ stdenv, buildGoPackage, fetchurl, cmake, xz, which }:
+{ stdenv, buildGoPackage, fetchurl, cmake, xz, which, autoconf }:
 
 buildGoPackage rec {
   name = "cockroach-${version}";
-  version = "1.0.5";
+  version = "1.1.2";
 
   goPackagePath = "github.com/cockroachdb/cockroach";
 
   src = fetchurl {
     url = "https://binaries.cockroachdb.com/cockroach-v${version}.src.tgz";
-    sha256 = "0jjl6zb8pyxws3i020h98vdr217railca8h6n3xijkvcqy9dj8wa";
+    sha256 = "0h1fijzihp85a18flq4brdc3b38gj867kfkp31gncnmff0xb8kam";
   };
 
-  buildInputs = [ cmake xz which ];
+  nativeBuildInputs = [ cmake xz which autoconf ];
 
   buildPhase = ''
     runHook preBuild

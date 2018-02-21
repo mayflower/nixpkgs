@@ -3,12 +3,12 @@
 
 buildPythonPackage rec {
   pname = "dyn";
-  version = "1.6.4";
+  version = "1.8.1";
   name  = "${pname}-${version}";
 
   src = fetchPypi {
     inherit pname version;
-    sha256 = "f3843938edac38cddf8e0bd2e0e884bb1b7845c265ae3605cd9e27eb98f90956";
+    sha256 = "e112149d48b4500c18b3cfb6e0e6e780bb5aa0e56ff87cac412280200b9ec8bf";
   };
 
   buildInputs = [ glibcLocales ];

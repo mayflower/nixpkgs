@@ -30,6 +30,6 @@ stdenv.mkDerivation {
 
   meta = with lib; {
     description = "DNS root data including root zone and DNSSEC key";
-    maintainers = with maintainers; [ fpletz veprbl ];
+    maintainers = with maintainers; [ fpletz vcunat ];
   };
 }

@@ -202,7 +202,6 @@ in
           mount -o defaults,bind,ro /etc/resolv.conf /etc/tinc/${network}/etc/resolv.conf
           mount -o defaults,bind,ro /nix/store /etc/tinc/${network}/nix/store
         '';
-
         postStop = optionalString data.chroot ''
           umount /etc/tinc/${network}/{etc/{hosts,resolv.conf},nix/store}
           rm -r /etc/tinc/${network}/{etc,nix}

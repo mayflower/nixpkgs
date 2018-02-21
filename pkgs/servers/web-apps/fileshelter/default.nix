@@ -1,4 +1,4 @@
-{ stdenv, fetchFromGitHub, autoreconfHook, libzip, boost, wt, libconfig, pkgconfig } :
+{ stdenv, fetchFromGitHub, autoreconfHook, libzip, boost, wt3, libconfig, pkgconfig } :
 
 stdenv.mkDerivation rec {
   name = "fileshelter";
@@ -12,10 +12,10 @@ stdenv.mkDerivation rec {
   };
 
   nativeBuildInputs = [ autoreconfHook pkgconfig ];
-  buildInputs = [ libzip boost wt libconfig ];
+  buildInputs = [ libzip boost wt3 libconfig ];
 
   postInstall = ''
-    ln -s ${wt}/share/Wt/resources $out/share/fileshelter/docroot/resources
+    ln -s ${wt3}/share/Wt/resources $out/share/fileshelter/docroot/resources
   '';
 
   meta = with stdenv.lib; {

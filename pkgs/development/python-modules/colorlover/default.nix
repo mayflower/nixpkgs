@@ -19,6 +19,5 @@ buildPythonPackage rec {
     description = "Color scales in Python for humans";
     license = stdenv.lib.licenses.mit;
     maintainers = with stdenv.lib.maintainers; [ globin ];
-    platforms = stdenv.lib.platforms.all;
   };
 }

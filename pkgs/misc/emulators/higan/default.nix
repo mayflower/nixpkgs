@@ -10,12 +10,12 @@ with stdenv.lib;
 stdenv.mkDerivation rec {
 
   name = "higan-${version}";
-  version = "103";
+  version = "106";
   sourceName = "higan_v${version}-source";
 
   src = fetchurl {
     urls = [ "http://download.byuu.org/${sourceName}.7z" ];
-    sha256 = "0xj2k5g1zyl71hk3kwaixk1axbi6s9kqq31c702rl7qkljv6lfp6";
+    sha256 = "063dzp9wrdnbvagraxi31xg0154y2gf67rrd0mnc8h104cgzjr35";
     curlOpts = "--user-agent 'Mozilla/5.0'"; # the good old user-agent trick...
   };
 
@@ -73,7 +73,7 @@ stdenv.mkDerivation rec {
           Game Boy, Game Boy Color, Game Boy Advance;
         - Sega's Master System, Game Gear, Mega Drive;
         - NEC's PC Engine, SuperGrafx;
-        - Bandai' WonderSwan, WonderSwan Color.
+        - Bandai's WonderSwan, WonderSwan Color.
     '';
     homepage = https://byuu.org/higan/;
     license = licenses.gpl3Plus;
@@ -81,8 +81,3 @@ stdenv.mkDerivation rec {
     platforms = with platforms; unix;
   };
 }
-
-#
-# TODO:
-#   - fix the BML and BIOS paths - maybe submitting
-#     a custom patch to upstream would not be a bad idea...
