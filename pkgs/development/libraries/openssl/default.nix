@@ -3,6 +3,7 @@
 , fetchpatch
 , withCryptodev ? false, cryptodevHeaders
 , enableSSL2 ? false
+, enableSSL3 ? false
 }:
 
 with stdenv.lib;
@@ -58,6 +59,7 @@ let
       "-DHAVE_CRYPTODEV"
       "-DUSE_CRYPTODEV_DIGESTS"
     ] ++ stdenv.lib.optional enableSSL2 "enable-ssl2"
+      ++ stdenv.lib.optional enableSSL3 "enable-ssl3"
       ++ stdenv.lib.optional (versionAtLeast version "1.1.0" && hostPlatform.isAarch64) "no-afalgeng";
 
     makeFlags = [ "MANDIR=$(man)/share/man" ];
