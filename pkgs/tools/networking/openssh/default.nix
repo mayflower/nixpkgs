@@ -52,10 +52,11 @@ stdenv.mkDerivation rec {
       substituteInPlace Makefile.in --replace '$(INSTALL) -m 4711' '$(INSTALL) -m 0711'
     '';
 
-  nativeBuildInputs = [ pkgconfig ];
+  nativeBuildInputs = [ pkgconfig autoreconfHook ];
+    # remove from above and uncomment below after removing openssl 1.1 patch
+    # ++ optional hpnSupport autoreconfHook;
   buildInputs = [ zlib openssl libedit pam ]
     ++ optional withKerberos kerberos
-    ++ optional hpnSupport autoreconfHook
     ;
 
   preConfigure = ''
