@@ -19,6 +19,5 @@ stdenv.mkDerivation rec {
     homepage = http://www.festvox.org/flite/;
     license = stdenv.lib.licenses.free;
     platforms = stdenv.lib.platforms.linux;
-    broken = true;
   };
 }
