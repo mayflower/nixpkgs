@@ -10,12 +10,7 @@ stdenv.mkDerivation rec {
   nativeBuildInputs = [ pkgconfig makeWrapper ];
   buildInputs = [ libxml2 gobjectIntrospection gtk3 glib pango readline dbus ];
 
-  propagatedBuildInputs = [ spidermonkey_38 ];
-
-  # GJS expects mozjs-38.pc but spidermonkey_38 only provides js.pc
-  preConfigure = ''
-    sed -i s/mozjs-38/js/ configure
-  '';
+  propagatedBuildInputs = [ spidermonkey_52 ];
 
   configureFlags = [
     "--enable-installed-tests"
