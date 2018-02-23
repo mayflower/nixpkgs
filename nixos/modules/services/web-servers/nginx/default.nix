@@ -577,7 +577,7 @@ in
         mkdir -p ${cfg.stateDir}/logs
         chmod 700 ${cfg.stateDir}
         chown -R ${cfg.user}:${cfg.group} ${cfg.stateDir}
-        ${cfg.package}/bin/nginx -t -c ${configFile} -p ${cfg.stateDir}
+        ${cfg.package}/bin/nginx -c ${configFile} -p ${cfg.stateDir} -t
         ln -sf ${configFile} /run/nginx/config
         ln -sf ${cfg.package} /run/nginx/package
       '';
