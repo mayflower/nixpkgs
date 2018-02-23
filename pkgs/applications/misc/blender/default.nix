@@ -1,4 +1,4 @@
-{ stdenv, stdenv_gcc5, lib, fetchurl, boost, cmake, ffmpeg, gettext, glew
+{ stdenv, lib, fetchurl, boost, cmake, ffmpeg, gettext, glew
 , ilmbase, libXi, libX11, libXext, libXrender
 , libjpeg, libpng, libsamplerate, libsndfile
 , libtiff, mesa, openal, opencolorio, openexr, openimageio, openjpeg_1, python
