@@ -3,10 +3,6 @@
 with lib;
 
 let
-  ## isPath :: String -> Bool
-  isPath = x: !(isAttrs x || isList x || isFunction x || isString x || isInt x || isBool x || isNull x)
-               || (isString x && builtins.substring 0 1 x == "/");
-
   cfg = config.services.buildkite-agent;
 
   mkHookOption = { name, description, example ? null }: {

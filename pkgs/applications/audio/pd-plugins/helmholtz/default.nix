@@ -39,6 +39,5 @@ stdenv.mkDerivation rec {
     license = stdenv.lib.licenses.bsd3;
     maintainers = [ stdenv.lib.maintainers.magnetophon ];
     platforms = stdenv.lib.platforms.linux;
-    broken = true;
   };
 }

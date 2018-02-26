@@ -20,18 +20,6 @@ rec {
     kernelAutoModules = false;
   };
 
-  pc64_sandybridge = pc64 // {
-    gcc.cpu = "sandybridge";
-    kernelExtraConfig = ''
-      GENERIC_CPU n
-      MCORE2 y
-    '';
-  };
-
-  pc64_haswell = pc64_sandybridge // {
-    gcc.arch = "haswell";
-  };
-
   pogoplug4 = {
     name = "pogoplug4";
 

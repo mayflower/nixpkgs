@@ -71,7 +71,7 @@ let
     LUA_PATH = stdenv.lib.concatStringsSep ";" (map luaPackages.getLuaPath lualibs);
     LUA_CPATH = stdenv.lib.concatStringsSep ";" (map luaPackages.getLuaCPath lualibs);
 
-    lualibs = [ luaPackages.mpack luaPackages.lpeg luajitPackages.lpeg luaPackages.luabitop ];
+    lualibs = [ luaPackages.mpack luaPackages.lpeg luaPackages.luabitop ];
 
     cmakeFlags = [
       "-DLUA_PRG=${luaPackages.lua}/bin/lua"

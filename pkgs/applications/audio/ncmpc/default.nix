@@ -1,11 +1,7 @@
 { stdenv, fetchFromGitHub, meson, ninja, pkgconfig, glib, ncurses
 , mpd_clientlib, gettext }:
 
-let
-  rpath = stdenv.lib.makeLibraryPath [
-    glib ncurses mpd_clientlib
-  ];
-in stdenv.mkDerivation rec {
+stdenv.mkDerivation rec {
   name = "ncmpc-${version}";
   version = "0.29";
 

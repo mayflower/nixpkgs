@@ -21,6 +21,5 @@ buildRustPackage rec {
     maintainers = [stdenv.lib.maintainers.dbrock];
     broken = true; # mark temporary as broken
     inherit version;
-    broken = true;
   };
 }
