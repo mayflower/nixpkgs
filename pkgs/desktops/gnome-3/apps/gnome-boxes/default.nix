@@ -1,7 +1,7 @@
-{ stdenv, fetchurl, makeWrapper, pkgconfig, intltool, itstool, libvirt-glib
-, glib, gobjectIntrospection, libxml2, gtk3, gtkvnc, libvirt, spice_gtk
-, spice_protocol, libuuid, libsoup, libosinfo, systemd, tracker, vala_0_32
-, libcap, yajl, gmp, gdbm, cyrus_sasl, gnome3, librsvg, desktop_file_utils
+{ stdenv, fetchurl, makeWrapper, pkgconfig, gettext, itstool, libvirt-glib
+, glib, gobjectIntrospection, libxml2, gtk3, gtkvnc, libvirt, spice-gtk
+, spice-protocol, libsoup, libosinfo, systemd, tracker, tracker-miners, vala
+, libcap, yajl, gmp, gdbm, cyrus_sasl, gnome3, librsvg, desktop-file-utils
 , mtools, cdrkit, libcdio, libusb, libarchive, acl, libgudev, qemu, libsecret
 , libcap_ng, numactl, xen, libapparmor
 }:
@@ -16,14 +16,14 @@ stdenv.mkDerivation rec {
   doCheck = true;
 
   nativeBuildInputs = [
-    makeWrapper pkgconfig intltool
+    makeWrapper pkgconfig gettext
   ];
 
   buildInputs = [
     itstool libvirt-glib glib gobjectIntrospection libxml2 gtk3 gtkvnc
-    libvirt spice_gtk spice_protocol libuuid libsoup libosinfo systemd
-    tracker vala_0_32 libcap yajl gmp gdbm cyrus_sasl libusb libarchive
-    gnome3.defaultIconTheme librsvg desktop_file_utils acl libgudev libsecret
+    libvirt spice-gtk spice-protocol libsoup libosinfo systemd
+    tracker tracker-miners vala libcap yajl gmp gdbm cyrus_sasl libusb libarchive
+    gnome3.defaultIconTheme librsvg desktop-file-utils acl libgudev libsecret
     libcap_ng numactl xen libapparmor
   ];
 
@@ -31,7 +31,7 @@ stdenv.mkDerivation rec {
     for prog in "$out/bin/"*; do
         wrapProgram "$prog" \
             --set GDK_PIXBUF_MODULE_FILE "$GDK_PIXBUF_MODULE_FILE" \
-            --prefix XDG_DATA_DIRS : "${gnome3.gnome_themes_standard}/share:$XDG_ICON_DIRS:$GSETTINGS_SCHEMAS_PATH" \
+            --prefix XDG_DATA_DIRS : "${gnome3.gnome-themes-standard}/share:$XDG_ICON_DIRS:$GSETTINGS_SCHEMAS_PATH" \
             --prefix PATH : "${stdenv.lib.makeBinPath [ mtools cdrkit libcdio qemu ]}"
     done
   '';

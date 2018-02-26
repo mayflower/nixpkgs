@@ -1,7 +1,7 @@
-{ stdenv, intltool, fetchurl, pkgconfig, glib
-, evolution_data_server, evolution, sqlite
-, makeWrapper, itstool, desktop_file_utils
-, clutter_gtk, libuuid, webkitgtk, zeitgeist
+{ stdenv, meson, ninja, gettext, fetchurl, pkgconfig, glib
+, evolution-data-server, evolution, sqlite
+, wrapGAppsHook, itstool, desktop-file-utils
+, clutter-gtk, libuuid, webkitgtk, zeitgeist
 , gnome3, librsvg, gdk_pixbuf, libxml2 }:
 
 stdenv.mkDerivation rec {
@@ -9,26 +9,32 @@ stdenv.mkDerivation rec {
 
   doCheck = true;
 
-  propagatedUserEnvPkgs = [ gnome3.gnome_themes_standard ];
+  patches = [
+    ./no-update-icon-cache.patch
+  ];
 
-  buildInputs = [ pkgconfig glib intltool itstool libxml2
-                  clutter_gtk libuuid webkitgtk gnome3.tracker
-                  gnome3.gnome_online_accounts zeitgeist desktop_file_utils
-                  gnome3.gsettings_desktop_schemas makeWrapper
+  postPatch = ''
+    chmod +x meson_post_install.py
+    patchShebangs meson_post_install.py
+  '';
+
+  propagatedUserEnvPkgs = [ gnome3.gnome-themes-standard ];
+
+  nativeBuildInputs = [
+    meson ninja pkgconfig gettext itstool libxml2 desktop-file-utils wrapGAppsHook
+  ];
+  buildInputs = [ glib clutter-gtk libuuid webkitgtk gnome3.tracker
+                  gnome3.gnome-online-accounts zeitgeist
+                  gnome3.gsettings-desktop-schemas
                   gdk_pixbuf gnome3.defaultIconTheme librsvg
-                  evolution_data_server evolution sqlite ];
+                  evolution-data-server evolution sqlite ];
 
   enableParallelBuilding = true;
-
-  preFixup = ''
-    wrapProgram "$out/bin/bijiben" \
-      --set GDK_PIXBUF_MODULE_FILE "$GDK_PIXBUF_MODULE_FILE" \
-      --prefix XDG_DATA_DIRS : "${gnome3.gnome_themes_standard}/share:$XDG_ICON_DIRS:$GSETTINGS_SCHEMAS_PATH"
-  '';
 
   meta = with stdenv.lib; {
     homepage = https://wiki.gnome.org/Apps/Bijiben;
     description = "Note editor designed to remain simple to use";
+    broken = true;
     maintainers = gnome3.maintainers;
     license = licenses.gpl3;
     platforms = platforms.linux;

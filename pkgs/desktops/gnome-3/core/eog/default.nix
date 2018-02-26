@@ -1,15 +1,15 @@
-{ fetchurl, stdenv, intltool, pkgconfig, itstool, libxml2, libjpeg, gnome3
-, shared_mime_info, wrapGAppsHook, librsvg, libexif }:
+{ fetchurl, stdenv, gettext, pkgconfig, itstool, libxml2, libjpeg, gnome3
+, shared-mime-info, wrapGAppsHook, librsvg, libexif, gobjectIntrospection }:
 
 stdenv.mkDerivation rec {
   inherit (import ./src.nix fetchurl) name src;
 
-  nativeBuildInputs = [ pkgconfig wrapGAppsHook ];
+  nativeBuildInputs = [ pkgconfig gettext itstool wrapGAppsHook gobjectIntrospection ];
 
   buildInputs = with gnome3;
-    [ intltool itstool libxml2 libjpeg gtk glib libpeas librsvg
-      gsettings_desktop_schemas shared_mime_info adwaita-icon-theme
-      gnome_desktop libexif dconf ];
+    [ libxml2 libjpeg gtk glib libpeas librsvg
+      gsettings-desktop-schemas shared-mime-info adwaita-icon-theme
+      gnome-desktop libexif dconf ];
 
   meta = with stdenv.lib; {
     homepage = https://wiki.gnome.org/Apps/EyeOfGnome;

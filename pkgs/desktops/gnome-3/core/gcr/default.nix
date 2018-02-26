@@ -1,20 +1,21 @@
-{ stdenv, fetchurl, pkgconfig, intltool, gnupg, p11_kit, glib
-, libgcrypt, libtasn1, dbus_glib, gtk, pango, gdk_pixbuf, atk
-, gobjectIntrospection, makeWrapper, libxslt, vala_0_32, gnome3 }:
+{ stdenv, fetchurl, pkgconfig, intltool, gnupg, p11-kit, glib
+, libgcrypt, libtasn1, dbus-glib, gtk, pango, gdk_pixbuf, atk
+, gobjectIntrospection, makeWrapper, libxslt, vala, gnome3 }:
 
 stdenv.mkDerivation rec {
   inherit (import ./src.nix fetchurl) name src;
 
   outputs = [ "out" "dev" ];
 
+  nativeBuildInputs = [ pkgconfig intltool gobjectIntrospection libxslt makeWrapper vala ];
+
   buildInputs = let
     gpg = gnupg.override { guiSupport = false; }; # prevent build cycle with pinentry_gnome
   in [
-    pkgconfig intltool gpg gobjectIntrospection libxslt
-    libgcrypt libtasn1 dbus_glib pango gdk_pixbuf atk makeWrapper vala_0_32
+    gpg libgcrypt libtasn1 dbus-glib pango gdk_pixbuf atk
   ];
 
-  propagatedBuildInputs = [ glib gtk p11_kit ];
+  propagatedBuildInputs = [ glib gtk p11-kit ];
 
   #doCheck = true;
 

@@ -1,33 +1,31 @@
-{ stdenv, intltool, fetchurl, evolution_data_server, db
+{ stdenv, intltool, fetchurl, evolution-data-server, db
 , pkgconfig, gtk3, glib, libsecret
-, libchamplain, clutter_gtk, geocode_glib
+, libchamplain, clutter-gtk, geocode-glib
 , bash, wrapGAppsHook, itstool, folks, libnotify, libxml2
-, gnome3, librsvg, gdk_pixbuf, file, telepathy_glib, nspr, nss
-, libsoup, vala_0_32, dbus_glib, automake, autoconf }:
+, gnome3, librsvg, gdk_pixbuf, file, telepathy-glib, nspr, nss
+, libsoup, vala, dbus-glib, automake, autoconf }:
 
 stdenv.mkDerivation rec {
   inherit (import ./src.nix fetchurl) name src;
 
   doCheck = true;
 
-  propagatedUserEnvPkgs = [ gnome3.gnome_themes_standard evolution_data_server ];
+  propagatedUserEnvPkgs = [ gnome3.gnome-themes-standard evolution-data-server ];
 
   # force build from vala
   preBuild = ''
    touch src/*.vala
   '';
 
-  buildInputs = [ pkgconfig gtk3 glib intltool itstool evolution_data_server
-                  gnome3.gsettings_desktop_schemas wrapGAppsHook file libnotify
-                  folks gnome3.gnome_desktop telepathy_glib libsecret dbus_glib
-                  libxml2 libsoup gnome3.gnome_online_accounts nspr nss
-                  gdk_pixbuf gnome3.defaultIconTheme librsvg
-                  libchamplain clutter_gtk geocode_glib
-                  vala_0_32 automake autoconf db ];
+  nativeBuildInputs = [ vala automake autoconf pkgconfig intltool itstool wrapGAppsHook file ];
+  buildInputs = [ gtk3 glib evolution-data-server gnome3.gsettings-desktop-schemas libnotify
+                  folks gnome3.gnome-desktop telepathy-glib libsecret dbus-glib
+                  libxml2 libsoup gnome3.gnome-online-accounts nspr nss
+                  gdk_pixbuf gnome3.defaultIconTheme libchamplain clutter-gtk geocode-glib db ];
 
   preFixup = ''
     gappsWrapperArgs+=(
-      --prefix XDG_DATA_DIRS : "${gnome3.gnome_themes_standard}/share"
+      --prefix XDG_DATA_DIRS : "${gnome3.gnome-themes-standard}/share"
     )
   '';
 

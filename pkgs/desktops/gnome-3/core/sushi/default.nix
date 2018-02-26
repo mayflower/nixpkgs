@@ -1,5 +1,5 @@
 { stdenv, fetchurl, pkgconfig, file, intltool, gobjectIntrospection, glib
-, clutter_gtk, clutter-gst, gnome3, gtksourceview, libmusicbrainz
+, clutter-gtk, clutter-gst, gnome3, gtksourceview, libmusicbrainz
 , webkitgtk, libmusicbrainz5, icu, makeWrapper, gst_all_1
 , gdk_pixbuf, librsvg, gtk3, harfbuzz }:
 
@@ -8,8 +8,9 @@ stdenv.mkDerivation rec {
 
   propagatedUserEnvPkgs = [ gst_all_1.gstreamer gst_all_1.gst-plugins-base gst_all_1.gst-plugins-good ];
 
-  buildInputs = [ pkgconfig file intltool gobjectIntrospection glib gtk3
-                  clutter_gtk clutter-gst gnome3.gjs gtksourceview gdk_pixbuf
+  nativeBuildInputs = [ pkgconfig ];
+  buildInputs = [ file intltool gobjectIntrospection glib gtk3
+                  clutter-gtk clutter-gst gnome3.gjs gtksourceview gdk_pixbuf
                   librsvg gnome3.defaultIconTheme libmusicbrainz5 webkitgtk
                   gnome3.evince icu makeWrapper harfbuzz ];
 
@@ -31,7 +32,7 @@ stdenv.mkDerivation rec {
   '';
 
   meta = with stdenv.lib; {
-    homepage = "http://en.wikipedia.org/wiki/Sushi_(software)";
+    homepage = "https://en.wikipedia.org/wiki/Sushi_(software)";
     description = "A quick previewer for Nautilus";
     maintainers = gnome3.maintainers;
     license = licenses.gpl2Plus;

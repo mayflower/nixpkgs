@@ -1,7 +1,7 @@
 { stdenv, intltool, fetchurl, apacheHttpd, nautilus
 , pkgconfig, gtk3, glib, libxml2, gnused, systemd
 , bash, wrapGAppsHook, itstool, libnotify, libtool, mod_dnssd
-, gnome3, librsvg, gdk_pixbuf, file, libcanberra_gtk3 }:
+, gnome3, librsvg, gdk_pixbuf, file, libcanberra-gtk3 }:
 
 stdenv.mkDerivation rec {
   inherit (import ./src.nix fetchurl) name src;
@@ -21,9 +21,10 @@ stdenv.mkDerivation rec {
                      "--with-systemduserunitdir=$(out)/etc/systemd/user"
                      "--with-nautilusdir=$(out)/lib/nautilus/extensions-3.0" ];
 
-  buildInputs = [ pkgconfig gtk3 glib intltool itstool libxml2 libtool
+  nativeBuildInputs = [ pkgconfig ];
+  buildInputs = [ gtk3 glib intltool itstool libxml2 libtool
                   wrapGAppsHook file gdk_pixbuf gnome3.defaultIconTheme librsvg
-                  nautilus libnotify libcanberra_gtk3 systemd ];
+                  nautilus libnotify libcanberra-gtk3 systemd ];
 
   postInstall = ''
     mkdir -p $out/share/gsettings-schemas/$name

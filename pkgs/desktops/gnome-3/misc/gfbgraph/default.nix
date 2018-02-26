@@ -1,5 +1,5 @@
 { stdenv, intltool, fetchurl, pkgconfig, glib
-, gnome3, libsoup, json_glib }:
+, gnome3, libsoup, json-glib }:
 
 stdenv.mkDerivation rec {
   name = "gfbgraph-0.2.3";
@@ -9,8 +9,9 @@ stdenv.mkDerivation rec {
     sha256 = "1dp0v8ia35fxs9yhnqpxj3ir5lh018jlbiwifjfn8ayy7h47j4fs";
   };
 
-  buildInputs = [ pkgconfig glib gnome3.gnome_online_accounts ];
-  propagatedBuildInputs = [ libsoup json_glib gnome3.rest ];
+  nativeBuildInputs = [ pkgconfig ];
+  buildInputs = [ glib gnome3.gnome-online-accounts ];
+  propagatedBuildInputs = [ libsoup json-glib gnome3.rest ];
 
   enableParallelBuilding = true;
 
