@@ -18,7 +18,7 @@ in stdenv.mkDerivation rec {
   buildInputs = [
     libvirt glib libxml2 intltool libtool yajl nettle libgcrypt
     python pygobject2 gobjectIntrospection libcap_ng numactl libapparmor
-  ] ++ stdenv.lib.optionals stdenv.isx86_64 [
+  ] ++ stdenv.lib.optionals (stdenv.isx86_64 && enableXen) [
     xen
   ];
 
