@@ -46,13 +46,13 @@ let
 in mapAttrs genericBuild {
 
   prometheus1 = {
-    version = "1.8.1";
-    sha256 = "07xvpjhhxc0r73qfmkvf94zhv19zv76privw6blg35k5nxcnj7j4";
+    version = "1.8.2";
+    sha256 = "088flpg3qgnj9afl9vbaa19v2s1d21yxy38nrlv5m7cxwy2pi5pv";
   };
 
   prometheus2 = {
-    version = "2.0.0-rc.2";
-    sha256 = "1bbfbc1rk85rfdl1iddm2402wgnn673vgjzxghjh8qaw7yp096nr";
+    version = "2.1.0";
+    sha256 = "01pbqfp43qrqcgyidyg2lw9jnjdrv140vnmqmm49z0vhlkxkwlvw";
     # Tests need lots of diskspace
     doCheck = false;
   };
