@@ -9,20 +9,6 @@
 }:
 
 let
-  # We want the new fixed S3 retry behavior for nixUnstable, but it's a breaking
-  # change so we don't want to update the top-level package.
-  aws-sdk-cpp-1_3 = aws-sdk-cpp.overrideAttrs (_: rec {
-    name = "aws-sdk-cpp-${version}";
-    version = "1.3.22";
-
-    src = fetchFromGitHub {
-      owner = "awslabs";
-      repo = "aws-sdk-cpp";
-      rev = version;
-      sha256 = "0sdgy8kqhxnw7n0sw4m3p3ay7yic3rhad5ab8m5lbx61ad9bq3c2";
-    };
-  });
-
   sh = busybox-sandbox-shell;
 
   common = { name, suffix ? "", src, fromGit ? false }: stdenv.mkDerivation rec {

@@ -25,7 +25,7 @@ stdenv.mkDerivation rec {
 
   buildInputs = [
     gnome3.gtk libglade networkmanager libnotify libsecret gsettings-desktop-schemas
-    polkit isocodes udev libgudev gnome3.gconf gnome3.libgnome-keyring
+    polkit isocodes udev libgudev gnome3.libgnome-keyring
     modemmanager jansson glib-networking
     libindicator-gtk3 libappindicator-gtk3
   ] ++ stdenv.lib.optional withGnome webkitgtk;

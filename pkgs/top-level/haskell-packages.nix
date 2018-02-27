@@ -127,7 +127,7 @@ in rec {
     };
     ghc822 = callPackage ../development/haskell-modules {
       buildHaskellPackages = bh.packages.ghc822;
-      ghc = compiler.ghc822;
+      ghc = bh.compiler.ghc822;
       compilerConfig = callPackage ../development/haskell-modules/configuration-ghc-8.2.x.nix { };
     };
     ghc841 = callPackage ../development/haskell-modules {

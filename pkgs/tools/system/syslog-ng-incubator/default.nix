@@ -21,7 +21,6 @@ stdenv.mkDerivation rec {
 
   configureFlags = [
     "--with-module-dir=$(out)/lib/syslog-ng"
-    "--disable-perl" # fails to build
   ];
 
   meta = with stdenv.lib; {
