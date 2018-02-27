@@ -595,9 +595,6 @@ with stdenv.lib;
   ${optionalString (versionOlder version "4.11") ''
     VIDEO_STK1160_AC97 y
   ''}
-  MEDIA_CONTROLLER y
-  MEDIA_USB_SUPPORT y
-  MEDIA_PCI_SUPPORT y
 
   # Our initrd init uses shebang scripts, so can't be modular.
   BINFMT_SCRIPT y

@@ -156,8 +156,5 @@ stdenv.mkDerivation {
     license = "GPL";
     maintainers = [ lib.maintainers.sander ];
     platforms = lib.platforms.linux;
-    # video drivers are in kernel since 4.14, vboxsf etc. will follow with 4.16+
-    # guest additions currently fail to compile with anything >4.14
-    broken = (!lib.versionOlder kernel.version "4.15");
   };
 }

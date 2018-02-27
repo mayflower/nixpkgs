@@ -32,6 +32,6 @@ stdenv.mkDerivation rec {
     description = "Controller for Ubiquiti UniFi accesspoints";
     license = licenses.unfree;
     platforms = platforms.unix;
-    maintainers = with maintainers; [ wkennington fpletz ];
+    maintainers = with maintainers; [ wkennington ];
   };
 }

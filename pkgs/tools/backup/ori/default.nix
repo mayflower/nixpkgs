@@ -24,6 +24,5 @@ stdenv.mkDerivation rec {
     homepage = http://ori.scs.stanford.edu/;
     license = licenses.mit;
     platforms = platforms.unix;
-    broken = true;
   };
 }

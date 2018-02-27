@@ -160,6 +160,5 @@ stdenv.mkDerivation {
     homepage = http://fenicsproject.org/;
     platforms = stdenv.lib.platforms.darwin;
     license = stdenv.lib.licenses.lgpl3;
-    broken = true;
   };
 }

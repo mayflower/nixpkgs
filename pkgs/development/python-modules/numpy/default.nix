@@ -1,4 +1,4 @@
-{ lib, fetchPypi, python, buildPythonPackage, isPy27, isPyPy, gfortran, nose, blas }:
+{lib, fetchPypi, python, buildPythonPackage, isPy27, isPyPy, gfortran, nose, blas }:
 
 buildPythonPackage rec {
   pname = "numpy";

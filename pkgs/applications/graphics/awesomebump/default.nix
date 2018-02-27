@@ -51,11 +51,6 @@ in stdenv.mkDerivation rec {
   # fatal error: properties/ImageProperties.peg.h: No such file or directory
   enableParallelBuilding = false;
 
-  # RPATH in /tmp hack
-  preFixup = ''
-    rm -r $NIX_BUILD_TOP/__nix_qt5__
-  '';
-
   meta = {
     homepage = https://github.com/kmkolasinski/AwesomeBump;
     description = "A program to generate normal, height, specular or ambient occlusion textures from a single image";

@@ -15419,7 +15419,6 @@ with pkgs;
   errbot = callPackage ../applications/networking/errbot {
     pythonPackages = python3Packages;
   };
-  errbot-plugin-githubhook = callPackage ../applications/networking/errbot/plugins/githubhook.nix { };
   errbot-plugin-xmppbridge = callPackage ../applications/networking/errbot/plugins/xmppbridge.nix { };
 
   espeak-classic = callPackage ../applications/audio/espeak { };

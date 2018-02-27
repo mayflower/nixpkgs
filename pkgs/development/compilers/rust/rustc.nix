@@ -103,10 +103,6 @@ stdenv.mkDerivation {
     # Useful debugging parameter
     # export VERBOSE=1
   ''
-  + optionalString (stdenv ? glibc) ''
-    # Disable failing test because of glibc-2.25 patch.
-    rm -vr src/test/run-pass/out-of-stack.rs
-  ''
   + optionalString stdenv.isDarwin ''
     # Disable all lldb tests.
     # error: Can't run LLDB test because LLDB's python path is not set

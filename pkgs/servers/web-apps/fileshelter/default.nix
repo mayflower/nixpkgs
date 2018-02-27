@@ -23,6 +23,6 @@ stdenv.mkDerivation rec {
     description = "FileShelter is a 'one-click' file sharing web application";
     maintainers = [ maintainers.willibutz ];
     license = licenses.gpl3;
-    platforms = platforms.linux;
+    platforms = [ "x86_64-linux" ];
   };
 }

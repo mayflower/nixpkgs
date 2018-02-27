@@ -62,7 +62,6 @@ common = rec { # attributes common to both builds
     "-DPLUGIN_AUTH_GSSAPI_CLIENT=NO"
   ]
     ++ optional stdenv.isDarwin "-DCURSES_LIBRARY=${ncurses.out}/lib/libncurses.dylib"
-    ++ optional (!stdenv.isLinux) "-DWITH_JEMALLOC=no" # bad build at least on Darwin
     ++ optional stdenv.hostPlatform.isMusl "-DWITHOUT_TOKUDB=1" # mariadb docs say disable this for musl
     ;
 

@@ -971,5 +971,5 @@
       arch = "linux-i686";
       sha512 = "4b1f2e81b76f280cca25100f2a6bd52d62adeb5d3dba58a18a8812efd4f23a97d38c86b40777a6ba6f8e2d69e50d043950d4be5b2e3f1e4c2cca61e9037508dd";
     }
-  ];
+    ];
 }

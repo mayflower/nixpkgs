@@ -40,7 +40,6 @@ stdenv.mkDerivation rec {
   dontStrip = hostPlatform != buildPlatform;
   bash_cv_func_sigsetjmp = if stdenv.isCygwin then "missing" else null;
 
-
   meta = with stdenv.lib; {
     description = "Library for interactive line editing";
 

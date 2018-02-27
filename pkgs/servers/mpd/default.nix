@@ -117,7 +117,6 @@ in stdenv.mkDerivation rec {
       (mkFlag opusSupport "opus")
       (mkFlag soundcloudSupport "soundcloud")
       "--enable-debug"
-      "--disable-oss"
       "--with-zeroconf=avahi"
     ]
     ++ opt stdenv.isLinux

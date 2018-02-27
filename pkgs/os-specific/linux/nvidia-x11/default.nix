@@ -27,7 +27,6 @@ rec {
   beta = stable; # not enough interest to maintain beta ATM
 
 
-
   legacy_340 = generic {
     version = "340.104";
     sha256_32bit = "1l8w95qpxmkw33c4lsf5ar9w2fkhky4x23rlpqvp1j66wbw1b473";

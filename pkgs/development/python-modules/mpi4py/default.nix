@@ -44,9 +44,6 @@ buildPythonPackage rec {
 
   buildInputs = [ mpi openssh ];
 
-  # Timing out communicating between processes when sandboxing enabled.
-  doCheck = false;
-
   meta = {
     description =
       "Python bindings for the Message Passing Interface standard";

@@ -28,14 +28,6 @@ stdenv.mkDerivation rec {
     sha256 = "1v32snw46rkgbdqdy3dssl2y13i8p2cr1cw1i18r6vdmiy24dw4v";
   };
 
-  patches = [
-    (fetchpatch {
-      name = "CVE-2017-9300.patch";
-      url = "https://git.videolan.org/?p=vlc/vlc-2.2.git;a=patch;h=55a82442cfea9dab8b853f3a4610f2880c5fadf3;hp=dbe888f9ca9c3b102478b4a16a3d1d985c267899";
-      sha256 = "0l0fwqkn31lggwc5dkhb58gkv8pc6ng51y0izjigqvfqvhwdnzxn";
-    })
-  ];
-
   # Comment-out the Qt 5.5 version check, as we do apply the relevant patch.
   # https://trac.videolan.org/vlc/ticket/16497
   postPatch = if (!withQt5) then null else

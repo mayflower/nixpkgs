@@ -14,11 +14,6 @@ stdenv.mkDerivation rec {
   buildInputs = [ libnotify gdk_pixbuf ];
   nativeBuildInputs = [ pkgconfig ];
 
-  prePatch = ''
-    substituteInPlace Makefile \
-        --replace ' = gcc' ' ?= gcc'
-  '';
-
   installPhase = ''
     mkdir -p $out/bin
     cp et $out/bin

@@ -36,6 +36,7 @@ python2Packages.buildPythonApplication rec {
       --set-default MAILPILE_SHARED "$out/share/mailpile"
   '';
 
+  # No tests were found
   doCheck = false;
 
   meta = with stdenv.lib; {

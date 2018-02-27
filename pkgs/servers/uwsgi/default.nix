@@ -1,4 +1,4 @@
-{ stdenv, lib, fetchurl, pkgconfig, jansson, pcre
+{ stdenv, lib, fetchurl, pkgconfig, jansson
 # plugins: list of strings, eg. [ "python2" "python3" ]
 , plugins
 , pam, withPAM ? false
@@ -58,7 +58,7 @@ stdenv.mkDerivation rec {
 
   nativeBuildInputs = [ python3 pkgconfig ];
 
-  buildInputs =  [ jansson pcre ]
+  buildInputs =  [ jansson ]
               ++ lib.optional withPAM pam
               ++ lib.optional withSystemd systemd
               ++ lib.concatMap (x: x.inputs) needed

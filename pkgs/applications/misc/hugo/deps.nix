@@ -37,15 +37,6 @@
     };
   }
   {
-    goPackagePath = "github.com/alecthomas/chroma";
-    fetch = {
-      type = "git";
-      url = "https://github.com/alecthomas/chroma";
-      rev = "b0295f66bdb7c61d54906003d7649185794e21b4";
-      sha256 = "1hnvv13nphbzr9xm21fys7lgm0kd6qlbk58vc8fi802lxzsfmdis";
-    };
-  }
-  {
     goPackagePath = "github.com/bep/gitmap";
     fetch = {
       type = "git";

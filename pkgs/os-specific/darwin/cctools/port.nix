@@ -2,7 +2,6 @@
 , llvm, libcxx, libcxxabi, clang, libuuid
 , libobjc ? null, maloader ? null, xctoolchain ? null
 , hostPlatform, targetPlatform
-, enableDumpNormalizedLibArgs ? false
 }:
 
 let
@@ -40,7 +39,7 @@ let
 
     patches = [
       ./ld-rpath-nonfinal.patch ./ld-ignore-rpath-link.patch
-    ] ++ stdenv.lib.optional enableDumpNormalizedLibArgs ./ld-dump-normalized-args.patch;
+    ];
 
     __propagatedImpureHostDeps = [
       # As far as I can tell, otool from cctools is the only thing that depends on these two, and we should fix them

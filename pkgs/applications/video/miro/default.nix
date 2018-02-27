@@ -63,6 +63,10 @@ in buildPythonApplication rec {
 
   postInstall = ''
     mv "$out/bin/miro.real" "$out/bin/miro"
+    wrapProgram "$out/bin/miro" \
+      --prefix GST_PLUGIN_SYSTEM_PATH : "$GST_PLUGIN_SYSTEM_PATH" \
+      --prefix GIO_EXTRA_MODULES : "${glib-networking.out}/lib/gio/modules" \
+      --prefix XDG_DATA_DIRS : "$GSETTINGS_SCHEMAS_PATH:$out/share"
   '';
 
   buildInputs = with pythonPackages; [ pygtk pygobject2 ] ++ [

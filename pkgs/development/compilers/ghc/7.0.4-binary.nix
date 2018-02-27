@@ -86,30 +86,13 @@ stdenv.mkDerivation rec {
       for prog in ld ar gcc strip ranlib; do
         find . -name "setup-config" -exec sed -i "s@/usr/bin/$prog@$(type -p $prog)@g" {} \;
       done
-    '' + stdenv.lib.optionalString stdenv.isDarwin ''
-      # not enough room in the object files for the full path to libiconv :(
-      fix () {
-        install_name_tool -change /usr/lib/libiconv.2.dylib @executable_path/libiconv.dylib $1
-      }
-
-      ln -s ${libiconv}/lib/libiconv.dylib ghc-${version}/utils/ghc-pwd/dist/build/tmp
-      ln -s ${libiconv}/lib/libiconv.dylib ghc-${version}/utils/hpc/dist/build/tmp
-      ln -s ${libiconv}/lib/libiconv.dylib ghc-${version}/ghc/stage2/build/tmp
-
-      for file in ghc-cabal ghc-pwd ghc-stage2 ghc-pkg haddock hsc2hs hpc; do
-        fix $(find . -type f -name $file)
-      done
-
-      for file in $(find . -name setup-config); do
-        substituteInPlace $file --replace /usr/bin/ranlib "$(type -P ranlib)"
-      done
     '';
 
-  configurePhase = ''
-    ./configure --prefix=$out \
-      --with-gmp-libraries=${gmp.out or gmp}/lib --with-gmp-includes=${gmp.dev or gmp}/include \
-      ${stdenv.lib.optionalString stdenv.isDarwin "--with-gcc=${./gcc-clang-wrapper.sh}"}
-  '';
+  configurePlatforms = [ ];
+  configureFlags = [
+    "--with-gmp-libraries=${stdenv.lib.getLib gmp}/lib"
+    "--with-gmp-includes=${stdenv.lib.getDev gmp}/include"
+  ] ++ stdenv.lib.optional stdenv.isDarwin "--with-gcc=${./gcc-clang-wrapper.sh}";
 
   # Stripping combined with patchelf breaks the executables (they die
   # with a segfault or the kernel even refuses the execve). (NIXPKGS-85)
