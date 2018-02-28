@@ -152,19 +152,6 @@ in {
       description = "An alarm callback plugin for integrating PagerDuty into Graylog";
     };
   };
-  pagerduty = glPlugin rec {
-    name = "graylog-pagerduty-${version}";
-    pluginName = "graylog-plugin-pagerduty";
-    version = "1.3.0";
-    src = fetchurl {
-      url = "https://github.com/graylog-labs/${pluginName}/releases/download/${version}/${pluginName}-${version}.jar";
-      sha256 = "1g63c6rm5pkz7f0d73wb2lmk4zm430jqnhihbyq112cm4i7ymglh";
-    };
-    meta = {
-      homepage = https://github.com/graylog-labs/graylog-plugin-pagerduty;
-      description = "An alarm callback plugin for integrating PagerDuty into Graylog";
-    };
-  };
   redis = glPlugin rec {
     name = "graylog-redis-${version}";
     pluginName = "graylog-plugin-redis";
@@ -202,19 +189,6 @@ in {
     meta = {
       homepage = https://github.com/graylog-labs/graylog-plugin-spaceweather;
       description = "Correlate proton density to the response time of your app and the ion temperature to your exception rate.";
-    };
-  };
-  twiliosms = glPlugin rec {
-    name = "graylog-twiliosms-${version}";
-    pluginName = "graylog-plugin-twiliosms";
-    version = "1.0.0";
-    src = fetchurl {
-      url = "https://github.com/graylog-labs/${pluginName}/releases/download/${version}/${pluginName}-${version}.jar";
-      sha256 = "0kwfv1zfj0fmxh9i6413bcsaxrn1vdwrzb6dphvg3dx27wxn1j1a";
-    };
-    meta = {
-      homepage = https://github.com/graylog-labs/graylog-plugin-twiliosms;
-      description = "An alarm callback plugin for integrating the Twilio SMS API into Graylog";
     };
   };
   twiliosms = glPlugin rec {
