@@ -2,7 +2,17 @@
 , intltool, itstool, libxml2, systemd }:
 
 stdenv.mkDerivation rec {
-  inherit (import ./src.nix fetchurl) name src;
+  name = "gnome-logs-${version}";
+  version = "3.26.3";
+
+  src = fetchurl {
+    url = "mirror://gnome/sources/gnome-logs/${gnome3.versionBranch version}/${name}.tar.xz";
+    sha256 = "0cbzl38haz1m6y7gcbvvab0jcrva781izhp8xv2dzmma4xlzdw0k";
+  };
+
+  passthru = {
+    updateScript = gnome3.updateScript { packageName = "gnome-logs"; attrPath = "gnome3.gnome-logs"; };
+  };
 
   configureFlags = [ "--disable-tests" ];
 

@@ -4,7 +4,17 @@
 , gnome3, gdk_pixbuf, libxslt }:
 
 stdenv.mkDerivation rec {
-  inherit (import ./src.nix fetchurl) name src;
+  name = "glade-${version}";
+  version = "3.20.4";
+
+  src = fetchurl {
+    url = "mirror://gnome/sources/glade/${gnome3.versionBranch version}/${name}.tar.xz";
+    sha256 = "1n9m4s81jd9fi60mrxsvlk4fi2vqrqmp95azsxp9jnqn6pkdz0jb";
+  };
+
+  passthru = {
+    updateScript = gnome3.updateScript { packageName = "glade"; attrPath = "gnome3.glade"; };
+  };
 
   nativeBuildInputs = [
     pkgconfig intltool itstool wrapGAppsHook docbook_xsl libxslt gobjectIntrospection

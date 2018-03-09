@@ -54,7 +54,7 @@ let
 
     base64 = callPackage ../development/ocaml-modules/base64 { };
 
-    bap = callPackage ../development/ocaml-modules/bap { cmdliner = cmdliner_0_9; };
+    bap = callPackage ../development/ocaml-modules/bap { };
 
     batteries = callPackage ../development/ocaml-modules/batteries { };
 
@@ -954,10 +954,6 @@ let
       else callPackage ../development/ocaml-modules/janestreet/async_ssl.nix { };
 
     # Apps / from all-packages
-
-    wyrd = callPackage ../tools/misc/wyrd {
-      ncurses = pkgs.ncurses5;
-    };
 
     haxe = callPackage ../development/compilers/haxe { };
 
