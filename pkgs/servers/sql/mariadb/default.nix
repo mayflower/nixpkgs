@@ -2,7 +2,7 @@
 , openssl, pcre, boost, judy, bison, libxml2
 , libaio, libevent, groff, jemalloc, cracklib, systemd, numactl, perl
 , fixDarwinDylibNames, cctools, CoreServices
-, scons, buildEnv, check, qt4
+, scons, buildEnv, check, qt4, asio
 }:
 
 with stdenv.lib;
@@ -215,7 +215,7 @@ galera = stdenv.mkDerivation rec {
     sha256 = "01qmrik3q89znzsrn477xk4n8m6jrvrnqriryxvkkf1y1xmjsaz3";
   };
 
-  buildInputs = [ scons boost openssl check qt4 ];
+  buildInputs = [ asio scons boost openssl check qt4  ];
 
   patchPhase = ''
     substituteInPlace SConstruct \
@@ -223,7 +223,7 @@ galera = stdenv.mkDerivation rec {
   '';
 
   preConfigure = ''
-    export CPPFLAGS="-I${boost.dev}/include -I${openssl.dev}/include -I${check}/include"
+    export CPPFLAGS="-I${boost.dev}/include -I${openssl.dev}/include -I${check}/include -I${asio}/include"
     export LIBPATH="${galeraLibs}/lib"
   '';
 
