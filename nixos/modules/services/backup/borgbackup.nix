@@ -3,259 +3,578 @@
 with lib;
 
 let
-  cfg = config.services.borgbackup;
 
-  makeService = name: jobcfg: {
-    description = "Borgbackup job ${name}";
-    path = with pkgs; [ openssh ];
-    environment = {
-      "BORG_REPO" = jobcfg.repository;
-      "BORG_PASSPHRASE" = jobcfg.passphrase or "";
+  isLocalPath = x:
+    builtins.substring 0 1 x == "/"      # absolute path
+    || builtins.substring 0 1 x == "."   # relative path
+    || builtins.match "[.*:.*]" == null; # not machine:path
+
+  mkExcludeFile = cfg:
+    # Write each exclude pattern to a new line
+    pkgs.writeText "excludefile" (concatStringsSep "\n" cfg.exclude);
+
+  mkKeepArgs = cfg:
+    # If cfg.prune.keep e.g. has a yearly attribute,
+    # its content is passed on as --keep-yearly
+    concatStringsSep " "
+      (mapAttrsToList (x: y: "--keep-${x}=${toString y}") cfg.prune.keep);
+
+  mkBackupScript = cfg: ''
+    on_exit()
+    {
+      exitStatus=$?
+      # Reset the EXIT handler, or else we're called again on 'exit' below
+      trap - EXIT
+      ${cfg.postHook}
+      exit $exitStatus
+    }
+    trap 'on_exit' INT TERM QUIT EXIT
+
+    archiveName="${cfg.archiveBaseName}-$(date ${cfg.dateFormat})"
+    archiveSuffix="${optionalString cfg.appendFailedSuffix ".failed"}"
+    ${cfg.preHook}
+  '' + optionalString cfg.doInit ''
+    # Run borg init if the repo doesn't exist yet
+    if ! borg list > /dev/null; then
+      borg init \
+        --encryption ${cfg.encryption.mode} \
+        $extraInitArgs
+      ${cfg.postInit}
+    fi
+  '' + ''
+    borg create \
+      --compression ${cfg.compression} \
+      --exclude-from ${mkExcludeFile cfg} \
+      $extraCreateArgs \
+      "::$archiveName$archiveSuffix" \
+      ${escapeShellArgs cfg.paths}
+  '' + optionalString cfg.appendFailedSuffix ''
+    borg rename "::$archiveName$archiveSuffix" "$archiveName"
+  '' + ''
+    ${cfg.postCreate}
+  '' + optionalString (cfg.prune.keep != { }) ''
+    borg prune \
+      ${mkKeepArgs cfg} \
+      --prefix ${escapeShellArg cfg.prune.prefix} \
+      $extraPruneArgs
+    ${cfg.postPrune}
+  '';
+
+  mkPassEnv = cfg: with cfg.encryption;
+    if passCommand != null then
+      { BORG_PASSCOMMAND = passCommand; }
+    else if passphrase != null then
+      { BORG_PASSPHRASE = passphrase; }
+    else { };
+
+  mkBackupService = name: cfg:
+    let
+      userHome = config.users.users.${cfg.user}.home;
+    in nameValuePair "borgbackup-job-${name}" {
+      description = "BorgBackup job ${name}";
+      path = with pkgs; [
+        borgbackup openssh
+      ];
+      script = mkBackupScript cfg;
+      serviceConfig = {
+        User = cfg.user;
+        Group = cfg.group;
+        # Only run when no other process is using CPU or disk
+        CPUSchedulingPolicy = "idle";
+        IOSchedulingClass = "idle";
+        ProtectSystem = "strict";
+        ReadWritePaths =
+          [ "${userHome}/.config/borg" "${userHome}/.cache/borg" ]
+          # Borg needs write access to repo if it is not remote
+          ++ optional (isLocalPath cfg.repo) cfg.repo;
+        PrivateTmp = true;
+      };
+      environment = {
+        BORG_REPO = cfg.repo;
+        inherit (cfg) extraInitArgs extraCreateArgs extraPruneArgs;
+      } // (mkPassEnv cfg) // cfg.environment;
+      inherit (cfg) startAt;
     };
-    preStart = jobcfg.preBackup;
-    postStart = jobcfg.postBackup;
-    script = ''
-      echo Running borg create
-      ${pkgs.borgbackup}/bin/borg create -v \
-        --stats \
-        --exclude-from ${pkgs.writeText "borgbackup-${name}-excludes" (
-          concatStringsSep "\n" jobcfg.excludes
-        )} \
-        --compression ${jobcfg.compression} \
-        ::${jobcfg.archive} '${concatStringsSep "' '" jobcfg.paths}'
-    '' + optionalString jobcfg.prune.enable (
-      let
-        keepCfg = jobcfg.prune.keep;
-        cmdOption = ktype:
-          let t = keepCfg."${ktype}"; in
-          optionalString (t != null) " --keep-${ktype} '${t}' ";
-      in ''
-        echo Running borg prune
-        ${pkgs.borgbackup}/bin/borg prune -v ''
-          + cmdOption "within"
-          + cmdOption "hourly"
-          + cmdOption "daily"
-          + cmdOption "weekly"
-          + cmdOption "monthly"
-          + cmdOption "yearly"
-          + '' \
-        --stats
-      ''
-    );
-    serviceConfig = {
-      Type = "oneshot";
-      Nice = 19;
-      IOSchedulingClass = "idle";
-      User = "borg";
-      Group = jobcfg.group;
-      PermissionsStartOnly = true;
-      TimeoutStartSec = "2h";
-      TimeoutSec = "6h";
-    };
+
+  # Paths listed in ReadWritePaths must exist before service is started
+  mkActivationScript = name: cfg:
+    let
+      install = "install -o ${cfg.user} -g ${cfg.group}";
+    in
+      nameValuePair "borgbackup-job-${name}" (stringAfter [ "users" ] (''
+        # Eensure that the home directory already exists
+        # We can't assert createHome == true because that's not the case for root
+        cd "${config.users.users.${cfg.user}.home}"
+        ${install} -d .config/borg
+        ${install} -d .cache/borg
+      '' + optionalString (isLocalPath cfg.repo) ''
+        ${install} -d ${escapeShellArg cfg.repo}
+      ''));
+
+  mkPassAssertion = name: cfg: {
+    assertion = with cfg.encryption;
+      mode != "none" -> passCommand != null || passphrase != null;
+    message =
+      "passCommand or passphrase has to be specified because"
+      + '' borgbackup.jobs.${name}.encryption != "none"'';
   };
 
-  makeTimer = name: jobcfg: {
-    description = "Update timer for borgbackup job ${name}";
-    partOf      = [ "borgbackup-${name}.service" ];
-    wantedBy    = [ "timers.target" ];
-    timerConfig.OnCalendar = jobcfg.interval;
+  mkRepoService = name: cfg:
+    nameValuePair "borgbackup-repo-${name}" {
+      description = "Create BorgBackup repository ${name} directory";
+      script = ''
+        mkdir -p ${escapeShellArg cfg.path}
+        chown ${cfg.user}:${cfg.group} ${escapeShellArg cfg.path}
+      '';
+      serviceConfig = {
+        # The service's only task is to ensure that the specified path exists
+        Type = "oneshot";
+      };
+      wantedBy = [ "multi-user.target" ];
+    };
+
+  mkAuthorizedKey = cfg: appendOnly: key:
+    let
+      # Because of the following line, clients do not need to specify an absolute repo path
+      cdCommand = "cd ${escapeShellArg cfg.path}";
+      restrictedArg = "--restrict-to-${if cfg.allowSubRepos then "path" else "repository"} .";
+      appendOnlyArg = optionalString appendOnly "--append-only";
+      quotaArg = optionalString (cfg.quota != null) "--storage-quota ${cfg.quota}";
+      serveCommand = "borg serve ${restrictedArg} ${appendOnlyArg} ${quotaArg}";
+    in
+      ''command="${cdCommand} && ${serveCommand}",restrict ${key}'';
+
+  mkUsersConfig = name: cfg: {
+    users.${cfg.user} = {
+      openssh.authorizedKeys.keys =
+        (map (mkAuthorizedKey cfg false) cfg.authorizedKeys
+        ++ map (mkAuthorizedKey cfg true) cfg.authorizedKeysAppendOnly);
+      useDefaultShell = true;
+    };
+    groups.${cfg.group} = { };
   };
 
-in
+  mkKeysAssertion = name: cfg: {
+    assertion = cfg.authorizedKeys != [ ] || cfg.authorizedKeysAppendOnly != [ ];
+    message =
+      "borgbackup.repos.${name} does not make sense"
+      + " without at least one public key";
+  };
 
-{
-  options = {
-    services.borgbackup.jobs = mkOption {
-      default = {};
-      description = "Borgbackup jobs.";
-      type = types.attrsOf (types.submodule {
+in {
+  meta.maintainers = with maintainers; [ dotlambda ];
+
+  ###### interface
+
+  options.services.borgbackup.jobs = mkOption {
+    description = "Deduplicating backups using BorgBackup.";
+    default = { };
+    example = literalExample ''
+      {
+        rootBackup = {
+          paths = "/";
+          exclude = [ "/nix" ];
+          repo = "/path/to/local/repo";
+          encryption = {
+            mode = "repokey";
+            passphrase = "secret";
+          };
+          compression = "auto,lzma";
+          startAt = "weekly";
+        };
+      }
+    '';
+    type = types.attrsOf (types.submodule (let globalConfig = config; in
+      { name, config, ... }: {
         options = {
-          repository = mkOption {
-            type = types.str;
-            example = "user@hostname:backup";
-            description = ''
-              Path to borg repository.
-            '';
-          };
-
-          archive = mkOption {
-            type = types.str;
-            default = "{hostname}-{now:%Y-%m-%d-%H-%M}";
-            example = "{hostname}-{user}-{now:%Y-%m-%d-%H-%M}";
-            description = ''
-              Archive name pattern for individual backups.
-
-              The format is described in
-              <citerefentry><refentrytitle>borg</refentrytitle>
-              <manvolnum>1</manvolnum></citerefentry>.
-            '';
-          };
 
           paths = mkOption {
-            type = types.listOf types.str;
-            default = [];
-            example = [ "/var/backups" "/etc/nixos" ];
+            type = with types; either path (nonEmptyListOf path);
+            description = "Path(s) to back up.";
+            example = "/home/user";
+            apply = x: if isList x then x else [ x ];
+          };
+
+          repo = mkOption {
+            type = types.str;
+            description = "Remote or local repository to back up to.";
+            example = "user@machine:/path/to/repo";
+          };
+
+          archiveBaseName = mkOption {
+            type = types.strMatching "[^/{}]+";
+            default = "${globalConfig.networking.hostName}-${name}";
+            defaultText = "\${config.networking.hostName}-<name>";
             description = ''
-              List of paths or path patterns to backup.
+              How to name the created archives. A timestamp, whose format is
+              determined by <option>dateFormat</option>, will be appended. The full
+              name can be modified at runtime (<literal>$archiveName</literal>).
+              Placeholders like <literal>{hostname}</literal> must not be used.
             '';
+          };
+
+          dateFormat = mkOption {
+            type = types.str;
+            description = ''
+              Arguments passed to <command>date</command>
+              to create a timestamp suffix for the archive name.
+            '';
+            default = "+%Y-%m-%dT%H:%M:%S";
+            example = "-u +%s";
+          };
+
+          startAt = mkOption {
+            type = with types; either str (listOf str);
+            default = "daily";
+            description = ''
+              When or how often the backup should run.
+              Must be in the format described in
+              <citerefentry><refentrytitle>systemd.time</refentrytitle>
+              <manvolnum>7</manvolnum></citerefentry>.
+              If you do not want the backup to start
+              automatically, use <literal>[ ]</literal>.
+            '';
+          };
+
+          user = mkOption {
+            type = types.str;
+            description = ''
+              The user <command>borg</command> is run as.
+              User or group need read permission
+              for the specified <option>paths</option>.
+            '';
+            default = "root";
           };
 
           group = mkOption {
             type = types.str;
-            default = "backup";
             description = ''
-              Passphrase to use for encrypted repositories, if any.
+              The group borg is run as. User or group needs read permission
+              for the specified <option>paths</option>.
+            '';
+            default = "root";
+          };
+
+          encryption.mode = mkOption {
+            type = types.enum [
+              "repokey" "keyfile"
+              "repokey-blake2" "keyfile-blake2"
+              "authenticated" "authenticated-blake2"
+              "none"
+            ];
+            description = ''
+              Encryption mode to use. Setting a mode
+              other than <literal>"none"</literal> requires
+              you to specify a <option>passCommand</option>
+              or a <option>passphrase</option>.
             '';
           };
 
-          passphrase = mkOption {
-            type = types.nullOr types.str;
-            default = null;
+          encryption.passCommand = mkOption {
+            type = with types; nullOr str;
             description = ''
-              Passphrase to use for encrypted repositories, if any.
+              A command which prints the passphrase to stdout.
+              Mutually exclusive with <option>passphrase</option>.
             '';
+            default = null;
+            example = "cat /path/to/passphrase_file";
+          };
+
+          encryption.passphrase = mkOption {
+            type = with types; nullOr str;
+            description = ''
+              The passphrase the backups are encrypted with.
+              Mutually exclusive with <option>passCommand</option>.
+              If you do not want the passphrase to be stored in the
+              world-readable Nix store, use <option>passCommand</option>.
+            '';
+            default = null;
           };
 
           compression = mkOption {
-            type = types.str;
+            # "auto" is optional,
+            # compression mode must be given,
+            # compression level is optional
+            type = types.strMatching "none|(auto,)?(lz4|zstd|zlib|lzma)(,[[:digit:]]{1,2})?";
+            description = ''
+              Compression method to use. Refer to
+              <command>borg help compression</command>
+              for all available options.
+            '';
             default = "lz4";
-            example = "lzma,1";
-            description = ''
-              Compression method to use for backups.
-
-              The format is described in
-              <citerefentry><refentrytitle>borg</refentrytitle>
-              <manvolnum>1</manvolnum></citerefentry>.
-            '';
+            example = "auto,lzma";
           };
 
-          excludes = mkOption {
-            type = types.listOf types.str;
-            default = [];
-            example = [ "*.pyc" "*.o" ];
+          exclude = mkOption {
+            type = with types; listOf str;
             description = ''
-              Patterns for paths to exclude from backups.
-
-              The format is described in
-              <citerefentry><refentrytitle>borg</refentrytitle>
-              <manvolnum>1</manvolnum></citerefentry>.
+              Exclude paths matching any of the given patterns. See
+              <command>borg help patterns</command> for pattern syntax.
             '';
+            default = [ ];
+            example = [
+              "/home/*/.cache"
+              "/nix"
+            ];
           };
 
-          prune.enable = mkOption {
+          doInit = mkOption {
             type = types.bool;
-            default = false;
             description = ''
-              Whether to prune the respository after creating a backup.
+              Run <command>borg init</command> if the
+              specified <option>repo</option> does not exist.
+              You should set this to <literal>false</literal>
+              if the repository is located on an external drive
+              that might not always be mounted.
+            '';
+            default = true;
+          };
+
+          appendFailedSuffix = mkOption {
+            type = types.bool;
+            description = ''
+              Append a <literal>.failed</literal> suffix
+              to the archive name, which is only removed if
+              <command>borg create</command> has a zero exit status.
+            '';
+            default = true;
+          };
+
+          prune.keep = mkOption {
+            # Specifying e.g. `prune.keep.yearly = -1`
+            # means there is no limit of yearly archives to keep
+            # The regex is for use with e.g. --keep-within 1y
+            type = with types; attrsOf (either int (strMatching "[[:digit:]]+[Hdwmy]"));
+            description = ''
+              Prune a repository by deleting all archives not matching any of the
+              specified retention options. See <command>borg help prune</command>
+              for the available options.
+            '';
+            default = { };
+            example = literalExample ''
+              {
+                within = "1d"; # Keep all archives from the last day
+                daily = 7;
+                weekly = 4;
+                monthly = -1;  # Keep at least one archive for each month
+              }
             '';
           };
 
           prune.prefix = mkOption {
             type = types.str;
-            default = ''''${config.networking.hostname}-'';
-            example = "hostname-";
             description = ''
-              Prefix of archives in the repository to prune.
+              Only consider archive names starting with this prefix for pruning.
+              By default, only archives created by this job are considered.
+              Use <literal>""</literal> to consider all archives.
+            '';
+            default = config.archiveBaseName;
+            defaultText = "\${archiveBaseName}";
+          };
+
+          environment = mkOption {
+            type = with types; attrsOf str;
+            description = ''
+              Environment variables passed to the backup script.
+              You can for example specify which SSH key to use.
+            '';
+            default = { };
+            example = { BORG_RSH = "ssh -i /path/to/key"; };
+          };
+
+          preHook = mkOption {
+            type = types.lines;
+            description = ''
+              Shell commands to run before the backup.
+              This can for example be used to mount file systems.
+            '';
+            default = "";
+            example = ''
+              # To add excluded paths at runtime
+              extraCreateArgs="$extraCreateArgs --exclude /some/path"
             '';
           };
 
-          prune.keep.within = mkOption {
-            type = types.nullOr types.str;
-            default = null;
-            example = "10d";
-            description = "How long to keep backups.";
-          };
-
-          prune.keep.hourly = mkOption {
-            type = types.nullOr types.str;
-            default = null;
-            example = "24";
-            description = "How many backups to keep per hour.";
-          };
-
-          prune.keep.daily = mkOption {
-            type = types.nullOr types.str;
-            default = null;
-            example = "7";
-            description = "How many backups to keep per day.";
-          };
-
-          prune.keep.weekly = mkOption {
-            type = types.nullOr types.str;
-            default = null;
-            example = "4";
-            description = "How many backups to keep per week.";
-          };
-
-          prune.keep.monthly = mkOption {
-            type = types.nullOr types.str;
-            default = null;
-            example = "12";
-            description = "How many backups to keep per month.";
-          };
-
-          prune.keep.yearly = mkOption {
-            type = types.nullOr types.str;
-            default = null;
-            example = "5";
-            description = "How many backups to keep per year.";
-          };
-
-          preBackup = mkOption {
+          postInit = mkOption {
             type = types.lines;
+            description = ''
+              Shell commands to run after <command>borg init</command>.
+            '';
             default = "";
-            description = "Script to execute before the backup job.";
           };
 
-          postBackup = mkOption {
+          postCreate = mkOption {
             type = types.lines;
+            description = ''
+              Shell commands to run after <command>borg create</command>. The name
+              of the created archive is stored in <literal>$archiveName</literal>.
+            '';
             default = "";
-            description = "Script to execute after the backup job.";
           };
 
-          interval = mkOption {
+          postPrune = mkOption {
+            type = types.lines;
+            description = ''
+              Shell commands to run after <command>borg prune</command>.
+            '';
+            default = "";
+          };
+
+          postHook = mkOption {
+            type = types.lines;
+            description = ''
+              Shell commands to run just before exit. They are executed
+              even if a previous command exits with a non-zero exit code.
+              The latter is available as <literal>$exitStatus</literal>.
+            '';
+            default = "";
+          };
+
+          extraInitArgs = mkOption {
             type = types.str;
-            default = "daily";
-            example = "hourly";
             description = ''
-              When to run borg create backup job.
-
-              The format is described in
-              <citerefentry><refentrytitle>systemd.time</refentrytitle>
-              <manvolnum>7</manvolnum></citerefentry>.
+              Additional arguments for <command>borg init</command>.
+              Can also be set at runtime using <literal>$extraInitArgs</literal>.
             '';
+            default = "";
+            example = "--append-only";
           };
+
+          extraCreateArgs = mkOption {
+            type = types.str;
+            description = ''
+              Additional arguments for <command>borg create</command>.
+              Can also be set at runtime using <literal>$extraCreateArgs</literal>.
+            '';
+            default = "";
+            example = "--stats --checkpoint-interval 600";
+          };
+
+          extraPruneArgs = mkOption {
+            type = types.str;
+            description = ''
+              Additional arguments for <command>borg prune</command>.
+              Can also be set at runtime using <literal>$extraPruneArgs</literal>.
+            '';
+            default = "";
+            example = "--save-space";
+          };
+
         };
-      });
-    };
+      }
+    ));
   };
 
-  config = mkIf (cfg.jobs != {}) (
-    let
-      mapJobs = f: listToAttrs (mapAttrsFlatten f cfg.jobs);
-    in {
-      assertions = mapAttrsToList (name: value: {
-        assertion = cfg.jobs."${name}".paths != [];
-        message = "services.borgbackup.jobs.${name}.paths can't be an empty list";
-      }) cfg.jobs;
+  options.services.borgbackup.repos = mkOption {
+    description = ''
+      Serve BorgBackup repositories to given public SSH keys,
+      restricting their access to the repository only.
+      Also, clients do not need to specify the absolute path when accessing the repository,
+      i.e. <literal>user@machine:.</literal> is enough. (Note colon and dot.)
+    '';
+    default = { };
+    type = types.attrsOf (types.submodule (
+      { name, config, ... }: {
+        options = {
 
-      users.extraUsers = singleton {
-        name = "borg";
-        group = "backup";
-        isNormalUser = true;
-        description = "borg backup user";
-        home = "/var/backup";
-      };
+          path = mkOption {
+            type = types.path;
+            description = ''
+              Where to store the backups. Note that the directory
+              is created automatically, with correct permissions.
+            '';
+            default = "/var/lib/borgbackup";
+          };
 
-      users.extraGroups = singleton {
-        name = "backup";
-      };
+          user = mkOption {
+            type = types.str;
+            description = ''
+              The user <command>borg serve</command> is run as.
+              User or group needs write permission
+              for the specified <option>path</option>.
+            '';
+            default = "borg";
+          };
 
-      systemd.services = mapJobs (name: value: nameValuePair "borgbackup-${name}" (makeService name value));
+          group = mkOption {
+            type = types.str;
+            description = ''
+              The group <command>borg serve</command> is run as.
+              User or group needs write permission
+              for the specified <option>path</option>.
+            '';
+            default = "borg";
+          };
 
-      systemd.timers = mapJobs (name: value: nameValuePair "borgbackup-${name}" (makeTimer name value));
+          authorizedKeys = mkOption {
+            type = with types; listOf str;
+            description = ''
+              Public SSH keys that are given full write access to this repository.
+              You should use a different SSH key for each repository you write to, because
+              the specified keys are restricted to running <command>borg serve</command>
+              and can only access this single repository.
+            '';
+            default = [ ];
+          };
 
-      environment.systemPackages = [ pkgs.borgbackup ];
-    }
-  );
+          authorizedKeysAppendOnly = mkOption {
+            type = with types; listOf str;
+            description = ''
+              Public SSH keys that can only be used to append new data (archives) to the repository.
+              Note that archives can still be marked as deleted and are subsequently removed from disk
+              upon accessing the repo with full write access, e.g. when pruning.
+            '';
+            default = [ ];
+          };
+
+          allowSubRepos = mkOption {
+            type = types.bool;
+            description = ''
+              Allow clients to create repositories in subdirectories of the
+              specified <option>path</option>. These can be accessed using
+              <literal>user@machine:path/to/subrepo</literal>. Note that a
+              <option>quota</option> applies to repositories independently.
+              Therefore, if this is enabled, clients can create multiple
+              repositories and upload an arbitrary amount of data.
+            '';
+            default = false;
+          };
+
+          quota = mkOption {
+            # See the definition of parse_file_size() in src/borg/helpers/parseformat.py
+            type = with types; nullOr (strMatching "[[:digit:].]+[KMGTP]?");
+            description = ''
+              Storage quota for the repository. This quota is ensured for all
+              sub-repositories if <option>allowSubRepos</option> is enabled
+              but not for the overall storage space used.
+            '';
+            default = null;
+            example = "100G";
+          };
+
+        };
+      }
+    ));
+  };
+
+  ###### implementation
+
+  config = mkIf (with config.services.borgbackup; jobs != { } || repos != { })
+    (with config.services.borgbackup; {
+      assertions =
+        mapAttrsToList mkPassAssertion jobs
+        ++ mapAttrsToList mkKeysAssertion repos;
+
+      system.activationScripts = mapAttrs' mkActivationScript jobs;
+
+      systemd.services =
+        # A job named "foo" is mapped to systemd.services.borgbackup-job-foo
+        mapAttrs' mkBackupService jobs
+        # A repo named "foo" is mapped to systemd.services.borgbackup-repo-foo
+        // mapAttrs' mkRepoService repos;
+
+      users = mkMerge (mapAttrsToList mkUsersConfig repos);
+
+      environment.systemPackages = with pkgs; [ borgbackup ];
+    });
 }
