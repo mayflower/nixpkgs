@@ -322,6 +322,12 @@ following incompatible changes:</para>
       <link xlink:href="https://github.com/rvl/pump.io-nixos">external module</link>.
     </para>
   </listitem>
+  <listitem>
+    <para>
+      All prometheus exporter modules are now defined as submodules.
+      The exporters are configured using <literal>services.prometheus.exporters</literal>.
+    </para>
+  </listitem>
 </itemizedlist>
 
 </section>
