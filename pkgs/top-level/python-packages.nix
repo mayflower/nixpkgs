@@ -307,6 +307,8 @@ in {
 
   pyatspi = disabledIf (!isPy3k) (callPackage ../development/python-modules/pyatspi { });
 
+  pyaxmlparser = callPackage ../development/python-modules/pyaxmlparser { };
+
   pycairo = callPackage ../development/python-modules/pycairo { };
 
   pycangjie = disabledIf (!isPy3k) (callPackage ../development/python-modules/pycangjie { });
@@ -5009,33 +5011,8 @@ in {
 
   google-compute-engine = callPackage ../tools/virtualization/google-compute-engine { };
 
-  gplaycli = buildPythonPackage rec {
-    version = "0.1.2";
-    name = "gplaycli-${version}";
-
-    src = pkgs.fetchFromGitHub {
-      owner = "matlink";
-      repo = "gplaycli";
-      rev = "${version}";
-      sha256 = "0yc09inzs3aggj0gw4irlhlzw5q562fsp0sks352y6z0vx31hcp3";
-    };
-
-   disabled = ! isPy27;
-
-   propagatedBuildInputs = with self; [ pkgs.libffi pyasn1 clint ndg-httpsclient protobuf requests args ];
-
-   preBuild = ''
-     substituteInPlace setup.py --replace "/etc" "$out/etc"
-     substituteInPlace gplaycli/gplaycli.py --replace "/etc" "$out/etc"
-   '';
-
-    meta = {
-      homepage = https://github.com/matlink/gplaycli;
-      description = "Google Play Downloader via Command line";
-      license = licenses.agpl3Plus;
-      maintainers = with maintainers; [ ];
-    };
-  };
+  gpapi = callPackage ../development/python-modules/gpapi { };
+  gplaycli = callPackage ../development/python-modules/gplaycli { };
 
   gpsoauth = buildPythonPackage rec {
     version = "0.2.0";
@@ -5762,24 +5739,7 @@ in {
     };
   };
 
-  mt-940 = buildPythonPackage rec {
-    version = "4.10.0";
-    name = "mt-940-${version}";
-
-    src = pkgs.fetchurl {
-      url = "mirror://pypi/m/mt-940/mt-940-${version}.tar.gz";
-      sha256 = "1gyqf1k2r2ml45x08bk69ws865yrpcph514mn4xvjz779mlgh67j";
-    };
-
-    buildInputs = with self; [ pytestrunner pyyaml pytest ];
-    doCheck = false; # Can't find data files
-
-    meta = {
-      description = "A library to parse MT940 files and returns smart Python collections for statistics and manipulation";
-      homepage = "http://pythonhosted.org/mt-940/";
-      license = licenses.bsd3;
-    };
-  };
+  mt-940 = callPackage ../development/python-modules/mt-940 { };
 
   mwlib = let
     pyparsing = buildPythonPackage rec {
