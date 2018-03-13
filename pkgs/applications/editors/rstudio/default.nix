@@ -26,12 +26,8 @@ stdenv.mkDerivation rec {
   };
 
   # Hack RStudio to only use the input R.
-  patches = [ 
-    ./r-location.patch 
-    (fetchpatch {
-      url = https://aur.archlinux.org/cgit/aur.git/plain/socketproxy-openssl.patch?h=rstudio-desktop-git;
-      sha256 = "0ywq9rk14s5961l6hvd3cw70jsm73r16h0bsh4yp52vams7cwy9d";
-    })
+  patches = [
+    ./r-location.patch
   ];
   postPatch = "substituteInPlace src/cpp/core/r_util/REnvironmentPosix.cpp --replace '@R@' ${R}";
 
