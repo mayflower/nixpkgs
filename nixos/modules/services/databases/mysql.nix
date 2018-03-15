@@ -245,6 +245,11 @@ in
           # Needed for the mysql_install_db command in the preStart script
           # which calls the hostname command.
           pkgs.nettools
+          pkgs.bash
+          pkgs.iproute
+          pkgs.coreutils
+          pkgs.which
+          pkgs.gawk
         ];
 
         preStart =
@@ -266,6 +271,8 @@ in
           '';
 
         serviceConfig.ExecStart = "${mysql}/bin/mysqld --defaults-extra-file=${myCnf} ${mysqldOptions}";
+        serviceConfig.TimeoutSec = "infinity";
+
 
         postStart =
           ''
