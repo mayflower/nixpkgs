@@ -154,7 +154,7 @@ in
           WorkingDirectory = home;
           User = user;
           Restart = "always";
-          ExecStart = "${pkgs.sks}/bin/sks db -basedir ${home}";
+          ExecStart = "${pkgs.sks}/bin/sks db";
         };
       };
     };
