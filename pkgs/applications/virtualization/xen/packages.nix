@@ -2,7 +2,7 @@
 , stdenv, overrideCC, gcc49
 }:
 
-# TODO on new Xen version: generalize this to generate [vanilla slim
+# TODO(@oxij) on new Xen version: generalize this to generate [vanilla slim
 # light] for each ./<version>.nix.
 
 rec {
@@ -10,6 +10,7 @@ rec {
   xen_4_5-vanilla = callPackage ./4.5.nix {
     # At the very least included seabios and etherboot need gcc49,
     # so we have to build all of it with gcc49.
+    stdenv = overrideCC stdenv gcc49;
     meta = {
       description = "vanilla";
       longDescription = ''
@@ -56,8 +57,6 @@ rec {
   };
 
   xen_4_8-vanilla = callPackage ./4.8.nix {
-    # At the very least included seabios and etherboot need gcc49,
-    # so we have to build all of it with gcc49.
     meta = {
       description = "vanilla";
       longDescription = ''
@@ -103,8 +102,8 @@ rec {
     };
   };
 
-  xen-vanilla = xen_4_5-vanilla;
-  xen-slim = xen_4_5-slim;
-  xen-light = xen_4_5-light;
+  xen-vanilla = xen_4_8-vanilla;
+  xen-slim = xen_4_8-slim;
+  xen-light = xen_4_8-light;
 
 }

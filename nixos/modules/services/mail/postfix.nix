@@ -26,7 +26,7 @@ let
 
   mainCf = let
     escape = replaceStrings ["$"] ["$$"];
-    mkList = items: "\n  " + concatMapStringsSep ",\n  " escape items;
+    mkList = items: "\n  " + concatStringsSep ",\n  " items;
     mkVal = value:
       if isList value then mkList value
         else " " + (if value == true then "yes"
@@ -395,6 +395,14 @@ in
         ";
       };
 
+      relayPort = mkOption {
+        type = types.int;
+        default = 25;
+        description = "
+          SMTP port for relay mail relay.
+        ";
+      };
+
       lookupMX = mkOption {
         type = types.bool;
         default = false;
@@ -406,7 +414,10 @@ in
       postmasterAlias = mkOption {
         type = types.str;
         default = "root";
-        description = "Who should receive postmaster e-mail.";
+        description = "
+          Who should receive postmaster e-mail. Multiple values can be added by
+          separating values with comma.
+        ";
       };
 
       rootAlias = mkOption {
@@ -414,6 +425,7 @@ in
         default = "";
         description = "
           Who should receive root e-mail. Blank for no redirection.
+          Multiple values can be added by separating values with comma.
         ";
       };
 
@@ -568,6 +580,12 @@ in
         description = "Maps to be compiled and placed into /var/lib/postfix/conf.";
       };
 
+      useSrs = mkOption {
+        type = types.bool;
+        default = false;
+        description = "Whether to enable sender rewriting scheme";
+      };
+
     };
 
   };
@@ -587,6 +605,8 @@ in
         # This makes comfortable for root to run 'postqueue' for example.
         systemPackages = [ pkgs.postfix ];
       };
+
+      services.pfix-srsd.enable = config.services.postfix.useSrs;
 
       services.mail.sendmailSetuidWrapper = mkIf config.services.postfix.setSendmail {
         program = "sendmail";
@@ -692,8 +712,8 @@ in
         setgid_group         = cfg.setgidGroup;
       })
       // optionalAttrs (cfg.relayHost != "") { relayhost = if cfg.lookupMX
-                                                           then cfg.relayHost
-                                                           else "[${cfg.relayHost}]"; }
+                                                           then "${cfg.relayHost}:${toString cfg.relayPort}"
+                                                           else "[${cfg.relayHost}]:${toString cfg.relayPort}"; }
       // optionalAttrs config.networking.enableIPv6 { inet_protocols = mkDefault "all"; }
       // optionalAttrs (cfg.networks != null) { mynetworks = cfg.networks; }
       // optionalAttrs (cfg.networksStyle != "") { mynetworks_style = cfg.networksStyle; }
@@ -707,6 +727,12 @@ in
       // optionalAttrs haveTransport { transport_maps = [ "hash:/etc/postfix/transport" ]; }
       // optionalAttrs haveVirtual { virtual_alias_maps = [ "${cfg.virtualMapType}:/etc/postfix/virtual" ]; }
       // optionalAttrs (cfg.dnsBlacklists != []) { smtpd_client_restrictions = clientRestrictions; }
+      // optionalAttrs cfg.useSrs {
+        sender_canonical_maps = [ "tcp:127.0.0.1:10001" ];
+        sender_canonical_classes = [ "envelope_sender" ];
+        recipient_canonical_maps = [ "tcp:127.0.0.1:10002" ];
+        recipient_canonical_classes = [ "envelope_recipient" ];
+      }
       // optionalAttrs cfg.enableHeaderChecks { header_checks = [ "regexp:/etc/postfix/header_checks" ]; }
       // optionalAttrs (cfg.sslCert != "") {
         smtp_tls_CAfile = cfg.sslCACert;

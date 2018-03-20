@@ -2,7 +2,7 @@
 let
 
   spdx = lic: lic // {
-    url = "http://spdx.org/licenses/${lic.spdxId}";
+    url = "http://spdx.org/licenses/${lic.spdxId}.html";
   };
 
 in
@@ -15,7 +15,12 @@ lib.mapAttrs (n: v: v // { shortName = n; }) rec {
 
   afl21 = spdx {
     spdxId = "AFL-2.1";
-    fullName = "Academic Free License";
+    fullName = "Academic Free License v2.1";
+  };
+
+  afl3 = spdx {
+    spdxId = "AFL-3.0";
+    fullName = "Academic Free License v3.0";
   };
 
   agpl3 = spdx {
@@ -74,6 +79,11 @@ lib.mapAttrs (n: v: v // { shortName = n; }) rec {
     fullName = ''Beerware License'';
   };
 
+  bsd0 = spdx {
+    spdxId = "0BSD";
+    fullName = "BSD Zero Clause License";
+  };
+
   bsd2 = spdx {
     spdxId = "BSD-2-Clause";
     fullName = ''BSD 2-clause "Simplified" License'';
@@ -92,6 +102,11 @@ lib.mapAttrs (n: v: v // { shortName = n; }) rec {
   bsdOriginal = spdx {
     spdxId = "BSD-4-Clause";
     fullName = ''BSD 4-clause "Original" or "Old" License'';
+  };
+
+  clArtistic = spdx {
+    spdxId = "ClArtistic";
+    fullName = "Clarified Artistic License";
   };
 
   cc0 = spdx {
@@ -314,6 +329,12 @@ lib.mapAttrs (n: v: v // { shortName = n; }) rec {
     free      = false;
   };
 
+  inria-icesl = {
+    fullName = "INRIA Non-Commercial License Agreement for IceSL";
+    url      = "http://shapeforge.loria.fr/icesl/EULA_IceSL_binary.pdf";
+    free     = false;
+  };
+
   ipa = spdx {
     spdxId = "IPA";
     fullName = "IPA Font License";
@@ -436,6 +457,11 @@ lib.mapAttrs (n: v: v // { shortName = n; }) rec {
     fullName = "Notion modified LGPL";
   };
 
+  nposl3 = spdx {
+    spdxId = "NPOSL-3.0";
+    fullName = "Non-Profit Open Software License 3.0";
+  };
+
   ofl = spdx {
     spdxId = "OFL-1.1";
     fullName = "SIL Open Font License 1.1";
@@ -451,6 +477,16 @@ lib.mapAttrs (n: v: v // { shortName = n; }) rec {
     fullName = "OpenSSL License";
   };
 
+  osl21 = spdx {
+    spdxId = "OSL-2.1";
+    fullName = "Open Software License 2.1";
+  };
+
+  osl3 = spdx {
+    spdxId = "OSL-3.0";
+    fullName = "Open Software License 3.0";
+  };
+
   php301 = spdx {
     spdxId = "PHP-3.01";
     fullName = "PHP License v3.01";
@@ -459,6 +495,12 @@ lib.mapAttrs (n: v: v // { shortName = n; }) rec {
   postgresql = spdx {
     spdxId = "PostgreSQL";
     fullName = "PostgreSQL License";
+  };
+
+  postman = {
+    fullName = "Postman EULA";
+    url = https://www.getpostman.com/licenses/postman_base_app;
+    free = false;
   };
 
   psfl = spdx {
@@ -548,6 +590,11 @@ lib.mapAttrs (n: v: v // { shortName = n; }) rec {
     fullName = "Vovida Software License v1.0";
   };
 
+  watcom = spdx {
+    spdxId = "Watcom-1.0";
+    fullName = "Sybase Open Watcom Public License 1.0";
+  };
+
   w3c = spdx {
     spdxId = "W3C";
     fullName = "W3C Software Notice and License";
@@ -582,5 +629,4 @@ lib.mapAttrs (n: v: v // { shortName = n; }) rec {
     spdxId = "ZPL-2.1";
     fullName = "Zope Public License 2.1";
   };
-
 }

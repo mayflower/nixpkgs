@@ -1,5 +1,5 @@
 { stdenv, lib, fetchurl, file, openssl, mlton
-, mysql, postgresql, sqlite
+, mysql, postgresql, sqlite, gcc
 }:
 
 stdenv.mkDerivation rec {
@@ -24,6 +24,7 @@ stdenv.mkDerivation rec {
     export MSHEADER="${mysql.connector-c}/include/mysql/mysql.h";
     export SQHEADER="${sqlite.dev}/include/sqlite3.h";
 
+    export CC="${gcc}/bin/gcc";
     export CCARGS="-I$out/include \
                    -L${openssl.out}/lib \
                    -L${mysql.connector-c}/lib \
@@ -38,7 +39,7 @@ stdenv.mkDerivation rec {
     description = "Advanced purely-functional web programming language";
     homepage    = "http://www.impredicative.com/ur/";
     license     = stdenv.lib.licenses.bsd3;
-    platforms   = stdenv.lib.platforms.linux;
+    platforms   = stdenv.lib.platforms.linux ++ stdenv.lib.platforms.darwin;
     maintainers = [ stdenv.lib.maintainers.thoughtpolice stdenv.lib.maintainers.sheganinans ];
   };
 }

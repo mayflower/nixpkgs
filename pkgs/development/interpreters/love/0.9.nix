@@ -1,5 +1,5 @@
 { stdenv, fetchurl, pkgconfig
-, SDL2, mesa, openal, luajit
+, SDL2, libGLU_combined, openal, luajit
 , libdevil, freetype, physfs
 , libmodplug, mpg123, libvorbis, libogg
 }:
@@ -11,8 +11,9 @@ stdenv.mkDerivation rec {
     sha256 = "1pikd0bzb44r4bf0jbgn78whz1yswpq1n5jc8nf87v42pm30kp84";
   };
 
+  nativeBuildInputs = [ pkgconfig ];
   buildInputs = [
-    pkgconfig SDL2 mesa openal luajit
+    SDL2 libGLU_combined openal luajit
     libdevil freetype physfs libmodplug mpg123 libvorbis libogg
   ];
 

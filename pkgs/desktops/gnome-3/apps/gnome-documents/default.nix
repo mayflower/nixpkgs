@@ -1,26 +1,34 @@
-{ stdenv, intltool, fetchurl, evince, gjs
-, pkgconfig, gtk3, glib
-, makeWrapper, itstool, libxslt, webkitgtk
+{ stdenv, gettext, fetchurl, evince, gjs
+, pkgconfig, gtk3, glib, tracker, tracker-miners
+, itstool, libxslt, webkitgtk
 , gnome3, librsvg, gdk_pixbuf, libsoup, docbook_xsl
-, gobjectIntrospection, json_glib, inkscape, poppler_utils
-, gmp, desktop_file_utils, wrapGAppsHook }:
+, gobjectIntrospection, json-glib, inkscape, poppler_utils
+, gmp, desktop-file-utils, wrapGAppsHook }:
 
 stdenv.mkDerivation rec {
-  inherit (import ./src.nix fetchurl) name src;
+  name = "gnome-documents-${version}";
+  version = "3.26.2";
+
+  src = fetchurl {
+    url = "mirror://gnome/sources/gnome-documents/${gnome3.versionBranch version}/${name}.tar.xz";
+    sha256 = "0q7bp0mvmhqmsvm5sjavm46y7sz43na62d1hrl62vg19hdqr9ir4";
+  };
+
+  passthru = {
+    updateScript = gnome3.updateScript { packageName = "gnome-documents"; attrPath = "gnome3.gnome-documents"; };
+  };
 
   doCheck = true;
 
   configureFlags = [ "--enable-getting-started" ];
 
-  buildInputs = [ pkgconfig gtk3 glib intltool itstool libxslt
-                  docbook_xsl desktop_file_utils inkscape poppler_utils
-                  gnome3.gsettings_desktop_schemas makeWrapper gmp
+  nativeBuildInputs = [ pkgconfig gettext itstool libxslt desktop-file-utils docbook_xsl wrapGAppsHook ];
+  buildInputs = [ gtk3 glib inkscape poppler_utils
+                  gnome3.gsettings-desktop-schemas gmp
                   gdk_pixbuf gnome3.defaultIconTheme librsvg evince
                   libsoup webkitgtk gjs gobjectIntrospection gnome3.rest
-                  gnome3.tracker gnome3.libgdata gnome3.gnome_online_accounts
-                  gnome3.gnome_desktop gnome3.libzapojit json_glib
-                  wrapGAppsHook ]
-                ++ (with gnome3; [ libgepub ]);
+                  tracker tracker-miners gnome3.libgdata gnome3.gnome-online-accounts
+                  gnome3.gnome-desktop gnome3.libzapojit json-glib gnome3.libgepub ];
 
   enableParallelBuilding = true;
 

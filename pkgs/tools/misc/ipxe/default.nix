@@ -1,4 +1,6 @@
-{ stdenv, fetchgit, perl, cdrkit, syslinux, xz, openssl }:
+{ stdenv, lib, fetchgit, perl, cdrkit, syslinux, xz, openssl
+, embedScript ? null
+}:
 
 let
   date = "20170922";
@@ -24,7 +26,7 @@ stdenv.mkDerivation {
   makeFlags =
     [ "ECHO_E_BIN_ECHO=echo" "ECHO_E_BIN_ECHO_E=echo" # No /bin/echo here.
       "ISOLINUX_BIN_LIST=${syslinux}/share/syslinux/isolinux.bin"
-    ];
+    ] ++ lib.optional (embedScript != null) "EMBED=${embedScript}";
 
 
   enabledOptions = [ "DOWNLOAD_PROTO_HTTPS" ];
@@ -46,11 +48,13 @@ stdenv.mkDerivation {
     ln -s undionly.kpxe $out/undionly.kpxe.0
   '';
 
+  enableParallelBuilding = true;
+
   meta = with stdenv.lib;
     { description = "Network boot firmware";
       homepage = http://ipxe.org/;
       license = licenses.gpl2;
-      maintainers = with maintainers; [ ehmry fpletz ];
+      maintainers = with maintainers; [ ehmry ];
       platforms = platforms.all;
     };
 }

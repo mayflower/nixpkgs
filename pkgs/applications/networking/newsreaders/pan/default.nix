@@ -1,6 +1,6 @@
 { spellChecking ? true
 , stdenv, fetchurl, pkgconfig, gtk2, gtkspell2 ? null
-, perl, pcre, gmime, gettext, intltool, dbus_glib, libnotify
+, perl, pcre, gmime, gettext, intltool, dbus-glib, libnotify
 }:
 
 assert spellChecking -> gtkspell2 != null;
@@ -15,7 +15,8 @@ stdenv.mkDerivation {
     sha256 = "1fab2i6ngqp66lhls0g7j8d1c1rk75afiqr3r1x2sn3zk47k4pxz";
   };
 
-  buildInputs = [ pkgconfig gtk2 perl gmime gettext intltool dbus_glib libnotify ]
+  nativeBuildInputs = [ pkgconfig ];
+  buildInputs = [ gtk2 perl gmime gettext intltool dbus-glib libnotify ]
     ++ stdenv.lib.optional spellChecking gtkspell2;
 
   enableParallelBuilding = true;

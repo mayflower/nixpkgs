@@ -1,42 +1,41 @@
-{ stdenv, fetchFromGitHub, python2 }:
+{ stdenv, makeWrapper, python2Packages, fetchFromGitHub, python2 }:
 
-python2.pkgs.buildPythonApplication rec {
-  name = "theharvester-${version}";
-  version = "2.7";
+stdenv.mkDerivation rec {
+  pname = "theHarvester";
+  version = "2.7.1";
+  name = "${pname}-${version}";
 
   src = fetchFromGitHub {
     owner = "laramies";
-    repo = "theHarvester";
-    rev = version;
-    sha256 = "0a8k6mdlprz4ahx8kmcadgd0fma1cbpc1ssb9la03y1rgkflq91s";
+    repo = "${pname}";
+    rev = "25553762d2d93a39083593adb08a34d5f5142c60";
+    sha256 = "0gnm598y6paz0knwvdv1cx0w6ngdbbpzkdark3q5vs66yajv24w4";
   };
 
-  format = "other";
+  nativeBuildInputs = [ makeWrapper ];
 
-  propagatedBuildInputs = with python2.pkgs; [ requests ];
-
-  postPatch = ''
-    mv lib theharvester_lib
-    for f in theHarvester.py theharvester_lib/*; do
-      substituteInPlace $f \
-        --replace 'from lib' 'from theharvester_lib'
-    done
-  '';
+  # add dependencies
+  propagatedBuildInputs = [ python2Packages.requests ];
 
   installPhase = ''
-    runHook preInstall
+    # create dirs
+    mkdir -p $out/share/${pname} $out/bin
 
-    install -vD theHarvester.py $out/bin/theharvester
-    install -vd $out/${python2.sitePackages}/
-    cp -R theharvester_lib discovery myparser.py $out/${python2.sitePackages}
+    # move project code
+    mv * $out/share/${pname}/
 
-    runHook postInstall
+    # make project runnable
+    chmod +x $out/share/${pname}/theHarvester.py
+    ln -s $out/share/${pname}/theHarvester.py $out/bin
+
+    wrapProgram "$out/bin/theHarvester.py" --prefix PYTHONPATH : $out/share/${pname}:$PYTHONPATH
   '';
 
   meta = with stdenv.lib; {
-    description = "E-mails, subdomains and names Harvester";
-    license = licenses.gpl2;
+    description = "Gather E-mails, subdomains and names from different public sources";
+    homepage = "https://github.com/laramies/theHarvester";
     platforms = platforms.all;
-    maintainers = [ maintainers.globin ];
+    maintainers = with maintainers; [ treemo ];
+    license = licenses.gpl2;
   };
 }

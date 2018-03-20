@@ -33,6 +33,11 @@ stdenv.mkDerivation rec {
     "--enable-milter"
   ];
 
+  postInstall = ''
+    mkdir $out/etc
+    cp etc/*.sample $out/etc
+  '';
+
   meta = with stdenv.lib; {
     homepage = http://www.clamav.net;
     description = "Antivirus engine designed for detecting Trojans, viruses, malware and other malicious threats";

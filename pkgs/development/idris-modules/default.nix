@@ -1,4 +1,4 @@
-{ pkgs, idris, overrides ? (self: super: {}) }: let
+{ pkgs, idris-no-deps, overrides ? (self: super: {}) }: let
   inherit (pkgs.lib) callPackageWith fix' extends;
 
   /* Taken from haskell-modules/default.nix, should probably abstract this away */
@@ -25,17 +25,35 @@
       pruviloj = [ self.prelude self.base ];
     };
 
-    files = builtins.filter (n: n != "default") (pkgs.lib.mapAttrsToList (name: type: let
-      m = builtins.match "(.*)\\.nix" name;
-    in if m == null then "default" else builtins.head m) (builtins.readDir ./.));
-  in (builtins.listToAttrs (map (name: {
-    inherit name;
+  in
+    {
+    inherit idris-no-deps callPackage;
+    # See #10450 about why we have to wrap the executable
+    idris =
+        (pkgs.callPackage ./idris-wrapper.nix {})
+          idris-no-deps
+          { path = [ pkgs.gcc ]; lib = [pkgs.gmp]; };
 
-    value = callPackage (./. + "/${name}.nix") {};
-  }) files)) // {
-    inherit idris callPackage;
+
+    with-packages = callPackage ./with-packages.nix {} ;
+
+    build-builtin-package = callPackage ./build-builtin-package.nix {};
+
+    build-idris-package = callPackage ./build-idris-package.nix {};
+
+    # Libraries
 
     # A list of all of the libraries that come with idris
     builtins = pkgs.lib.mapAttrsToList (name: value: value) builtins_;
+
+    httpclient = callPackage ./httpclient.nix {};
+
+    lightyear = callPackage ./lightyear.nix {};
+
+    wl-pprint = callPackage ./wl-pprint.nix {};
+
+    specdris = callPackage ./specdris.nix {};
+
+
   } // builtins_;
 in fix' (extends overrides idrisPackages)

@@ -8,6 +8,11 @@ let
 
   mysql = cfg.package;
 
+  isMariaDB =
+    let
+      pName = _p: (builtins.parseDrvName (_p.name)).name;
+    in pName mysql == pName pkgs.mariadb;
+
   pidFile = "${cfg.pidDir}/mysqld.pid";
 
   mysqldOptions =
@@ -50,7 +55,7 @@ in
         type = types.package;
         example = literalExample "pkgs.mysql";
         description = "
-          Which MySQL derivation to use.
+          Which MySQL derivation to use. MariaDB packages are supported too.
         ";
       };
 
@@ -58,7 +63,7 @@ in
         type = types.nullOr types.str;
         default = null;
         example = literalExample "0.0.0.0";
-        description = "Address to bind to. The default it to bind to all addresses";
+        description = "Address to bind to. The default is to bind to all addresses";
       };
 
       port = mkOption {
@@ -135,7 +140,7 @@ in
         '';
         example = [
           "nextcloud"
-          "piwik"
+          "matomo"
         ];
       };
 
@@ -291,10 +296,10 @@ in
                     # Create initial databases
                     if ! test -e "${cfg.dataDir}/${database.name}"; then
                         echo "Creating initial database: ${database.name}"
-                        ( echo "create database ${database.name};"
+                        ( echo 'create database `${database.name}`;'
 
                           ${optionalString (database ? "schema") ''
-                          echo "use ${database.name};"
+                          echo 'use `${database.name}`;'
 
                           if [ -f "${database.schema}" ]
                           then
@@ -357,12 +362,12 @@ in
             ''}
 
             ${optionalString (cfg.enableSocketAuth) ''
-              echo "ALTER USER 'root'@'localhost' IDENTIFIED WITH ${if mysql == pkgs.mariadb then "unix_socket" else "auth_socket"};" | ${mysql}/bin/mysql -u root -N
+              echo "ALTER USER 'root'@'localhost' IDENTIFIED WITH ${if isMariaDB then "unix_socket" else "auth_socket"};" | ${mysql}/bin/mysql -u root -N
             ''}
 
             ${concatMapStrings (user:
               ''
-                ( echo "CREATE USER IF NOT EXISTS '${user.name}'@'localhost' IDENTIFIED WITH ${if mysql == pkgs.mariadb then "unix_socket" else "auth_socket"};"
+                ( echo "CREATE USER IF NOT EXISTS '${user.name}'@'localhost' IDENTIFIED WITH ${if isMariaDB then "unix_socket" else "auth_socket"};"
                   ${concatStringsSep "\n" (mapAttrsToList (database: permission: ''
                   echo "GRANT ${permission} ON ${database} TO '${user.name}'@'localhost';"
                   '') user.ensurePermissions)}

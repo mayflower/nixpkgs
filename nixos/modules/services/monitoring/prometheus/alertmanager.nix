@@ -150,15 +150,15 @@ in {
       after    = [ "network.target" ];
       script = ''
         ${pkgs.prometheus-alertmanager.bin}/bin/alertmanager \
-          -config.file ${alertmanagerYml} \
-          -web.listen-address ${cfg.listenAddress}:${toString cfg.port} \
-          -log.level ${cfg.logLevel} \
-          -storage.path ${cfg.stateDir} \
-          ${optionalString (cfg.webExternalUrl != null) ''-web.external-url ${cfg.webExternalUrl}''} \
-          ${optionalString (cfg.logFormat != null) "-log.format ${cfg.logFormat}"} \
-          ${optionalString (cfg.meshNickName != null) "-mesh.nickname ${cfg.meshNickName}"} \
-          ${optionalString (cfg.meshPassword != null) "-mesh.password ${cfg.meshPassword}"} \
-          ${toString (map (peer: "-mesh.peer ${peer}:6783") cfg.meshPeers)}
+          --config.file ${alertmanagerYml} \
+          --web.listen-address ${cfg.listenAddress}:${toString cfg.port} \
+          --log.level ${cfg.logLevel} \
+          --storage.path ${cfg.stateDir} \
+          ${optionalString (cfg.webExternalUrl != null) ''--web.external-url ${cfg.webExternalUrl}''} \
+          ${optionalString (cfg.logFormat != null) "--log.format ${cfg.logFormat}"} \
+          ${optionalString (cfg.meshNickName != null) "--mesh.nickname ${cfg.meshNickName}"} \
+          ${optionalString (cfg.meshPassword != null) "--mesh.password ${cfg.meshPassword}"} \
+          ${toString (map (peer: "--mesh.peer ${peer}:6783") cfg.meshPeers)}
       '';
 
       serviceConfig = {

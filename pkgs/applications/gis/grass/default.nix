@@ -10,7 +10,8 @@ stdenv.mkDerivation {
     sha256 = "0yzljbrxlqp4wbw08n1dvmm4vmwkg8glf1ff4xyh589r5ryb7gxv";
   };
 
-  buildInputs = [ flex bison zlib proj gdal libtiff libpng fftw sqlite pkgconfig cairo
+  nativeBuildInputs = [ pkgconfig ];
+  buildInputs = [ flex bison zlib proj gdal libtiff libpng fftw sqlite cairo
   readline ffmpeg makeWrapper wxGTK30 netcdf geos postgresql mysql.connector-c blas ]
     ++ (with python2Packages; [ python dateutil wxPython30 numpy ]);
 

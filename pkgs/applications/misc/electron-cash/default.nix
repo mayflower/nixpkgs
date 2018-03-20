@@ -18,7 +18,7 @@ python3Packages.buildPythonApplication rec {
   };
 
   propagatedBuildInputs = with python3Packages; [
-    dns  # dnspython
+    dnspython
     ecdsa
     jsonrpclib-pelix
     matplotlib

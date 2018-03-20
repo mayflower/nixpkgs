@@ -11,7 +11,8 @@ in stdenv.mkDerivation {
     sha256 = "04dvbqdrrs67490gn4gkq9zk8mqy3mkls2818ha4p0ckhh0pm149";
   };
 
-  buildInputs = [ pkgconfig guile texinfo ];
+  nativeBuildInputs = [ pkgconfig ];
+  buildInputs = [ guile texinfo ];
 
   preConfigure = ''
     configureFlags="
@@ -26,6 +27,5 @@ in stdenv.mkDerivation {
     license = licenses.gpl3Plus;
     maintainers = with maintainers; [ vyp ];
     platforms = platforms.linux;
-    broken = true;
   };
 }

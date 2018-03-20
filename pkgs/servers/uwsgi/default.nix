@@ -1,10 +1,10 @@
-{ stdenv, lib, fetchurl, pkgconfig, jansson, pcre
+{ stdenv, lib, fetchurl, pkgconfig, jansson
 # plugins: list of strings, eg. [ "python2" "python3" ]
 , plugins
 , pam, withPAM ? false
 , systemd, withSystemd ? false
 , python2, python3, ncurses
-, ruby, php-embed
+, ruby, php-embed, mysql
 }:
 
 let pythonPlugin = pkg : lib.nameValuePair "python${if pkg ? isPy2 then "2" else "3"}" {
@@ -33,8 +33,8 @@ let pythonPlugin = pkg : lib.nameValuePair "python${if pkg ? isPy2 then "2" else
                   (lib.nameValuePair "php" {
                     # usage: https://uwsgi-docs.readthedocs.io/en/latest/PHP.html#running-php-apps-with-nginx
                     path = "plugins/php";
-                    preBuild = "touch unix.h";
                     inputs = [ php-embed ] ++ php-embed.buildInputs;
+                    NIX_CFLAGS_LINK = [ "-L${mysql.connector-c}/lib/mysql" ];
                   })
                 ];
 
@@ -49,16 +49,16 @@ in
 
 stdenv.mkDerivation rec {
   name = "uwsgi-${version}";
-  version = "2.0.15";
+  version = "2.0.16";
 
   src = fetchurl {
     url = "http://projects.unbit.it/downloads/${name}.tar.gz";
-    sha256 = "1zvj28wp3c1hacpd4c6ra5ilwvvfq3l8y6gn8i7mnncpddlzjbjp";
+    sha256 = "1x61vipgzhzb6flbbgl0hq96j9d330gh0kmwv8pwh6n57j7z84d9";
   };
 
   nativeBuildInputs = [ python3 pkgconfig ];
 
-  buildInputs =  [ jansson pcre ]
+  buildInputs =  [ jansson ]
               ++ lib.optional withPAM pam
               ++ lib.optional withSystemd systemd
               ++ lib.concatMap (x: x.inputs) needed
@@ -89,7 +89,7 @@ stdenv.mkDerivation rec {
     ${lib.concatMapStringsSep "\n" (x: x.install or "") needed}
   '';
 
-  NIX_CFLAGS_LINK = [ "-lsystemd" ];
+  NIX_CFLAGS_LINK = [ "-lsystemd" ] ++ lib.concatMap (x: x.NIX_CFLAGS_LINK or []) needed;
 
   meta = with stdenv.lib; {
     homepage = http://uwsgi-docs.readthedocs.org/en/latest/;

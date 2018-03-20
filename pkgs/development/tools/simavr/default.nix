@@ -1,5 +1,5 @@
 { stdenv, fetchFromGitHub, avrbinutils, avrgcc, avrlibc, libelf, which, git, pkgconfig, freeglut
-, mesa }:
+, libGLU_combined }:
 
 stdenv.mkDerivation rec {
   name = "simavr-${version}";
@@ -31,7 +31,8 @@ stdenv.mkDerivation rec {
     patchelf --set-rpath "$(patchelf --print-rpath "$target"):$out/lib" "$target"
   '';
 
-  buildInputs = [ which git avrbinutils avrgcc avrlibc libelf pkgconfig freeglut mesa ];
+  nativeBuildInputs = [ pkgconfig ];
+  buildInputs = [ which git avrbinutils avrgcc avrlibc libelf freeglut libGLU_combined ];
 
   meta = with stdenv.lib; {
     description = "A lean and mean Atmel AVR simulator";

@@ -15,17 +15,22 @@
 
 buildPythonPackage rec {
   pname = "pyopencl";
-  version = "2017.2.2";
-  name = "${pname}-${version}";
+  version = "2018.1";
 
-  buildInputs = [ pytest opencl-headers ocl-icd ];
+  checkInputs = [ pytest ];
+  buildInputs = [ opencl-headers ocl-icd ];
 
   propagatedBuildInputs = [ numpy cffi pytools decorator appdirs six Mako ];
 
   src = fetchPypi {
     inherit pname version;
-    sha256 = "d2f7b04d2e819c6e90d6366b7712a7452a39fba218e51b11b02c85ab07fd2983";
+    sha256 = "b692966bbaaa65ef8949ee25660d6b0cc7cbadc7f4a35eb9c5139dfa4dde6d4a";
   };
+
+  # py.test is not needed during runtime, so remove it from `install_requires`
+  postPatch = ''
+    substituteInPlace setup.py --replace "pytest>=2" ""
+  '';
 
   # gcc: error: pygpu_language_opencl.cpp: No such file or directory
   doCheck = false;

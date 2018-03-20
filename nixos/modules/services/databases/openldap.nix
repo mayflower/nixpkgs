@@ -176,9 +176,15 @@ in {
       after = [ "network.target" ];
       preStart = ''
         mkdir -p /var/run/slapd
-        chown -R ${cfg.user}:${cfg.group} /var/run/slapd
-        mkdir -p ${cfg.dataDir}
-        chown -R ${cfg.user}:${cfg.group} ${cfg.dataDir}
+        chown -R "${cfg.user}:${cfg.group}" /var/run/slapd
+        ${optionalString (cfg.declarativeContents != null) ''
+          rm -Rf "${cfg.dataDir}"
+        ''}
+        mkdir -p "${cfg.dataDir}"
+        ${optionalString (cfg.declarativeContents != null) ''
+          ${openldap.out}/bin/slapadd ${configOpts} -l ${dataFile}
+        ''}
+        chown -R "${cfg.user}:${cfg.group}" "${cfg.dataDir}"
       '';
       # -d 0 is set to not detach
       script = ''

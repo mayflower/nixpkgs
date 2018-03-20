@@ -1,46 +1,55 @@
 { fetchurl, stdenv, pkgconfig, gnome3, ibus, intltool, upower, wrapGAppsHook
-, libcanberra_gtk2, libcanberra_gtk3, accountsservice, libpwquality, libpulseaudio
-, gdk_pixbuf, librsvg, libxkbfile, libnotify, libgudev
+, libcanberra-gtk3, accountsservice, libpwquality, libpulseaudio
+, gdk_pixbuf, librsvg, libnotify, libgudev
 , libxml2, polkit, libxslt, libgtop, libsoup, colord, colord-gtk
-, cracklib, python, libkrb5, networkmanagerapplet, networkmanager
-, libwacom, samba, shared_mime_info, tzdata, icu, libtool, udev
-, docbook_xsl, docbook_xsl_ns, modemmanager, clutter, clutter_gtk
+, cracklib, libkrb5, networkmanagerapplet, networkmanager
+, libwacom, samba, shared-mime-info, tzdata, libtool
+, docbook_xsl, docbook_xsl_ns, modemmanager, clutter, clutter-gtk
 , fontconfig, sound-theme-freedesktop, grilo }:
 
-# http://ftp.gnome.org/pub/GNOME/teams/releng/3.10.2/gnome-suites-core-3.10.2.modules
-# TODO: bluetooth, wacom, printers
-
 stdenv.mkDerivation rec {
-  inherit (import ./src.nix fetchurl) name src;
+  name = "gnome-control-center-${version}";
+  version = "3.26.2";
 
-  propagatedUserEnvPkgs =
-    [ gnome3.gnome_themes_standard gnome3.libgnomekbd ];
+  src = fetchurl {
+    url = "mirror://gnome/sources/gnome-control-center/${gnome3.versionBranch version}/${name}.tar.xz";
+    sha256 = "07aed27d6317f2cad137daa6d94a37ad02c32b958dcd30c8f07d0319abfb04c5";
+  };
 
-  # https://bugzilla.gnome.org/show_bug.cgi?id=752596
-  enableParallelBuilding = false;
+  passthru = {
+    updateScript = gnome3.updateScript { packageName = "gnome-control-center"; attrPath = "gnome3.gnome-control-center"; };
+  };
 
-  buildInputs = with gnome3;
-    [ pkgconfig intltool ibus gtk glib glib_networking upower libcanberra_gtk2 gsettings_desktop_schemas
-      libxml2 gnome_desktop gnome_settings_daemon polkit libxslt libgtop gnome-menus
-      gnome_online_accounts libsoup colord libpulseaudio fontconfig colord-gtk libpwquality
-      accountsservice libkrb5 networkmanagerapplet libwacom samba libnotify libxkbfile
-      shared_mime_info icu libtool docbook_xsl docbook_xsl_ns gnome3.grilo
-      gdk_pixbuf gnome3.defaultIconTheme librsvg clutter clutter_gtk
-      gnome3.vino udev libcanberra_gtk3 libgudev wrapGAppsHook
-      networkmanager modemmanager gnome3.gnome-bluetooth grilo tracker
-      cracklib ];
+  propagatedUserEnvPkgs = [ gnome3.gnome-themes-standard ];
+
+  nativeBuildInputs = [
+    pkgconfig intltool wrapGAppsHook libtool libxslt docbook_xsl docbook_xsl_ns
+    shared-mime-info
+  ];
+
+  buildInputs = with gnome3; [
+    ibus gtk glib glib-networking upower gsettings-desktop-schemas
+    libxml2 gnome-desktop gnome-settings-daemon polkit libgtop
+    gnome-online-accounts libsoup colord libpulseaudio fontconfig colord-gtk
+    accountsservice libkrb5 networkmanagerapplet libwacom samba libnotify
+    grilo libpwquality cracklib vino libcanberra-gtk3 libgudev
+    gdk_pixbuf defaultIconTheme librsvg clutter clutter-gtk
+    networkmanager modemmanager gnome-bluetooth tracker
+  ];
 
   preBuild = ''
     substituteInPlace panels/datetime/tz.h --replace "/usr/share/zoneinfo/zone.tab" "${tzdata}/share/zoneinfo/zone.tab"
+
+    substituteInPlace panels/region/cc-region-panel.c --replace "gkbd-keyboard-display" "${gnome3.libgnomekbd}/bin/gkbd-keyboard-display"
 
     # hack to make test-endianess happy
     mkdir -p $out/share/locale
     substituteInPlace panels/datetime/test-endianess.c --replace "/usr/share/locale/" "$out/share/locale/"
   '';
 
-  preFixup = with gnome3; ''
+  preFixup = ''
     gappsWrapperArgs+=(
-      --prefix XDG_DATA_DIRS : "${gnome3.gnome_themes_standard}/share:${sound-theme-freedesktop}/share"
+      --prefix XDG_DATA_DIRS : "${gnome3.gnome-themes-standard}/share:${sound-theme-freedesktop}/share"
       # Thumbnailers (for setting user profile pictures)
       --prefix XDG_DATA_DIRS : "${gdk_pixbuf}/share"
       --prefix XDG_DATA_DIRS : "${librsvg}/share"
@@ -56,5 +65,4 @@ stdenv.mkDerivation rec {
     maintainers = gnome3.maintainers;
     platforms = platforms.linux;
   };
-
 }

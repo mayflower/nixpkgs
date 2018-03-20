@@ -53,7 +53,7 @@ stdenv.mkDerivation ((lib.optionalAttrs (! isNull buildScript) {
   ++ lib.optionals openclSupport [ pkgs.opencl-headers pkgs.ocl-icd ]
   ++ lib.optionals xmlSupport    [ pkgs.libxml2 pkgs.libxslt ]
   ++ lib.optionals tlsSupport    [ pkgs.openssl pkgs.gnutls ]
-  ++ lib.optionals openglSupport [ pkgs.mesa pkgs.mesa_noglu.osmesa pkgs.libdrm ]
+  ++ lib.optionals openglSupport [ pkgs.libGLU_combined pkgs.libGL.osmesa pkgs.libdrm ]
   ++ (with pkgs.xorg; [
     libX11  libXi libXcursor libXrandr libXrender libXxf86vm libXcomposite libXext
   ])));
@@ -92,7 +92,7 @@ stdenv.mkDerivation ((lib.optionalAttrs (! isNull buildScript) {
           ((map (links "share/wine/gecko") geckos)
         ++ (map (links "share/wine/mono")  monos))}
   '' + lib.optionalString supportFlags.gstreamerSupport ''
-    for i in wine wine64; do
+    for i in wine ; do
       if [ -e "$out/bin/$i" ]; then
         wrapProgram "$out/bin/$i" \
           --argv0 "" \
@@ -109,6 +109,6 @@ stdenv.mkDerivation ((lib.optionalAttrs (! isNull buildScript) {
     homepage = http://www.winehq.org/;
     license = "LGPL";
     description = "An Open Source implementation of the Windows API on top of X, OpenGL, and Unix";
-    maintainers = with stdenv.lib.maintainers; [ avnik raskin ];
+    maintainers = with stdenv.lib.maintainers; [ avnik raskin bendlas ];
   };
 })

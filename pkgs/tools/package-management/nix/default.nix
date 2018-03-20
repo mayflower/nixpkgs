@@ -1,45 +1,21 @@
 { lib, stdenv, fetchurl, fetchFromGitHub, perl, curl, bzip2, sqlite, openssl ? null, xz
 , pkgconfig, boehmgc, perlPackages, libsodium, aws-sdk-cpp, brotli
 , autoreconfHook, autoconf-archive, bison, flex, libxml2, libxslt, docbook5, docbook5_xsl
-, libseccomp, busybox
-, hostPlatform
+, libseccomp, busybox-sandbox-shell
+, hostPlatform, buildPlatform
 , storeDir ? "/nix/store"
 , stateDir ? "/nix/var"
 , confDir ? "/etc"
 }:
 
 let
-  # We want the new fixed S3 retry behavior for nixUnstable, but it's a breaking
-  # change so we don't want to update the top-level package.
-  aws-sdk-cpp-1_3 = aws-sdk-cpp.overrideAttrs (_: rec {
-    name = "aws-sdk-cpp-${version}";
-    version = "1.3.22";
-
-    src = fetchFromGitHub {
-      owner = "awslabs";
-      repo = "aws-sdk-cpp";
-      rev = version;
-      sha256 = "0sdgy8kqhxnw7n0sw4m3p3ay7yic3rhad5ab8m5lbx61ad9bq3c2";
-    };
-  });
-
-  sh = busybox.override {
-    useMusl = true;
-    enableStatic = true;
-    enableMinimal = true;
-    extraConfig = ''
-      CONFIG_ASH y
-      CONFIG_ASH_BUILTIN_ECHO y
-      CONFIG_ASH_BUILTIN_TEST y
-      CONFIG_ASH_OPTIMIZE_FOR_SIZE y
-    '';
-  };
+  sh = busybox-sandbox-shell;
 
   common = { name, suffix ? "", src, fromGit ? false }: stdenv.mkDerivation rec {
     inherit name src;
     version = lib.getVersion name;
 
-    is112 = lib.versionAtLeast version "1.12pre";
+    is20 = lib.versionAtLeast version "2.0pre";
 
     VERSION_SUFFIX = lib.optionalString fromGit suffix;
 
@@ -47,29 +23,23 @@ let
 
     nativeBuildInputs =
       [ pkgconfig ]
-      ++ lib.optionals (!is112) [ perl ]
+      ++ lib.optionals (!is20) [ curl perl ]
       ++ lib.optionals fromGit [ autoreconfHook autoconf-archive bison flex libxml2 libxslt docbook5 docbook5_xsl ];
 
-    buildInputs = [ curl openssl sqlite xz ]
+    buildInputs = [ curl openssl sqlite xz bzip2 ]
       ++ lib.optional (stdenv.isLinux || stdenv.isDarwin) libsodium
-      ++ lib.optionals fromGit [ brotli ] # Since 1.12
-      ++ lib.optional stdenv.isLinux libseccomp
-      ++ lib.optional ((stdenv.isLinux || stdenv.isDarwin) && is112)
-          (aws-sdk-cpp-1_3.override {
+      ++ lib.optionals is20 [ brotli ] # Since 1.12
+      ++ lib.optional (hostPlatform.isSeccomputable) libseccomp
+      ++ lib.optional ((stdenv.isLinux || stdenv.isDarwin) && is20)
+          (aws-sdk-cpp.override {
             apis = ["s3"];
             customMemoryManagement = false;
           });
 
     propagatedBuildInputs = [ boehmgc ];
 
-    # Note: bzip2 is not passed as a build input, because the unpack phase
-    # would end up using the wrong bzip2 when cross-compiling.
-    # XXX: The right thing would be to reinstate `--with-bzip2' in Nix.
-    postUnpack =
-      '' export CPATH="${bzip2.dev}/include"
-         export LIBRARY_PATH="${bzip2.out}/lib"
-         export CXXFLAGS="-Wno-error=reserved-user-defined-literal"
-      '';
+    # Seems to be required when using std::atomic with 64-bit types
+    NIX_LDFLAGS = lib.optionalString (stdenv.system == "armv6l-linux") "-latomic";
 
     configureFlags =
       [ "--with-store-dir=${storeDir}"
@@ -78,45 +48,29 @@ let
         "--disable-init-state"
         "--enable-gc"
       ]
-      ++ lib.optionals (!is112) [
+      ++ lib.optionals (!is20) [
         "--with-dbi=${perlPackages.DBI}/${perl.libPrefix}"
         "--with-dbd-sqlite=${perlPackages.DBDSQLite}/${perl.libPrefix}"
         "--with-www-curl=${perlPackages.WWWCurl}/${perl.libPrefix}"
-      ] ++ lib.optionals (is112 && stdenv.isLinux) [
+      ] ++ lib.optionals (is20 && stdenv.isLinux) [
         "--with-sandbox-shell=${sh}/bin/busybox"
-      ];
+      ]
+      ++ lib.optional (
+          hostPlatform != buildPlatform && hostPlatform ? nix && hostPlatform.nix ? system
+      ) ''--with-system=${hostPlatform.nix.system}''
+         # RISC-V support in progress https://github.com/seccomp/libseccomp/pull/50
+      ++ lib.optional (!hostPlatform.isSeccomputable) "--disable-seccomp-sandboxing";
 
     makeFlags = "profiledir=$(out)/etc/profile.d";
 
     installFlags = "sysconfdir=$(out)/etc";
 
-    doInstallCheck = true;
+    doInstallCheck = true; # not cross
 
     # socket path becomes too long otherwise
     preInstallCheck = lib.optional stdenv.isDarwin "export TMPDIR=/tmp";
 
     separateDebugInfo = stdenv.isLinux;
-
-    crossAttrs = {
-      postUnpack =
-        '' export CPATH="${bzip2.crossDrv}/include"
-           export NIX_CROSS_LDFLAGS="-L${bzip2.crossDrv}/lib -rpath-link ${bzip2.crossDrv}/lib $NIX_CROSS_LDFLAGS"
-        '';
-
-      configureFlags =
-        ''
-          --with-store-dir=${storeDir} --localstatedir=${stateDir}
-          --with-dbi=${perlPackages.DBI}/${perl.libPrefix}
-          --with-dbd-sqlite=${perlPackages.DBDSQLite}/${perl.libPrefix}
-          --with-www-curl=${perlPackages.WWWCurl}/${perl.libPrefix}
-          --disable-init-state
-          --enable-gc
-        '' + stdenv.lib.optionalString (
-            hostPlatform ? nix && hostPlatform.nix ? system
-        ) ''--with-system=${hostPlatform.nix.system}'';
-
-      doInstallCheck = false;
-    };
 
     enableParallelBuilding = true;
 
@@ -164,7 +118,7 @@ in rec {
 
   nix = nixStable;
 
-  nixStable = (common rec {
+  nix1 = (common rec {
     name = "nix-1.11.16";
     src = fetchurl {
       url = "http://nixos.org/releases/nix/${name}/${name}.tar.xz";
@@ -172,16 +126,27 @@ in rec {
     };
   }) // { perl-bindings = nixStable; };
 
+  nixStable = (common rec {
+    name = "nix-2.0";
+    src = fetchurl {
+      url = "http://nixos.org/releases/nix/${name}/${name}.tar.xz";
+      sha256 = "7024d327314bf92c1d3e6cccd944929828a44b24093954036bfb0115a92f5a14";
+    };
+  }) // { perl-bindings = perl-bindings { nix = nixStable; }; };
+
+  nixUnstable = nix;
+/*
   nixUnstable = (lib.lowPrio (common rec {
-    name = "nix-unstable-1.12${suffix}";
-    suffix = "pre5873_b76e282d";
+    name = "nix-2.0${suffix}";
+    suffix = "pre5968_a6c0b773";
     src = fetchFromGitHub {
       owner = "NixOS";
       repo = "nix";
-      rev = "b76e282da8824b679368370e43c994e588994a9a";
-      sha256 = "11clfc8fh8q8s3k4canmn36xhh3zcl2zd8wwddp4pdvdal16b5n6";
+      rev = "a6c0b773b72d4e30690e01f1f1dcffc28f2d9ea1";
+      sha256 = "0i8wcblcjw3291ba6ki4llw3fgm8ylp9q52kajkyr58dih537346";
     };
     fromGit = true;
   })) // { perl-bindings = perl-bindings { nix = nixUnstable; }; };
+*/
 
 }

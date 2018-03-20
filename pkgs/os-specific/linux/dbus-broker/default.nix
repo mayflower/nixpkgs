@@ -1,20 +1,23 @@
-{ stdenv, fetchgit, fetchFromGitHub, meson, ninja, pkgconfig
-, dbus, glib, systemd }:
+{ stdenv, fetchgit, fetchFromGitHub, docutils, meson, ninja, pkgconfig
+, dbus, glib, linuxHeaders, systemd }:
 
 stdenv.mkDerivation rec {
   name = "dbus-broker-${version}";
-  version = "3";
+  version = "11";
 
   src = fetchFromGitHub {
     owner           = "bus1";
     repo            = "dbus-broker";
     rev             = "v${version}";
-    sha256          = "1f2vw5b2cbdgd3g7vnzwr9lsw9v4xc5nc0nf9xc3qb5xqzsq7v7i";
+    sha256          = "19sszb6ac7md494i996ixqmz9b3gim8rrv2nbrmlgjd59gk6hf7b";
     fetchSubmodules = true;
   };
 
-  nativeBuildInputs = [ meson ninja pkgconfig ];
-  buildInputs = [ dbus glib systemd ];
+  nativeBuildInputs = [ docutils meson ninja pkgconfig ];
+
+  buildInputs = [ dbus glib linuxHeaders systemd ];
+
+  enableParallelBuilding = true;
 
   prePatch = ''
     substituteInPlace meson.build \
@@ -24,6 +27,9 @@ stdenv.mkDerivation rec {
 
   postInstall = ''
     install -Dm644 ../README $out/share/doc/dbus-broker/README
+
+    sed -i $out/lib/systemd/{system,user}/dbus-broker.service \
+      -e 's,^ExecReload.*busctl,ExecReload=${systemd}/bin/busctl,'
   '';
 
   checkPhase = "ninja test";

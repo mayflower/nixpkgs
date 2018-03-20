@@ -1,14 +1,15 @@
 { gui ? true,
   buildPythonPackage, fetchFromGitHub, lib,
   sphinx_1_2, lxml, isodate, numpy, pytest,
-  tkinter ? null, py3to2, isPy34,
+  tkinter ? null, py3to2, isPy3k,
   ... }:
 
 buildPythonPackage rec {
-  name = "arelle-${version}${lib.optionalString (!gui) "-headless"}";
+  pname = "arelle-${version}${lib.optionalString (!gui) "-headless"}";
   version = "2017-08-24";
+  name = pname + "-" + version;
 
-  disabled = !isPy34;
+  disabled = !isPy3k;
 
   # Releases are published at http://arelle.org/download/ but sadly no
   # tags are published on github.

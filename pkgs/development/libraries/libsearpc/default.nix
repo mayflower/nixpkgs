@@ -14,7 +14,8 @@ stdenv.mkDerivation rec
 
   patches = [ ./libsearpc.pc.patch ];
 
-  buildInputs = [ automake autoconf pkgconfig libtool python2Packages.python python2Packages.simplejson ];
+  nativeBuildInputs = [ pkgconfig ];
+  buildInputs = [ automake autoconf libtool python2Packages.python python2Packages.simplejson ];
   propagatedBuildInputs = [ glib jansson ];
 
   preConfigure = "./autogen.sh";
@@ -27,6 +28,6 @@ stdenv.mkDerivation rec
     description = "A simple and easy-to-use C language RPC framework (including both server side & client side) based on GObject System";
     license = stdenv.lib.licenses.lgpl3;
     platforms = stdenv.lib.platforms.linux;
-    maintainers = [ stdenv.lib.maintainers.calrama ];
+    maintainers = [ ];
   };
 }

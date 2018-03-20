@@ -16,6 +16,12 @@ stdenv.mkDerivation rec {
 
   patchFlags = "-p0";
 
+  configureFlags =
+    stdenv.lib.optional (stdenv.hostPlatform != stdenv.buildPlatform)
+    [ # This test requires running host code
+      "bash_cv_wcwidth_broken=no"
+    ];
+
   patches =
     [ ./link-against-ncurses.patch
       ./no-arch_only-6.3.patch
@@ -33,7 +39,6 @@ stdenv.mkDerivation rec {
   # Don't run the native `strip' when cross-compiling.
   dontStrip = hostPlatform != buildPlatform;
   bash_cv_func_sigsetjmp = if stdenv.isCygwin then "missing" else null;
-
 
   meta = with stdenv.lib; {
     description = "Library for interactive line editing";

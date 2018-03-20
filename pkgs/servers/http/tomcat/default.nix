@@ -48,7 +48,7 @@ in {
     sha256 = "1qnww70x75c0qf2wn8mkpz5lszggjnh78dpb4chyw2fnbm3wxain";
   };
 
-  tomcatUnstable = common {
+  tomcat9 = common {
     versionMajor = "9";
     versionMinor = "0.2";
     sha256 = "0aaykzi0b2xsdmjp60ihcjzh1m95p0a79kn5l2v7vgbkyg449638";

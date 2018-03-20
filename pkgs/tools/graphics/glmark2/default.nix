@@ -1,4 +1,4 @@
-{ stdenv, fetchFromGitHub, pkgconfig, libjpeg, libpng, xorg, libX11, mesa, libdrm,
+{ stdenv, fetchFromGitHub, pkgconfig, libjpeg, libpng, xorg, libX11, libGLU_combined, libdrm,
   python27, wayland, libudev }:
 
 stdenv.mkDerivation rec {
@@ -12,8 +12,9 @@ stdenv.mkDerivation rec {
     sha256 = "076l75rfl6pnp1wgiwlaihy1vg2advg1z8bi0x84kk259kldgvwn";
   };
 
+  nativeBuildInputs = [ pkgconfig ];
   buildInputs = [
-    pkgconfig libjpeg libpng xorg.libxcb libX11 mesa libdrm python27 wayland libudev
+    libjpeg libpng xorg.libxcb libX11 libGLU_combined libdrm python27 wayland libudev
   ];
 
   buildPhase = ''

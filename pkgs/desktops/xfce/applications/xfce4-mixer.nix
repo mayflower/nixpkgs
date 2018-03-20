@@ -1,6 +1,6 @@
 { stdenv, fetchurl, pkgconfig, intltool, wrapGAppsHook
 , glib, gstreamer, gst-plugins-base, gtk, hicolor_icon_theme
-, libxfce4util, libxfce4ui, xfce4panel, xfconf, libunique ? null
+, libxfce4util, libxfce4ui, xfce4-panel, xfconf, libunique ? null
 , pulseaudioSupport ? false, gst-plugins-good
 }:
 
@@ -32,7 +32,7 @@ stdenv.mkDerivation rec {
     [ pkgconfig intltool wrapGAppsHook hicolor_icon_theme ];
 
   buildInputs =
-    [ glib gstreamer gtk libxfce4util libxfce4ui xfce4panel xfconf libunique
+    [ glib gstreamer gtk libxfce4util libxfce4ui xfce4-panel xfconf libunique
     ] ++ gst_plugins;
 
   passthru = { inherit gst_plugins; };

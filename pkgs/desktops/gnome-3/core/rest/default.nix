@@ -1,20 +1,31 @@
 { stdenv, fetchurl, pkgconfig, glib, libsoup, gobjectIntrospection, gnome3 }:
 
-stdenv.mkDerivation rec {
-  name = "rest-${version}";
-  major = "0.8";
-  version = "${major}.0";
+let
+  pname = "rest";
+  version = "0.8.1";
+in stdenv.mkDerivation rec {
+  name = "${pname}-${version}";
 
   src = fetchurl {
-    url = "mirror://gnome/sources/rest/${major}/${name}.tar.xz";
-    sha256 = "e7b89b200c1417073aef739e8a27ff2ab578056c27796ec74f5886a5e0dff647";
+    url = "mirror://gnome/sources/${pname}/${gnome3.versionBranch version}/${name}.tar.xz";
+    sha256 = "0513aad38e5d3cedd4ae3c551634e3be1b9baaa79775e53b2dba9456f15b01c9";
   };
 
-  buildInputs = [ pkgconfig glib libsoup gobjectIntrospection];
+  nativeBuildInputs = [ pkgconfig ];
+  buildInputs = [ glib libsoup gobjectIntrospection];
 
   configureFlags = "--with-ca-certificates=/etc/ssl/certs/ca-certificates.crt";
 
+  passthru = {
+    updateScript = gnome3.updateScript {
+      packageName = pname;
+      attrPath = "gnome3.${pname}";
+    };
+  };
+
   meta = with stdenv.lib; {
+    homepage = https://wiki.gnome.org/Projects/Librest;
+    license = licenses.lgpl21;
     platforms = platforms.linux;
     maintainers = gnome3.maintainers;
   };

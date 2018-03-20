@@ -19,13 +19,15 @@ stdenv.mkDerivation rec {
     sha256 = "147wyr5m185f8swsmb4q1ahs9r1rycapbpa2548aqbv298bbish3";
   })];
 
+  nativeBuildInputs = [ pkgconfig ];
+
+  buildInputs = lib.optionals withGUI [ gtk2 sqlite ];
+
   # Fix version info.
   preConfigure = ''
     sed -e "s/return \"unknown\"/return \"${version}\"/" \
         -i src/core/version.cc
   '';
-
-  buildInputs = lib.optionals withGUI [ gtk2 pkgconfig sqlite ];
 
   makeFlags = [ "PREFIX=$(out)" ];
 
@@ -36,7 +38,7 @@ stdenv.mkDerivation rec {
   enableParallelBuilding = true;
 
   meta = with stdenv.lib; {
-    homepage = http://ezix.org/project/wiki/HardwareLiSter;
+    homepage = https://ezix.org/project/wiki/HardwareLiSter;
     description = "Provide detailed information on the hardware configuration of the machine";
     license = licenses.gpl2;
     maintainers = with maintainers; [ phreedom jgeerds ];

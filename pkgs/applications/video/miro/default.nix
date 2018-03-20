@@ -1,8 +1,8 @@
 { stdenv, fetchurl, pkgconfig
 , pythonPackages, pyrex096, ffmpeg, boost, glib, gtk2, webkitgtk24x-gtk2, libsoup
 , taglib, sqlite
-, libtorrentRasterbar, glib_networking, gsettings_desktop_schemas
-, gst-python, gst-plugins-base, gst-plugins-good, gst-ffmpeg, wrapGAppsHook
+, libtorrentRasterbar, glib-networking, gsettings-desktop-schemas
+, gst-python, gst-plugins-base, gst-plugins-good, gst-ffmpeg
 , enableBonjour ? false, avahi ? null
 }:
 
@@ -63,11 +63,15 @@ in buildPythonApplication rec {
 
   postInstall = ''
     mv "$out/bin/miro.real" "$out/bin/miro"
+    wrapProgram "$out/bin/miro" \
+      --prefix GST_PLUGIN_SYSTEM_PATH : "$GST_PLUGIN_SYSTEM_PATH" \
+      --prefix GIO_EXTRA_MODULES : "${glib-networking.out}/lib/gio/modules" \
+      --prefix XDG_DATA_DIRS : "$GSETTINGS_SCHEMAS_PATH:$out/share"
   '';
 
   buildInputs = with pythonPackages; [ pygtk pygobject2 ] ++ [
     pkgconfig pyrex096 ffmpeg boost glib gtk2 webkitgtk24x-gtk2 libsoup
-    taglib gsettings_desktop_schemas sqlite
+    taglib gsettings-desktop-schemas sqlite
   ];
 
   propagatedBuildInputs = with pythonPackages; [

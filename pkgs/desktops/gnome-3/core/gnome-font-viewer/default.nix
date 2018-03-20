@@ -1,26 +1,27 @@
-{ stdenv, intltool, fetchurl
-, pkgconfig, gtk3, glib
-, bash, wrapGAppsHook, itstool
-, gnome3, librsvg, gdk_pixbuf }:
+{ stdenv, meson, ninja, gettext, fetchurl
+, pkgconfig, gtk3, glib, libxml2
+, wrapGAppsHook, gnome3 }:
 
 stdenv.mkDerivation rec {
-  inherit (import ./src.nix fetchurl) name src;
+  name = "gnome-font-viewer-${version}";
+  version = "3.26.0";
+
+  src = fetchurl {
+    url = "mirror://gnome/sources/gnome-font-viewer/${gnome3.versionBranch version}/${name}.tar.xz";
+    sha256 = "02768a62b4033de5ef9d00602e8c29e5de05255f879b0d9b4d731be9648fe9a0";
+  };
+
+  passthru = {
+    updateScript = gnome3.updateScript { packageName = "gnome-font-viewer"; attrPath = "gnome3.gnome-font-viewer"; };
+  };
 
   doCheck = true;
 
-  NIX_CFLAGS_COMPILE = "-I${gnome3.glib.dev}/include/gio-unix-2.0";
+  nativeBuildInputs = [ meson ninja pkgconfig gettext wrapGAppsHook libxml2 ];
+  buildInputs = [ gtk3 glib gnome3.gnome-desktop gnome3.defaultIconTheme ];
 
-  propagatedUserEnvPkgs = [ gnome3.gnome_themes_standard ];
-
-  buildInputs = [ pkgconfig gtk3 glib intltool itstool gnome3.gnome_desktop
-                  gdk_pixbuf gnome3.defaultIconTheme librsvg
-                  gnome3.gsettings_desktop_schemas wrapGAppsHook ];
-
-  preFixup = ''
-    gappsWrapperArgs+=(
-      --prefix XDG_DATA_DIRS : "${gnome3.gnome_themes_standard}/share"
-    )
-  '';
+  # Do not run meson-postinstall.sh
+  preConfigure = "sed -i '2,$ d'  meson-postinstall.sh";
 
   meta = with stdenv.lib; {
     description = "Program that can preview fonts and create thumbnails for fonts";

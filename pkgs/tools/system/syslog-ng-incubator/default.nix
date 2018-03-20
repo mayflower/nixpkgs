@@ -4,13 +4,13 @@
 
 stdenv.mkDerivation rec {
   name = "syslog-ng-incubator-${version}";
-  version = "0.6.0";
+  version = "0.6.2";
 
   src = fetchFromGitHub {
     owner = "balabit";
     repo = "syslog-ng-incubator";
     rev = name;
-    sha256 = "1wiv289lc5kxsd3ydyn1zvvgjrj1mv2jghv0cm425wsdsfr7fjb0";
+    sha256 = "17y85cqcyfbp882gaii731cvz5bg1s8rgda271jh6kgnrz5rbd4s";
   };
 
   nativeBuildInputs = [ pkgconfig autoreconfHook yacc ];
@@ -21,7 +21,6 @@ stdenv.mkDerivation rec {
 
   configureFlags = [
     "--with-module-dir=$(out)/lib/syslog-ng"
-    "--disable-perl" # fails to build
   ];
 
   meta = with stdenv.lib; {

@@ -1,24 +1,65 @@
-{ stdenv, fetchFromGitHub, cmake, pkgconfig, libpng, jansson, curl
-, SDL2, SDL2_ttf, speexdsp, expat, fontconfig }:
+{ stdenv, fetchurl, fetchFromGitHub,
+  SDL2, cmake, curl, fontconfig, freetype, jansson, libiconv, libpng,
+  libpthreadstubs, libzip, libGLU, openssl, pkgconfig, speexdsp, zlib
+}:
 
-stdenv.mkDerivation rec {
+let
   name = "openrct2-${version}";
-  version = "0.0.4";
+  version = "0.1.1";
 
-  src = fetchFromGitHub {
+  openrct2-src = fetchFromGitHub {
     owner = "OpenRCT2";
     repo = "OpenRCT2";
     rev = "v${version}";
-    sha256 = "0w1rr082z8n7i5q6fmv1r8dkisl28gzk2jilick02mkkryvfw12h";
+    sha256 = "1xxwqx2gzvsdrsy76rz3sys9m4pyn9q25nbnkba3cw1z4l2b73lg";
   };
 
-  nativeBuildInputs = [ pkgconfig cmake ];
-  buildInputs = [ libpng jansson SDL2 SDL2_ttf curl speexdsp expat fontconfig ];
+  title-sequences-src = fetchFromGitHub {
+    owner = "OpenRCT2";
+    repo = "title-sequences";
+    rev = "v0.1.0";
+    sha256 = "17c926lhby90ilvyyl6jsiy0df8dw5jws97xigp3x8hddhvv7c16";
+  };
+in
+stdenv.mkDerivation rec {
+  inherit name;
+
+  src = openrct2-src;
+
+  buildInputs = [
+    SDL2
+    cmake
+    curl
+    fontconfig
+    freetype
+    jansson
+    libiconv
+    libpng
+    libpthreadstubs
+    libzip
+    libGLU
+    openssl
+    pkgconfig
+    speexdsp
+    zlib
+  ];
+
+  postUnpack = ''
+    cp -r ${title-sequences-src} $sourceRoot/title
+  '';
+
+  cmakeFlags = [
+    "-DCMAKE_BUILD_TYPE=RELWITHDEBINFO" "-DDOWNLOAD_TITLE_SEQUENCES=OFF"];
+
+  makeFlags = ["all" "g2"];
+
+  preFixup = "ln -s $out/share/openrct2 $out/bin/data";
 
   meta = with stdenv.lib; {
-    description = "";
-    homepage = https://openrct2.org/;
-    maintainers = with maintainers; [ fpletz ];
+    description = "An open source re-implementation of RollerCoaster Tycoon 2 (original game required)";
+    homepage = https://openrct2.website/;
+    license = licenses.gpl3;
     platforms = platforms.linux;
+    maintainers = with maintainers; [ geistesk ];
   };
 }

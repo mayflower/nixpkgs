@@ -2,13 +2,12 @@
 , llvm, libcxx, libcxxabi, clang, libuuid
 , libobjc ? null, maloader ? null, xctoolchain ? null
 , hostPlatform, targetPlatform
-, enableDumpNormalizedLibArgs ? false
 }:
 
 let
-  # The prefix prepended to binary names to allow multiple binuntils on the
+  # The targetPrefix prepended to binary names to allow multiple binuntils on the
   # PATH to both be usable.
-  prefix = stdenv.lib.optionalString
+  targetPrefix = stdenv.lib.optionalString
     (targetPlatform != hostPlatform)
     "${targetPlatform.config}-";
 in
@@ -20,7 +19,7 @@ assert (!hostPlatform.isDarwin) -> (maloader != null && xctoolchain != null);
 
 let
   baseParams = rec {
-    name = "${prefix}cctools-port-${version}";
+    name = "${targetPrefix}cctools-port-${version}";
     version = "895";
 
     src = fetchFromGitHub {
@@ -30,6 +29,8 @@ let
       sha256 = "0l45mvyags56jfi24rawms8j2ihbc45mq7v13pkrrwppghqrdn52";
     };
 
+    outputs = [ "out" "dev" ];
+
     nativeBuildInputs = [ autoconf automake libtool_2 ];
     buildInputs = [ libuuid ] ++
       # Only need llvm and clang if the stdenv isn't already clang-based (TODO: just make a stdenv.cc.isClang)
@@ -38,11 +39,17 @@ let
 
     patches = [
       ./ld-rpath-nonfinal.patch ./ld-ignore-rpath-link.patch
-    ] ++ stdenv.lib.optional enableDumpNormalizedLibArgs ./ld-dump-normalized-args.patch;
+    ];
+
+    __propagatedImpureHostDeps = [
+      # As far as I can tell, otool from cctools is the only thing that depends on these two, and we should fix them
+      "/usr/lib/libobjc.A.dylib"
+      "/usr/lib/libobjc.dylib"
+    ];
 
     enableParallelBuilding = true;
 
-    # TODO(@Ericson2314): Always pass "--target" and always prefix.
+    # TODO(@Ericson2314): Always pass "--target" and always targetPrefix.
     configurePlatforms = [ "build" "host" ] ++ stdenv.lib.optional (targetPlatform != hostPlatform) "target";
     configureFlags = stdenv.lib.optionals (!stdenv.isDarwin) [
       "CXXFLAGS=-I${libcxx}/include/c++/v1"
@@ -106,7 +113,7 @@ let
       '';
 
     passthru = {
-      inherit prefix;
+      inherit targetPrefix;
     };
 
     meta = {

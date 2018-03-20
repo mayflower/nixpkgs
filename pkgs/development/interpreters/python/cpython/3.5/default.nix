@@ -67,6 +67,8 @@ in stdenv.mkDerivation {
   patches = [
     ./no-ldconfig.patch
     ./ld_library_path.patch
+  ] ++ optionals (x11Support && stdenv.isDarwin) [
+    ./use-correct-tcl-tk-on-darwin.patch
   ];
 
   postPatch = ''
@@ -154,7 +156,7 @@ in stdenv.mkDerivation {
   in rec {
     inherit libPrefix sitePackages x11Support;
     executable = "${libPrefix}m";
-    buildEnv = callPackage ../../wrapper.nix { python = self; };
+    buildEnv = callPackage ../../wrapper.nix { python = self; inherit (pythonPackages) requiredPythonModules; };
     withPackages = import ../../with-packages.nix { inherit buildEnv pythonPackages;};
     pkgs = pythonPackages;
     isPy3 = true;
@@ -178,6 +180,6 @@ in stdenv.mkDerivation {
     '';
     license = licenses.psfl;
     platforms = with platforms; linux ++ darwin;
-    maintainers = with maintainers; [ chaoflow domenkozar cstrahan ];
+    maintainers = with maintainers; [ fridh ];
   };
 }

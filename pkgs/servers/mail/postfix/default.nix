@@ -1,4 +1,4 @@
-{ stdenv, lib, fetchurl, makeWrapper, gnused, db, openssl, cyrus_sasl
+{ stdenv, lib, fetchurl, makeWrapper, gnused, db, openssl, cyrus_sasl, libnsl
 , coreutils, findutils, gnugrep, gawk, icu, pcre
 , withPgSQL ? false, postgresql
 , withMySQL ? false, mysql
@@ -32,7 +32,8 @@ in stdenv.mkDerivation rec {
     sha256 = "0xpky04a5xnzbcizqj4y1gyxqjrzvpjlvk1g757wdrs678fq82vx";
   };
 
-  buildInputs = [ makeWrapper gnused db openssl cyrus_sasl icu pcre ]
+  nativeBuildInputs = [ makeWrapper ];
+  buildInputs = [ db openssl cyrus_sasl icu libnsl pcre ]
                 ++ lib.optional withPgSQL postgresql
                 ++ lib.optional withMySQL mysql.connector-c
                 ++ lib.optional withSQLite sqlite

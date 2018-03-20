@@ -179,6 +179,8 @@ in
         preStart = ''
           mkdir -p /etc/tinc/${network}/hosts
           chown tinc.${network} /etc/tinc/${network}/hosts
+          mkdir -p /etc/tinc/${network}/invitations
+          chown tinc.${network} /etc/tinc/${network}/invitations
 
           # Determine how we should generate our keys
           if type tinc >/dev/null 2>&1; then
@@ -202,7 +204,6 @@ in
           mount -o defaults,bind,ro /etc/resolv.conf /etc/tinc/${network}/etc/resolv.conf
           mount -o defaults,bind,ro /nix/store /etc/tinc/${network}/nix/store
         '';
-
         postStop = optionalString data.chroot ''
           umount /etc/tinc/${network}/{etc/{hosts,resolv.conf},nix/store}
           rm -r /etc/tinc/${network}/{etc,nix}

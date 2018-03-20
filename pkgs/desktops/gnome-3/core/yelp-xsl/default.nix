@@ -2,11 +2,22 @@
 , itstool, libxml2, libxslt, gnome3 }:
 
 stdenv.mkDerivation rec {
-  inherit (import ./src.nix fetchurl) name src;
+  name = "yelp-xsl-${version}";
+  version = "3.20.1";
+
+  src = fetchurl {
+    url = "mirror://gnome/sources/yelp-xsl/${gnome3.versionBranch version}/${name}.tar.xz";
+    sha256 = "dc61849e5dca473573d32e28c6c4e3cf9c1b6afe241f8c26e29539c415f97ba0";
+  };
+
+  passthru = {
+    updateScript = gnome3.updateScript { packageName = "yelp-xsl"; attrPath = "gnome3.yelp-xsl"; };
+  };
 
   doCheck = true;
 
-  buildInputs = [ pkgconfig intltool itstool libxml2 libxslt ];
+  nativeBuildInputs = [ pkgconfig ];
+  buildInputs = [ intltool itstool libxml2 libxslt ];
 
   meta = with stdenv.lib; {
     homepage = https://wiki.gnome.org/Apps/Yelp;

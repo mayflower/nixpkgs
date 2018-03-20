@@ -1,5 +1,5 @@
 { stdenv, fetchurl
-, automake, autoconf, libtool, pkgconfig, autoconf-archive
+, automake, autoconf, bzip2, libtar, libtool, pkgconfig, autoconf-archive
 , libxml2
 , languageMachines
 }:
@@ -13,7 +13,8 @@ stdenv.mkDerivation {
   version = release.version;
   src = fetchurl { inherit (release) url sha256;
                    name = "timblserver-${release.version}.tar.gz"; };
-  buildInputs = [ automake autoconf libtool pkgconfig autoconf-archive
+  nativeBuildInputs = [ pkgconfig ];
+  buildInputs = [ automake autoconf bzip2 libtar libtool autoconf-archive
                   libxml2
                   languageMachines.ticcutils
                   languageMachines.timbl

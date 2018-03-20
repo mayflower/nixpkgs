@@ -13,7 +13,8 @@ stdenv.mkDerivation rec {
     sha256 = "746ff540ccf601645f500ee7743f443caf987d6380e61e5249fc15f7a455ed42";
   };
 
-  buildInputs = [ ncurses autoreconfHook ];
+  nativeBuildInputs = [ autoreconfHook ];
+  buildInputs = [ ncurses ];
 
   preAutoreconf = ''
     touch NEWS
@@ -32,7 +33,7 @@ stdenv.mkDerivation rec {
 
   meta = {
     description = "Extract URLs from text";
-    homepage = http://packages.qa.debian.org/u/urlview.html;
+    homepage = https://packages.qa.debian.org/u/urlview.html;
     license = stdenv.lib.licenses.gpl2;
     platforms = with stdenv.lib.platforms; linux ++ darwin;
   };

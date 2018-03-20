@@ -1,6 +1,6 @@
-{ stdenv, fetchurl, wrapGAppsHook, pkgconfig, intltool, gst_all_1
-, gtk, dbus_glib, libxfce4ui, libxfce4util, xfconf
-, taglib, libnotify
+{ stdenv, fetchurl, makeWrapper, pkgconfig, intltool, gst_all_1
+, gtk, dbus-glib, libxfce4ui, libxfce4util, xfconf
+, taglib, libnotify, hicolor-icon-theme
 , withGstPlugins ? true
 }:
 
@@ -18,7 +18,8 @@ stdenv.mkDerivation rec {
   nativeBuildInputs = [ pkgconfig intltool wrapGAppsHook ];
 
   buildInputs = [
-    gtk dbus_glib libxfce4ui libxfce4util xfconf
+    makeWrapper hicolor-icon-theme
+    gtk dbus-glib libxfce4ui libxfce4util xfconf
     taglib libnotify
   ] ++ (stdenv.lib.optionals withGstPlugins
     (with gst_all_1; [

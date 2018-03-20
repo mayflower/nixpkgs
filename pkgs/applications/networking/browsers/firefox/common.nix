@@ -3,9 +3,9 @@
 , isTorBrowserLike ? false }:
 
 { lib, stdenv, pkgconfig, pango, perl, python, zip, libIDL
-, libjpeg, zlib, dbus, dbus_glib, bzip2, xorg
+, libjpeg, zlib, dbus, dbus-glib, bzip2, xorg
 , freetype, fontconfig, file, nspr, nss, libnotify
-, yasm, mesa, sqlite, unzip, makeWrapper
+, yasm, libGLU_combined, sqlite, unzip, makeWrapper
 , hunspell, libevent, libstartup_notification, libvpx
 , cairo, icu, libpng, jemalloc
 , autoconf213, which, gnused, cargo, rustc, llvmPackages
@@ -19,6 +19,7 @@
 , pulseaudioSupport ? true, libpulseaudio
 , ffmpegSupport ? true, gstreamer, gst-plugins-base
 , gtk3Support ? !isTorBrowserLike, gtk2, gtk3, wrapGAppsHook
+, gssSupport ? true, kerberos
 
 ## privacy-related options
 
@@ -58,7 +59,7 @@
 , enableOfficialBranding ? true
 }:
 
-assert stdenv.cc ? libc && stdenv.cc.libc != null;
+assert stdenv.cc.libc or null != null;
 
 let
   flag = tf: x: [(if tf then "--enable-${x}" else "--disable-${x}")];
@@ -72,9 +73,9 @@ stdenv.mkDerivation (rec {
 
   buildInputs = [
     gtk2 perl zip libIDL libjpeg zlib bzip2
-    dbus dbus_glib pango freetype fontconfig xorg.libXi
+    dbus dbus-glib pango freetype fontconfig xorg.libXi
     xorg.libX11 xorg.libXrender xorg.libXft xorg.libXt file
-    nspr libnotify xorg.pixman yasm mesa
+    nspr libnotify xorg.pixman yasm libGLU_combined
     xorg.libXScrnSaver xorg.scrnsaverproto
     xorg.libXext xorg.xextproto sqlite unzip makeWrapper
     hunspell libevent libstartup_notification libvpx /* cairo */
@@ -85,7 +86,8 @@ stdenv.mkDerivation (rec {
   ++ lib.optional  alsaSupport alsaLib
   ++ lib.optional  pulseaudioSupport libpulseaudio # only headers are needed
   ++ lib.optionals ffmpegSupport [ gstreamer gst-plugins-base ]
-  ++ lib.optional  gtk3Support gtk3;
+  ++ lib.optional  gtk3Support gtk3
+  ++ lib.optional  gssSupport kerberos;
 
   NIX_CFLAGS_COMPILE = "-I${nspr.dev}/include/nspr -I${nss.dev}/include/nss";
 
@@ -98,29 +100,25 @@ stdenv.mkDerivation (rec {
     rm -f configure
     rm -f js/src/configure
     rm -f .mozconfig*
+  '' + (if lib.versionAtLeast version "58"
+  # this will run autoconf213
+  then ''
+    configureScript="$(realpath ./mach) configure"
+  '' else ''
+    make -f client.mk configure-files
+    configureScript="$(realpath ./configure)"
+  '') + ''
+    cxxLib=$( echo -n ${gcc}/include/c++/* )
+    archLib=$cxxLib/$( ${gcc}/bin/gcc -dumpmachine )
 
- '' + lib.optionalString (stdenv.lib.versionAtLeast version "58.0.0") ''
-    cat >.mozconfig <<END_MOZCONFIG
-    ${lib.concatStringsSep "\n" (map (flag: "ac_add_options ${flag}") configureFlags)}
-    ${lib.optionalString googleAPISupport "ac_add_options --with-google-api-keyfile=$TMPDIR/ga"}
-    END_MOZCONFIG
+    test -f layout/style/ServoBindings.toml && sed -i -e '/"-DMOZ_STYLO"/ a , "-cxx-isystem", "'$cxxLib'", "-isystem", "'$archLib'"' layout/style/ServoBindings.toml
   '' + lib.optionalString googleAPISupport ''
     # Google API key used by Chromium and Firefox.
     # Note: These are for NixOS/nixpkgs use ONLY. For your own distribution,
     # please get your own set of keys.
     echo "AIzaSyDGi15Zwl11UNe6Y-5XW_upsfyw31qwZPI" > $TMPDIR/ga
     configureFlagsArray+=("--with-google-api-keyfile=$TMPDIR/ga")
-  '' + ''
-    # this will run autoconf213
-    ${if (stdenv.lib.versionAtLeast version "58.0.0") then "./mach configure" else "make -f client.mk configure-files"}
-
-    configureScript="$(realpath ./configure)"
-
-    cxxLib=$( echo -n ${gcc}/include/c++/* )
-    archLib=$cxxLib/$( ${gcc}/bin/gcc -dumpmachine )
-
-    test -f layout/style/ServoBindings.toml && sed -i -e '/"-DMOZ_STYLO"/ a , "-cxx-isystem", "'$cxxLib'", "-isystem", "'$archLib'"' layout/style/ServoBindings.toml
-
+  '' + lib.optionalString (lib.versionOlder version "58") ''
     cd obj-*
   '';
 
@@ -148,9 +146,13 @@ stdenv.mkDerivation (rec {
     "--disable-gconf"
     "--enable-default-toolkit=cairo-gtk${if gtk3Support then "3" else "2"}"
   ]
-  ++ lib.optionals (stdenv.lib.versionAtLeast version "56") [
-    "--with-libclang-path=${llvmPackages.clang-unwrapped}/lib"
+  ++ lib.optionals (lib.versionAtLeast version "56" && !stdenv.hostPlatform.isi686) [
+    # on i686-linux: --with-libclang-path is not available in this configuration
+    "--with-libclang-path=${llvmPackages.libclang}/lib"
     "--with-clang-path=${llvmPackages.clang}/bin/clang"
+  ]
+  ++ lib.optionals (lib.versionAtLeast version "57") [
+    "--enable-webrender=build"
   ]
 
   # TorBrowser patches these
@@ -177,6 +179,7 @@ stdenv.mkDerivation (rec {
   ++ flag alsaSupport "alsa"
   ++ flag pulseaudioSupport "pulseaudio"
   ++ flag ffmpegSupport "ffmpeg"
+  ++ flag gssSupport "negotiateauth"
   ++ lib.optional (!ffmpegSupport) "--disable-gstreamer"
   ++ flag webrtcSupport "webrtc"
   ++ flag crashreporterSupport "crashreporter"
@@ -188,6 +191,16 @@ stdenv.mkDerivation (rec {
                            "--enable-strip" ])
   ++ lib.optional enableOfficialBranding "--enable-official-branding"
   ++ extraConfigureFlags;
+
+  # Before 58 we have to run `make -f client.mk configure-files` at
+  # the top level, and then run `./configure` in the obj-* dir (see
+  # above), but in 58 we have to instead run `./mach configure` at the
+  # top level and then run `make` in obj-*. (We can also run the
+  # `make` at the top level in 58, but then we would have to `cd` to
+  # `make install` anyway. This is ugly, but simple.)
+  postConfigure = lib.optionalString (lib.versionAtLeast version "58") ''
+    cd obj-*
+  '';
 
   preBuild = lib.optionalString (enableOfficialBranding && isTorBrowserLike) ''
     buildFlagsArray=("MOZ_APP_DISPLAYNAME=Tor Browser")
@@ -238,6 +251,7 @@ stdenv.mkDerivation (rec {
     gtk = gtk2;
     inherit nspr;
     inherit ffmpegSupport;
+    inherit gssSupport;
   } // lib.optionalAttrs gtk3Support { inherit gtk3; };
 
 } // overrides)

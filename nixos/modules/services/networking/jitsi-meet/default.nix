@@ -95,7 +95,7 @@ in {
         admins = [ "focus@auth.${cfg.hostname}.${cfg.domain}" ];
         modules = {
           bosh = true;
-          httpserver = false;
+          # httpserver = false;
           websocket = true;
         };
         extraModules = [ "pubsub" ];

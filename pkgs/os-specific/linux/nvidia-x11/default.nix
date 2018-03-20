@@ -14,30 +14,17 @@ let
         sha256 = "18clfpw03g8dxm61bmdkmccyaxir3gnq451z6xqa2ilm3j820aa5";
       });
 in
-{
+rec {
   # Policy: use the highest stable version as the default (on our master).
   stable = generic {
-    version = "384.111";
-    sha256_32bit = "13wly7hn7bp04kabmbiss85bf5ynhv68g5fxpq9d42mxd93gbzw9";
-    sha256_64bit = "1c8pw297pdp194hxbbjhk901w5s3ixihg92696l3pw3zsd96v245";
-    settingsSha256 = "0zyk1w4csq9nfhaakz8mivvml2vb5vd14c0dhj1z879inmg74fvf";
-    persistencedSha256 = "1y1738z4w21m5vx0q5wv44pvnsjwgx22wdg8qgkfrpkbp66kmjvr";
-    prePatch = ''
-      if [ "$system" = "x86_64-linux" ]; then
-        local f="kernel/nvidia-uvm/uvm8_va_block.c"
-        cat ${./task_stack.c} $f > $f.tmp
-        mv $f.tmp $f
-      fi
-    '';
+    version = "390.25";
+    sha256_32bit = "0fkbpx01l46pprrd4nlc2y6hfmkb55ddlwm1r84kr6j08qmmb0qi";
+    sha256_64bit = "0whsls1mm6vkll5qmxnyz8vjgspp1rmqpsampgi83k62n514c08r";
+    settingsSha256 = "1jhbr68z36s3fr9vx3ga2f6yrzlwpc0j5mw8h12g65p7wdsbk6y7";
+    persistencedSha256 = "033azbhi50f1b0lw759sncgf7ckh2m2c0khj5v15sch9kl1fzk8i";
   };
 
-  beta = generic {
-    version = "381.22";
-    sha256_32bit = "13wly7hn7bp04kabmbiss85bf5ynhv68g5fxpq9d42mxd93gbzw9";
-    sha256_64bit = "13fj9ndy5rmh410d0vi2b0crfl7rbsm6rn7cwms0frdzkyhshghs";
-    settingsSha256 = "0zyk1w4csq9nfhaakz8mivvml2vb5vd14c0dhj1z879inmg74fvf";
-    persistencedSha256 = "08315rb9l932fgvy758an5vh3jgks0qc4g36xip4l32pkxd9k963";
-  };
+  beta = stable; # not enough interest to maintain beta ATM
 
 
   legacy_340 = generic {

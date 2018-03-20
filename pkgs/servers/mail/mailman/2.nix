@@ -8,7 +8,7 @@ stdenv.mkDerivation rec {
     sha256 = "0s9ywix4m3n7qa0baws744ildg48hsa87jahpsfiqqilhmpwl8mh";
   };
 
-  buildInputs = [ python pythonPackages.dns ];
+  buildInputs = [ python pythonPackages.dnspython ];
 
   patches = [ ./fix-var-prefix.patch ];
 

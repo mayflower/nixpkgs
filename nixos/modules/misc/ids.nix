@@ -197,21 +197,22 @@
       #input = 174; # unused
       sddm = 175;
       tss = 176;
-      memcached = 177;
+      #memcached = 177; removed 2018-01-03
       ntp = 179;
       zabbix = 180;
-      redis = 181;
+      #redis = 181; removed 2018-01-03
       unifi = 183;
       uptimed = 184;
       zope2 = 185;
       ripple-data-api = 186;
       mediatomb = 187;
       rdnssd = 188;
-      # ihaskell = 189; # unused
+      ihaskell = 189;
       i2p = 190;
       lambdabot = 191;
       asterisk = 192;
       plex = 193;
+      plexpy = 195;
       grafana = 196;
       skydns = 197;
       # ripple-rest = 198; # unused, removed 2017-08-12
@@ -232,7 +233,7 @@
       calibre-server = 213;
       heapster = 214;
       bepasty = 215;
-      pumpio = 216;
+      # pumpio = 216; # unused, removed 2018-02-24
       nm-openvpn = 217;
       mathics = 218;
       ejabberd = 219;
@@ -280,8 +281,8 @@
       stanchion = 262;
       riak-cs = 263;
       infinoted = 264;
-      keystone = 265;
-      glance = 266;
+      # keystone = 265; # unused, removed 2017-12-13
+      # glance = 266; # unused, removed 2017-12-13
       couchpotato = 267;
       gogs = 268;
       pdns-recursor = 269;
@@ -297,7 +298,14 @@
       rslsync = 279;
       minio = 280;
       kanboard = 281;
-      sks = 282;
+      pykms = 282;
+      kodi = 283;
+      restya-board = 284;
+      mighttpd2 = 285;
+      hass = 286;
+      monero = 287;
+      ceph = 288;
+      sks = 399;
 
       # When adding a uid, make sure it doesn't match an existing gid. And don't use uids above 399!
 
@@ -472,17 +480,17 @@
       input = 174;
       sddm = 175;
       tss = 176;
-      #memcached = 177; # unused
+      #memcached = 177; # unused, removed 2018-01-03
       #ntp = 179; # unused
       #zabbix = 180; # unused
-      #redis = 181; # unused
+      #redis = 181; # unused, removed 2018-01-03
       #unifi = 183; # unused
       #uptimed = 184; # unused
       #zope2 = 185; # unused
       #ripple-data-api = 186; #unused
       mediatomb = 187;
       #rdnssd = 188; # unused
-      # ihaskell = 189; # unused
+      ihaskell = 189;
       i2p = 190;
       lambdabot = 191;
       asterisk = 192;
@@ -507,7 +515,7 @@
       xtreemfs = 212;
       calibre-server = 213;
       bepasty = 215;
-      pumpio = 216;
+      # pumpio = 216; # unused, removed 2018-02-24
       nm-openvpn = 217;
       mathics = 218;
       ejabberd = 219;
@@ -548,8 +556,8 @@
       stanchion = 262;
       riak-cs = 263;
       infinoted = 264;
-      keystone = 265;
-      glance = 266;
+      # keystone = 265; # unused, removed 2017-12-13
+      # glance = 266; # unused, removed 2017-12-13
       couchpotato = 267;
       gogs = 268;
       kresd = 270;
@@ -564,7 +572,14 @@
       rslsync = 279;
       minio = 280;
       kanboard = 281;
-      sks = 282;
+      pykms = 282;
+      kodi = 283;
+      restya-board = 284;
+      mighttpd2 = 285;
+      hass = 286;
+      monero = 287;
+      ceph = 288;
+      sks = 399;
 
       # When adding a gid, make sure it doesn't match an existing
       # uid. Users and groups with the same name should have equal

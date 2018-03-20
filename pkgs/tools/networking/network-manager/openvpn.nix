@@ -4,16 +4,16 @@
 stdenv.mkDerivation rec {
   name    = "${pname}${if withGnome then "-gnome" else ""}-${version}";
   pname   = "NetworkManager-openvpn";
-  major   = "1.2";
-  version = "${major}.8";
+  major   = "1.8";
+  version = "${major}.0";
 
   src = fetchurl {
     url    = "mirror://gnome/sources/${pname}/${major}/${pname}-${version}.tar.xz";
-    sha256 = "0m06sg2rnz764psvpsrx0pvll11nfn9hypgbp3s6vna8y83l02ry";
+    sha256 = "1973n89g66a3jfx8r45a811fga4kadh6r1w35cb25cz1mlii2vhn";
   };
 
   buildInputs = [ openvpn networkmanager libsecret ]
-    ++ stdenv.lib.optionals withGnome [ gnome3.gtk gnome3.libgnome_keyring
+    ++ stdenv.lib.optionals withGnome [ gnome3.gtk gnome3.libgnome-keyring
                                         gnome3.networkmanagerapplet ];
 
   nativeBuildInputs = [ intltool pkgconfig ];

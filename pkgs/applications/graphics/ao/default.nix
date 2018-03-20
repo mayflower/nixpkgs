@@ -1,15 +1,17 @@
 {stdenv, fetchgit, cmake, ninja, boost, libpng, glfw3, epoxy, guile, pkgconfig
-, mesa, libX11, libpthreadstubs, libXau, libXdmcp, libXrandr, libXext
+, libGLU_combined, libX11, libpthreadstubs, libXau, libXdmcp, libXrandr, libXext
 , libXinerama, libXxf86vm, libXcursor, libXfixes
 }:
 stdenv.mkDerivation rec {
   version = "0.0pre20160820";
   name = "ao-${version}";
+
+  nativeBuildInputs = [ pkgconfig ];
   buildInputs = [
-    cmake ninja boost libpng glfw3 epoxy guile pkgconfig mesa libX11 
+    cmake ninja boost libpng glfw3 epoxy guile libGLU_combined libX11 
     libpthreadstubs libXau libXdmcp libXrandr libXext libXinerama libXxf86vm
     libXcursor libXfixes
-    ];
+  ];
 
   src = fetchgit {
     url = https://github.com/mkeeter/ao;

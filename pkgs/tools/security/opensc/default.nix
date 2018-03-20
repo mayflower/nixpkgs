@@ -15,8 +15,9 @@ stdenv.mkDerivation rec {
     sha256 = "1mgcf698zhpqzamd52547scdws7mhdva377kc3chpr455n0mw8g0";
   };
 
+  nativeBuildInputs = [ pkgconfig ];
   buildInputs = [
-    autoreconfHook pkgconfig zlib readline openssl pcsclite libassuan
+    autoreconfHook zlib readline openssl pcsclite libassuan
     libXt libxslt libiconv docbook_xml_dtd_412
   ] ++ stdenv.lib.optional stdenv.isDarwin Carbon;
 

@@ -1,4 +1,4 @@
-{ stdenv, fetchgit, fetchpatch, autoreconfHook, boost, curl, openssl, log4shib, xercesc, xml-security-c }:
+{ stdenv, fetchgit, autoreconfHook, boost, curl, openssl, log4shib, xercesc, xml-security-c }:
 
 stdenv.mkDerivation rec {
   name = "xml-tooling-c-${version}";
@@ -14,10 +14,6 @@ stdenv.mkDerivation rec {
   nativeBuildInputs = [ autoreconfHook ];
 
   enableParallelBuilding = true;
-
-  postPatch = ''
-    sed 's/continue$/continue;/' -i xmltooling/util/ReloadableXMLFile.cpp
-  '';
 
   meta = with stdenv.lib; {
     description = "A low-level library that provides a high level interface to XML processing for OpenSAML 2";

@@ -117,6 +117,7 @@ in
       cc = null;
       fetchurl = null;
     };
+    stdenvNoCC = stdenv;
 
     cc = import ../../build-support/cc-wrapper {
       name = "cc-native";
@@ -126,11 +127,11 @@ in
         "i686-solaris" = "/usr/gnu";
         "x86_64-solaris" = "/opt/local/gcc47";
       }.${system} or "/usr";
-      inherit stdenv;
+      inherit stdenvNoCC;
     };
 
     fetchurl = import ../../build-support/fetchurl {
-      inherit stdenv;
+      inherit lib stdenvNoCC;
       # Curl should be in /usr/bin or so.
       curl = null;
     };

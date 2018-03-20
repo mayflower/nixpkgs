@@ -4,7 +4,7 @@
          version="5.0"
          xml:id="sec-release-17.09">
 
-<title>Release 17.09 (“Hummingbird”, 2017/09/29)</title>
+<title>Release 17.09 (“Hummingbird”, 2017/09/??)</title>
 
 <section xmlns="http://docbook.org/ns/docbook"
          xmlns:xlink="http://www.w3.org/1999/xlink"
@@ -419,15 +419,7 @@ FLUSH PRIVILEGES;
 </programlisting>
     </para>
   </listitem>
-  <listitem>
-    <para>
-      <literal>sha256</literal> argument value of
-      <literal>dockerTools.pullImage</literal> expression must be
-      updated since the mechanism to download the image has been
-      changed. Skopeo is now used to pull the image instead of the
-      Docker daemon.
-    </para>
-  </listitem>
+
   <listitem>
     <para>
       <literal>services.mysqlBackup</literal> now works by default

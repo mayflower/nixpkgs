@@ -1,5 +1,5 @@
 { stdenv, fetchFromGitHub, pkgconfig, cmake, curl, boost, eigen
-, freeimage, freetype, mesa, SDL2, alsaLib, libarchive }:
+, freeimage, freetype, libGLU_combined, SDL2, alsaLib, libarchive }:
 
 stdenv.mkDerivation rec {
   name = "emulationstation-${version}";
@@ -12,7 +12,8 @@ stdenv.mkDerivation rec {
     sha256 = "0cm0sq2wri2l9cvab1l0g02za59q7klj0h3p028vr96n6njj4w9v";
   };
 
-  buildInputs = [ pkgconfig cmake alsaLib boost curl eigen freeimage freetype libarchive mesa SDL2 ];
+  nativeBuildInputs = [ pkgconfig ];
+  buildInputs = [ cmake alsaLib boost curl eigen freeimage freetype libarchive libGLU_combined SDL2 ];
 
   buildPhase = "cmake . && make";
   installPhase = ''
@@ -25,6 +26,5 @@ stdenv.mkDerivation rec {
     maintainers = [ stdenv.lib.maintainers.edwtjo ];
     license = stdenv.lib.licenses.mit;
     platforms = stdenv.lib.platforms.linux;
-    broken = true;
   };
 }

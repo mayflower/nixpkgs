@@ -1,5 +1,5 @@
 { stdenv, runCommand, makeWrapper, lndir
-, dconf, hicolor_icon_theme, ibus, librsvg, plugins
+, dconf, hicolor-icon-theme, ibus, librsvg, plugins
 }:
 
 let
@@ -7,7 +7,7 @@ let
   env = {
     buildInputs = [ ibus ] ++ plugins;
     nativeBuildInputs = [ lndir makeWrapper ];
-    propagatedUserEnvPackages = [ hicolor_icon_theme ];
+    propagatedUserEnvPackages = [ hicolor-icon-theme ];
     paths = [ ibus ] ++ plugins;
     inherit (ibus) meta;
   };
@@ -21,7 +21,7 @@ let
         done
     done
 
-    for prog in ibus ibus-setup; do
+    for prog in ibus; do
         wrapProgram "$out/bin/$prog" \
           --set GDK_PIXBUF_MODULE_FILE ${librsvg.out}/lib/gdk-pixbuf-2.0/2.10.0/loaders.cache \
           --prefix GI_TYPELIB_PATH : "$GI_TYPELIB_PATH:$out/lib/girepository-1.0" \
@@ -37,7 +37,7 @@ let
           --set IBUS_TABLE_LOCATION "$out/share/ibus-table" \
           --prefix PYTHONPATH : "$PYTHONPATH" \
           --prefix XDG_DATA_DIRS : "$out/share:$GSETTINGS_SCHEMAS_PATH" \
-          --suffix XDG_DATA_DIRS : "${hicolor_icon_theme}/share"
+          --suffix XDG_DATA_DIRS : "${hicolor-icon-theme}/share"
     done
 
     for prog in ibus-daemon; do
@@ -56,7 +56,7 @@ let
           --set IBUS_TABLE_LOCATION "$out/share/ibus-table" \
           --prefix PYTHONPATH : "$PYTHONPATH" \
           --prefix XDG_DATA_DIRS : "$out/share:$GSETTINGS_SCHEMAS_PATH" \
-          --suffix XDG_DATA_DIRS : "${hicolor_icon_theme}/share" \
+          --suffix XDG_DATA_DIRS : "${hicolor-icon-theme}/share" \
           --add-flags "--cache=refresh"
     done
   '';

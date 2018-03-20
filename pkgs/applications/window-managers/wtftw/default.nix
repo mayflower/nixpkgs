@@ -9,9 +9,10 @@ rustPlatform.buildRustPackage rec {
     sha256 = "1r74nhcwiy2rmifzjhdal3jcqz4jz48nfvhdyw4gasa6nxp3msdl";
   };
 
-  depsSha256 = "0z7h8ybh2db3xl8qxbzby5lncdaijixzmbn1j8a45lbky1xiix71";
+  cargoSha256 = "0z92ml84b5652zgwzn08a8vvxksaa54jql66sfpdz1mvjwhgdmvn";
 
-  buildInputs = [ libXinerama libX11 pkgconfig ];
+  nativeBuildInputs = [ pkgconfig ];
+  buildInputs = [ libXinerama libX11 ];
   libPath = stdenv.lib.makeLibraryPath [ libXinerama libX11 ];
 
   preInstall = ''
@@ -30,6 +31,7 @@ rustPlatform.buildRustPackage rec {
   '';
 
   meta = with stdenv.lib; {
+    broken = true;
     description = "A tiling window manager in Rust";
     homepage = https://github.com/Kintaro/wtftw;
     license = stdenv.lib.licenses.bsd3;

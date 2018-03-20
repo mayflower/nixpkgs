@@ -2,12 +2,12 @@
 
 buildPythonPackage rec {
   pname = "zc.buildout";
-  version = "2.9.6";
+  version = "2.11.0";
   name = "${pname}-nix-${version}";
 
   src = fetchurl {
     url = "mirror://pypi/${builtins.substring 0 1 pname}/${pname}/${pname}-${version}.tar.gz";
-    sha256 = "f8bb89b5a6b82800812c10766ad07c3ef8f06ef156e28e1f735fe8b41f96e91e";
+    sha256 = "092b0a147d5fb4e79ee0afde665570f85738e714463854f9e4f7f38d0b27ea82";
   };
 
   patches = [ ./nix.patch ];

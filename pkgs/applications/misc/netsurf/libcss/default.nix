@@ -15,7 +15,8 @@ stdenv.mkDerivation rec {
     sha256 = "0qp4p1q1dwgdra4pkrzd081zjzisxkgwx650ijx323j8bj725daf";
   };
 
-  buildInputs = [ pkgconfig perl
+  nativeBuildInputs = [ pkgconfig ];
+  buildInputs = [ perl
     buildsystem
     libwapcaplet
     libparserutils
@@ -25,6 +26,8 @@ stdenv.mkDerivation rec {
     "PREFIX=$(out)"
     "NSSHARED=${buildsystem}/share/netsurf-buildsystem"
   ];
+
+  NIX_CFLAGS_COMPILE=[ "-Wno-error=implicit-fallthrough" ];
 
   meta = with stdenv.lib; {
     homepage = http://www.netsurf-browser.org/;

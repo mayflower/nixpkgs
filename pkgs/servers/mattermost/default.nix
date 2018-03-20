@@ -1,29 +1,49 @@
-{ stdenv, fetchurl }:
+{ stdenv, fetchurl, fetchFromGitHub, buildGoPackage }:
 
-stdenv.mkDerivation rec {
+let
+  version = "4.7.2";
+  goPackagePath = "github.com/mattermost/mattermost-server";
+  buildFlags = "-ldflags \"-X '${goPackagePath}/model.BuildNumber=nixpkgs-${version}'\"";
+in
+
+buildGoPackage rec {
   name = "mattermost-${version}";
-  version = "4.1.0";
 
-  src = fetchurl {
-    url = "https://releases.mattermost.com/${version}/mattermost-team-${version}-linux-amd64.tar.gz";
-    sha256 = "0bp56i108pxsqcswxy1hdz3d8wq83lc29wcq6npimwx566rx4xhf";
+  src = fetchFromGitHub {
+    owner = "mattermost";
+    repo = "mattermost-server";
+    rev = "v${version}";
+    sha256 = "129rvmwf9c19jbdpiclysb870svs2fbhdybcal0jbmzgx2zr8qma";
   };
 
-  installPhase = ''
-    mkdir -p $out
-    mv * $out/
-    ln -s ./platform $out/bin/mattermost-platform
+  webApp = fetchurl {
+    url = "https://releases.mattermost.com/${version}/mattermost-team-${version}-linux-amd64.tar.gz";
+    sha256 = "14gr7zzx77q862qccjcdwrzd6n8g2z8yngw8aa4g3q6hypsqi4v3";
+  };
+
+  inherit goPackagePath;
+
+  buildPhase = ''
+    runHook preBuild
+    cd go/src/${goPackagePath}/cmd/platform
+    go install ${buildFlags}
+    runHook postBuild
   '';
 
-  postFixup = ''
-    patchelf --set-interpreter "$(cat $NIX_CC/nix-support/dynamic-linker)" $out/bin/platform
+  preInstall = ''
+    mkdir -p $bin
+    tar --strip 1 -C $bin -xf $webApp
+  '';
+
+  postInstall = ''
+    ln -s $bin/bin/platform $bin/bin/mattermost-platform
   '';
 
   meta = with stdenv.lib; {
-    description = "Open-Source, self-hosted Slack-alternative";
+    description = "Open-source, self-hosted Slack-alternative";
     homepage = https://www.mattermost.org;
     license = with licenses; [ agpl3 asl20 ];
-    maintainers = with maintainers; [ fpletz ];
-    platforms = [ "x86_64-linux" ];
+    maintainers = with maintainers; [ fpletz ryantm ];
+    platforms = platforms.unix;
   };
 }

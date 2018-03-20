@@ -13,9 +13,10 @@ let
     steam = callPackage ./steam.nix { };
     steam-fonts = callPackage ./fonts.nix { };
     steam-chrootenv = callPackage ./chrootenv.nix {
-      steam-runtime-i686 =
-        if pkgs.system == "x86_64-linux"
-        then pkgs.pkgsi686Linux.steamPackages.steam-runtime
+      glxinfo-i686 = pkgs.pkgsi686Linux.glxinfo;
+      steam-runtime-wrapped-i686 =
+        if steamArch == "amd64"
+        then pkgs.pkgsi686Linux.steamPackages.steam-runtime-wrapped
         else null;
     };
   };

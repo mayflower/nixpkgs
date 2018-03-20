@@ -1,4 +1,4 @@
-{ stdenv, fetchurl, bash, unzip, glibc, openssl, gcc, mesa, freetype, xorg, alsaLib, cairo, libuuid, autoreconfHook, gcc48, ... }:
+{ stdenv, fetchurl, bash, unzip, glibc, openssl, gcc, libGLU_combined, freetype, xorg, alsaLib, cairo, libuuid, autoreconfHook, gcc48, ... }:
 
 { name, src, version, source-date, source-url, ... }:
 
@@ -83,7 +83,7 @@ stdenv.mkDerivation rec {
     mkdir -p "$out/bin"
 
     # Note: include ELF rpath in LD_LIBRARY_PATH for finding libc.
-    libs=$out:$(patchelf --print-rpath "$out/pharo"):${cairo}/lib:${mesa}/lib:${freetype}/lib:${openssl}/lib:${libuuid}/lib:${alsaLib}/lib:${xorg.libICE}/lib:${xorg.libSM}/lib
+    libs=$out:$(patchelf --print-rpath "$out/pharo"):${cairo}/lib:${libGLU_combined}/lib:${freetype}/lib:${openssl}/lib:${libuuid}/lib:${alsaLib}/lib:${xorg.libICE}/lib:${xorg.libSM}/lib
 
     # Create the script
     cat > "$out/bin/${cmd}" <<EOF
@@ -103,9 +103,10 @@ stdenv.mkDerivation rec {
   # http://forum.world.st/OSProcess-fork-issue-with-Debian-built-VM-td4947326.html
   #
   # (stack protection is disabled above for gcc 4.8 compatibility.)
-  buildInputs = [ bash unzip glibc openssl gcc48 mesa freetype xorg.libX11 xorg.libICE xorg.libSM alsaLib cairo pharo-share libuuid autoreconfHook ];
+  nativeBuildInputs = [ autoreconfHook ];
+  buildInputs = [ bash unzip glibc openssl gcc48 libGLU_combined freetype xorg.libX11 xorg.libICE xorg.libSM alsaLib cairo pharo-share libuuid ];
 
-  meta = {
+  meta = with stdenv.lib; {
     description = "Clean and innovative Smalltalk-inspired environment";
     longDescription = ''
       Pharo's goal is to deliver a clean, innovative, free open-source
@@ -121,8 +122,8 @@ stdenv.mkDerivation rec {
       packaging (ppa:pharo/stable)' project.
     '';
     homepage = http://pharo.org;
-    license = stdenv.lib.licenses.mit;
-    maintainers = [ stdenv.lib.maintainers.lukego ];
-    platforms = [ "i686-linux" "x86_64-linux" "i686-darwin" "x86_64-darwin" ];
+    license = licenses.mit;
+    maintainers = [ maintainers.lukego ];
+    platforms = [ "i686-linux" "x86_64-linux" ];
   };
 }

@@ -15,8 +15,7 @@ stdenv.mkDerivation rec {
 
   meta = {
     description = "Cross platform port of the macOS CoreFoundation";
-    homepage = http://sourceforge.net/projects/opencflite/;
+    homepage = https://sourceforge.net/projects/opencflite/;
     license = stdenv.lib.licenses.apsl20;
-    platforms = [ stdenv.lib.platforms.darwin ];
   };
 }

@@ -287,21 +287,11 @@ in rec {
       '';
     };
 
-    stopScript = mkOption {
-      type = types.lines;
-      default = "";
-      description = ''
-        Shell commands executed when the service's main process
-        is stopped.
-      '';
-    };
-
     preStop = mkOption {
       type = types.lines;
       default = "";
       description = ''
-        Shell commands executed before the service's main process
-        is stopped.
+        Shell commands executed to stop the service.
       '';
     };
 

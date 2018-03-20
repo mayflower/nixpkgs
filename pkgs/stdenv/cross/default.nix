@@ -34,8 +34,10 @@ in bootStages ++ [
       hostPlatform = crossSystem;
       targetPlatform = crossSystem;
       cc = if crossSystem.useiOSCross or false
-           then buildPackages.darwin.ios-cross
-           else buildPackages.gccCrossStageFinal;
+             then buildPackages.darwin.ios-cross
+           else if crossSystem.useAndroidPrebuilt
+             then buildPackages.androidenv.androidndkPkgs.gcc
+           else buildPackages.gcc;
     };
   })
 

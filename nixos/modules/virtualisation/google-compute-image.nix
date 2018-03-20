@@ -6,7 +6,7 @@ let
   gce = pkgs.google-compute-engine;
 in
 {
-  imports = [ ../profiles/headless.nix ../profiles/qemu-guest.nix ./grow-partition.nix ];
+  imports = [ ../profiles/headless.nix ../profiles/qemu-guest.nix ];
 
   system.build.googleComputeImage = import ../../lib/make-disk-image.nix {
     name = "google-compute-image";
@@ -14,7 +14,7 @@ in
       PATH=$PATH:${pkgs.stdenv.lib.makeBinPath [ pkgs.gnutar pkgs.gzip ]}
       pushd $out
       mv $diskImage disk.raw
-      tar -Szcf nixos-image-${config.system.nixosLabel}-${pkgs.stdenv.system}.raw.tar.gz disk.raw
+      tar -Szcf nixos-image-${config.system.nixos.label}-${pkgs.stdenv.system}.raw.tar.gz disk.raw
       rm $out/disk.raw
       popd
     '';
@@ -29,6 +29,7 @@ in
     autoResize = true;
   };
 
+  boot.growPartition = true;
   boot.kernelParams = [ "console=ttyS0" "panic=1" "boot.panic_on_fail" ];
   boot.initrd.kernelModules = [ "virtio_scsi" ];
   boot.kernelModules = [ "virtio_pci" "virtio_net" ];

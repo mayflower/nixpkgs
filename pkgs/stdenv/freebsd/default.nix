@@ -29,7 +29,8 @@ let inherit (localSystem) system; in
     inherit bootstrapTools;
 
     fetchurl = import ../../build-support/fetchurl {
-      inherit stdenv;
+      inherit lib;
+      stdenvNoCC = stdenv;
       curl = bootstrapTools;
     };
 
@@ -77,7 +78,7 @@ let inherit (localSystem) system; in
         nativeTools  = true;
         nativePrefix = "/usr";
         nativeLibc   = true;
-        inherit (prevStage) stdenv;
+        stdenvNoCC = prevStage.stdenv;
         cc           = {
           name    = "clang-9.9.9";
           cc      = "/usr";

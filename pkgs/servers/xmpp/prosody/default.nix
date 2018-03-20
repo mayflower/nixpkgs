@@ -1,44 +1,46 @@
 { stdenv, fetchurl, libidn, openssl, makeWrapper, fetchhg
 , lua5, luasocket, luasec, luaexpat, luafilesystem, luabitop
-, lualdap, luadbi, luaevent ? null, luazlib ? null
-, withLibevent ? true, withZlib ? true }:
+, withLibevent ? true, luaevent ? null
+, withDBI ? true, luadbi ? null
+# use withExtraLibs to add additional dependencies of community modules
+, withExtraLibs ? [ ]
+, withInstallCommunityModules ? [ ]
+, withCommunityModules ? [ ] }:
 
 assert withLibevent -> luaevent != null;
-assert withZlib -> luazlib != null;
+assert withDBI -> luadbi != null;
 
 with stdenv.lib;
 
 let
-  libs        = [ luasocket luasec luaexpat luafilesystem luabitop lualdap luadbi ]
+  libs        = [ luasocket luasec luaexpat luafilesystem luabitop ]
                 ++ optional withLibevent luaevent
-                ++ optional withZlib luazlib;
+                ++ optional withDBI luadbi
+                ++ withExtraLibs;
   getPath     = lib : type : "${lib}/lib/lua/${lua5.luaversion}/?.${type};${lib}/share/lua/${lua5.luaversion}/?.${type}";
   getLuaPath  = lib : getPath lib "lua";
   getLuaCPath = lib : getPath lib "so";
   luaPath     = concatStringsSep ";" (map getLuaPath  libs);
   luaCPath    = concatStringsSep ";" (map getLuaCPath libs);
-
-  buildNumber = "331";
 in
 
 stdenv.mkDerivation rec {
-  version = "0.10-1nightly${buildNumber}";
+  version = "0.10.0";
   name = "prosody-${version}";
 
   src = fetchurl {
-    url = "https://prosody.im/nightly/0.10/build${buildNumber}/${name}.tar.gz";
-    sha256 = "01j5qlx6c65pvjxjxx1cml9ykylxdpa4hy8wr41ncvpvsr3cw5j5";
+    url = "http://prosody.im/downloads/source/${name}.tar.gz";
+    sha256 = "1644jy5dk46vahmh6nna36s79k8k668sbi3qamjb4q3c4m3y853l";
   };
 
   communityModules = fetchhg {
-    url = "https://hg.prosody.im/prosody-modules/";
-    rev = "05248d5a7166";
-    sha256 = "1jpkplv1ifp5ikhp8y6nb11j827wgk9qc1wwg0nghkspkrpln9dg";
+    url = "https://hg.prosody.im/prosody-modules";
+    rev = "150a7bd59043";
+    sha256 = "0nfx3lngcy88nd81gb7v4kh3nz1bzsm67bxgpd2lprk54diqcrz1";
   };
 
-  buildInputs = [ lua5 luasocket luasec luaexpat luabitop lualdap luadbi libidn openssl makeWrapper ]
-                ++ optional withLibevent luaevent
-                ++ optional withZlib luazlib;
+  buildInputs = [ lua5 makeWrapper libidn openssl ]
+    ++ optional withDBI luadbi;
 
   configureFlags = [
     "--ostype=linux"
@@ -47,9 +49,9 @@ stdenv.mkDerivation rec {
   ];
 
   postInstall = ''
-      mkdir $modules
-      cp -r $communityModules/* $modules
-
+      ${concatMapStringsSep "\n" (module: ''
+        cp -r $communityModules/mod_${module} $out/lib/prosody/modules/
+      '') (withCommunityModules ++ withInstallCommunityModules)}
       wrapProgram $out/bin/prosody \
         --set LUA_PATH '${luaPath};' \
         --set LUA_CPATH '${luaCPath};'
@@ -59,14 +61,13 @@ stdenv.mkDerivation rec {
         --set LUA_CPATH '${luaCPath};'
     '';
 
-  outputs = [ "out" "modules" ];
-  setOutputFlags = false;
+  passthru.communityModules = withCommunityModules;
 
   meta = {
     description = "Open-source XMPP application server written in Lua";
     license = licenses.mit;
-    homepage = http://www.prosody.im;
+    homepage = https://prosody.im;
     platforms = platforms.linux;
-    maintainers = with maintainers; [ flosse fpletz ];
+    maintainers = with maintainers; [ fpletz ];
   };
 }

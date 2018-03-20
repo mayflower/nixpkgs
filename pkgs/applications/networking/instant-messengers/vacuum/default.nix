@@ -26,7 +26,7 @@ stdenv.mkDerivation rec {
   nativeBuildInputs = [ qmake4Hook ];
 
   preConfigure = ''
-    qmakeFlags="$qmakeFlags INSTALL_PREFIX=$out -recursive"
+    qmakeFlags="$qmakeFlags INSTALL_PREFIX=$out"
   '';
 
   hardeningDisable = [ "format" ];

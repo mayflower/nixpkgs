@@ -79,10 +79,6 @@ in releaseTools.nixBuild rec {
       guile # optional, for Guile + Guix support
       perlDeps perl nixUnstable
       postgresql # for running the tests
-      (aws-sdk-cpp.override {
-        apis = ["s3"];
-        customMemoryManagement = false;
-      })
     ];
 
   hydraPath = lib.makeBinPath (

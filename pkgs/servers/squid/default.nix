@@ -10,8 +10,8 @@ stdenv.mkDerivation rec {
   };
 
   buildInputs = [
-    perl openldap pam db cyrus_sasl libcap expat libxml2 openssl
-  ];
+    perl openldap db cyrus_sasl expat libxml2 openssl
+  ] ++ stdenv.lib.optionals stdenv.isLinux [ libcap pam ];
 
   patches = [
     (fetchpatch {
@@ -32,12 +32,11 @@ stdenv.mkDerivation rec {
     "--disable-arch-native"
     "--with-openssl"
     "--enable-ssl-crtd"
-    "--enable-linux-netfilter"
     "--enable-storeio=ufs,aufs,diskd,rock"
     "--enable-removal-policies=lru,heap"
     "--enable-delay-pools"
     "--enable-x-accelerator-vary"
-  ];
+  ] ++ stdenv.lib.optional (stdenv.isLinux && !stdenv.hostPlatform.isMusl) "--enable-linux-netfilter";
 
   meta = with stdenv.lib; {
     description = "A caching proxy for the Web supporting HTTP, HTTPS, FTP, and more";

@@ -17,8 +17,9 @@ stdenv.mkDerivation rec {
 
   enableParallelBuilding = true;
 
+  nativeBuildInputs = [ pkgconfig ];
   buildInputs = [
-    gettext ncurses pkgconfig luajit ruby tcl perl python
+    gettext ncurses luajit ruby tcl perl python
   ];
 
   patches = [ ./macvim.patch ];
@@ -102,6 +103,7 @@ stdenv.mkDerivation rec {
   '';
 
   meta = with stdenv.lib; {
+    broken = true; # needs ruby 2.2
     description = "Vim - the text editor - for macOS";
     homepage    = https://github.com/b4winckler/macvim;
     license = licenses.vim;

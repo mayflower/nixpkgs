@@ -10,8 +10,8 @@ stdenv.mkDerivation rec {
     sha256 = "01q13p7gc0janjfml6zs46na8qnval8hc833fk2wrnmi4w9xw4fd";
   };
 
-  buildInputs = [ boost fcgi openssl opensaml-cpp log4shib pkgconfig xercesc xml-security-c xml-tooling-c ];
-  nativeBuildInputs = [ autoreconfHook ];
+  nativeBuildInputs = [ autoreconfHook pkgconfig ];
+  buildInputs = [ boost fcgi openssl opensaml-cpp log4shib xercesc xml-security-c xml-tooling-c ];
 
   configureFlags = [
     "--without-apxs"

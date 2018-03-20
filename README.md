@@ -1,6 +1,5 @@
-[<img src="http://nixos.org/logo/nixos-hires.png" width="500px" alt="logo" />](https://nixos.org/nixos)
+[<img src="https://nixos.org/logo/nixos-hires.png" width="500px" alt="logo" />](https://nixos.org/nixos)
 
-[![Build Status](https://travis-ci.org/NixOS/nixpkgs.svg?branch=master)](https://travis-ci.org/NixOS/nixpkgs)
 [![Code Triagers Badge](https://www.codetriage.com/nixos/nixpkgs/badges/users.svg)](https://www.codetriage.com/nixos/nixpkgs)
 
 Nixpkgs is a collection of packages for the [Nix](https://nixos.org/nix/) package
@@ -23,14 +22,14 @@ release and `nixos-unstable` for the latest successful build of master:
 
 For pull-requests, please rebase onto nixpkgs `master`.
 
-[NixOS](https://nixos.org/nixos/) linux distribution source code is located inside
+[NixOS](https://nixos.org/nixos/) Linux distribution source code is located inside
 `nixos/` folder.
 
 * [NixOS installation instructions](https://nixos.org/nixos/manual/#ch-installation)
 * [Documentation (Nix Expression Language chapter)](https://nixos.org/nix/manual/#ch-expression-language)
 * [Manual (How to write packages for Nix)](https://nixos.org/nixpkgs/manual/)
 * [Manual (NixOS)](https://nixos.org/nixos/manual/)
-* [Nix Wiki](https://nixos.org/wiki/) (deprecated, see milestone ["Move the Wiki!"](https://github.com/NixOS/nixpkgs/issues?q=is%3Aopen+is%3Aissue+milestone%3A%22Move+the+wiki%21%22))
+* [Community maintained wiki](https://nixos.wiki/)
 * [Continuous package builds for unstable/master](https://hydra.nixos.org/jobset/nixos/trunk-combined)
 * [Continuous package builds for 17.09 release](https://hydra.nixos.org/jobset/nixos/release-17.09)
 * [Tests for unstable/master](https://hydra.nixos.org/job/nixos/trunk-combined/tested#tabs-constituents)

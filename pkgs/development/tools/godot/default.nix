@@ -1,22 +1,22 @@
 { stdenv, fetchFromGitHub, gcc5, scons, pkgconfig, libX11, libXcursor
 , libXinerama, libXrandr, libXrender, freetype, openssl, alsaLib
-, libpulseaudio, mesa_glu, zlib }:
+, libpulseaudio, libGLU, zlib }:
 
 stdenv.mkDerivation rec {
   name    = "godot-${version}";
-  version = "2.1.4-stable";
+  version = "2.1.4";
 
   src = fetchFromGitHub {
     owner  = "godotengine";
     repo   = "godot";
-    rev    = version;
+    rev    = "${version}-stable";
     sha256 = "0d2zczn5k7296sky5gllq55cxd586nx134y2iwjpkqqjr62g0h48";
   };
 
   nativeBuildInputs = [ pkgconfig ];
   buildInputs = [
     gcc5 scons libX11 libXcursor libXinerama libXrandr libXrender
-    freetype openssl alsaLib libpulseaudio mesa_glu zlib
+    freetype openssl alsaLib libpulseaudio libGLU zlib
   ];
 
   patches = [ ./pkg_config_additions.patch ];

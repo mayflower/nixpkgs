@@ -1,5 +1,5 @@
 { stdenv, fetchurl, pythonPackages, pkgconfig, SDL2
-, libpng, ffmpeg, freetype, glew, mesa, fribidi, zlib
+, libpng, ffmpeg, freetype, glew, libGLU_combined, fribidi, zlib
 , glib
 }:
 
@@ -23,15 +23,16 @@ stdenv.mkDerivation {
     sha256 = "035342rr39zp7krp08z0xhcl73gqbqyilshgmljq0ynfrxxckn35";
   };
 
+  nativeBuildInputs = [ pkgconfig ];
   buildInputs = [
-    python cython pkgconfig wrapPython
-    SDL2 libpng ffmpeg freetype glew mesa fribidi zlib pygame_sdl2 glib
+    python cython wrapPython
+    SDL2 libpng ffmpeg freetype glew libGLU_combined fribidi zlib pygame_sdl2 glib
   ];
 
   pythonPath = [ pygame_sdl2 ];
 
   RENPY_DEPS_INSTALL = stdenv.lib.concatStringsSep "::" (map (path: "${path}") [
-    SDL2 SDL2.dev libpng ffmpeg ffmpeg.out freetype glew.dev glew.out mesa fribidi zlib
+    SDL2 SDL2.dev libpng ffmpeg ffmpeg.out freetype glew.dev glew.out libGLU_combined fribidi zlib
   ]);
 
   buildPhase = ''

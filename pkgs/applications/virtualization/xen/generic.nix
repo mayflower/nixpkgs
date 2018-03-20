@@ -53,8 +53,9 @@ stdenv.mkDerivation (rec {
 
   hardeningDisable = [ "stackprotector" "fortify" "pic" ];
 
+  nativeBuildInputs = [ pkgconfig ];
   buildInputs = [
-    cmake pkgconfig which
+    cmake which
 
     # Xen
     bison bzip2 checkpolicy dev86 figlet flex gettext glib iasl libaio
@@ -220,6 +221,7 @@ stdenv.mkDerivation (rec {
     done
   '';
 
+  # TODO(@oxij): Stop referencing args here
   meta = {
     homepage = http://www.xen.org/;
     description = "Xen hypervisor and related components"
@@ -230,5 +232,5 @@ stdenv.mkDerivation (rec {
                     + withXenfiles (name: x: ''* ${name}: ${x.meta.description or "(No description)"}.'');
     platforms = [ "x86_64-linux" ];
     maintainers = with stdenv.lib.maintainers; [ eelco tstrobel oxij ];
-  };
+  } // (config.meta or {});
 } // removeAttrs config [ "xenfiles" "buildInputs" "patches" "postPatch" "meta" ])

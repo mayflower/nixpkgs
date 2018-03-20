@@ -1,13 +1,16 @@
 { stdenv, fetchurl, perl, python2, ruby, bison, gperf, cmake
 , pkgconfig, gettext, gobjectIntrospection, libnotify, gnutls
-, gtk2, gtk3, wayland, libwebp, enchant, xlibs, libxkbcommon, epoxy, at_spi2_core
-, libxml2, libsoup, libsecret, libxslt, harfbuzz, libpthreadstubs, pcre, nettle, libtasn1, p11_kit
-, libidn, libedit, readline, mesa, libintlOrEmpty
+, gtk3, wayland, libwebp, enchant, xlibs, libxkbcommon, epoxy, at-spi2-core
+, libxml2, libsoup, libsecret, libxslt, harfbuzz, libpthreadstubs, pcre, nettle, libtasn1, p11-kit
+, libidn, libedit, readline, libGLU_combined, libintlOrEmpty
 , enableGeoLocation ? true, geoclue2, sqlite
+, enableGtk2Plugins ? false, gtk2 ? null
 , gst-plugins-base, gst-plugins-bad
 }:
 
 assert enableGeoLocation -> geoclue2 != null;
+assert enableGtk2Plugins -> gtk2 != null;
+assert stdenv.isDarwin -> !enableGtk2Plugins;
 
 with stdenv.lib;
 stdenv.mkDerivation rec {
@@ -16,7 +19,7 @@ stdenv.mkDerivation rec {
 
   meta = {
     description = "Web content rendering engine, GTK+ port";
-    homepage = http://webkitgtk.org/;
+    homepage = https://webkitgtk.org/;
     license = licenses.bsd2;
     platforms = with platforms; linux ++ darwin;
     hydraPlatforms = [];
@@ -59,13 +62,12 @@ stdenv.mkDerivation rec {
   "-DPORT=GTK"
   "-DUSE_LIBHYPHEN=0"
   ]
+  ++ optional (!enableGtk2Plugins) "-DENABLE_PLUGIN_PROCESS_GTK2=OFF"
   ++ optional stdenv.isLinux "-DENABLE_GLES2=ON"
   ++ optionals stdenv.isDarwin [
   "-DUSE_SYSTEM_MALLOC=ON"
   "-DUSE_ACCELERATE=0"
   "-DENABLE_INTROSPECTION=ON"
-  "-DENABLE_MINIBROWSER=OFF"
-  "-DENABLE_PLUGIN_PROCESS_GTK2=OFF"
   "-DENABLE_MINIBROWSER=OFF"
   "-DENABLE_VIDEO=ON"
   "-DENABLE_QUARTZ_TARGET=ON"
@@ -80,17 +82,18 @@ stdenv.mkDerivation rec {
   NIX_CFLAGS_COMPILE = optionalString stdenv.isDarwin " -lintl";
 
   nativeBuildInputs = [
-    cmake perl python2 ruby bison gperf sqlite
+    cmake perl python2 ruby bison gperf
     pkgconfig gettext gobjectIntrospection
   ];
 
   buildInputs = libintlOrEmpty ++ [
-    gtk2 libwebp enchant libnotify gnutls pcre nettle libidn
-    libxml2 libsecret libxslt harfbuzz libpthreadstubs libtasn1 p11_kit
-    sqlite gst-plugins-base gst-plugins-bad libxkbcommon epoxy at_spi2_core
+    libwebp enchant libnotify gnutls pcre nettle libidn
+    libxml2 libsecret libxslt harfbuzz libpthreadstubs libtasn1 p11-kit
+    sqlite gst-plugins-base gst-plugins-bad libxkbcommon epoxy at-spi2-core
   ] ++ optional enableGeoLocation geoclue2
+    ++ optional enableGtk2Plugins gtk2
     ++ (with xlibs; [ libXdmcp libXt libXtst ])
-    ++ optionals stdenv.isDarwin [ libedit readline mesa ]
+    ++ optionals stdenv.isDarwin [ libedit readline libGLU_combined ]
     ++ optional stdenv.isLinux wayland;
 
   propagatedBuildInputs = [
