@@ -346,29 +346,25 @@ let
   };
 
   lualdap = buildLuaPackage rec {
-    name = "ldap-1.1.0";
+    name = "ldap-${version}";
+    version = "1.2.3";
+
     src = fetchFromGitHub {
-      owner = "luaforge";
+      owner = "lualdap";
       repo = "lualdap";
-      rev = "v1_1_0";
-      sha256 = "0ymv66fgb4wp5ncqwf3jvb1qhh8rxg93sm4sffaqizdjsygvbd3h";
+      rev = "v${version}";
+      sha256 = "0abzwszgahqkjhmrs251488dxlv70w844cf1siidrv6kxjqmv0qg";
     };
 
     buildInputs = [ openldap ];
 
-    sourceRoot = "source/lualdap";
-
-    buildPhase = ''
-      gcc -O2 -fPIC -I${openldap}/include -c -o src/lualdap.o src/lualdap.c
-      gcc -O2 -Wall -fPIC -L${openldap}/lib -shared -o src/lualdap.so.1.1.0 src/lualdap.o -lldap
-    '';
-
-    installPhase = ''
-      LUA_LIBDIR=$out/lib/lua/${lua.luaversion}
-      mkdir -p $LUA_LIBDIR
-      cp src/lualdap.so.1.1.0 $LUA_LIBDIR
-      cd $LUA_LIBDIR; ln -sf lualdap.so.1.1.0 lualdap.so
-    '';
+    meta = with stdenv.lib; {
+      description = "Lua bindings for the OpenLDAP client libraries";
+      homepage = "https://github.com/lualdap/lualdap";
+      license = licenses.mit;
+      maintainers = with maintainers; [ fpletz globin ];
+      platforms = platforms.unix;
+    };
   };
 
   luasec = buildLuaPackage rec {
