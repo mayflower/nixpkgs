@@ -43,8 +43,7 @@ stdenv.mkDerivation rec {
   };
 
   buildInputs = [ lua5 luasocket luasec luaexpat luabitop lualdap luadbi libidn openssl makeWrapper ]
-                ++ optional withLibevent luaevent
-                ++ optional withZlib luazlib;
+                ++ optional withLibevent luaevent;
 
   configureFlags = [
     "--ostype=linux"
