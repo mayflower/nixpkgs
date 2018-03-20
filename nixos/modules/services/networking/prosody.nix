@@ -363,7 +363,7 @@ in
       };
 
       extraPluginPaths = mkOption {
-        type = types.listOf types.package;
+        type = types.listOf types.path;
         default = [];
         description = "Addtional path in which to look find plugins/modules";
       };
@@ -417,7 +417,7 @@ in
 
   config = mkIf cfg.enable {
 
-    environment.systemPackages = [ pkgs.prosody ];
+    environment.systemPackages = [ cfg.package ];
 
     environment.etc."prosody/prosody.cfg.lua".text = ''
 
@@ -427,7 +427,6 @@ in
 
       data_path = "/var/lib/prosody"
       plugin_paths = {
-        "${pkgs.prosody.modules}", "${pkgs.prosody.modules}/mod_lib_ldap",
         ${lib.concatStringsSep ", " (map (n: "\"${n}\"") cfg.extraPluginPaths) }
       }
 
@@ -443,7 +442,7 @@ in
         ${ lib.concatStringsSep "\n\ \ " (lib.mapAttrsToList
           (name: val: optionalString val "${toLua name};")
         cfg.modules) }
-
+        ${ lib.concatStringsSep "\n" (map (x: "${toLua x};") cfg.package.communityModules)}
         ${ lib.concatStringsSep "\n" (map (x: "${toLua x};") cfg.extraModules)}
       };
 

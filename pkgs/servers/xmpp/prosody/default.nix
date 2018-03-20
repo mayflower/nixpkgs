@@ -1,12 +1,11 @@
 { stdenv, fetchurl, libidn, openssl, makeWrapper, fetchhg
 , lua5, luasocket, luasec, luaexpat, luafilesystem, luabitop
-, lualdap
 , withLibevent ? true, luaevent ? null
 , withDBI ? true, luadbi ? null
 # use withExtraLibs to add additional dependencies of community modules
 , withExtraLibs ? [ ]
-# FIXME , withCommunityModules ? [ ] }:
-}:
+, withInstallCommunityModules ? [ ]
+, withCommunityModules ? [ ] }:
 
 assert withLibevent -> luaevent != null;
 assert withDBI -> luadbi != null;
@@ -14,7 +13,7 @@ assert withDBI -> luadbi != null;
 with stdenv.lib;
 
 let
-  libs        = [ luasocket luasec luaexpat luafilesystem luabitop lualdap ]
+  libs        = [ luasocket luasec luaexpat luafilesystem luabitop ]
                 ++ optional withLibevent luaevent
                 ++ optional withDBI luadbi
                 ++ withExtraLibs;
@@ -23,8 +22,6 @@ let
   getLuaCPath = lib : getPath lib "so";
   luaPath     = concatStringsSep ";" (map getLuaPath  libs);
   luaCPath    = concatStringsSep ";" (map getLuaCPath libs);
-
-  buildNumber = "331";
 in
 
 stdenv.mkDerivation rec {
@@ -42,8 +39,8 @@ stdenv.mkDerivation rec {
     sha256 = "0nfx3lngcy88nd81gb7v4kh3nz1bzsm67bxgpd2lprk54diqcrz1";
   };
 
-  buildInputs = [ lua5 luasocket luasec luaexpat luabitop lualdap luadbi libidn openssl makeWrapper ]
-                ++ optional withLibevent luaevent;
+  buildInputs = [ lua5 makeWrapper libidn openssl ]
+    ++ optional withDBI luadbi;
 
   configureFlags = [
     "--ostype=linux"
@@ -51,14 +48,10 @@ stdenv.mkDerivation rec {
     "--with-lua=${lua5}"
   ];
 
-  # FIXME
-  #     ${concatMapStringsSep "\n" (module: ''
-  #       cp -r $communityModules/mod_${module} $out/lib/prosody/modules/
-  #     '') withCommunityModules}
   postInstall = ''
-      mkdir $modules
-      cp -r $communityModules/* $modules
-
+      ${concatMapStringsSep "\n" (module: ''
+        cp -r $communityModules/mod_${module} $out/lib/prosody/modules/
+      '') (withCommunityModules ++ withInstallCommunityModules)}
       wrapProgram $out/bin/prosody \
         --set LUA_PATH '${luaPath};' \
         --set LUA_CPATH '${luaCPath};'
@@ -68,8 +61,7 @@ stdenv.mkDerivation rec {
         --set LUA_CPATH '${luaCPath};'
     '';
 
-  outputs = [ "out" "modules" ];
-  setOutputFlags = false;
+  passthru.communityModules = withCommunityModules;
 
   meta = {
     description = "Open-source XMPP application server written in Lua";

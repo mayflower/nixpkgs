@@ -12373,7 +12373,7 @@ with pkgs;
   prosody = callPackage ../servers/xmpp/prosody {
     # _compat can probably be removed on next minor version after 0.10.0
     lua5 = lua5_2_compat;
-    inherit (lua52Packages) luasocket luasec luaexpat luafilesystem luabitop luaevent lualdap luadbi;
+    inherit (lua52Packages) luasocket luasec luaexpat luafilesystem luabitop luaevent luadbi;
   };
 
   biboumi = callPackage ../servers/xmpp/biboumi { };
