@@ -2,7 +2,6 @@
 , lua5, luasocket, luasec, luaexpat, luafilesystem, luabitop
 , lualdap
 , withLibevent ? true, luaevent ? null
-, withZlib ? true, luazlib ? null
 , withDBI ? true, luadbi ? null
 # use withExtraLibs to add additional dependencies of community modules
 , withExtraLibs ? [ ]
@@ -10,7 +9,6 @@
 }:
 
 assert withLibevent -> luaevent != null;
-assert withZlib -> luazlib != null;
 assert withDBI -> luadbi != null;
 
 with stdenv.lib;
@@ -18,7 +16,6 @@ with stdenv.lib;
 let
   libs        = [ luasocket luasec luaexpat luafilesystem luabitop lualdap ]
                 ++ optional withLibevent luaevent
-                ++ optional withZlib luazlib
                 ++ optional withDBI luadbi
                 ++ withExtraLibs;
   getPath     = lib : type : "${lib}/lib/lua/${lua5.luaversion}/?.${type};${lib}/share/lua/${lua5.luaversion}/?.${type}";
@@ -31,18 +28,18 @@ let
 in
 
 stdenv.mkDerivation rec {
-  version = "0.10-1nightly${buildNumber}";
+  version = "0.10.0";
   name = "prosody-${version}";
 
   src = fetchurl {
-    url = "https://prosody.im/nightly/0.10/build${buildNumber}/${name}.tar.gz";
-    sha256 = "01j5qlx6c65pvjxjxx1cml9ykylxdpa4hy8wr41ncvpvsr3cw5j5";
+    url = "http://prosody.im/downloads/source/${name}.tar.gz";
+    sha256 = "1644jy5dk46vahmh6nna36s79k8k668sbi3qamjb4q3c4m3y853l";
   };
 
   communityModules = fetchhg {
     url = "https://hg.prosody.im/prosody-modules";
-    rev = "9a3e51f348fe";
-    sha256 = "09g4vi52rv0r3jzcm0bsgp4ngqq6iapfbxfh0l7qj36qnajp4vm6";
+    rev = "150a7bd59043";
+    sha256 = "0nfx3lngcy88nd81gb7v4kh3nz1bzsm67bxgpd2lprk54diqcrz1";
   };
 
   buildInputs = [ lua5 luasocket luasec luaexpat luabitop lualdap luadbi libidn openssl makeWrapper ]
@@ -78,7 +75,7 @@ stdenv.mkDerivation rec {
   meta = {
     description = "Open-source XMPP application server written in Lua";
     license = licenses.mit;
-    homepage = http://www.prosody.im;
+    homepage = https://prosody.im;
     platforms = platforms.linux;
     maintainers = with maintainers; [ fpletz ];
   };
