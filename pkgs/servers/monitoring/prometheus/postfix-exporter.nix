@@ -1,20 +1,28 @@
-{ stdenv, buildGoPackage, fetchFromGitHub }:
+{ stdenv, buildGoPackage, fetchFromGitHub, systemd, makeWrapper }:
 
 buildGoPackage rec {
-  name = "postfix_exporter-unstable-${version}";
-  version = "2017-06-01";
-  rev = "a8b4bed735a03f234fcfffba85302f51025e6b1d";
+  name = "postfix_exporter-${version}";
+  version = "0.1.0";
 
   goPackagePath = "github.com/kumina/postfix_exporter";
 
   src = fetchFromGitHub {
     owner = "kumina";
     repo = "postfix_exporter";
-    inherit rev;
-    sha256 = "0rxvjpyjcvr1y8k8skq5f1bnl0mpgvaa04dn8c44v7afqnv78riy";
+    rev = version;
+    sha256 = "1hv8d9ik49rnxlc9mlfx9bqq8rjc4zk3d3jk71kl46wajkjlsy8i";
   };
 
+  patches = [ ./postfix-exporter_systemd-journal.patch ];
+
+  buildInputs = [ systemd makeWrapper ];
+
   goDeps = ./postfix-exporter-deps.nix;
+
+  postInstall = ''
+    wrapProgram $bin/bin/postfix_exporter \
+      --prefix LD_LIBRARY_PATH : "${systemd.lib}/lib"
+  '';
 
   meta = with stdenv.lib; {
     inherit (src.meta) homepage;
