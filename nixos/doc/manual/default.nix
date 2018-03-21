@@ -313,6 +313,7 @@ in rec {
         --param man.output.base.dir "'$out/share/man/'" \
         --param man.endnotes.are.numbered 0 \
         --param man.break.after.slash 1 \
+        --maxdepth 30000 \
         --stringparam target.database.document "${olinkDB}/olinkdb.xml" \
         ${docbook5_xsl}/xml/xsl/docbook/manpages/docbook.xsl \
         ${manual-combined}/man-pages-combined.xml
