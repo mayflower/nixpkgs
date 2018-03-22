@@ -1303,7 +1303,9 @@ with pkgs;
 
   mathics = pythonPackages.mathics;
 
-  masscan = callPackage ../tools/security/masscan { };
+  masscan = callPackage ../tools/security/masscan {
+    stdenv = gccStdenv;
+  };
 
   massren = callPackage ../tools/misc/massren { };
 
@@ -4955,6 +4957,8 @@ with pkgs;
   };
 
   ssss = callPackage ../tools/security/ssss { };
+
+  stabber = callPackage ../misc/stabber { };
 
   stress = callPackage ../tools/system/stress { };
 
@@ -10022,7 +10026,9 @@ with pkgs;
 
   libplist = callPackage ../development/libraries/libplist { };
 
-  libqglviewer = callPackage ../development/libraries/libqglviewer { };
+  libqglviewer = callPackage ../development/libraries/libqglviewer {
+    inherit (darwin.apple_sdk.frameworks) AGL;
+  };
 
   libre = callPackage ../development/libraries/libre {};
   librem = callPackage ../development/libraries/librem {};
@@ -14437,7 +14443,9 @@ with pkgs;
   inherit (callPackages ../data/fonts/noto-fonts {})
     noto-fonts noto-fonts-cjk noto-fonts-emoji;
 
-  nullmailer = callPackage ../servers/mail/nullmailer { };
+  nullmailer = callPackage ../servers/mail/nullmailer {
+    stdenv = gccStdenv;
+  };
 
   numix-icon-theme = callPackage ../data/icons/numix-icon-theme { };
 
@@ -16736,7 +16744,9 @@ with pkgs;
 
   mod-distortion = callPackage ../applications/audio/mod-distortion { };
 
-  monero = callPackage ../applications/altcoins/monero { };
+  monero = callPackage ../applications/altcoins/monero {
+    inherit (darwin.apple_sdk.frameworks) IOKit;
+  };
 
   monero-gui = libsForQt5.callPackage ../applications/altcoins/monero-gui { };
 
