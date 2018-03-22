@@ -4,7 +4,7 @@
 , withDBI ? true, luadbi ? null
 # use withExtraLibs to add additional dependencies of community modules
 , withExtraLibs ? [ ]
-, withInstallCommunityModules ? [ ]
+, withOnlyInstalledCommunityModules ? [ ]
 , withCommunityModules ? [ ] }:
 
 assert withLibevent -> luaevent != null;
@@ -51,7 +51,7 @@ stdenv.mkDerivation rec {
   postInstall = ''
       ${concatMapStringsSep "\n" (module: ''
         cp -r $communityModules/mod_${module} $out/lib/prosody/modules/
-      '') (withCommunityModules ++ withInstallCommunityModules)}
+      '') (withCommunityModules ++ withOnlyInstalledCommunityModules)}
       wrapProgram $out/bin/prosody \
         --set LUA_PATH '${luaPath};' \
         --set LUA_CPATH '${luaCPath};'
