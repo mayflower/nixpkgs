@@ -12988,6 +12988,7 @@ with pkgs;
   axis2 = callPackage ../servers/http/tomcat/axis2 { };
 
   unifi = callPackage ../servers/unifi { };
+  unifiLTS = callPackage ../servers/unifi { useLTS=true; };
 
   virtuoso6 = callPackage ../servers/sql/virtuoso/6.x.nix {
     openssl = openssl_1_0_2;
