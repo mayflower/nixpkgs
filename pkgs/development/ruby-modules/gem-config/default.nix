@@ -141,6 +141,7 @@ in
   grpc = attrs: {
     nativeBuildInputs = [ pkgconfig ];
     buildInputs = [ openssl ];
+    hardeningDisable = [ "format" ];
     NIX_CFLAGS_COMPILE = [ "-Wno-error=stringop-overflow" "-Wno-error=implicit-fallthrough" ];
   };
 
@@ -262,6 +263,10 @@ in
     nativeBuildInputs = [ pkgconfig ];
     buildInputs = [ cmake openssl libssh2 zlib ];
     dontUseCmakeConfigure = true;
+  };
+
+  sassc = attrs: {
+    buildInputs = [ rake ];
   };
 
   scrypt = attrs:
