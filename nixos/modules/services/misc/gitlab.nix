@@ -482,7 +482,7 @@ in {
         Type = "simple";
         User = cfg.user;
         Group = cfg.group;
-        TimeoutSec = "300";
+        TimeoutSec = "infinity";
         Restart = "on-failure";
         WorkingDirectory = "${cfg.packages.gitlab}/share/gitlab";
         ExecStart="${cfg.packages.gitlab.rubyEnv}/bin/bundle exec \"sidekiq -C \"${cfg.packages.gitlab}/share/gitlab/config/sidekiq_queues.yml\" -e production -P ${cfg.statePath}/tmp/sidekiq.pid\"";
@@ -529,7 +529,7 @@ in {
         Type = "simple";
         User = cfg.user;
         Group = cfg.group;
-        TimeoutSec = "300";
+        TimeoutSec = "infinity";
         Restart = "on-failure";
         WorkingDirectory = gitlabEnv.HOME;
         ExecStart =
@@ -658,7 +658,7 @@ in {
         Type = "simple";
         User = cfg.user;
         Group = cfg.group;
-        TimeoutSec = "300";
+        TimeoutSec = "infinity";
         Restart = "on-failure";
         WorkingDirectory = "${cfg.packages.gitlab}/share/gitlab";
         ExecStart = "${cfg.packages.gitlab.rubyEnv}/bin/bundle exec \"unicorn -c ${cfg.statePath}/config/unicorn.rb -E production\"";
