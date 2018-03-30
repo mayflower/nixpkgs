@@ -79,19 +79,19 @@
     dependencies = ["google-protobuf" "grpc"];
     source = {
       remotes = ["https://rubygems.org"];
-      sha256 = "0z3asy104q36sshq9zhmgcm32sg8qr8jvy0mi19nakkq7prrkwqv";
+      sha256 = "0cp2mwq2v83djghj2bnqg057qphyv2fr29xj1parbyll0k0ips7i";
       type = "gem";
     };
-    version = "0.83.0";
+    version = "0.88.0";
   };
   github-linguist = {
     dependencies = ["charlock_holmes" "escape_utils" "mime-types" "rugged"];
     source = {
       remotes = ["https://rubygems.org"];
-      sha256 = "0c8w92yzjfs7pjnm8bdjsgyd1jpisn10fb6dy43381k1k8pxsifd";
+      sha256 = "0kgashbqpypv329m63b85ri1dx0gppwd0832hvwh124lk5b19drk";
       type = "gem";
     };
-    version = "4.7.6";
+    version = "5.3.3";
   };
   github-markup = {
     source = {
@@ -184,10 +184,10 @@
     dependencies = ["google-protobuf" "googleapis-common-protos-types" "googleauth"];
     source = {
       remotes = ["https://rubygems.org"];
-      sha256 = "02b80pyg4rgkiafyh1jqnfh6xp9abpd1x0a9c2h98f0851scw28b";
+      sha256 = "17wvqhjmldxph4li402rvfbyzi5455lzmfr2y19kq9ghrzjyad82";
       type = "gem";
     };
-    version = "1.8.7";
+    version = "1.10.0";
   };
   i18n = {
     source = {
@@ -212,6 +212,15 @@
       type = "gem";
     };
     version = "2.1.0";
+  };
+  licensee = {
+    dependencies = ["rugged"];
+    source = {
+      remotes = ["https://rubygems.org"];
+      sha256 = "1nhj0vx30llqyb7q52bwmrgy9xpjk3q48k98h0dvq83ym4v216a2";
+      type = "gem";
+    };
+    version = "8.7.0";
   };
   little-plugger = {
     source = {
@@ -340,10 +349,10 @@
   public_suffix = {
     source = {
       remotes = ["https://rubygems.org"];
-      sha256 = "0mvzd9ycjw8ydb9qy3daq3kdzqs2vpqvac4dqss6ckk4rfcjc637";
+      sha256 = "1x5h1dh1i3gwc01jbg01rly2g6a1qwhynb1s8a30ic507z1nh09s";
       type = "gem";
     };
-    version = "3.0.1";
+    version = "3.0.2";
   };
   rainbow = {
     dependencies = ["rake"];
@@ -473,6 +482,15 @@
       type = "gem";
     };
     version = "2.1.0";
+  };
+  sentry-raven = {
+    dependencies = ["faraday"];
+    source = {
+      remotes = ["https://rubygems.org"];
+      sha256 = "0yf2gysjw6sy1xcp2jw35z9cp83pwx33lq0qyvaqbs969j4993r4";
+      type = "gem";
+    };
+    version = "2.7.2";
   };
   signet = {
     dependencies = ["addressable" "faraday" "jwt" "multi_json"];
