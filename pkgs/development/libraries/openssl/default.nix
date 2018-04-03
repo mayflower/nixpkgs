@@ -1,6 +1,5 @@
 { stdenv, fetchurl, buildPackages, perl
 , buildPlatform, hostPlatform
-, fetchpatch
 , withCryptodev ? false, cryptodevHeaders
 , enableSSL2 ? false
 , enableSSL3 ? false
@@ -116,20 +115,13 @@ let
 in {
 
   openssl_1_0_2 = common {
-    version = "1.0.2n";
-    sha256 = "1zm82pyq5a9jm10q6iv7d3dih3xwjds4x30fqph3k317byvsn2rp";
+    version = "1.0.2o";
+    sha256 = "0kcy13l701054nhpbd901mz32v1kn4g311z0nifd83xs2jbmqgzc";
   };
 
   openssl_1_1_0 = common {
-    version = "1.1.0g";
-    sha256 = "1bvka2wf33w2vxv7yw578nnjqyhz2b3chvfb0l4k2ffscw950kfy";
-    patches = [
-      (fetchurl {
-        name = "CVE-2017-3738.patch";
-        url = "https://github.com/openssl/openssl/commit/563066.patch";
-        sha256 = "1f033p6mkhdgf772l42879zvimiiwk5gbv3m2m2y4z8qjybn0xh8";
-      })
-    ];
+    version = "1.1.0h";
+    sha256 = "05x509lccqjscgyi935z809pwfm708islypwhmjnb6cyvrn64daq";
   };
 
 }

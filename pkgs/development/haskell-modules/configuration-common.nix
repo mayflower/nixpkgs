@@ -916,17 +916,6 @@ self: super: {
   # https://github.com/bos/text-icu/issues/32
   text-icu = dontCheck super.text-icu;
 
-  # https://github.com/strake/lenz.hs/issues/2
-  lenz =
-    let patch = pkgs.fetchpatch
-          { url = https://github.com/strake/lenz.hs/commit/4b9b79104759b9c6b24484455e1eb0d962eb3cff.patch;
-            sha256 = "02i0w9i55a4r251wgjzl5vbk6m2qhilwl7bfp5jwmf22z66sglyn";
-          };
-    in overrideCabal super.lenz (drv:
-      { patches = (drv.patches or []) ++ [ patch ];
-        editedCabalFile = null;
-      });
-
   # https://github.com/haskell/cabal/issues/4969
   haddock-library_1_4_4 = dontHaddock super.haddock-library_1_4_4;
   haddock-api = super.haddock-api.override { haddock-library = self.haddock-library_1_4_4; };
@@ -1015,5 +1004,8 @@ self: super: {
     url = https://github.com/GaloisInc/SHA/commit/c258350e953c3de2f98c5625ac3857f1a6863afc.patch;
     sha256 = "1485bbjca1wqbh3c9yqj85kmq8j7zxq79y5isxypy3r6wjpr3g6b";
   });
+
+  # https://github.com/strake/lenz-template.hs/issues/1
+  lenz-template = doJailbreak super.lenz-template;
 
 }

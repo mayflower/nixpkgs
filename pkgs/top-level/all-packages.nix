@@ -2581,6 +2581,7 @@ with pkgs;
   gocryptfs = callPackage ../tools/filesystems/gocrypfs { };
 
   godot = callPackage ../development/tools/godot {};
+  godot_headers = callPackage ../development/libraries/godot_headers {};
 
   goklp = callPackage ../tools/networking/goklp {};
 
@@ -3858,8 +3859,6 @@ with pkgs;
   networkmanager-iodine = callPackage ../tools/networking/network-manager/iodine.nix { };
 
   networkmanager-openvpn = callPackage ../tools/networking/network-manager/openvpn.nix { };
-
-  networkmanager-pptp = callPackage ../tools/networking/network-manager/pptp.nix { };
 
   networkmanager-l2tp = callPackage ../tools/networking/network-manager/l2tp.nix { };
 
@@ -5665,6 +5664,8 @@ with pkgs;
 
   xmlroff = callPackage ../tools/typesetting/xmlroff { };
 
+  xmloscopy = callPackage ../tools/text/xml/xmloscopy { };
+
   xmlstarlet = callPackage ../tools/text/xml/xmlstarlet { };
 
   xmlto = callPackage ../tools/typesetting/xmlto {
@@ -6455,6 +6456,12 @@ with pkgs;
         inherit (gnome2) GConf gnome_vfs;
       };
 
+  openjdk10 =
+      callPackage ../development/compilers/openjdk/10.nix {
+        bootjdk = openjdk9;
+        inherit (gnome2) GConf gnome_vfs;
+      };
+
   openjdk = openjdk8;
 
   jdk7 = openjdk7 // { outputs = [ "out" ]; };
@@ -6489,6 +6496,20 @@ with pkgs;
       lib.setName "openjre-${lib.getVersion pkgs.openjdk9.jre}-headless"
         (lib.addMetaAttrs { outputsToInstall = [ "jre" ]; }
           ((openjdk9.override { minimal = true; }).jre // { outputs = [ "jre" ]; }));
+
+  jdk10 = if stdenv.isArm || stdenv.isAarch64 then oraclejdk10 else openjdk10 // { outputs = [ "out" ]; };
+  jre10 = if stdenv.isArm || stdenv.isAarch64 then oraclejre10 else lib.setName "openjre-${lib.getVersion pkgs.openjdk10.jre}"
+    (lib.addMetaAttrs { outputsToInstall = [ "jre" ]; }
+      (openjdk10.jre // { outputs = [ "jre" ]; }));
+  jre10_headless =
+    if stdenv.isArm || stdenv.isAarch64 then
+      oraclejre10
+    else if stdenv.isDarwin then
+      jre10
+    else
+      lib.setName "openjre-${lib.getVersion pkgs.openjdk10.jre}-headless"
+        (lib.addMetaAttrs { outputsToInstall = [ "jre" ]; }
+          ((openjdk10.override { minimal = true; }).jre // { outputs = [ "jre" ]; }));
 
   jdk = jdk8;
   jre = jre8;
@@ -6961,8 +6982,7 @@ with pkgs;
   z88dk = callPackage ../development/compilers/z88dk { };
 
   zulu8 = callPackage ../development/compilers/zulu/8.nix { };
-  zulu9 = callPackage ../development/compilers/zulu { };
-  zulu = zulu9;
+  zulu = callPackage ../development/compilers/zulu { };
 
   ### DEVELOPMENT / INTERPRETERS
 
@@ -7669,7 +7689,9 @@ with pkgs;
 
   cl-launch = callPackage ../development/tools/misc/cl-launch {};
 
-  cloudfoundry-cli = callPackage ../development/tools/cloudfoundry-cli { };
+  cloudfoundry-cli = callPackage ../development/tools/cloudfoundry-cli {
+    go = go_1_9;
+  };
 
   coan = callPackage ../development/tools/analysis/coan { };
 
@@ -7893,8 +7915,8 @@ with pkgs;
   gnumake42 = callPackage ../development/tools/build-managers/gnumake/4.2 { };
   gnumake = if hostPlatform.isRiscV # Technically this check should be for glibc version.
     then gnumake42HEAD
-  else gnumake42;
-  gnumake42HEAD = callPackage ../development/tools/build-managers/gnumake/4.2/head.nix { };
+    else gnumake42;
+  gnumake42HEAD = lowPrio (callPackage ../development/tools/build-managers/gnumake/4.2/head.nix { });
 
   gnustep = recurseIntoAttrs (callPackage ../desktops/gnustep {});
 
@@ -8288,7 +8310,9 @@ with pkgs;
 
   swfmill = callPackage ../tools/video/swfmill { };
 
-  swftools = callPackage ../tools/video/swftools { };
+  swftools = callPackage ../tools/video/swftools {
+    stdenv = gccStdenv;
+  };
 
   tcptrack = callPackage ../development/tools/misc/tcptrack { };
 
@@ -9669,7 +9693,9 @@ with pkgs;
     inherit (darwin.apple_sdk.frameworks) Carbon IOKit;
   };
 
-  libcdio-paranoia = callPackage ../development/libraries/libcdio-paranoia { };
+  libcdio-paranoia = callPackage ../development/libraries/libcdio-paranoia {
+    inherit (darwin.apple_sdk.frameworks) DiskArbitration IOKit;
+  };
 
   libcdr = callPackage ../development/libraries/libcdr { lcms = lcms2; };
 
@@ -10867,6 +10893,7 @@ with pkgs;
 
   opal = callPackage ../development/libraries/opal {
     ffmpeg = ffmpeg_2;
+    stdenv = overrideCC stdenv gcc6;
   };
 
   openh264 = callPackage ../development/libraries/openh264 { };
@@ -11048,8 +11075,10 @@ with pkgs;
   postgis = callPackage ../development/libraries/postgis { };
   postgis_2_3 = callPackage ../development/libraries/postgis/2.3.nix { };
 
-  protobuf = callPackage ../development/libraries/protobuf/3.4.nix { };
+  protobuf = protobuf3_4;
 
+  protobuf3_5 = callPackage ../development/libraries/protobuf/3.5.nix { };
+  protobuf3_4 = callPackage ../development/libraries/protobuf/3.4.nix { };
   protobuf3_1 = callPackage ../development/libraries/protobuf/3.1.nix { };
   protobuf2_5 = callPackage ../development/libraries/protobuf/2.5.nix { };
 
@@ -12555,7 +12584,6 @@ with pkgs;
   oauth2_proxy = callPackage ../servers/oauth2_proxy { };
 
   openafs = callPackage ../servers/openafs { tsmbac = null; ncurses = null; };
-  openpts = callPackage ../servers/openpts { };
 
   openresty = callPackage ../servers/http/openresty {
     openssl = openssl_1_0_2;
@@ -12713,9 +12741,9 @@ with pkgs;
 
   qboot = callPackage ../applications/virtualization/qboot { stdenv = stdenv_32bit; };
 
-  OVMF = callPackage ../applications/virtualization/OVMF { seabios=false; openssl=null; };
-  OVMF-CSM = callPackage ../applications/virtualization/OVMF { openssl=null; };
-  #WIP: OVMF-secureBoot = callPackage ../applications/virtualization/OVMF { seabios=false; secureBoot=true; };
+  OVMF = callPackage ../applications/virtualization/OVMF { seabios = null; openssl = null; };
+  OVMF-CSM = callPackage ../applications/virtualization/OVMF { openssl = null; };
+  #WIP: OVMF-secureBoot = callPackage ../applications/virtualization/OVMF { seabios = null; secureBoot = true; };
 
   seabios = callPackage ../applications/virtualization/seabios { };
 
@@ -12788,6 +12816,7 @@ with pkgs;
 
   qpid-cpp = callPackage ../servers/amqp/qpid-cpp {
     boost = boost155;
+    inherit (pythonPackages) buildPythonPackage qpid-python;
   };
 
   quagga = callPackage ../servers/quagga { };
@@ -13034,6 +13063,13 @@ with pkgs;
   alsaUtils = callPackage ../os-specific/linux/alsa-utils { };
   alsaOss = callPackage ../os-specific/linux/alsa-oss { };
   alsaTools = callPackage ../os-specific/linux/alsa-tools { };
+
+  inherit (callPackage ../misc/arm-trusted-firmware {})
+    buildArmTrustedFirmware
+    armTrustedFirmwareAllwinner
+    armTrustedFirmwareQemu
+    armTrustedFirmwareRK3328
+    ;
 
   microcodeAmd = callPackage ../os-specific/linux/microcode/amd.nix { };
 
@@ -13291,7 +13327,9 @@ with pkgs;
 
   kmscube = callPackage ../os-specific/linux/kmscube { };
 
-  kmsxx = callPackage ../development/libraries/kmsxx { };
+  kmsxx = callPackage ../development/libraries/kmsxx {
+    stdenv = overrideCC stdenv gcc6;
+  };
 
   latencytop = callPackage ../os-specific/linux/latencytop { };
 
@@ -13532,7 +13570,6 @@ with pkgs;
 
     nvidiaPackages = callPackage ../os-specific/linux/nvidia-x11 { };
 
-    nvidia_x11_legacy173 = nvidiaPackages.legacy_173;
     nvidia_x11_legacy304 = nvidiaPackages.legacy_304;
     nvidia_x11_legacy340 = nvidiaPackages.legacy_340;
     nvidia_x11_beta      = nvidiaPackages.beta;
@@ -13908,6 +13945,7 @@ with pkgs;
   radeontop = callPackage ../os-specific/linux/radeontop { };
 
   raspberrypifw = callPackage ../os-specific/linux/firmware/raspberrypi {};
+  raspberrypi-tools = callPackage ../os-specific/linux/firmware/raspberrypi/tools.nix {};
 
   regionset = callPackage ../os-specific/linux/regionset { };
 
@@ -14022,25 +14060,28 @@ with pkgs;
     ubootBananaPi
     ubootBeagleboneBlack
     ubootClearfog
+    ubootGuruplug
     ubootJetsonTK1
     ubootOdroidXU3
     ubootOrangePiPc
     ubootPcduino3Nano
+    ubootPine64
+    ubootQemuAarch64
     ubootQemuArm
     ubootRaspberryPi
     ubootRaspberryPi2
     ubootRaspberryPi3_32bit
     ubootRaspberryPi3_64bit
+    ubootSheevaplug
+    ubootSopine
     ubootUtilite
     ubootWandboard
     ;
 
   # Non-upstream U-Boots:
-  ubootSheevaplug = callPackage ../misc/uboot/sheevaplug.nix { };
-
   ubootNanonote = callPackage ../misc/uboot/nanonote.nix { };
 
-  ubootGuruplug = callPackage ../misc/uboot/guruplug.nix { };
+  ubootRock64 = callPackage ../misc/uboot/rock64.nix { };
 
   uclibc = callPackage ../os-specific/linux/uclibc { };
 
@@ -14264,6 +14305,8 @@ with pkgs;
   docbook_xml_xslt = docbook_xsl;
 
   docbook5_xsl = docbook_xsl_ns;
+
+  documentation-highlighter = callPackage ../misc/documentation-highlighter { };
 
   cabin = callPackage ../data/fonts/cabin { };
 
@@ -15214,11 +15257,10 @@ with pkgs;
 
   # go 1.9 pin until https://github.com/moby/moby/pull/35739
   inherit (callPackage ../applications/virtualization/docker { go = go_1_9; })
-    docker_17_12
-    docker_18_02;
+    docker_18_03;
 
-  docker = docker_17_12;
-  docker-edge = docker_18_02;
+  docker = docker_18_03;
+  docker-edge = docker_18_03;
 
   docker-proxy = callPackage ../applications/virtualization/docker/proxy.nix { };
 
@@ -15265,9 +15307,6 @@ with pkgs;
   dvdstyler = callPackage ../applications/video/dvdstyler {
     inherit (gnome2) libgnomeui;
   };
-
-  dwb-unwrapped = callPackage ../applications/networking/browsers/dwb { dconf = gnome3.dconf; };
-  dwb = wrapFirefox dwb-unwrapped { desktopName = "dwb"; };
 
   dwm = callPackage ../applications/window-managers/dwm {
     patches = config.dwm.patches or [];
@@ -16746,13 +16785,18 @@ with pkgs;
 
   monero = callPackage ../applications/altcoins/monero {
     inherit (darwin.apple_sdk.frameworks) IOKit;
+    boost = boost15x;
   };
 
-  monero-gui = libsForQt5.callPackage ../applications/altcoins/monero-gui { };
+  monero-gui = libsForQt5.callPackage ../applications/altcoins/monero-gui {
+    boost = boost15x;
+  };
 
   xmr-stak = callPackage ../applications/misc/xmr-stak {
     hwloc = hwloc-nox;
   };
+
+  xmrig = callPackage ../applications/misc/xmrig { };
 
   monkeysAudio = callPackage ../applications/audio/monkeys-audio { };
 
@@ -17029,7 +17073,7 @@ with pkgs;
 
   mypaint = callPackage ../applications/graphics/mypaint { };
 
-  mythtv = callPackage ../applications/video/mythtv { };
+  mythtv = libsForQt5.callPackage ../applications/video/mythtv { };
 
   micro = callPackage ../applications/editors/micro { };
 
@@ -17391,6 +17435,7 @@ with pkgs;
   qsampler = libsForQt5.callPackage ../applications/audio/qsampler { };
 
   qscreenshot = callPackage ../applications/graphics/qscreenshot {
+    inherit (darwin.apple_sdk.frameworks) Carbon;
     qt = qt4;
   };
 
