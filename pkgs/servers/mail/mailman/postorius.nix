@@ -1,6 +1,6 @@
 { stdenv, fetchFromGitLab, fetchpatch, python3 }:
 
-python3.pkgs.buildPythonApplication rec {
+python3.pkgs.buildPythonPackage rec {
   name = "postorius-${version}";
   version = "1.1.1";
 
