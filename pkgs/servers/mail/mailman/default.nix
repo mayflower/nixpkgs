@@ -1,6 +1,6 @@
 { stdenv, fetchFromGitLab, python3 }:
 
-python3.pkgs.buildPythonApplication rec {
+python3.pkgs.buildPythonPackage rec {
   name = "mailman-${version}";
   version = "3.1.1";
 
