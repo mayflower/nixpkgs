@@ -689,6 +689,8 @@ in {
 
   async-timeout = callPackage ../development/python-modules/async_timeout { };
 
+  async_generator = callPackage ../development/python-modules/async_generator { };
+
   asn1ate = callPackage ../development/python-modules/asn1ate { };
 
   atomiclong = buildPythonPackage rec {
