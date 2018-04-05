@@ -1,14 +1,14 @@
 { stdenv, fetchgit, pythonPackages }:
 
-pythonPackages.buildPythonApplication rec {
+pythonPackages.buildPythonPackage rec {
   name = "privacyidea-${version}";
-  version = "2.21.1";
+  version = "2.22";
 
   src = fetchgit {
     url = "https://github.com/privacyidea/privacyidea.git";
     rev = "refs/tags/v${version}";
     fetchSubmodules = true;
-    sha256 = "09y6rhpwfbi35zlvsm6y2vmav4a8zdlvw7cybm07wbqv1zc711lz";
+    sha256 = "1fgy4h0zxq5p07x6j9d4s60nhp5z9c4mjm2hsp2sszxpvpb76ic8";
   };
 
   postPatch = ''
@@ -16,6 +16,8 @@ pythonPackages.buildPythonApplication rec {
       --replace 'import pkg_resources' '# no pkg_resources' \
       --replace 'pkg_resources.get_distribution("privacyidea").version' \
                 '"${version}"'
+    substituteInPlace setup.py \
+      --replace "ldap3==2.1.1" "ldap3==2.4.1"
     sed -i '/argparse/d' setup.py
   '';
 
