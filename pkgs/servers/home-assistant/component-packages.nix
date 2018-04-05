@@ -130,7 +130,7 @@
     "joaoapps_join" = ps: with ps; [  ];
     "juicenet" = ps: with ps; [  ];
     "keyboard" = ps: with ps; [  ];
-    "keyboard_remote" = ps: with ps; [  ];
+    "keyboard_remote" = ps: with ps; [ evdev ];
     "kira" = ps: with ps; [  ];
     "knx" = ps: with ps; [  ];
     "lametric" = ps: with ps; [  ];
@@ -206,7 +206,7 @@
     "media_player.songpal" = ps: with ps; [  ];
     "media_player.sonos" = ps: with ps; [  ];
     "media_player.soundtouch" = ps: with ps; [ libsoundtouch ];
-    "media_player.spotify" = ps: with ps; [  ];
+    "media_player.spotify" = ps: with ps; [ spotipy ];
     "media_player.vizio" = ps: with ps; [  ];
     "media_player.vlc" = ps: with ps; [  ];
     "media_player.webostv" = ps: with ps; [ websockets ];
@@ -289,7 +289,7 @@
     "sensor.coinmarketcap" = ps: with ps; [ coinmarketcap ];
     "sensor.cpuspeed" = ps: with ps; [  ];
     "sensor.crimereports" = ps: with ps; [  ];
-    "sensor.cups" = ps: with ps; [  ];
+    "sensor.cups" = ps: with ps; [ pycups ];
     "sensor.darksky" = ps: with ps; [  ];
     "sensor.deluge" = ps: with ps; [ deluge-client ];
     "sensor.deutsche_bahn" = ps: with ps; [  ];
