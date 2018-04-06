@@ -2,16 +2,16 @@
 
 buildGoPackage rec {
   name = "node_exporter-${version}";
-  version = "0.16.0-rc.0";
-  rev = "002c1ca02917406cbecc457162e2bdb1f29c2f49";
+  version = "0.16.0-rc.1";
+  rev = "v${version}";
 
   goPackagePath = "github.com/prometheus/node_exporter";
 
   src = fetchFromGitHub {
     inherit rev;
-    owner = "mayflower";
+    owner = "prometheus";
     repo = "node_exporter";
-    sha256 = "1j4h75s0lpjgl06lzfhwmxdf112av2acn2q2lrww6hp33fz5gb69";
+    sha256 = "1sdcmapnvygssi65pghi8a859dqmswx7k4sccd7av324xvnvnb7j";
   };
 
   # FIXME: megacli test fails
