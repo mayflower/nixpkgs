@@ -119,8 +119,8 @@
     "hue" = ps: with ps; [ aiohue ];
     "ifttt" = ps: with ps; [  ];
     "ihc" = ps: with ps; [  ];
-    "image_processing.dlib_face_detect" = ps: with ps; [  ];
-    "image_processing.dlib_face_identify" = ps: with ps; [  ];
+    "image_processing.dlib_face_detect" = ps: with ps; [ face_recognition ];
+    "image_processing.dlib_face_identify" = ps: with ps; [ face_recognition ];
     "image_processing.opencv" = ps: with ps; [ numpy ];
     "influxdb" = ps: with ps; [ influxdb ];
     "insteon_local" = ps: with ps; [  ];
@@ -182,7 +182,7 @@
     "media_player.dunehd" = ps: with ps; [  ];
     "media_player.emby" = ps: with ps; [  ];
     "media_player.frontier_silicon" = ps: with ps; [  ];
-    "media_player.gpmdp" = ps: with ps; [  ];
+    "media_player.gpmdp" = ps: with ps; [ websocket_client ];
     "media_player.gstreamer" = ps: with ps; [  ];
     "media_player.kodi" = ps: with ps; [ jsonrpc-async jsonrpc-websocket ];
     "media_player.lg_netcast" = ps: with ps; [  ];
@@ -466,6 +466,6 @@
     "zeroconf" = ps: with ps; [ zeroconf ];
     "zha" = ps: with ps; [  ];
     "zigbee" = ps: with ps; [  ];
-    "zwave" = ps: with ps; [ pydispatcher ];
+    "zwave" = ps: with ps; [ pydispatcher python_openzwave ];
   };
 }
