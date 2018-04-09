@@ -2,8 +2,8 @@
 
 buildGoPackage rec {
   name = "prometheus-unbound-exporter-${version}";
-  version = "0.1+git20171019";
-  rev = "91ad2ff6208526858203f684abcf7e18fcbf6269";
+  version = "0.1+git20171204";
+  rev = "4f36729f553665a4268b5c265448977276a95096";
 
   goPackagePath = "github.com/kumina/unbound_exporter";
 
@@ -13,7 +13,7 @@ buildGoPackage rec {
     inherit rev;
     owner = "kumina";
     repo = "unbound_exporter";
-    sha256 = "1zxc8cc8q6m285dz0rwynzlymyfw19d9w2vyivw0gbfiwx830aa2";
+    sha256 = "0py4h0185f13v1rz8wr8ha35cw5c4hfdjsk7x82a9vqqpqpby63s";
   };
 
   meta = with stdenv.lib; {
