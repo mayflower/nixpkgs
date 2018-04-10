@@ -34,4 +34,6 @@ pythonPackages.buildPythonPackage rec {
     bcrypt pyrad qrcode defusedxml flaskbabel pycrypto-original matplotlib psycopg2
     pandas
   ];
+
+  doCheck = false;
 }
