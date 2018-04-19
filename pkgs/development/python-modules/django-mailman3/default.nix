@@ -6,13 +6,13 @@
 buildPythonPackage rec {
   pname = "django-mailman3";
   name = "${pname}-${version}";
-  version = "1.2.0a1";
+  version = "1.2.0a2";
 
   src = fetchFromGitLab {
     owner = "mailman";
     repo = "django-mailman3";
     rev = version;
-    sha256 = "0h2vclvnpjszmzakd72l6b6qdq0zbi9jqlgq97csynncw9xr1qig";
+    sha256 = "1x26dfdby6gsb5s57kyw55n8fwivv2r2vphvica76afzzf1cq4zc";
   };
 
   propagatedBuildInputs = [

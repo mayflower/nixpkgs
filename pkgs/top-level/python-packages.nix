@@ -5565,7 +5565,7 @@ in {
       owner = "mailman";
       repo = "mailmanclient";
       rev = version;
-      sha256 = "0w01xp1nds0ndg6k0zmaixfhbqavbpi4gm1hmdzzgnwf9hyx8kvp";
+      sha256 = "092kkr4jd1qh3y0ir68vr3asf1mgalh5mnjgv2j9fxfmcyyfxz8p";
     };
 
     propagatedBuildInputs = with self; [ httplib2 six ];

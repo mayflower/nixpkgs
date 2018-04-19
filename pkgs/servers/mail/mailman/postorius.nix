@@ -5,10 +5,10 @@ python3.pkgs.buildPythonPackage rec {
   version = "1.1.1-dev";
 
   src = fetchFromGitLab {
-    owner = "globin";
+    owner = "mailman";
     repo = "postorius";
-    rev = "f1483a6fd118550ebacdfdd6beeeda4058fdaa02";
-    sha256 = "055dvclb60kpiwdzddd9gndzaxbnyr2hxvyci49akqvc3k5k6hiv";
+    rev = "8fb62f5dc9708095ffd9d9b1fad338a353191d69";
+    sha256 = "07h403g676f6yc4v6i9kw40r2lqnjcsx1vs53l4wg1z1x7c2smgc";
   };
 
   propagatedBuildInputs = with python3.pkgs; [
