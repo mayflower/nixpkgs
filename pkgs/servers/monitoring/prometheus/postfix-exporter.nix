@@ -2,7 +2,7 @@
 
 buildGoPackage rec {
   name = "postfix_exporter-${version}";
-  version = "0.1.0";
+  version = "0.1.1";
 
   goPackagePath = "github.com/kumina/postfix_exporter";
 
@@ -10,10 +10,8 @@ buildGoPackage rec {
     owner = "kumina";
     repo = "postfix_exporter";
     rev = version;
-    sha256 = "1hv8d9ik49rnxlc9mlfx9bqq8rjc4zk3d3jk71kl46wajkjlsy8i";
+    sha256 = "1p2j66jzzgyv2w832pw57g02vrac6ldrblqllgwyy0i8krb3ibyz";
   };
-
-  patches = [ ./postfix-exporter_systemd-journal.patch ];
 
   buildInputs = [ systemd makeWrapper ];
 
