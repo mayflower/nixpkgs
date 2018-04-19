@@ -6,17 +6,18 @@
 buildPythonPackage rec {
   pname = "django-mailman3";
   name = "${pname}-${version}";
-  version = "1.1.0+python3-patch";
+  version = "1.2.0a1";
 
   src = fetchFromGitLab {
     owner = "mailman";
     repo = "django-mailman3";
-    rev = "439d8256ba97c15165e5ce2f2ab3bffe2efaa940";
-    sha256 = "1barbvwkv0pwzzzqjl6bdblj44kfmkl07ffbz5bcqhsj3gpdzpjb";
+    rev = version;
+    sha256 = "0h2vclvnpjszmzakd72l6b6qdq0zbi9jqlgq97csynncw9xr1qig";
   };
 
   propagatedBuildInputs = [
-    mailmanclient pytz django-gravatar2 django django-allauth future django_compressor
+    mailmanclient pytz django-gravatar2 django django-allauth future
+    django_compressor
   ];
   checkInputs = [ mock ];
 

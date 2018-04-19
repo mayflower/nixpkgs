@@ -2,13 +2,13 @@
 
 python3.pkgs.buildPythonPackage rec {
   name = "postorius-${version}";
-  version = "1.1.1";
+  version = "1.1.1-dev";
 
   src = fetchFromGitLab {
     owner = "globin";
     repo = "postorius";
-    rev = "884a8bf24396d1aafcbe70985f0465e1e4121d09";
-    sha256 = "0zl0syi2f9gdilc8vp3vgdavz75dbaagq1rdsgj8ldddkzdylnd6";
+    rev = "f1483a6fd118550ebacdfdd6beeeda4058fdaa02";
+    sha256 = "055dvclb60kpiwdzddd9gndzaxbnyr2hxvyci49akqvc3k5k6hiv";
   };
 
   propagatedBuildInputs = with python3.pkgs; [

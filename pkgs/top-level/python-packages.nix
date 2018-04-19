@@ -5559,13 +5559,13 @@ in {
 
   mailmanclient = buildPythonPackage rec {
     name = "mailmanclient-${version}";
-    version = "3.1.1";
+    version = "3.1.2a1";
 
     src = pkgs.fetchFromGitLab {
       owner = "mailman";
       repo = "mailmanclient";
       rev = version;
-      sha256 = "01n8kvd4daffba0k805x2wi9c8z9g16g4igsqzf9fdwsq80k7i07";
+      sha256 = "0w01xp1nds0ndg6k0zmaixfhbqavbpi4gm1hmdzzgnwf9hyx8kvp";
     };
 
     propagatedBuildInputs = with self; [ httplib2 six ];
@@ -8565,11 +8565,11 @@ in {
   httpbin = callPackage ../development/python-modules/httpbin { };
 
   httplib2 = buildPythonPackage rec {
-    name = "httplib2-0.9.2";
+    name = "httplib2-0.11.3";
 
     src = pkgs.fetchurl {
       url = "mirror://pypi/h/httplib2/${name}.tar.gz";
-      sha256 = "126rsryvw9vhbf3qmsfw9lf4l4xm2srmgs439lgma4cpag4s3ay3";
+      sha256 = "1pyb0hmc0j0kcy27yiw38gq9pk7f1fkny5k1vd13cdz6l3csw7g7";
     };
 
     meta = {
@@ -14627,11 +14627,11 @@ in {
 
   django-haystack = buildPythonPackage rec {
     name = "django-haystack-${version}";
-    version = "2.6.1";
+    version = "2.8.1";
 
     src = pkgs.fetchurl {
       url = "mirror://pypi/d/django-haystack/django-haystack-${version}.tar.gz";
-      sha256 = "0bn50656gh6mda9ypp2ax6ifssakkwz0i4mb53l2vr0ia9iizj8b";
+      sha256 = "1302fqsrx8w474xk5cmnmg3hjqfprlxnjg9qlg86arsr4v4vqm4b";
     };
 
     doCheck = false;  # no tests in source
@@ -14642,8 +14642,6 @@ in {
 
     patchPhase = ''
       sed -i 's/geopy==/geopy>=/' setup.py
-      sed -i 's/whoosh==/Whoosh>=/' setup.py
-      sed -i 's/<1.11/<1.12/' setup.py
     '';
 
     meta = with stdenv.lib; {

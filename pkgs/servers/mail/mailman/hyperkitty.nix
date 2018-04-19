@@ -2,13 +2,13 @@
 
 python3.pkgs.buildPythonPackage rec {
   name = "hyperkitty-${version}";
-  version = "1.1.4";
+  version = "1.1.5-dev";
 
   src = fetchFromGitLab {
-    owner = "globin";
+    owner = "mailman";
     repo = "hyperkitty";
-    rev = "bd60e4efc63b14286a3484807c90e8fa0c7de64d";
-    sha256 = "0cbcrv699k4wa1z8m7qrp9hm72rqkv2bya2l9d7y5lcqz34ng5kp";
+    rev = "917561284e4cd6b863cdfdcfde47d2e3d7f152c7";
+    sha256 = "0h5dqpxjir30fyqprm4wlvhg1fwj4f0dzl9zx2rym2d67wjrx92y";
   };
 
   propagatedBuildInputs = with python3.pkgs; [
@@ -20,10 +20,16 @@ python3.pkgs.buildPythonPackage rec {
 
   buildInputs = with python3.pkgs; [ coverage mock ];
 
-  doCheck = false;
+  doCheck = true;
 
   postPatch = ''
     sed -i 's/Django<1.11/Django/' setup.py
+  '';
+
+  checkPhase = ''
+    cd $NIX_BUILD_TOP/$sourceRoot
+    PYTHONPATH=.:$PYTHONPATH python example_project/manage.py test \
+      --settings=hyperkitty.tests.settings_test hyperkitty
   '';
 
   meta = {
