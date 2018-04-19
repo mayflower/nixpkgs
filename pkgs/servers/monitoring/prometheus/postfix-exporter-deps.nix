@@ -5,8 +5,8 @@
     fetch = {
       type = "git";
       url = "https://github.com/beorn7/perks";
-      rev = "4c0e84591b9aa9e6dcfdf3e020114cd81f89d5f9";
-      sha256 = "1hrybsql68xw57brzj805xx2mghydpdiysv3gbhr7f5wlxj2514y";
+      rev = "3a771d992973f24aa725d07868b467d1ddfceafb";
+      sha256 = "1l2lns4f5jabp61201sh88zf3b0q793w4zdgp9nll7mmfcxxjif3";
     };
   }
   {
@@ -14,8 +14,8 @@
     fetch = {
       type = "git";
       url = "https://github.com/coreos/go-systemd";
-      rev = "127658326aaff7892c7d60c29657c6e6c440ad7e";
-      sha256 = "1qckr877q9yigkw73l76fwrx6y4d9hv5057xa6y7qcn8d33jdpjm";
+      rev = "d1b7d058aa2adfc795ad17ff4aaa2bc64ec11c78";
+      sha256 = "1nz3v1b90hnmj2vjjwq96pr6psxlndqjyd30v9sgiwygzb7db9mv";
     };
   }
   {
@@ -32,8 +32,8 @@
     fetch = {
       type = "git";
       url = "https://github.com/golang/protobuf";
-      rev = "bbd03ef6da3a115852eaf24c8a1c46aeb39aa175";
-      sha256 = "1pyli3dcagi7jzpiazph4fhkz7a3z4bhd25nwbb7g0iy69b8z1g4";
+      rev = "e09c5db296004fbe3f74490e84dcd62c3c5ddb1b";
+      sha256 = "1acnmalkqwrq6k3l71c4pyws0zn18r2609kqaq55lhbdcjgzid31";
     };
   }
   {
@@ -50,8 +50,8 @@
     fetch = {
       type = "git";
       url = "https://github.com/prometheus/client_golang";
-      rev = "c3324c1198cf3374996e9d3098edd46a6b55afc9";
-      sha256 = "19qcz5bpzj5kqyhmbq5kxr8nrqqlszazzq6w0wldis1yk1wwww00";
+      rev = "82f5ff156b29e276022b1a958f7d385870fb9814";
+      sha256 = "111j329yrlgvh73dm80gawwxsh9dgjkw74254kyj5c2rfmra7znz";
     };
   }
   {
@@ -68,8 +68,8 @@
     fetch = {
       type = "git";
       url = "https://github.com/prometheus/common";
-      rev = "e4aa40a9169a88835b849a6efb71e05dc04b88f0";
-      sha256 = "0m1n616d694jca0qjwjn5ci7scfgm2jpi94dhi356arm9lhda4jc";
+      rev = "d0f7cd64bda49e08b22ae8a730aa57aa0db125d6";
+      sha256 = "1d4hfbb66xsf0wq317fwhgrwakqzhvryw4d7ip851lwrpql5fqcx";
     };
   }
   {
@@ -77,8 +77,8 @@
     fetch = {
       type = "git";
       url = "https://github.com/prometheus/procfs";
-      rev = "54d17b57dd7d4a3aa092476596b3f8a933bde349";
-      sha256 = "1b5218hi6k9i637k6xc7ynpll577zbnrhjm9jr2iczy3j0rr4rvr";
+      rev = "8b1c2da0d56deffdbb9e48d4414b4e674bd8083e";
+      sha256 = "0x128p15h35mgwqxkigfkk1lfrcz9g697ahl8v6xp9kwvcqvjrrf";
     };
   }
 ]
