@@ -14849,6 +14849,8 @@ with pkgs;
 
   artha = callPackage ../applications/misc/artha { };
 
+  atlassian-cli = callPackage ../applications/office/atlassian-cli { };
+
   atomEnv = callPackage ../applications/editors/atom/env.nix {
     gconf = gnome2.GConf;
   };
