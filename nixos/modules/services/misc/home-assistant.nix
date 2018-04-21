@@ -106,8 +106,10 @@ in {
       description = "Home Assistant";
       after = [ "network.target" ];
       preStart = lib.optionalString (cfg.config != null) ''
-        rm -f ${cfg.configDir}/configuration.yaml
-        ln -s ${configFile} ${cfg.configDir}/configuration.yaml
+        config=${cfg.configDir}/configuration.yaml
+        rm -f $config
+        ${pkgs.remarshal}/bin/json2yaml -i ${configFile} -o $config
+        chmod 444 $config
       '';
       serviceConfig = {
         ExecStart = ''
