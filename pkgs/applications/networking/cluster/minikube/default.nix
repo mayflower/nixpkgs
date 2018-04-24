@@ -1,21 +1,38 @@
-{ stdenv, buildGoPackage, fetchFromGitHub, fetchurl, go-bindata, libvirt, qemu, docker-machine-kvm,
+{ stdenv, buildGoPackage, fetchFromGitHub, fetchurl, go-bindata, kubernetes, libvirt, pkgconfig, qemu, docker-machine-kvm,
   gpgme, makeWrapper, hostPlatform, vmnet, python }:
 
-let binPath = stdenv.lib.optionals stdenv.isLinux [ libvirt qemu docker-machine-kvm ];
-
-in buildGoPackage rec {
-  pname   = "minikube";
-  name    = "${pname}-${version}";
+let
   version = "0.27.0";
-
-  goPackagePath = "k8s.io/minikube";
-
   src = fetchFromGitHub {
     owner  = "kubernetes";
     repo   = "minikube";
     rev    = "v${version}";
     sha256 = "00gj8x5p0vxwy0y0g5nnddmq049h7zxvhb73lb4gii5mghr9mkws";
   };
+
+  docker-machine-kvm2 = buildGoPackage rec {
+    pname = "docker-machine-kvm2";
+    name = "${pname}-${version}";
+    inherit src;
+    inherit version;
+
+    buildInputs = [ pkgconfig ];
+    propagatedBuildInputs = [ libvirt ];
+
+    goPackagePath = "k8s.io/minikube";
+    subPackages = [ "cmd/drivers/kvm" ];
+    postInstall = "mv $bin/bin/kvm $bin/bin/docker-machine-driver-kvm2";
+  };
+
+  binPath = stdenv.lib.optionals stdenv.isLinux [ libvirt qemu docker-machine-kvm docker-machine-kvm2 ];
+
+in buildGoPackage rec {
+  pname   = "minikube";
+  name    = "${pname}-${version}";
+  inherit src;
+  inherit version;
+
+  goPackagePath = "k8s.io/minikube";
 
   buildInputs = [ go-bindata makeWrapper gpgme ] ++ stdenv.lib.optional hostPlatform.isDarwin vmnet;
   subPackages = [ "cmd/minikube" ] ++ stdenv.lib.optional hostPlatform.isDarwin "cmd/drivers/hyperkit";
