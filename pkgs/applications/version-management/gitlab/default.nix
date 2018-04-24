@@ -7,6 +7,7 @@ let
     name = "gitlab-env-${version}";
     inherit ruby;
     gemdir = ./.;
+    groups = [ "default" "unicorn" "ed25519" "metrics" ];
     meta = with lib; {
       homepage = http://www.gitlab.com/;
       platforms = platforms.linux;
@@ -15,11 +16,11 @@ let
     };
   };
 
-  version = "10.6.2";
+  version = "10.7.0";
 
   gitlabDeb = fetchurl {
     url = "https://packages.gitlab.com/gitlab/gitlab-ce/packages/debian/jessie/gitlab-ce_${version}-ce.0_amd64.deb/download";
-    sha256 = "1rrr0b98ygmpah45v16v1xhfsk1mf0g0zyag74lf2mb9x0h1607i";
+    sha256 = "0dngh6gj8kkfcxn6ki9i96jg4x1x0vq3zzdimxz31g3j2zpd0ryz";
   };
 
 in
@@ -31,7 +32,7 @@ stdenv.mkDerivation rec {
     owner = "gitlabhq";
     repo = "gitlabhq";
     rev = "v${version}";
-    sha256 = "1a5r5kd2gdlkfg4nxnvqc4myidj7i6k1gcwcv6kcwsslkrrrs0cw";
+    sha256 = "010xhzrp6svp2a4xzmzwl4x3hk9wc1frqr66lp8x58nfmvr8hdrg";
   };
 
   buildInputs = [
@@ -40,7 +41,6 @@ stdenv.mkDerivation rec {
 
   patches = [
     ./remove-hardcoded-locations.patch
-    # ./fix-36783.patch
   ];
 
   postPatch = ''
@@ -102,6 +102,6 @@ stdenv.mkDerivation rec {
 
   passthru = {
     inherit rubyEnv;
-    inherit ruby;
+    ruby = rubyEnv.wrappedRuby;
   };
 }

@@ -28,10 +28,10 @@
   charlock_holmes = {
     source = {
       remotes = ["https://rubygems.org"];
-      sha256 = "09dn56sx0kcw0k8ypiynhnhhiq7ff9m7b57l8wvnxj82wxsjb54y";
+      sha256 = "1nf1l31n10yaark2rrg5qzyzcx9w80681449s3j09qmnipsl8rl5";
       type = "gem";
     };
-    version = "0.7.5";
+    version = "0.7.6";
   };
   concurrent-ruby = {
     source = {
@@ -79,10 +79,10 @@
     dependencies = ["google-protobuf" "grpc"];
     source = {
       remotes = ["https://rubygems.org"];
-      sha256 = "0cp2mwq2v83djghj2bnqg057qphyv2fr29xj1parbyll0k0ips7i";
+      sha256 = "0xwgi3902c89kx0fa176wz289nh67qm9bmx0yykrg5xx1lwk8a2j";
       type = "gem";
     };
-    version = "0.88.0";
+    version = "0.95.0";
   };
   github-linguist = {
     dependencies = ["charlock_holmes" "escape_utils" "mime-types" "rugged"];
@@ -469,10 +469,10 @@
   rugged = {
     source = {
       remotes = ["https://rubygems.org"];
-      sha256 = "1rqhg6g2q2av3fb6iyzfd3hfjxvr8hs32w7llil2kbx73crvc2dy";
+      sha256 = "0q1krxgd0ql03x8m9m05x5sxizw5sc7lms7rkp44qf45grpdk3v3";
       type = "gem";
     };
-    version = "0.26.0";
+    version = "0.27.0";
   };
   sanitize = {
     dependencies = ["nokogiri"];

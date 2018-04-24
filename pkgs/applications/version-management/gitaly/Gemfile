@@ -1,8 +1,9 @@
 source 'https://rubygems.org'
 
+gem 'rugged', '~> 0.27.0'
 gem 'github-linguist', '~> 5.3.3', require: 'linguist'
 gem 'gitlab-markup', '~> 1.6.2'
-gem 'gitaly-proto', '~> 0.88.0', require: 'gitaly'
+gem 'gitaly-proto', '~> 0.95.0', require: 'gitaly'
 gem 'activesupport', '~> 5.0.2'
 gem 'rdoc', '~> 4.2'
 gem 'gollum-lib', '~> 4.2', require: false
