@@ -66,6 +66,9 @@ let
     toPythonModule = x: x; # Application does not provide modules.
   }));
 
+  # See build-setupcfg/default.nix for documentation.
+  buildSetupcfg = import ../build-support/build-setupcfg self;
+
   graphiteVersion = "1.0.2";
 
   fetchPypi = makeOverridable( {format ? "setuptools", ... } @attrs:
@@ -133,6 +136,7 @@ in {
   inherit fetchPypi callPackage;
   inherit hasPythonModule requiredPythonModules makePythonPath disabledIf;
   inherit toPythonModule toPythonApplication;
+  inherit buildSetupcfg;
 
   # helpers
 
@@ -1416,6 +1420,7 @@ in {
 
       homepage = https://github.com/skarra/CalDAVClientLibrary/tree/asynkdev/;
       maintainers = with maintainers; [ pjones ];
+      broken = true; # 2018-04-11
     };
   };
 
@@ -1770,21 +1775,7 @@ in {
 
   py4j = callPackage ../development/python-modules/py4j { };
 
-  pyechonest = self.buildPythonPackage rec {
-    name = "pyechonest-8.0.2";
-
-    src = pkgs.fetchurl {
-      url = "mirror://pypi/p/pyechonest/pyechonest-8.0.2.tar.gz";
-      sha256 = "496265f4b7d33483ec153b9e1b8333fe959b115f7e781510089c8313b7d86560";
-    };
-
-    disabled = isPy3k;
-
-    meta = {
-      description = "Tap into The Echo Nest's Musical Brain for the best music search, information, recommendations and remix tools on the web";
-      homepage = https://github.com/echonest/pyechonest;
-    };
-  };
+  pyechonest = callPackage ../development/python-modules/pyechonest { };
 
   billiard = buildPythonPackage rec {
     name = "billiard-${version}";
@@ -5378,6 +5369,7 @@ in {
     pname = "lightblue";
     version = "0.4";
     name = "${pname}-${version}";
+    disabled = isPy3k; # build fails, 2018-04-11
 
     src = pkgs.fetchurl {
       url = "mirror://sourceforge/${pname}/${name}.tar.gz";
@@ -5385,8 +5377,6 @@ in {
     };
 
     buildInputs = [ pkgs.bluez pkgs.openobex ];
-
-    disabled = isPy3k;
 
     meta = {
       homepage = http://lightblue.sourceforge.net;
@@ -7731,9 +7721,7 @@ in {
     };
   };
 
-  # py3k disabled, see https://travis-ci.org/NixOS/nixpkgs/builds/48759067
-  graph-tool = if isPy3k then throw "graph-tool in Nix doesn't support py3k yet"
-    else callPackage ../development/python-modules/graph-tool/2.x.x.nix { boost = pkgs.boost159; };
+  graph-tool = callPackage ../development/python-modules/graph-tool/2.x.x.nix { };
 
   grappelli_safe = buildPythonPackage rec {
     version = "0.3.13";
@@ -11058,7 +11046,7 @@ in {
   dynd = buildPythonPackage rec {
     version = "0.7.2";
     name = "dynd-${version}";
-    disabled = isPyPy;
+    disabled = isPyPy || !isPy3k; # tests fail on python2, 2018-04-11
 
     src = pkgs.fetchFromGitHub {
       owner = "libdynd";
@@ -12244,7 +12232,11 @@ in {
   pika-pool = callPackage ../development/python-modules/pika-pool { };
   platformio = callPackage ../development/python-modules/platformio { };
 
-  kmsxx = callPackage ../development/libraries/kmsxx { };
+  kmsxx = (callPackage ../development/libraries/kmsxx {
+    inherit (pkgs.kmsxx) stdenv;
+  }).overrideAttrs (oldAttrs: {
+    name = "${python.libPrefix}-${pkgs.kmsxx.name}";
+  });
 
   pybase64 = callPackage ../development/python-modules/pybase64 { };
 
@@ -12781,7 +12773,7 @@ in {
     meta = {
       description = "Interface for working with block devices";
       license = licenses.gpl2Plus;
-      broken = isPy3k;
+      broken = isPy3k; # doesn't build on python 3, 2018-04-11
     };
   };
 
@@ -12844,7 +12836,7 @@ in {
       license = licenses.bsd2;
       platforms = platforms.all;
       homepage = "http://jparyani.github.io/pycapnp/index.html";
-      broken = true;
+      broken = true; # 2018-04-11
     };
   };
 
@@ -13303,7 +13295,7 @@ in {
       homepage = https://pypi.python.org/pypi/PyICU/;
       description = "Python extension wrapping the ICU C++ API";
       license = licenses.mit;
-      platforms = with platforms; allBut darwin;
+      platforms = platforms.linux; # Maybe other non-darwin Unix
       maintainers = [ maintainers.rycee ];
     };
   };

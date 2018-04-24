@@ -4,6 +4,7 @@
 
 # Userspace dependencies
 , zlib, libuuid, python, attr, openssl
+, nfs-utils
 
 # Kernel dependencies
 , kernel ? null, spl ? null, splUnstable ? null, splLegacyCrypto ? null
@@ -27,7 +28,7 @@ let
         versionAtLeast kernel.version incompatibleKernelVersion then
        throw ''
          Linux v${kernel.version} is not yet supported by zfsonlinux v${version}.
-         ${stdenv.lib.optional (!isUnstable) "Try zfsUnstable or set the NixOS option boot.zfs.enableUnstable."}
+         ${stdenv.lib.optionalString (!isUnstable) "Try zfsUnstable or set the NixOS option boot.zfs.enableUnstable."}
        ''
     else stdenv.mkDerivation rec {
       name = "zfs-${configFile}-${version}${optionalString buildKernel "-${kernel.version}"}";
@@ -61,6 +62,7 @@ let
         substituteInPlace ./module/zfs/zfs_ctldir.c   --replace "mount -t zfs"            "${utillinux}/bin/mount -t zfs"
         substituteInPlace ./lib/libzfs/libzfs_mount.c --replace "/bin/umount"             "${utillinux}/bin/umount"
         substituteInPlace ./lib/libzfs/libzfs_mount.c --replace "/bin/mount"              "${utillinux}/bin/mount"
+        substituteInPlace ./lib/libshare/nfs.c        --replace "/usr/sbin/exportfs"      "${nfs-utils}/bin/exportfs"
         substituteInPlace ./cmd/ztest/ztest.c         --replace "/usr/sbin/ztest"         "$out/sbin/ztest"
         substituteInPlace ./cmd/ztest/ztest.c         --replace "/usr/sbin/zdb"           "$out/sbin/zdb"
         substituteInPlace ./config/user-systemd.m4    --replace "/usr/lib/modules-load.d" "$out/etc/modules-load.d"
@@ -77,6 +79,7 @@ let
         done
 
         ./autogen.sh
+        configureFlagsArray+=("--libexecdir=$out/libexec")
       '';
 
       configureFlags = [
@@ -86,6 +89,7 @@ let
         "--with-udevdir=$(out)/lib/udev"
         "--with-systemdunitdir=$(out)/etc/systemd/system"
         "--with-systemdpresetdir=$(out)/etc/systemd/system-preset"
+        "--with-systemdgeneratordir=$(out)/lib/systemd/system-generator"
         "--with-mounthelperdir=$(out)/bin"
         "--sysconfdir=/etc"
         "--localstatedir=/var"
@@ -144,12 +148,12 @@ in {
   # to be adapted
   zfsStable = common {
     # comment/uncomment if breaking kernel versions are known
-    incompatibleKernelVersion = null;
+    incompatibleKernelVersion = "4.16";
 
     # this package should point to the latest release.
-    version = "0.7.7";
+    version = "0.7.8";
 
-    sha256 = "0lrzy27sh1cinkf04ki2vfjrgpgbiza2s59i2by45qdd8kmkcc5r";
+    sha256 = "0m7j5cpz81lqcfbh4w3wvqjjka07wickl27klgy1zplv6vr0baix";
 
     extraPatches = [
       (fetchpatch {
@@ -161,30 +165,32 @@ in {
     inherit spl;
   };
 
-  zfsUnstable = common {
+  zfsUnstable = common rec {
     # comment/uncomment if breaking kernel versions are known
-    incompatibleKernelVersion = null;
+    incompatibleKernelVersion = "4.16";
 
     # this package should point to a version / git revision compatible with the latest kernel release
-    version = "2018-02-02";
+    version = "2018-04-10";
 
-    rev = "fbd42542686af053f0d162ec4630ffd4fff1cc30";
-    sha256 = "0qzkwnnk7kz1hwvcaqlpzi5yspfhhmd2alklc07k056ddzbx52qb";
+    rev = "74df0c5e251a920a1966a011c16f960cd7ba562e";
+    sha256 = "1x3mipj3ryznnd7kx84r3n607hv6jqs66mb61g3zcdmvk6al4yq4";
     isUnstable = true;
 
     extraPatches = [
       (fetchpatch {
-        url = "https://github.com/Mic92/zfs/compare/fbd42542686af053f0d162ec4630ffd4fff1cc30...nixos-zfs-2018-02-02.patch";
-        sha256 = "05wqwjm9648x60vkwxbp8l6z1q73r2a5l2ni28i2f4pla8s3ahln";
+        url = "https://github.com/Mic92/zfs/compare/${rev}...nixos-zfs-2018-02-02.patch";
+        sha256 = "1gqmgqi39qhk5kbbvidh8f2xqq25vj58i9x0wjqvcx6a71qj49ch";
       })
     ];
 
     spl = splUnstable;
   };
 
+  # TODO: Remove this module before 18.09
+  # also remove boot.zfs.enableLegacyCrypto
   zfsLegacyCrypto = common {
     # comment/uncomment if breaking kernel versions are known
-    incompatibleKernelVersion = null;
+    incompatibleKernelVersion = "4.16";
 
     # this package should point to a version / git revision compatible with the latest kernel release
     version = "2018-02-01";
