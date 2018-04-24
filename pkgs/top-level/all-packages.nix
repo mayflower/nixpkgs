@@ -10472,9 +10472,7 @@ with pkgs;
 
   libviper = callPackage ../development/libraries/libviper { };
 
-  libvpx = libvpx_1_5;
-  libvpx_1_5 = callPackage ../development/libraries/libvpx { };
-  libvpx_1_4 = callPackage ../development/libraries/libvpx/1.4.nix { };
+  libvpx = callPackage ../development/libraries/libvpx { };
   libvpx-git = callPackage ../development/libraries/libvpx/git.nix { };
 
   libvterm = callPackage ../development/libraries/libvterm { };
