@@ -29,7 +29,7 @@ buildGoPackage rec {
     owner = "gitlab-org";
     repo = "gitlab-runner";
     rev = "v${version}";
-    sha256 = "1777c7l18mp56ymjyrbgh7k0f21mdyf501j7qkzy9pkshx3q58ll";
+    sha256 = "113vkx3dnv3fvnracszlhf56fb5jr41fr3s0bs025hv8b9sp04zz";
   };
 
   patches = [ ./fix-shell-path.patch ];
