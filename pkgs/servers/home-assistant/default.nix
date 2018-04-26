@@ -13,6 +13,7 @@ let
           inherit version;
           sha256 = "dc5cab081d4b334d0440b019edf24fe1cb138b8114e0e22d2b0661284bc1775f";
         };
+        propagatedBuildInputs = [ self.async_generator ] ++ oldAttrs.propagatedBuildInputs;
       });
       pytest = super.pytest.overridePythonAttrs (oldAttrs: rec {
         version = "3.4.2";
@@ -34,6 +35,8 @@ let
           inherit version;
           sha256 = "874b397ddbf0a4c1d8d644b21c2481e8a96b61343f820ad52d8a322d61a15083";
         };
+        propagatedBuildInputs = [ self.requests ] ++ oldAttrs.propagatedBuildInputs;
+        doCheck = false;
       });
       async-timeout = super.async-timeout.overridePythonAttrs (oldAttrs: rec {
         version = "2.0.1";
