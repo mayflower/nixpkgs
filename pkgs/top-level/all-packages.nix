@@ -15599,7 +15599,9 @@ with pkgs;
   errbot = callPackage ../applications/networking/errbot {
     pythonPackages = python3Packages;
   };
-  errbot-plugin-xmppbridge = callPackage ../applications/networking/errbot/plugins/xmppbridge.nix { };
+  errbotPlugins = recurseIntoAttrs (
+    callPackage ../applications/networking/errbot/plugins.nix { }
+  );
 
   espeak-classic = callPackage ../applications/audio/espeak { };
 
