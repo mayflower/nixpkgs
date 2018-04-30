@@ -1,22 +1,17 @@
-{ stdenv, fetchurl, fetchpatch, pythonPackages, glibcLocales }:
+{ stdenv, fetchFromGitHub, pythonPackages, glibcLocales }:
 
-pythonPackages.buildPythonApplication rec {
+pythonPackages.buildPythonPackage rec {
   name = "errbot-${version}";
   version = "5.1.3";
 
-  src = fetchurl {
-    url = "mirror://pypi/e/errbot/${name}.tar.gz";
-    sha256 = "0nkfq6fx87g7kvxrb5lp8gkb75658cmyffnacpy8jq3a16py3jrr";
+  src = fetchFromGitHub {
+    owner = "mayflower";
+    repo = "errbot";
+    rev = "6e624a57f4b388a2e20af84ccf73fd93b5596925";
+    sha256 = "13n3h58w07457krxxk4aqm05406jp20h35iwxiiy1dy8aip0zp5l";
   };
 
   disabled = !pythonPackages.isPy3k;
-
-  patches = [
-    (fetchpatch {
-      url = "https://github.com/mayflower/errbot/commit/3d360fded72cbd83376778bce124a0a2fcd7d621.patch";
-      sha256 = "0qlninni6rgwk5fvcybpan3zppmchs34p4v9rzwnqqzhn4429mfh";
-    })
-  ];
 
   LC_ALL = "en_US.utf8";
 
