@@ -6,16 +6,19 @@ let
   cfg = config.services.neo4j;
 
   serverConfig = pkgs.writeText "neo4j.conf" ''
-    dbms.directories.certificates=${cfg.dataDir}/certificates
-    dbms.directories.logs=${cfg.dataDir}/logs
     dbms.directories.data=${cfg.dataDir}/data
-    dbms.directories.metrics=${cfg.dataDir}/metrics
+    dbms.directories.certificates=${cfg.certDir}
+    dbms.directories.logs=${cfg.dataDir}/logs
     dbms.directories.plugins=${cfg.dataDir}/plugins
-    dbms.allow_format_migration=true
-    dbms.security.auth_enabled=false
     dbms.connector.http.type=HTTP
     dbms.connector.http.enabled=true
     dbms.connector.http.address=${cfg.listenAddress}:${toString cfg.port}
+    ${optionalString cfg.enableBolt ''
+      dbms.connector.bolt.type=BOLT
+      dbms.connector.bolt.enabled=true
+      dbms.connector.bolt.tls_level=OPTIONAL
+      dbms.connector.bolt.address=${cfg.listenAddress}:${toString cfg.boltPort}
+    ''}
     ${optionalString cfg.enableHttps ''
       dbms.connector.https.type=HTTP
       dbms.connector.https.enabled=true
@@ -42,7 +45,11 @@ in {
   ###### interface
 
   options.services.neo4j = {
-    enable = mkEnableOption "neo4j";
+    enable = mkOption {
+      description = "Whether to enable neo4j.";
+      default = false;
+      type = types.bool;
+    };
 
     package = mkOption {
       description = "Neo4j package to use.";
@@ -87,6 +94,12 @@ in {
       type = types.int;
     };
 
+    certDir = mkOption {
+      description = "Neo4j TLS certificates directory.";
+      default = "${cfg.dataDir}/certificates";
+      type = types.path;
+    };
+
     dataDir = mkOption {
       description = "Neo4j data directory.";
       default = "/var/lib/neo4j";
@@ -106,9 +119,9 @@ in {
     systemd.services.neo4j = {
       description = "Neo4j Daemon";
       wantedBy = [ "multi-user.target" ];
-      after = [ "network-interfaces.target" ];
+      after = [ "network.target" ];
       environment = {
-        NEO4J_INSTANCE = cfg.dataDir;
+        NEO4J_HOME = "${cfg.package}/share/neo4j";
         NEO4J_CONF = "${cfg.dataDir}/conf";
       };
       serviceConfig = {
@@ -118,8 +131,7 @@ in {
         LimitNOFILE = 40000;
       };
       preStart = ''
-        mkdir -p /run/neo4j
-        mkdir -m 0700 -p ${cfg.dataDir}/{data,conf,certificates,logs}
+        mkdir -m 0700 -p ${cfg.dataDir}/{data/graph.db,conf,logs}
         ln -fs ${serverConfig} ${cfg.dataDir}/conf/neo4j.conf
         if [ "$(id -u)" = 0 ]; then chown -R neo4j ${cfg.dataDir}; fi
       '';
