@@ -8509,21 +8509,7 @@ in {
 
   httpbin = callPackage ../development/python-modules/httpbin { };
 
-  httplib2 = buildPythonPackage rec {
-    name = "httplib2-0.11.3";
-
-    src = pkgs.fetchurl {
-      url = "mirror://pypi/h/httplib2/${name}.tar.gz";
-      sha256 = "1pyb0hmc0j0kcy27yiw38gq9pk7f1fkny5k1vd13cdz6l3csw7g7";
-    };
-
-    meta = {
-      homepage = http://code.google.com/p/httplib2;
-      description = "A comprehensive HTTP client library";
-      license = licenses.mit;
-      maintainers = with maintainers; [ garbas ];
-    };
-  };
+  httplib2 = callPackage ../development/python-modules/httplib2 { };
 
   hvac = callPackage ../development/python-modules/hvac { };
 
