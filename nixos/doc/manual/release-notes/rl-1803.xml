@@ -389,12 +389,6 @@ following incompatible changes:</para>
   </listitem>
   <listitem>
     <para>
-      All prometheus exporter modules are now defined as submodules.
-      The exporters are configured using <literal>services.prometheus.exporters</literal>.
-    </para>
-  </listitem>
-  <listitem>
-    <para>
       The Prosody XMPP server has received a major update. The following modules were renamed:
       <itemizedlist>
         <listitem>
