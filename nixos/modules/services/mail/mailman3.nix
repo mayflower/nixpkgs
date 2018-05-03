@@ -124,7 +124,7 @@ let
         ''}
       )
 
-      MIDDLEWARE_CLASSES += ('django_mailman3.middleware.TimezoneMiddleware',)
+      MIDDLEWARE_CLASSES = ('django_mailman3.middleware.TimezoneMiddleware',)
 
       DATABASES = {
           'default': {
