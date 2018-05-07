@@ -20745,6 +20745,8 @@ EOF
   h11 = callPackage ../development/python-modules/h11 { };
 
   aiohue = callPackage ../development/python-modules/aiohue { };
+
+  PyMVGLive = callPackage ../development/python-modules/pymvglive { };
 });
 
 in fix' (extends overrides packages)
