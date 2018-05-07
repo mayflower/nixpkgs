@@ -20743,6 +20743,8 @@ EOF
   wsproto = callPackage ../development/python-modules/wsproto { };
 
   h11 = callPackage ../development/python-modules/h11 { };
+
+  aiohue = callPackage ../development/python-modules/aiohue { };
 });
 
 in fix' (extends overrides packages)
