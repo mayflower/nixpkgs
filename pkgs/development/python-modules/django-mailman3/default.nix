@@ -9,10 +9,10 @@ buildPythonPackage rec {
   version = "1.2.0a2";
 
   src = fetchFromGitLab {
-    owner = "mailman";
+    owner = "globin";
     repo = "django-mailman3";
-    rev = version;
-    sha256 = "1x26dfdby6gsb5s57kyw55n8fwivv2r2vphvica76afzzf1cq4zc";
+    rev = "68151db68953f8564230e4ab09612fc2b6e1b87f";
+    sha256 = "15id91b14ck0my3i2l3vj99n2crilf6yjlqsb8cwqxjkgblz9kwd";
   };
 
   propagatedBuildInputs = [
