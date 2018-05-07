@@ -46,6 +46,9 @@ let
         };
       });
       hass-frontend = super.callPackage ./frontend.nix { };
+      aiohue = super.aiohue.overridePythonAttrs (oldAttrs: {
+        propagatedBuildInputs = [ self.aiohttp ];
+      });
     };
   };
 
