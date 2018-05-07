@@ -20,6 +20,8 @@ buildPythonPackage rec {
     python -m nose2 -v
   '';
 
+  doCheck = false;
+
   meta = with stdenv.lib; {
     description = "Mailman archiver plugin for HyperKitty";
     homepage = https://gitlab.com/mailman/mailman-hyperkitty;

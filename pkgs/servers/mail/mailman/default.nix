@@ -2,19 +2,19 @@
 
 python3.pkgs.buildPythonPackage rec {
   name = "mailman-${version}";
-  version = "3.1.1";
+  version = "3.2.0-unstable-2018-05-03";
 
   src = fetchFromGitLab {
-    owner = "mailman";
+    owner = "globin";
     repo = "mailman";
-    rev = version;
-    sha256 = "0hczxx7zs1iwfiqzfsbkmqba027c366cgwhqwdfqq2xmsjc37i8a";
+    rev = "5710921542b80d9bef486bbacea6b3d888a98a0a";
+    sha256 = "144w6ljxaccxddv84r0w3mfvik15iijvdnqci9c9lzkxl2877ynj";
   };
 
   propagatedBuildInputs = with python3.pkgs; [
     aiosmtpd alembic atpublic falcon flufl-bounce flufl-i18n flufl-lock flufl-testing
     dns httplib2 lazr-config lazr-smtptest nose nose2 passlib psycopg2 requests
-    zope_component
+    zope_component click
   ];
 
   patches = [ ./log-to-syslog.patch ];
@@ -24,7 +24,6 @@ python3.pkgs.buildPythonPackage rec {
       --replace "config.BIN_DIR, 'master'" "config.BIN_DIR, '.master-wrapped'"
     substituteInPlace src/mailman/bin/master.py \
       --replace "config.BIN_DIR, 'runner'" "config.BIN_DIR, '.runner-wrapped'"
-    sed -i '/PRESERVE_ENVS =/ a"PYTHONHOME",' src/mailman/bin/master.py
     sed -i 's/aiosmtpd==/aiosmtpd>=/' setup.py
   '';
 

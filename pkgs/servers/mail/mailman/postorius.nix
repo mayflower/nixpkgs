@@ -7,8 +7,8 @@ python3.pkgs.buildPythonPackage rec {
   src = fetchFromGitLab {
     owner = "mailman";
     repo = "postorius";
-    rev = "8fb62f5dc9708095ffd9d9b1fad338a353191d69";
-    sha256 = "07h403g676f6yc4v6i9kw40r2lqnjcsx1vs53l4wg1z1x7c2smgc";
+    rev = "009ebe132dc99125ef4a5c1761187819e6d7cce8";
+    sha256 = "1szmi6cclgn4qc6w6m6g7xwpk249m4b9wlngp7fkys3p6ncw5jdd";
   };
 
   propagatedBuildInputs = with python3.pkgs; [
