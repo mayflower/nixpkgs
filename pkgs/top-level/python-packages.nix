@@ -20749,6 +20749,8 @@ EOF
   PyMVGLive = callPackage ../development/python-modules/pymvglive { };
 
   coinmarketcap = callPackage ../development/python-modules/coinmarketcap { };
+
+  pyowm = callPackage ../development/python-modules/pyowm { };
 });
 
 in fix' (extends overrides packages)
