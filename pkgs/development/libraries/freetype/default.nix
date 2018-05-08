@@ -1,5 +1,6 @@
 { stdenv, lib, fetchurl, copyPathsToStore
 , hostPlatform
+, buildPlatform, buildPackages
 , pkgconfig, which
 , zlib, bzip2, libpng, gnumake, glib
 
@@ -36,6 +37,8 @@ in stdenv.mkDerivation {
     sha256 = "121gm15ayfg3rglby8ifh8384mcjb9dhmx9j40zl7yszw72b4frs";
   };
 
+  depsBuildBuild = [ buildPackages.stdenv.cc ];
+
   propagatedBuildInputs = [ zlib bzip2 libpng ]; # needed when linking against freetype
   # dependence on harfbuzz is looser than the reverse dependence
   nativeBuildInputs = [ pkgconfig which ]
@@ -71,6 +74,10 @@ in stdenv.mkDerivation {
     # Somehow it calls the unwrapped gcc, "i686-pc-linux-gnu-gcc", instead
     # of gcc. I think it's due to the unwrapped gcc being in the PATH. I don't
     # know why it's on the PATH.
-    configureFlags = "--disable-static CC_BUILD=gcc";
+    configureFlags = "--disable-static CC_BUILD=${buildPackages.stdenv.cc.targetPrefix}cc";
+
+    preFixup = ''
+      moveToOutput bin/freetype-config "$dev"
+    '';
   };
 }
