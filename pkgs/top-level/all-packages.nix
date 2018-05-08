@@ -6090,9 +6090,9 @@ with pkgs;
   # Only needed for mingw builds
   gccCrossMingw2 = assert targetPlatform != buildPlatform; wrapCCWith {
     name = "gcc-cross-wrapper";
-    cc = gccCrossStageStatic.gcc;
+    cc = gccCrossStageStatic.cc;
     libc = windows.mingw_headers2;
-    inherit binutils;
+    bintools = binutils;
   };
 
   gcc45 = lowPrio (wrapCC (callPackage ../development/compilers/gcc/4.5 {
