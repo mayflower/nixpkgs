@@ -15,11 +15,11 @@
 with stdenv.lib;
 buildPythonApplication rec {
 
-  name = "youtube-dl-${version}";
+  pname = "youtube-dl";
   version = "2018.05.01";
 
   src = fetchurl {
-    url = "https://yt-dl.org/downloads/${version}/${name}.tar.gz";
+    url = "https://yt-dl.org/downloads/${version}/${pname}-${version}.tar.gz";
     sha256 = "1mpyqdyjip5a6nn8lj1kaaab4pj75js6i8qzgap8bmn0k46awb1n";
   };
 
