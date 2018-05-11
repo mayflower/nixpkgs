@@ -5289,7 +5289,7 @@ let self = _self // overrides; _self = with self; {
       url = "mirror://cpan/authors/id/X/XA/XAOC/${name}.tar.gz";
       sha256 = "bbeaced995d7d8d10cfc51a3a5a66da41ceb2bc04fedcab50e10e6300e801c6e";
     };
-    propagatedBuildInputs = [ pkgs.pkgconfig ];
+    propagatedNativeBuildInputs = [ pkgs.buildPackages.pkgconfig ];
     meta = {
       homepage = http://gtk2-perl.sourceforge.net;
       description = "Simplistic interface to pkg-config";
