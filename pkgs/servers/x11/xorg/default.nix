@@ -1,8 +1,8 @@
 # THIS IS A GENERATED FILE.  DO NOT EDIT!
 args @ { clangStdenv, fetchurl, fetchgit, fetchpatch, stdenv, pkgconfig, intltool, freetype, fontconfig
-, libxslt, expat, libpng, zlib, perl, mesa_drivers, spice-protocol
+, libxslt, expat, libpng, zlib, mesa_drivers, spice-protocol
 , dbus, libuuid, openssl, gperf, m4, libevdev, tradcpp, libinput, mcpp, makeWrapper, autoreconfHook
-, autoconf, automake, libtool, xmlto, asciidoc, flex, bison, python, mtdev, pixman, ... }: with args;
+, autoconf, automake, libtool, xmlto, asciidoc, flex, bison, mtdev, pixman, buildPackages, ... }: with args;
 
 let
 
@@ -1142,10 +1142,10 @@ let
       url = http://xcb.freedesktop.org/dist/libxcb-1.12.tar.bz2;
       sha256 = "0nvv0la91cf8p5qqlb3r5xnmg1jn2wphn4fb5jfbr6byqsvv3psa";
     };
-    nativeBuildInputs = [ pkgconfig ];
-    buildInputs = [ libxslt libpthreadstubs python libXau xcbproto libXdmcp ];
+    nativeBuildInputs = [ pkgconfig buildPackages.python ];
+    buildInputs = [ libxslt libpthreadstubs libXau xcbproto libXdmcp ];
     meta.platforms = stdenv.lib.platforms.unix;
-  }) // {inherit libxslt libpthreadstubs python libXau xcbproto libXdmcp ;};
+  }) // {inherit libxslt libpthreadstubs libXau xcbproto libXdmcp ;};
 
   libxkbfile = (mkDerivation "libxkbfile" {
     name = "libxkbfile-1.0.9";
@@ -1454,10 +1454,10 @@ let
       url = http://xcb.freedesktop.org/dist/xcb-proto-1.12.tar.bz2;
       sha256 = "01j91946q8f34l1mbvmmgvyc393sm28ym4lxlacpiav4qsjan8jr";
     };
-    nativeBuildInputs = [ pkgconfig ];
-    buildInputs = [ python ];
+    nativeBuildInputs = [ pkgconfig buildPackages.python3 ];
+    buildInputs = [ ];
     meta.platforms = stdenv.lib.platforms.unix;
-  }) // {inherit python ;};
+  }) // {inherit ;};
 
   xcbutil = (mkDerivation "xcbutil" {
     name = "xcb-util-0.4.0";
