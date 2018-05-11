@@ -8,6 +8,7 @@
 , swig
 , ncurses
 , pam
+, buildPackages
 }:
 
 let
@@ -66,15 +67,12 @@ let
       autoreconfHook
       bison
       flex
+      perl
       pkgconfig
+      buildPackages.python
       swig
       ncurses
       which
-    ];
-
-    buildInputs = [
-      perl
-      python
     ];
 
     # required to build apparmor-parser
