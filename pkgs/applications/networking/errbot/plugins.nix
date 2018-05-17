@@ -66,12 +66,12 @@ rec {
   };
   atlassian = mkErrbotPlugin {
     pname = "atlassian";
-    version = "2018-04-30";
+    version = "2018-05-16";
     src = fetchFromGitHub {
       owner = "mayflower";
       repo = "err-atlassian";
-      rev = "fad08d7b3cee328561a74d7adfc422f2c0fb9d8d";
-      sha256 = "1i6497p0cqqddkcmiiqqsqa4fnknmpk2p5ibfxa3pw2bzslcq51x";
+      rev = "7c1aefd0829c0a144e6ff6a6ad43daf6073b0de3";
+      sha256 = "18126pc8hxxqb60fwrmxrcpv1vyddbncp72sp2ik88gq7qf6ghcn";
     };
     withPackages = ps: with ps; [ jira oauth2 tlslite ];
   };
