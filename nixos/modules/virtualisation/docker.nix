@@ -146,7 +146,6 @@ in
 
       systemd.services.docker = {
         wantedBy = optional cfg.enableOnBoot "multi-user.target";
-        requires = [ "" ];
         environment = proxy_env;
         serviceConfig = {
           ExecStart = [
@@ -154,6 +153,7 @@ in
             ''
               ${cfg.package}/bin/dockerd \
                 --group=docker \
+                --host=fd:// \
                 --log-driver=${cfg.logDriver} \
                 ${optionalString (cfg.storageDriver != null) "--storage-driver=${cfg.storageDriver}"} \
                 ${optionalString cfg.liveRestore "--live-restore" } \
@@ -168,6 +168,19 @@ in
 
         path = [ pkgs.kmod ] ++ (optional (cfg.storageDriver == "zfs") pkgs.zfs);
       };
+
+      systemd.sockets.docker = {
+        description = "Docker Socket for the API";
+        wantedBy = [ "sockets.target" ];
+        partOf = [ "docker.service" ];
+        socketConfig = {
+          ListenStream = cfg.listenOptions;
+          SocketMode = "0660";
+          SocketUser = "root";
+          SocketGroup = "docker";
+        };
+      };
+
 
       systemd.services.docker-prune = {
         description = "Prune docker resources";
