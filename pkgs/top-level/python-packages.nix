@@ -1636,6 +1636,8 @@ in {
 
   cx_Freeze = callPackage ../development/python-modules/cx_freeze {};
 
+  cx_oracle = callPackage ../development/python-modules/cx_oracle {};
+
   cvxopt = buildPythonPackage rec {
     name = "${pname}-${version}";
     pname = "cvxopt";
