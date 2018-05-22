@@ -313,6 +313,8 @@ in {
 
   pyaes = callPackage ../development/python-modules/pyaes { };
 
+  pyairvisual = callPackage ../development/python-modules/pyairvisual { };
+
   pyamf = callPackage ../development/python-modules/pyamf { };
 
   pyatspi = disabledIf (!isPy3k) (callPackage ../development/python-modules/pyatspi { });
