@@ -152,8 +152,8 @@ in
   config = mkIf cfg.enable {
 
     assertions = [
-      { assertion = (cfg.channel >= 1 && cfg.channel <= 13);
-        message = "channel must be between 1 and 13";
+      { assertion = (cfg.channel >= 0 && cfg.channel <= 13);
+        message = "channel must be between 0 and 13";
       }];
 
     environment.systemPackages =  [ pkgs.hostapd ];
