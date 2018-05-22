@@ -75,4 +75,15 @@ rec {
     };
     withPackages = ps: with ps; [ jira oauth2 tlslite ];
   };
+  homeassistant = mkErrbotPlugin {
+    pname = "homeassistant";
+    version = "2017-09-18";
+    src = fetchFromGitHub {
+      owner = "btotharye";
+      repo = "err-homeassistant";
+      rev = "a9d3c60cc7f36e71c982746c09dba4d0642bf95a";
+      sha256 = "0a8401yir6g3iicnls87n11sa1dklqz4f7cs2nw0zsdgpvvygada";
+    };
+    withPackages = ps: with ps; [ requests fuzzywuzzy python-Levenshtein ];
+  };
 }
