@@ -16429,17 +16429,11 @@ with pkgs;
 
   jedit = callPackage ../applications/editors/jedit { };
 
-  jicofo = callPackage ../servers/jitsi/jicofo.nix { };
-
   jgmenu = callPackage ../applications/misc/jgmenu { };
 
   jigdo = callPackage ../applications/misc/jigdo { };
 
   jitsi = callPackage ../applications/networking/instant-messengers/jitsi { };
-
-  jitsi-meet = callPackage ../servers/jitsi/jitsi-meet.nix { };
-
-  jitsi-videobridge = callPackage ../servers/jitsi/jitsi-videobridge.nix { };
 
   joe = callPackage ../applications/editors/joe { };
 

@@ -491,10 +491,6 @@
   ./services/networking/iodine.nix
   ./services/networking/ircd-hybrid/default.nix
   ./services/networking/iwd.nix
-  ./services/networking/jitsi-meet/default.nix
-  ./services/networking/jitsi-meet/jicofo.nix
-  ./services/networking/jitsi-meet/jitsi-meet.nix
-  ./services/networking/jitsi-meet/jitsi-videobridge.nix
   ./services/networking/keepalived/default.nix
   ./services/networking/keybase.nix
   ./services/networking/kippo.nix
