@@ -83,14 +83,21 @@ let
   };
 in stdenv.mkDerivation rec {
   name = "mpv-${version}";
-  version = "0.28.2";
+  version = "0.27.2";
 
   src = fetchFromGitHub {
     owner = "mpv-player";
     repo  = "mpv";
     rev    = "v${version}";
-    sha256 = "0bldxhqjz7z9fgvx4k40l49awpay17fscp8ypswb459yicy8npmg";
+    sha256 = "1ivyyqajkxq5c1zxp0dm7pljvianhgvwl3dbghgpzyrch59k5wnr";
   };
+
+  patches = [
+    (fetchpatch {
+      url = "https://github.com/mpv-player/mpv/commit/2ecf240b1cd20875991a5b18efafbe799864ff7f.patch";
+      sha256 = "1sr0770rvhsgz8d7ysr9qqp4g9gwdhgj8g3rgnz90wl49lgrykhb";
+    })
+  ];
 
   postPatch = ''
     patchShebangs ./TOOLS/
