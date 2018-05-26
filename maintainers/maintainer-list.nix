@@ -1735,6 +1735,11 @@
     email = "me@joelt.io";
     name = "Joel Taylor";
   };
+  johanot = {
+    email = "write@ownrisk.dk";
+    github = "johanot";
+    name = "Johan Thomsen";
+  };
   johbo = {
     email = "johannes@bornhold.name";
     github = "johbo";
