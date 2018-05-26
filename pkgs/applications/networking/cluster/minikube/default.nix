@@ -1,5 +1,6 @@
-{ stdenv, buildGoPackage, fetchFromGitHub, fetchurl, go-bindata, kubernetes, libvirt, pkgconfig, qemu, docker-machine-kvm,
-  gpgme, makeWrapper, hostPlatform, vmnet, python }:
+{ stdenv, buildGoPackage, fetchFromGitHub, go-bindata
+, libvirt, qemu, docker-machine-kvm, docker-machine-kvm2
+, gpgme, makeWrapper, hostPlatform, vmnet, python, kubectl }:
 
 let
   version = "0.27.0";
@@ -10,21 +11,7 @@ let
     sha256 = "00gj8x5p0vxwy0y0g5nnddmq049h7zxvhb73lb4gii5mghr9mkws";
   };
 
-  docker-machine-kvm2 = buildGoPackage rec {
-    pname = "docker-machine-kvm2";
-    name = "${pname}-${version}";
-    inherit src;
-    inherit version;
-
-    buildInputs = [ pkgconfig ];
-    propagatedBuildInputs = [ libvirt ];
-
-    goPackagePath = "k8s.io/minikube";
-    subPackages = [ "cmd/drivers/kvm" ];
-    postInstall = "mv $bin/bin/kvm $bin/bin/docker-machine-driver-kvm2";
-  };
-
-  binPath = stdenv.lib.optionals stdenv.isLinux [ libvirt qemu docker-machine-kvm docker-machine-kvm2 ];
+  binPath = stdenv.lib.optionals stdenv.isLinux [ libvirt qemu docker-machine-kvm docker-machine-kvm2 kubectl ];
 
 in buildGoPackage rec {
   pname   = "minikube";
