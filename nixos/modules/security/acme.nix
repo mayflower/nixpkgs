@@ -149,14 +149,6 @@ in
         '';
       };
 
-      tosHash = mkOption {
-        type = types.string;
-        default = "cc88d8d9517f490191401e7b54e9ffd12a2b9082ec7a1d4cec6101f9f1647e7b";
-        description = ''
-          SHA256 of the Terms of Services document. This changes once in a while.
-        '';
-      };
-
       production = mkOption {
         type = types.bool;
         default = true;
@@ -205,7 +197,7 @@ in
               let
                 cpath = "${cfg.directory}/${cert}";
                 rights = if data.allowKeysForGroup then "750" else "700";
-                cmdline = [ "-v" "-d" data.domain "--default_root" data.webroot "--valid_min" cfg.validMin "--tos_sha256" cfg.tosHash ]
+                cmdline = [ "-v" "-d" data.domain "--default_root" data.webroot "--valid_min" cfg.validMin ]
                           ++ optionals (cfg.server != null) [ "--server" cfg.server ]
                           ++ optionals (data.email != null) [ "--email" data.email ]
                           ++ concatMap (p: [ "-f" p ]) data.plugins
@@ -267,7 +259,7 @@ in
                         chown '${data.user}:${data.group}' '${cpath}'
                       fi
                   '';
-                  script = 
+                  script =
                     ''
                       workdir="$(mktemp -d)"
 
