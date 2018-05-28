@@ -149,6 +149,35 @@ let
           Optional http login credentials for metrics scraping.
         '';
       };
+      tls_config = mkOption {
+        type = types.nullOr (types.submodule {
+          options = {
+            ca_file = mkOption {
+              type = types.str;
+              description = ''
+                CA file
+              '';
+            };
+            cert_file = mkOption {
+              type = types.str;
+              description = ''
+                Cert file
+              '';
+            };
+            key_file = mkOption {
+              type = types.str;
+              description = ''
+                Cert key
+              '';
+            };
+          };
+        });
+        default = null;
+        apply = x: mapNullable _filter x;
+        description = ''
+          Optional tls client cert auth configuration.
+        '';
+      };
       dns_sd_configs = mkOption {
         type = types.listOf promTypes.dns_sd_config;
         default = [];
