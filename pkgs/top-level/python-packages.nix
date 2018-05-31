@@ -1631,8 +1631,8 @@ in {
   cufflinks = callPackage ../development/python-modules/cufflinks { };
 
   cupy = callPackage ../development/python-modules/cupy {
-    cudatoolkit = pkgs.cudatoolkit8;
-    cudnn = pkgs.cudnn6_cudatoolkit8;
+    cudatoolkit = pkgs.cudatoolkit_8;
+    cudnn = pkgs.cudnn6_cudatoolkit_8;
     nccl = pkgs.nccl;
   };
 
@@ -6048,7 +6048,7 @@ in {
   };
 
   pycuda = callPackage ../development/python-modules/pycuda rec {
-    cudatoolkit = pkgs.cudatoolkit75;
+    cudatoolkit = pkgs.cudatoolkit_7_5;
     inherit (pkgs.stdenv) mkDerivation;
   };
 
@@ -20184,12 +20184,24 @@ EOF
 
   tensorflow-tensorboard = callPackage ../development/python-modules/tensorflow-tensorboard { };
 
+<<<<<<< HEAD
   tensorflow = callPackage ../development/python-modules/tensorflow rec {
     cudaSupport = pkgs.config.cudaSupport or false;
     inherit (pkgs.linuxPackages) nvidia_x11;
     cudatoolkit = pkgs.cudatoolkit9;
     cudnn = pkgs.cudnn_cudatoolkit9;
   };
+=======
+  tensorflow =
+    if stdenv.isDarwin
+    then callPackage ../development/python-modules/tensorflow/bin.nix { }
+    else callPackage ../development/python-modules/tensorflow rec {
+      cudaSupport = pkgs.config.cudaSupport or false;
+      inherit (pkgs.linuxPackages) nvidia_x11;
+      cudatoolkit = pkgs.cudatoolkit_9;
+      cudnn = pkgs.cudnn_cudatoolkit_9;
+    };
+>>>>>>> 9e730ee2543... renaming cudatoolkit version numbers
 
   tensorflowWithoutCuda = self.tensorflow.override {
     cudaSupport = false;
