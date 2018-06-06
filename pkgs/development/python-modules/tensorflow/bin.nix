@@ -18,6 +18,7 @@
 , zlib
 , python
 , symlinkJoin
+, autoPatchelfHook
 }:
 
 # We keep this binary build for two reasons:
@@ -58,18 +59,20 @@ in buildPythonPackage rec {
   # bleach) Hence we disable dependency checking for now.
   installFlags = lib.optional isPy36 "--no-dependencies";
 
+  nativeBuildInputs = [ autoPatchelfHook ];
+
   # Note that we need to run *after* the fixup phase because the
   # libraries are loaded at runtime. If we run in preFixup then
   # patchelf --shrink-rpath will remove the cuda libraries.
-  postFixup = let
-    rpath = stdenv.lib.makeLibraryPath
-      ([ stdenv.cc.cc.lib zlib ] ++ lib.optionals cudaSupport [ cudatoolkit_joined cudnn nvidia_x11 ]);
-  in
-  lib.optionalString (stdenv.isLinux) ''
-    rrPath="$out/${python.sitePackages}/tensorflow/:${rpath}"
-    internalLibPath="$out/${python.sitePackages}/tensorflow/python/_pywrap_tensorflow_internal.so"
-    find $out -name '*.${stdenv.hostPlatform.extensions.sharedLibrary}' -exec patchelf --set-rpath "$rrPath" {} \;
-  '';
+  # postFixup = let
+  #   rpath = stdenv.lib.makeLibraryPath
+  #     ([ stdenv.cc.cc.lib zlib ] ++ lib.optionals cudaSupport [ cudatoolkit_joined cudnn nvidia_x11 ]);
+  # in
+  # lib.optionalString (stdenv.isLinux) ''
+  #   rrPath="$out/${python.sitePackages}/tensorflow/:${rpath}"
+  #   internalLibPath="$out/${python.sitePackages}/tensorflow/python/_pywrap_tensorflow_internal.so"
+  #   find $out -name '*.${stdenv.hostPlatform.extensions.sharedLibrary}' -exec patchelf --set-rpath "$rrPath" {} \;
+  # '';
 
 
   meta = with stdenv.lib; {
