@@ -162,7 +162,7 @@ let
       makeWrapper ${cfg.packages.gitlab.rubyEnv}/bin/rake $out/bin/gitlab-rake \
           ${concatStrings (mapAttrsToList (name: value: "--set ${name} '${value}' ") gitlabEnv)} \
           --set GITLAB_CONFIG_PATH '${cfg.statePath}/config' \
-          --set PATH '${lib.makeBinPath [ pkgs.nodejs pkgs.gzip pkgs.git pkgs.gnutar config.services.postgresql.package ]}:$PATH' \
+          --set PATH '${lib.makeBinPath [ pkgs.coreutils pkgs.nodejs pkgs.gzip pkgs.git pkgs.gnutar config.services.postgresql.package ]}' \
           --set RAKEOPT '-f ${cfg.packages.gitlab}/share/gitlab/Rakefile' \
           --run 'cd ${cfg.packages.gitlab}/share/gitlab'
      '';
@@ -623,6 +623,10 @@ in {
             GITLAB_ROOT_PASSWORD='${cfg.initialRootPassword}' GITLAB_ROOT_EMAIL='${cfg.initialRootEmail}'
           touch "${cfg.statePath}/db-seeded"
         fi
+
+        # The gitlab:shell:setup regenerates the authorized_keys file so that
+        # the store path to the gitlab-shell in it gets updated
+        ${pkgs.sudo}/bin/sudo -u ${cfg.user} force=yes ${gitlab-rake}/bin/gitlab-rake gitlab:shell:setup RAILS_ENV=production
 
         # The gitlab:shell:create_hooks task seems broken for fixing links
         # so we instead delete all the hooks and create them anew
