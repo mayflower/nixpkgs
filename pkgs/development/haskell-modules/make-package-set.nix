@@ -102,8 +102,7 @@ let
   callPackage = drv: args: callPackageWithScope defaultScope drv args;
 
   withPackages = packages: buildPackages.callPackage ./with-packages-wrapper.nix {
-    inherit (self) llvmPackages;
-    inherit ghc;
+    inherit (self) ghc llvmPackages;
     inherit packages;
   };
 
@@ -120,7 +119,7 @@ let
       installPhase = ''
         export HOME="$TMP"
         mkdir -p "$out"
-        cabal2nix --compiler=${ghc.haskellCompilerName} --system=${stdenv.system} ${sha256Arg} "${src}" ${extraCabal2nixOptions} > "$out/default.nix"
+        cabal2nix --compiler=${self.ghc.haskellCompilerName} --system=${hostPlatform.system} ${sha256Arg} "${src}" ${extraCabal2nixOptions} > "$out/default.nix"
       '';
   };
 
@@ -162,7 +161,7 @@ in package-set { inherit pkgs stdenv callPackage; } self // {
       filter = path: type:
                  pkgs.lib.hasSuffix "${name}.cabal" path ||
                  baseNameOf path == "package.yaml";
-      expr = haskellSrc2nix {
+      expr = self.haskellSrc2nix {
         inherit name;
         src = if pkgs.lib.canCleanSource src
                 then pkgs.lib.cleanSourceWith { inherit src filter; }

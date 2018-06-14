@@ -1247,6 +1247,8 @@ with pkgs;
 
   goa = callPackage ../development/tools/goa { };
 
+  gohai = callPackage ../tools/system/gohai { };
+
   gorilla-bin = callPackage ../tools/security/gorilla-bin { };
 
   gosu = callPackage ../tools/misc/gosu { };
@@ -2078,8 +2080,6 @@ with pkgs;
   eflite = callPackage ../applications/audio/eflite {};
 
   eid-mw = callPackage ../tools/security/eid-mw { };
-
-  eid-viewer = callPackage ../tools/security/eid-viewer { };
 
   mcrcon = callPackage ../tools/networking/mcrcon {};
 
@@ -6812,6 +6812,11 @@ with pkgs;
     });
   inherit (rust) cargo rustc;
 
+  rust_1_26 = callPackage ../development/compilers/rust/1.26
+    (stdenv.lib.optionalAttrs (stdenv.cc.isGNU && stdenv.hostPlatform.isi686) {
+      stdenv = overrideCC stdenv gcc6; # with gcc-7: undefined reference to `__divmoddi4'
+    });
+
   buildRustCrate = callPackage ../build-support/rust/build-rust-crate.nix { };
 
   cargo-vendor = callPackage ../build-support/rust/cargo-vendor {};
@@ -10800,9 +10805,7 @@ with pkgs;
 
   nix-plugins = callPackage ../development/libraries/nix-plugins { };
 
-  nix-plugins_4 = callPackage ../development/libraries/nix-plugins/4.nix {
-    nix = nixUnstable;
-  };
+  nix-plugins_4 = callPackage ../development/libraries/nix-plugins/4.nix {};
 
   nlohmann_json = callPackage ../development/libraries/nlohmann_json { };
 
@@ -13401,21 +13404,21 @@ with pkgs;
       ];
   };
 
-  linux_copperhead_lts = callPackage ../os-specific/linux/kernel/linux-copperhead-lts.nix {
-    kernelPatches = with kernelPatches; [
-      bridge_stp_helper
-      modinst_arg_list_too_long
-      tag_hardened
-    ];
-  };
+  linux_copperhead_lts = (linux_4_14.override {
+    kernelPatches = linux_4_14.kernelPatches ++ [
+      kernelPatches.copperhead_4_14
+      kernelPatches.tag_hardened
+     ];
+    modDirVersionArg = linux_4_14.modDirVersion + "-hardened";
+  });
 
-  linux_copperhead_stable = callPackage ../os-specific/linux/kernel/linux-copperhead-stable.nix {
-    kernelPatches = with kernelPatches; [
-      bridge_stp_helper
-      modinst_arg_list_too_long
-      tag_hardened
-    ];
-  };
+  linux_copperhead_stable = (linux_4_16.override {
+    kernelPatches = linux_4_16.kernelPatches ++ [
+      kernelPatches.copperhead_4_16
+      kernelPatches.tag_hardened
+     ];
+    modDirVersionArg = linux_4_16.modDirVersion + "-hardened";
+  });
 
   # linux mptcp is based on the 4.4 kernel
   linux_mptcp = callPackage ../os-specific/linux/kernel/linux-mptcp.nix {
@@ -13480,6 +13483,21 @@ with pkgs;
   };
 
   linux_4_15 = callPackage ../os-specific/linux/kernel/linux-4.15.nix {
+    kernelPatches =
+      [ kernelPatches.bridge_stp_helper
+        # See pkgs/os-specific/linux/kernel/cpu-cgroup-v2-patches/README.md
+        # when adding a new linux version
+        # kernelPatches.cpu-cgroup-v2."4.11"
+        kernelPatches.modinst_arg_list_too_long
+      ]
+      ++ lib.optionals ((platform.kernelArch or null) == "mips")
+      [ kernelPatches.mips_fpureg_emu
+        kernelPatches.mips_fpu_sigill
+        kernelPatches.mips_ext3_n32
+      ];
+  };
+
+  linux_4_16 = callPackage ../os-specific/linux/kernel/linux-4.16.nix {
     kernelPatches =
       [ kernelPatches.bridge_stp_helper
         # See pkgs/os-specific/linux/kernel/cpu-cgroup-v2-patches/README.md
@@ -13685,7 +13703,7 @@ with pkgs;
   linux = linuxPackages.kernel;
 
   # Update this when adding the newest kernel major version!
-  linuxPackages_latest = linuxPackages_4_15;
+  linuxPackages_latest = linuxPackages_4_16;
   linux_latest = linuxPackages_latest.kernel;
 
   # Build the kernel modules for the some of the kernels.
@@ -13696,6 +13714,7 @@ with pkgs;
   linuxPackages_4_9 = recurseIntoAttrs (linuxPackagesFor pkgs.linux_4_9);
   linuxPackages_4_14 = recurseIntoAttrs (linuxPackagesFor pkgs.linux_4_14);
   linuxPackages_4_15 = recurseIntoAttrs (linuxPackagesFor pkgs.linux_4_15);
+  linuxPackages_4_16 = recurseIntoAttrs (linuxPackagesFor pkgs.linux_4_16);
   # Don't forget to update linuxPackages_latest!
 
   # Intentionally lacks recurseIntoAttrs, as -rc kernels will quite likely break out-of-tree modules and cause failed Hydra builds.
@@ -15850,11 +15869,14 @@ with pkgs;
   });
 
   firefox-unwrapped = firefoxPackages.firefox;
-  firefox-esr-unwrapped = firefoxPackages.firefox-esr;
+  firefox-esr-52-unwrapped = firefoxPackages.firefox-esr-52;
+  firefox-esr-60-unwrapped = firefoxPackages.firefox-esr-60;
   tor-browser-unwrapped = firefoxPackages.tor-browser;
 
   firefox = wrapFirefox firefox-unwrapped { };
-  firefox-esr = wrapFirefox firefox-esr-unwrapped { };
+  firefox-esr-52 = wrapFirefox firefox-esr-52-unwrapped { };
+  firefox-esr-60 = wrapFirefox firefox-esr-60-unwrapped { };
+  firefox-esr = firefox-esr-52;
 
   firefox-bin-unwrapped = callPackage ../applications/networking/browsers/firefox-bin {
     channel = "release";
