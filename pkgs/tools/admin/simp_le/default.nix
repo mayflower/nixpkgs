@@ -1,12 +1,12 @@
-{ stdenv, fetchFromGitHub, fetchpatch, pythonPackages, bash }:
- 
-pythonPackages.buildPythonApplication rec {
-  pname = "simp_le-client";
-  version = "0.8.0";
+{ stdenv, fetchFromGitHub, fetchpatch, python3Packages, bash }:
 
-  src = pythonPackages.fetchPypi {
+python3Packages.buildPythonApplication rec {
+  pname = "simp_le-client";
+  version = "0.9.0";
+
+  src = python3Packages.fetchPypi {
     inherit pname version;
-    sha256 = "0nv9mm99rm8i9flgfgwvmajbsxb5rm162nfxlq3wk66bbbyr6y1i";
+    sha256 = "1yxfznd78zkg2f657v520zj5w4dvq5n594d0kpm4lra8xnpg4zcv";
   };
 
   postPatch = ''
@@ -20,7 +20,7 @@ pythonPackages.buildPythonApplication rec {
     $out/bin/simp_le --test
   '';
 
-  propagatedBuildInputs = with pythonPackages; [ acme setuptools_scm josepy ];
+  propagatedBuildInputs = with python3Packages; [ acme setuptools_scm josepy mock ];
 
   meta = with stdenv.lib; {
     homepage = https://github.com/zenhack/simp_le;
