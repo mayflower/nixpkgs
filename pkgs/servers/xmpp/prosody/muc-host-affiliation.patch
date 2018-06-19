@@ -1,0 +1,12 @@
+diff --git a/plugins/muc/muc.lib.lua b/plugins/muc/muc.lib.lua
+index 5d8c6df..c5a88e0 100644
+--- a/plugins/muc/muc.lib.lua
++++ b/plugins/muc/muc.lib.lua
+@@ -995,6 +995,7 @@ function room_mt:get_affiliation(jid)
+ 	local node, host, resource = jid_split(jid);
+ 	local bare = node and node.."@"..host or host;
+ 	local result = self._affiliations[bare]; -- Affiliations are granted, revoked, and maintained based on the user's bare JID.
++	if not result then result = self._affiliations[host]; end
+ 	if not result and self._affiliations[host] == "outcast" then result = "outcast"; end -- host banned
+ 	return result;
+ end
