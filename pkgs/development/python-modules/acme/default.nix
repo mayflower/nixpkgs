@@ -1,6 +1,6 @@
 { stdenv, buildPythonPackage, fetchPypi
 , certbot
-, nose
+, pytest
 , cryptography
 , pyasn1
 , pyopenssl
@@ -12,6 +12,7 @@
 , werkzeug
 , mock
 , ndg-httpsclient
+, requests-toolbelt
 }:
 
 buildPythonPackage rec {
@@ -21,11 +22,11 @@ buildPythonPackage rec {
   name = "${pname}-${version}";
 
   propagatedBuildInputs = [
-    cryptography pyasn1 pyopenssl pyRFC3339 pytz requests six werkzeug mock
-    ndg-httpsclient josepy
+    cryptography pyasn1 pyopenssl pyRFC3339 pytz requests six werkzeug
+    ndg-httpsclient josepy requests-toolbelt
   ];
 
-  checkInputs = [ nose ];
+  checkInputs = [ pytest mock ];
 
   postUnpack = "sourceRoot=\${sourceRoot}/acme";
 }
