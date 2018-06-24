@@ -7,27 +7,19 @@ let
 
   py = python3.override {
     packageOverrides = self: super: {
-      requests = super.requests.overridePythonAttrs (oldAttrs: rec {
-        version = "2.18.4";
+      aiohttp = super.aiohttp.overridePythonAttrs (oldAttrs: rec {
+        version = "3.3.2";
         src = oldAttrs.src.override {
           inherit version;
-          sha256 = "0zi3v9nsmv9j27d0c0m1dvqyvaxz53g8m0aa1h3qanxs4irkwi4w";
+          sha256 = "04ncng5j30ayf0mp6ikaq56fxlks89w9inbsxfswgbpvlg3yw3gj";
         };
-        propagatedBuildInputs = [ self.async_generator ] ++ oldAttrs.propagatedBuildInputs;
         doCheck = false;
       });
-      urllib3 = super.urllib3.overridePythonAttrs (oldAttrs: rec {
-        version = "1.22";
+      async-timeout = super.async-timeout.overridePythonAttrs (oldAttrs: rec {
+        version = "3.0.0";
         src = oldAttrs.src.override {
           inherit version;
-          sha256 = "0kyvc9zdlxr5r96bng5rhm9a6sfqidrbvvkz64s76qs5267dli6c";
-        };
-      });
-      idna = super.idna.overridePythonAttrs (oldAttrs: rec {
-        version = "2.6";
-        src = oldAttrs.src.override {
-          inherit version;
-          sha256 = "13qaab6d0s15gknz8v3zbcfmbj6v86hn9pjxgkdf62ch13imssic";
+          sha256 = "b3c0ddc416736619bd4a95ca31de8da6920c3b9a140c64dbef2b2fa7bf521287";
         };
       });
       cryptography = super.cryptography.overridePythonAttrs (oldAttrs: rec {
@@ -55,6 +47,20 @@ let
         };
         propagatedBuildInputs = [ self.requests ] ++ oldAttrs.propagatedBuildInputs;
         doCheck = false;
+      });
+      certifi = super.certifi.overridePythonAttrs (oldAttrs: rec {
+        version = "2018.4.16";
+        src = oldAttrs.src.override {
+          inherit version;
+          sha256 = "13e698f54293db9f89122b0581843a782ad0934a4fe0172d2a980ba77fc61bb7";
+        };
+      });
+      pytz = super.pytz.overridePythonAttrs (oldAttrs: rec {
+        version = "2018.4";
+        src = oldAttrs.src.override {
+          inherit version;
+          sha256 = "c06425302f2cf668f1bba7a0a03f3c1d34d4ebeef2c72003da308b3947c7f749";
+        };
       });
       # used by check_config script
       # can be unpinned once https://github.com/home-assistant/home-assistant/issues/11917 is resolved
