@@ -17,7 +17,13 @@ buildGoPackage rec {
     sha256 = "098xrzq7wkizww9552bk8cn300336y51qfzf1fkfwrn1fqf9nswl";
   };
 
+  postPatch = ''
+    substituteInPlace pkg/cmd/grafana-server/main.go \
+      --replace 'var version = "5.0.0"'  'var version = "${version}"'
+  '';
+
   preBuild = "export GOPATH=$GOPATH:$NIX_BUILD_TOP/go/src/${goPackagePath}/Godeps/_workspace";
+
   postInstall = ''
     tar -xvf $srcStatic
     mkdir -p $bin/share/grafana
