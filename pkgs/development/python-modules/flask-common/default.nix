@@ -1,5 +1,5 @@
 { stdenv, fetchPypi, buildPythonPackage
-, crayons, flask, flask_cache, gunicorn, maya, meinheld, whitenoise }:
+, crayons, flask, flask-caching, gunicorn, maya, meinheld, whitenoise }:
 
 buildPythonPackage rec {
   pname = "Flask-Common";
@@ -10,7 +10,7 @@ buildPythonPackage rec {
     sha256 = "1f6ibvkxpxgczxs4qcbh5bj8rf9ggggbagi2dkaphx5w29xbbys4";
   };
 
-  propagatedBuildInputs = [ crayons flask flask_cache gunicorn maya meinheld whitenoise ];
+  propagatedBuildInputs = [ crayons flask flask-caching gunicorn maya meinheld whitenoise ];
 
   meta = with stdenv.lib; {
     description = "Flask extension with lots of common time-savers";
