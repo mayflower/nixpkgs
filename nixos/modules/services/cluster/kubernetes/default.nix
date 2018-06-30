@@ -1106,6 +1106,11 @@ in {
 
       services.kubernetes.kubelet.enable = mkDefault true;
       services.kubernetes.proxy.enable = mkDefault true;
+
+      systemd.extraConfig = ''
+        DefaultCPUAccounting=yes
+        DefaultMemoryAccounting=yes
+      '';
     })
 
     (mkIf cfg.addonManager.enable {
