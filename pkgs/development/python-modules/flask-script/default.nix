@@ -12,6 +12,15 @@ buildPythonPackage rec {
   propagatedBuildInputs = [ flask ];
   checkInputs = [ pytest ];
 
+  postPatch = ''
+    substituteInPlace tests.py \
+      --replace 'flask.ext.script' 'flask_script'
+  '';
+
+  checkPhase = ''
+    py.test tests.py
+  '';
+
   meta = with lib; {
     homepage = http://github.com/smurfix/flask-script;
     description = "Scripting support for Flask";
