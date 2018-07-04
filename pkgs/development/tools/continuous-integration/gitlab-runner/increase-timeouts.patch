@@ -1,0 +1,20 @@
+diff --git a/helpers/docker/sockets.go b/helpers/docker/sockets.go
+index 1c799e3..3119fef 100644
+--- a/helpers/docker/sockets.go
++++ b/helpers/docker/sockets.go
+@@ -9,11 +9,11 @@ import (
+ )
+ 
+ // Why 32? See https://github.com/docker/docker/pull/8035.
+-const defaultTimeout = 32 * time.Second
++const defaultTimeout = 120 * time.Second
+ const defaultKeepAlive = 10 * time.Second
+-const defaultTLSHandshakeTimeout = 10 * time.Second
+-const defaultResponseHeaderTimeout = 30 * time.Second
+-const defaultExpectContinueTimeout = 30 * time.Second
++const defaultTLSHandshakeTimeout = 30 * time.Second
++const defaultResponseHeaderTimeout = 120 * time.Second
++const defaultExpectContinueTimeout = 120 * time.Second
+ const defaultIdleConnTimeout = time.Minute
+ 
+ // configureTransport configures the specified Transport according to the

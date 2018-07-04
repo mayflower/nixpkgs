@@ -32,7 +32,7 @@ buildGoPackage rec {
     sha256 = "06p8fggnxn2afy0k4wjh44d1qby9n2j0mq6cl206cckzh2gfsknp";
   };
 
-  patches = [ ./fix-shell-path.patch ];
+  patches = [ ./fix-shell-path.patch ./increase-timeouts.patch ];
 
   buildInputs = [ go-bindata ];
 
