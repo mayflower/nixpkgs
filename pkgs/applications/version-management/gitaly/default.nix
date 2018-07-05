@@ -7,7 +7,7 @@ let
     gemdir = ./.;
   };
 in buildGoPackage rec {
-  version = "0.100.0";
+  version = "0.105.0";
   name = "gitaly-${version}";
 
   src = fetchFromGitLab {
@@ -33,7 +33,7 @@ in buildGoPackage rec {
   meta = with stdenv.lib; {
     homepage = http://www.gitlab.com/;
     platforms = platforms.unix;
-    maintainers = with maintainers; [ roblabla ];
+    maintainers = with maintainers; [ roblabla globin fpletz ];
     license = licenses.mit;
   };
 }

@@ -61,10 +61,10 @@
     dependencies = ["multipart-post"];
     source = {
       remotes = ["https://rubygems.org"];
-      sha256 = "1c3x3s8vb5nf7inyfvhdxwa4q3swmnacpxby6pish5fgmhws7zrr";
+      sha256 = "157c4cmb5g1b3ny6k9qf9z57rfijl54fcq3hnqqf6g31g1m096b2";
       type = "gem";
     };
-    version = "0.14.0";
+    version = "0.12.2";
   };
   gemojione = {
     dependencies = ["json"];
@@ -79,10 +79,10 @@
     dependencies = ["google-protobuf" "grpc"];
     source = {
       remotes = ["https://rubygems.org"];
-      sha256 = "1y5sn60h71ssxmc8br32fqhgmfqxgrmdlg4vya8dyy37ai20f85z";
+      sha256 = "0c81rblr32va5j03igcm1ba96g84ndsfh55ixqz85ks98986dmg0";
       type = "gem";
     };
-    version = "0.99.0";
+    version = "0.101.0";
   };
   github-linguist = {
     dependencies = ["charlock_holmes" "escape_utils" "mime-types" "rugged"];
@@ -184,10 +184,10 @@
     dependencies = ["google-protobuf" "googleapis-common-protos-types" "googleauth"];
     source = {
       remotes = ["https://rubygems.org"];
-      sha256 = "17wvqhjmldxph4li402rvfbyzi5455lzmfr2y19kq9ghrzjyad82";
+      sha256 = "1is4czi3i7y6zyxzyrpsma1z91axmc0jz2ngr6ckixqd3629npkz";
       type = "gem";
     };
-    version = "1.10.0";
+    version = "1.11.0";
   };
   i18n = {
     source = {
@@ -469,10 +469,10 @@
   rugged = {
     source = {
       remotes = ["https://rubygems.org"];
-      sha256 = "0q1krxgd0ql03x8m9m05x5sxizw5sc7lms7rkp44qf45grpdk3v3";
+      sha256 = "0vsq9jsmgygpk04fjjvyc7p7zrs9aakzgfbp1sk0hp7pjrb1sc6a";
       type = "gem";
     };
-    version = "0.27.0";
+    version = "0.27.1";
   };
   sanitize = {
     dependencies = ["nokogiri"];
