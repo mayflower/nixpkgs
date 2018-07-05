@@ -1,4 +1,4 @@
-{ pkgs, stdenv, lib, bundler, fetchurl, fetchFromGitHub, bundlerEnv, libiconv
+{ pkgs, stdenv, lib, bundler, fetchurl, fetchFromGitLab, bundlerEnv, libiconv
 , ruby, tzdata, git, procps, nettools
 }:
 
@@ -16,11 +16,11 @@ let
     };
   };
 
-  version = "10.8.0";
+  version = "11.0.2";
 
   gitlabDeb = fetchurl {
     url = "https://packages.gitlab.com/gitlab/gitlab-ce/packages/debian/jessie/gitlab-ce_${version}-ce.0_amd64.deb/download";
-    sha256 = "0j5jrlwfpgwfirjnqb9w4snl9w213kdxb1ajyrla211q603d4j34";
+    sha256 = "1siyxih8zd2hyp2rkqnz9gpngw1vp1j9w1naix2bn2lhgcfxpyjl";
   };
 
 in
@@ -28,11 +28,11 @@ in
 stdenv.mkDerivation rec {
   name = "gitlab-${version}";
 
-  src = fetchFromGitHub {
-    owner = "gitlabhq";
-    repo = "gitlabhq";
+  src = fetchFromGitLab {
+    owner = "gitlab-org";
+    repo = "gitlab-ce";
     rev = "v${version}";
-    sha256 = "1idvi27xpghvvb3sv62afhcnnswvjlrbg5lld79a761kd4187cym";
+    sha256 = "1kxxshsqbvv6y7jf7mp3pl2ma02gy7wrgnb0n5m4wwvcnw86jcfh";
   };
 
   buildInputs = [
