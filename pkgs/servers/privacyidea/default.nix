@@ -2,13 +2,13 @@
 
 pythonPackages.buildPythonPackage rec {
   name = "privacyidea-${version}";
-  version = "2.22";
+  version = "2.22.1";
 
   src = fetchgit {
     url = "https://github.com/privacyidea/privacyidea.git";
     rev = "refs/tags/v${version}";
     fetchSubmodules = true;
-    sha256 = "1fgy4h0zxq5p07x6j9d4s60nhp5z9c4mjm2hsp2sszxpvpb76ic8";
+    sha256 = "10hls53g3dvvy4lczqj8qr8vwhcl5ka4i766y02pr6p2822fp1l1";
   };
 
   postPatch = ''
