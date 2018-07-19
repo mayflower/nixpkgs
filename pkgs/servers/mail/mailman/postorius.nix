@@ -15,6 +15,8 @@ python3.pkgs.buildPythonPackage rec {
     mailmanclient django django-mailman3 beautifulsoup4 vcrpy mock psycopg2
   ];
 
+  patches = [ ./users_can_create_lists.patch ];
+
   postPatch = ''
     substituteInPlace src/postorius/templatetags/membership_helpers.py \
       --replace "._client" ""
