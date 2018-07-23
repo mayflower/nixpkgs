@@ -5,11 +5,11 @@
 
 stdenv.mkDerivation rec {
   name = "atlassian-jira-${version}";
-  version = "7.10.0";
+  version = "7.11.0";
 
   src = fetchurl {
     url = "https://downloads.atlassian.com/software/jira/downloads/atlassian-jira-software-${version}.tar.gz";
-    sha256 = "1805v8ag0aflyygc194xk696xk5krbc8zc4yba4cx95dcnc4rvwq";
+    sha256 = "0w2fgs5n2zdvxgcx2rn010nz81z4q3z6cbq9hmpyzxy9ygjby2w4";
   };
 
   buildPhase = ''
@@ -36,6 +36,6 @@ stdenv.mkDerivation rec {
     description = "Proprietary issue tracking product, also providing project management functions";
     homepage = https://www.atlassian.com/software/jira;
     license = licenses.unfree;
-    maintainers = with maintainers; [ fpletz globin ];
+    maintainers = with maintainers; [ fpletz globin ciil ];
   };
 }
