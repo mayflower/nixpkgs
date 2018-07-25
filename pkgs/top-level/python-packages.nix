@@ -20769,8 +20769,6 @@ EOF
 
   pyowm = callPackage ../development/python-modules/pyowm { };
 
-  prometheus_client = callPackage ../development/python-modules/prometheus_client { };
-
   astunparse = callPackage ../development/python-modules/astunparse { };
 
   gast = callPackage ../development/python-modules/gast { };
