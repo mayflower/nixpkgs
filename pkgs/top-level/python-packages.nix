@@ -17547,6 +17547,8 @@ EOF
     };
   });
 
+  xml2rfc = callPackage ../development/python-modules/xml2rfc { };
+
   xmltodict = callPackage ../development/python-modules/xmltodict { };
 
   xarray = callPackage ../development/python-modules/xarray { };
@@ -20773,6 +20775,9 @@ EOF
 
   gast = callPackage ../development/python-modules/gast { };
 
+  prometheus_client = callPackage ../development/python-modules/prometheus_client { };
+
+  simpy = callPackage ../development/python-modules/simpy { };
 });
 
 in fix' (extends overrides packages)

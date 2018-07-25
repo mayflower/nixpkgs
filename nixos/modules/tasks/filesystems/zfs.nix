@@ -412,21 +412,15 @@ in
               ${packages.zfsUser}/sbin/zfs set nixos:shutdown-time="$(date)" "${pool}"
             '';
           };
+        createZfsService = serv:
+          nameValuePair serv {
+            after = [ "systemd-modules-load.service" ];
+            wantedBy = [ "zfs.target" ];
+          };
 
       in listToAttrs (map createImportService dataPools ++
-                      map createSyncService allPools)
-        // (
-          let
-            unitOpts = {
-              after = [ "systemd-modules-load.service" ];
-              wantedBy = [ "zfs.target" ];
-            };
-          in {
-            "zfs-mount" = unitOpts;
-            "zfs-share" = unitOpts;
-            "zfs-zed" = unitOpts;
-          }
-        );
+                      map createSyncService allPools ++
+                      map createZfsService [ "zfs-mount" "zfs-share" "zfs-zed" ]);
 
       systemd.targets."zfs-import" =
         let
@@ -435,6 +429,7 @@ in
           {
             requires = services;
             after = services;
+            wantedBy = [ "zfs.target" ];
           };
 
       systemd.targets."zfs".wantedBy = [ "multi-user.target" ];
