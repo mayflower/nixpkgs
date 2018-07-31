@@ -11,7 +11,7 @@ pythonPackages.buildPythonPackage rec {
     sha256 = "10hls53g3dvvy4lczqj8qr8vwhcl5ka4i766y02pr6p2822fp1l1";
   };
 
-  patches = [ ./add-description.patch ];
+  patches = [ ./add-description.patch ./subscription.patch ];
 
   postPatch = ''
     substituteInPlace privacyidea/api/lib/utils.py \
