@@ -35,8 +35,8 @@ stdenv.mkDerivation rec {
 
   communityModules = fetchhg {
     url = "https://hg.prosody.im/prosody-modules";
-    rev = "150a7bd59043";
-    sha256 = "0nfx3lngcy88nd81gb7v4kh3nz1bzsm67bxgpd2lprk54diqcrz1";
+    rev = "e55172ce68d4";
+    sha256 = "1ib35bfajpv2mca39fsr4622jjhznd438ijr35whii32wg94vl4a";
   };
 
   patches = [ ./muc-host-affiliation.patch ];
