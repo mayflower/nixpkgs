@@ -358,6 +358,8 @@ let
 
     buildInputs = [ openldap ];
 
+    patches = [ ../development/lua-modules/lualdap-ldaps.patch ];
+
     meta = with stdenv.lib; {
       description = "Lua bindings for the OpenLDAP client libraries";
       homepage = "https://github.com/lualdap/lualdap";
