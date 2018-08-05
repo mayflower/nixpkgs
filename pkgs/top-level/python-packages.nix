@@ -4528,6 +4528,10 @@ in {
     };
   };
 
+  fluent-logger = callPackage ../development/python-modules/fluent-logger {};
+
+  python-forecastio = callPackage ../development/python-modules/python-forecastio { };
+
   fpdf = callPackage ../development/python-modules/fpdf { };
 
   fritzconnection = callPackage ../development/python-modules/fritzconnection { };
@@ -20776,6 +20780,8 @@ EOF
   prometheus_client = callPackage ../development/python-modules/prometheus_client { };
 
   simpy = callPackage ../development/python-modules/simpy { };
+
+  rfc7464 = callPackage ../development/python-modules/rfc7464 { };
 });
 
 in fix' (extends overrides packages)
