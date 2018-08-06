@@ -223,6 +223,7 @@ in
       in {
         wantedBy = [ "multi-user.target" ];
         after = [ "postgresql.service" ];
+        path = with pkgs; [ openssl ];
         preStart = let
           pi-manage = "${pkgs.sudo}/bin/sudo -u privacyidea -H PRIVACYIDEA_CONFIGFILE=${piCfgFile} ${pkgs.privacyidea}/bin/pi-manage";
         in ''
