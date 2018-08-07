@@ -36,3 +36,38 @@
      return True
  
  
+--- a/privacyidea/lib/subscriptions.py
++++ b/privacyidea/lib/subscriptions.py
+@@ -95,19 +95,19 @@ def subscription_status():
+ 
+     :return: subscription state
+     """
+-    token_count = get_tokens(assigned=True, active=True, count=True)
+-    if token_count <= APPLICATIONS.get("privacyidea", 50):
+-        return 0
+-
+-    subscriptions = get_subscription("privacyidea")
+-    if len(subscriptions) == 0:
+-        return 1
+-
+-    try:
+-        check_subscription("privacyidea")
+-    except SubscriptionError as exx:
+-        log.warning(u"{0}".format(exx))
+-        return 2
++    #token_count = get_tokens(assigned=True, active=True, count=True)
++    #if token_count <= APPLICATIONS.get("privacyidea", 50):
++    #    return 0
++
++    #subscriptions = get_subscription("privacyidea")
++    #if len(subscriptions) == 0:
++    #    return 1
++
++    #try:
++    #    check_subscription("privacyidea")
++    #except SubscriptionError as exx:
++    #    log.warning(u"{0}".format(exx))
++    #    return 2
+ 
+     return 3
+ 
