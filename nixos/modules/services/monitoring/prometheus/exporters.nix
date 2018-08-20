@@ -28,6 +28,7 @@ let
     nginx     = import ./exporters/nginx.nix     { inherit config lib pkgs; };
     node      = import ./exporters/node.nix      { inherit config lib pkgs; };
     postfix   = import ./exporters/postfix.nix   { inherit config lib pkgs; };
+    rspamd    = import ./exporters/rspamd.nix    { inherit config lib pkgs; };
     snmp      = import ./exporters/snmp.nix      { inherit config lib pkgs; };
     surfboard = import ./exporters/surfboard.nix { inherit config lib pkgs; };
     tor       = import ./exporters/tor.nix       { inherit config lib pkgs; };
@@ -161,9 +162,11 @@ in
       '';
     }];
   }] ++ [(mkIf config.services.minio.enable {
-    services.prometheus.exporters.minio.minioAddress  = mkDefault "http://localhost:9000";
+    services.prometheus.exporters.minio.minioAddress = mkDefault "http://localhost:9000";
     services.prometheus.exporters.minio.minioAccessKey = mkDefault config.services.minio.accessKey;
     services.prometheus.exporters.minio.minioAccessSecret = mkDefault config.services.minio.secretKey;
+  })] ++ [(mkIf config.services.rspamd.enable {
+    services.prometheus.exporters.rspamd.url = mkDefault "http://localhost:11334/stat";
   })] ++ (mapAttrsToList (name: conf:
     mkExporterConf {
       inherit name;
