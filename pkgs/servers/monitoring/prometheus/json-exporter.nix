@@ -16,6 +16,8 @@ buildGoPackage rec {
 
   goDeps = ./json-exporter_deps.nix;
 
+  patches = [ ./json-exporter-bool-support.patch ];
+
   meta = {
     description = "A prometheus exporter which scrapes remote JSON by JSONPath";
     homepage = https://github.com/kawamuray/prometheus-json-exporter;
