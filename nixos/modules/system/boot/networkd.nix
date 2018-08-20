@@ -250,7 +250,7 @@ let
     (assertByteFormat "MTUBytes")
     (assertValueOneOf "ARP" boolValues)
     (assertValueOneOf "Unmanaged" boolValues)
-    (assertValueOneOf "RquiredForOnline" boolValues)
+    (assertValueOneOf "RequiredForOnline" boolValues)
   ];
 
 
