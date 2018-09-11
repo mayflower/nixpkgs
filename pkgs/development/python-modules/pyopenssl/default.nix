@@ -1,6 +1,7 @@
 { stdenv
 , buildPythonPackage
 , fetchPypi
+, fetchpatch
 , openssl
 , cryptography
 , pyasn1
@@ -19,6 +20,14 @@ buildPythonPackage rec {
     inherit pname version;
     sha256 = "2c10cfba46a52c0b0950118981d61e72c1e5b1aac451ca1bc77de1a679456773";
   };
+
+  patches = [
+    (fetchpatch {
+      url = "https://github.com/pyca/pyopenssl/pull/787.patch";
+      sha256 = "0igv329qsjn568vzg4am4sds6sbhf8wb5x6867pngwwiq9whv187";
+      excludes = [ "CHANGELOG.rst" ];
+    })
+  ];
 
   outputs = [ "out" "dev" ];
 
