@@ -25,8 +25,6 @@ stdenv.mkDerivation {
 
   hardeningDisable = [ "pic" "stackprotector" ];
 
-  hardeningDisable = [ "pic" "stackprotector" ];
-
   # Not to strip cross build binaries (this is for the gcc-cross-wrapper)
   dontCrossStrip = true;
 

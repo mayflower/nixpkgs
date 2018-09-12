@@ -13,7 +13,7 @@ stdenv.mkDerivation rec {
       # specified in the file= option.
       ./multiple-key-files.patch
     ];
- 
+
   buildInputs = [ pam openssl perl ];
 
   enableParallelBuilding = true;

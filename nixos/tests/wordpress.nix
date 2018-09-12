@@ -10,7 +10,6 @@ import ./make-test.nix ({ pkgs, ... }:
     { web =
         { pkgs, ... }:
         {
-          time.timeZone = "UTC";
           services.mysql = {
             enable = true;
             package = pkgs.mysql;

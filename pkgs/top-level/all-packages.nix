@@ -1750,9 +1750,7 @@ with pkgs;
 
   chunkfs = callPackage ../tools/filesystems/chunkfs { };
 
-  chunksync = callPackage ../tools/backup/chunksync {
-    openssl = openssl_1_0_2;
-  };
+  chunksync = callPackage ../tools/backup/chunksync { };
 
   cipherscan = callPackage ../tools/security/cipherscan {
     openssl = if stdenv.hostPlatform.system == "x86_64-linux"
@@ -2370,7 +2368,6 @@ with pkgs;
 
   encfs = callPackage ../tools/filesystems/encfs {
     tinyxml2 = tinyxml-2;
-    openssl = openssl_1_0_2;
   };
 
   enscript = callPackage ../tools/text/enscript { };
@@ -2867,7 +2864,6 @@ with pkgs;
   gocryptfs = callPackage ../tools/filesystems/gocryptfs { };
 
   godot = callPackage ../development/tools/godot {};
-  godot_headers = callPackage ../development/libraries/godot_headers {};
 
   goklp = callPackage ../tools/networking/goklp {};
 
@@ -3380,12 +3376,8 @@ with pkgs;
 
   ispike = callPackage ../development/libraries/science/robotics/ispike { };
 
-  isync = callPackage ../tools/networking/isync {
-    openssl = openssl_1_0_2;
-  };
-  isyncUnstable = callPackage ../tools/networking/isync/unstable.nix {
-    openssl = openssl_1_0_2;
-  };
+  isync = callPackage ../tools/networking/isync { };
+  isyncUnstable = callPackage ../tools/networking/isync/unstable.nix { };
 
   ivan = callPackage ../games/ivan { };
 
@@ -4370,7 +4362,6 @@ with pkgs;
 
   ntp = callPackage ../tools/networking/ntp {
     libcap = if stdenv.isLinux then libcap else null;
-    openssl = openssl_1_1_0;
   };
 
   numdiff = callPackage ../tools/text/numdiff { };
@@ -5454,9 +5445,7 @@ with pkgs;
 
   stun = callPackage ../tools/networking/stun { };
 
-  stunnel = callPackage ../tools/networking/stunnel {
-    openssl = openssl_1_1_0;
-  };
+  stunnel = callPackage ../tools/networking/stunnel { };
 
   stutter = haskell.lib.overrideCabal (haskell.lib.justStaticExecutables haskellPackages.stutter) (drv: {
     preCheck = "export PATH=dist/build/stutter:$PATH";
@@ -5517,9 +5506,7 @@ with pkgs;
 
   znapzend = callPackage ../tools/backup/znapzend { };
 
-  tarsnap = callPackage ../tools/backup/tarsnap {
-    openssl = openssl_1_0_2;
-  };
+  tarsnap = callPackage ../tools/backup/tarsnap { };
 
   tarsnapper = callPackage ../tools/backup/tarsnapper { };
 
@@ -5575,13 +5562,11 @@ with pkgs;
 
   thc-hydra = callPackage ../tools/security/thc-hydra { };
 
-  thefuck = python3Packages.callPackage ../tools/misc/thefuck { };
-
   theharvester = callPackage ../tools/security/theharvester { };
 
-  thin-provisioning-tools = callPackage ../tools/misc/thin-provisioning-tools {  };
+  thefuck = python3Packages.callPackage ../tools/misc/thefuck { };
 
-  tie = callPackage ../development/tools/misc/tie { };
+  thin-provisioning-tools = callPackage ../tools/misc/thin-provisioning-tools {  };
 
   tiled = libsForQt5.callPackage ../applications/editors/tiled { };
 
@@ -5594,6 +5579,10 @@ with pkgs;
   tzupdate = callPackage ../applications/misc/tzupdate { };
 
   tinc = callPackage ../tools/networking/tinc { };
+
+  tie = callPackage ../development/tools/misc/tie { };
+
+  tilix = callPackage ../applications/misc/tilix { };
 
   tinc_pre = callPackage ../tools/networking/tinc/pre.nix { };
 
@@ -5799,9 +5788,7 @@ with pkgs;
     openssl = openssl_1_0_2;
   };
 
-  vboot_reference = callPackage ../tools/system/vboot_reference {
-    openssl = openssl_1_0_2;
-  };
+  vboot_reference = callPackage ../tools/system/vboot_reference { };
 
   vcftools = callPackage ../applications/science/biology/vcftools { };
 
@@ -5976,9 +5963,7 @@ with pkgs;
 
   uemacs = callPackage ../applications/editors/uemacs { };
 
-  uftp = callPackage ../servers/uftp {
-    openssl = openssl_1_0_2;
-  };
+  uftp = callPackage ../servers/uftp { };
 
   uhttpmock = callPackage ../development/libraries/uhttpmock { };
 
@@ -6102,7 +6087,6 @@ with pkgs;
   wget = callPackage ../tools/networking/wget {
     inherit (perlPackages) IOSocketSSL LWP;
     libpsl = null;
-    openssl = openssl_1_0_2;
   };
 
   which = callPackage ../tools/system/which { };
@@ -6348,9 +6332,7 @@ with pkgs;
 
   rush = callPackage ../shells/rush { };
 
-  xonsh = callPackage ../shells/xonsh {
-    python3Packages = python35Packages;
-  };
+  xonsh = callPackage ../shells/xonsh { };
 
   zsh = callPackage ../shells/zsh { };
 
@@ -7249,11 +7231,6 @@ with pkgs;
     });
   inherit (rust) cargo rustc;
 
-  rust_1_26 = callPackage ../development/compilers/rust/1.26
-    (stdenv.lib.optionalAttrs (stdenv.cc.isGNU && stdenv.hostPlatform.isi686) {
-      stdenv = overrideCC stdenv gcc6; # with gcc-7: undefined reference to `__divmoddi4'
-    });
-
   buildRustCrate = callPackage ../build-support/rust/build-rust-crate.nix { };
 
   cargo-vendor = callPackage ../build-support/rust/cargo-vendor { };
@@ -7721,7 +7698,6 @@ with pkgs;
   python35 = callPackage ../development/interpreters/python/cpython/3.5 {
     inherit (darwin) CF configd;
     self = python35;
-    openssl = openssl_1_0_2;
   };
   python36 = callPackage ../development/interpreters/python/cpython/3.6 {
     inherit (darwin) CF configd;
@@ -8172,9 +8148,7 @@ with pkgs;
 
   cl-launch = callPackage ../development/tools/misc/cl-launch {};
 
-  cloudfoundry-cli = callPackage ../development/tools/cloudfoundry-cli {
-    go = go_1_9;
-  };
+  cloudfoundry-cli = callPackage ../development/tools/cloudfoundry-cli { };
 
   coan = callPackage ../development/tools/analysis/coan { };
 
@@ -9169,7 +9143,8 @@ with pkgs;
 
   clutter = callPackage ../development/libraries/clutter { };
 
-  clutter-gst = callPackage ../development/libraries/clutter-gst { };
+  clutter-gst = callPackage ../development/libraries/clutter-gst {
+  };
 
   clutter-gtk = callPackage ../development/libraries/clutter-gtk { };
 
@@ -9480,9 +9455,7 @@ with pkgs;
 
   fontconfig-ultimate = callPackage ../development/libraries/fontconfig-ultimate {};
 
-  folly = callPackage ../development/libraries/folly {
-    openssl = openssl_1_0_2;
-  };
+  folly = callPackage ../development/libraries/folly { };
 
   makeFontsConf = let fontconfig_ = fontconfig; in {fontconfig ? fontconfig_, fontDirectories}:
     callPackage ../development/libraries/fontconfig/make-fonts-conf.nix {
@@ -10130,7 +10103,6 @@ with pkgs;
 
   krb5 = callPackage ../development/libraries/kerberos/krb5.nix {
     inherit (darwin) bootstrap_cmds;
-    openssl = openssl_1_1_0;
   };
   krb5Full = krb5;
   libkrb5 = krb5.override {
@@ -11399,8 +11371,6 @@ with pkgs;
 
   nix-plugins = callPackage ../development/libraries/nix-plugins {};
 
-  nix-plugins_4 = callPackage ../development/libraries/nix-plugins/4.nix {};
-
   nlohmann_json = callPackage ../development/libraries/nlohmann_json { };
 
   nntp-proxy = callPackage ../applications/networking/nntp-proxy { };
@@ -12210,7 +12180,6 @@ with pkgs;
 
   srtp = callPackage ../development/libraries/srtp {
     libpcap = if stdenv.isLinux then libpcap else null;
-    openssl = openssl_1_0_2;
   };
 
   stb = callPackage ../development/libraries/stb { };
@@ -12230,7 +12199,6 @@ with pkgs;
   sqlcipher = lowPrio (callPackage ../development/libraries/sqlcipher {
     readline = null;
     ncurses = null;
-    openssl = openssl_1_0_2;
   });
 
   stfl = callPackage ../development/libraries/stfl { };
@@ -12626,9 +12594,7 @@ with pkgs;
 
   xmlrpc_c = callPackage ../development/libraries/xmlrpc-c { };
 
-  xmlsec = callPackage ../development/libraries/xmlsec {
-    openssl = openssl_1_1_0;
-  };
+  xmlsec = callPackage ../development/libraries/xmlsec { };
 
   xml-security-c = callPackage ../development/libraries/xml-security-c {
     openssl = openssl_1_0_2;
@@ -13045,7 +13011,7 @@ with pkgs;
   dico = callPackage ../servers/dico { };
 
   dict = callPackage ../servers/dict {
-    libmaa = callPackage ../servers/dict/libmaa.nix {};
+      libmaa = callPackage ../servers/dict/libmaa.nix {};
   };
 
   dictdDBs = recurseIntoAttrs (callPackages ../servers/dict/dictd-db.nix {});
@@ -13163,13 +13129,13 @@ with pkgs;
 
   lighttpd = callPackage ../servers/http/lighttpd { };
 
-  mailman = callPackage ../servers/mail/mailman { };
-
   livepeer = callPackage ../servers/livepeer { ffmpeg = ffmpeg_3; };
 
   lwan = callPackage ../servers/http/lwan { };
 
   labelImg = callPackage ../applications/science/machine-learning/labelimg { };
+
+  mailman = callPackage ../servers/mail/mailman { };
 
   mattermost = callPackage ../servers/mattermost { };
   matterircd = callPackage ../servers/mattermost/matterircd.nix { };
@@ -13261,9 +13227,7 @@ with pkgs;
   openafs = callPackage ../servers/openafs/1.6 { tsmbac = null; ncurses = null; };
   openafs_1_8 = callPackage ../servers/openafs/1.8 { tsmbac = null; ncurses = null; };
 
-  openresty = callPackage ../servers/http/openresty {
-    openssl = openssl_1_0_2;
-  };
+  openresty = callPackage ../servers/http/openresty { };
 
   opensmtpd = callPackage ../servers/mail/opensmtpd { };
   opensmtpd-extras = callPackage ../servers/mail/opensmtpd/extras.nix { };
@@ -14861,9 +14825,7 @@ with pkgs;
 
   wirelesstools = callPackage ../os-specific/linux/wireless-tools { };
 
-  wpa_supplicant = callPackage ../os-specific/linux/wpa_supplicant {
-    openssl = openssl_1_1_0;
-  };
+  wpa_supplicant = callPackage ../os-specific/linux/wpa_supplicant { };
 
   wpa_supplicant_gui = libsForQt5.callPackage ../os-specific/linux/wpa_supplicant/gui.nix { };
 
@@ -15480,7 +15442,6 @@ with pkgs;
 
   alpine = callPackage ../applications/networking/mailreaders/alpine {
     tcl = tcl-8_5;
-    openssl = openssl_1_0_2;
   };
 
   msgviewer = callPackage ../applications/networking/mailreaders/msgviewer { };
@@ -16727,9 +16688,7 @@ with pkgs;
 
   get_iplayer = callPackage ../applications/misc/get_iplayer {};
 
-  getxbook = callPackage ../applications/misc/getxbook {
-    openssl = openssl_1_0_2;
-  };
+  getxbook = callPackage ../applications/misc/getxbook { };
 
   ghq = gitAndTools.ghq;
 
@@ -18140,7 +18099,7 @@ with pkgs;
 
   pflask = callPackage ../os-specific/linux/pflask {};
 
-  photoqt = libsForQt56.callPackage ../applications/graphics/photoqt { };
+  photoqt = libsForQt5.callPackage ../applications/graphics/photoqt { };
 
   photoflow = callPackage ../applications/graphics/photoflow { };
 

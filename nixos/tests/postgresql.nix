@@ -16,10 +16,6 @@ let
     CREATE TABLE xmltest ( doc xml );
     INSERT INTO xmltest (doc) VALUES ('<test>ok</test>'); -- check if libxml2 enabled
   '';
-  test2-sql = pkgs.writeText "postgresql-test" ''
-    INSERT INTO sth (id) VALUES (1);
-    INSERT INTO xmltest (doc) VALUES ('<test>ok</test>');
-  '';
   make-postgresql-test = postgresql-name: postgresql-package: makeTest {
     name = postgresql-name;
     meta = with pkgs.stdenv.lib.maintainers; {
@@ -28,7 +24,7 @@ let
 
     machine = {...}:
       {
-        services.postgresql.package = postgresql-package;
+        services.postgresql.package=postgresql-package;
         services.postgresql.enable = true;
 
         services.postgresqlBackup.enable = true;
@@ -41,10 +37,8 @@ let
         return 'test $(sudo -u postgres psql postgres -tAc "' . $select . '"|wc -l) -eq ' . $nlines;
       }
 
-      $db1->start;
-
-      $db1->waitForUnit("postgresql");
-
+      $machine->start;
+      $machine->waitForUnit("postgresql");
       # postgresql should be available just after unit start
       $machine->succeed("cat ${test-sql} | sudo -u postgres psql");
       $machine->shutdown; # make sure that postgresql survive restart (bug #1735)

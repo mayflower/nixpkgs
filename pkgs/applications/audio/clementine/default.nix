@@ -108,7 +108,7 @@ let
     '';
     postInstall = ''
       mkdir -p $out/libexec/clementine
-      mv $out/bin/clementine-spotifyblob $out/libexec/clementine/
+      mv $out/bin/clementine-spotifyblob $out/libexec/clementine
       rmdir $out/bin
 
       makeWrapper ${free}/bin/clementine $out/bin/clementine \

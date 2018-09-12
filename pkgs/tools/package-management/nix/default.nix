@@ -9,6 +9,7 @@
 }:
 
 let
+
   sh = busybox-sandbox-shell;
 
   common = { name, suffix ? "", src, fromGit ? false }: stdenv.mkDerivation rec {

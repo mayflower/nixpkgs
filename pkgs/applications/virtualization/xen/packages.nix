@@ -11,6 +11,7 @@ rec {
     # At the very least included seabios and etherboot need gcc49,
     # so we have to build all of it with gcc49.
     stdenv = overrideCC stdenv gcc49;
+
     meta = {
       description = "vanilla";
       longDescription = ''

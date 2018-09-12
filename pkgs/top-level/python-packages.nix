@@ -240,8 +240,6 @@ in {
 
   bugseverywhere = callPackage ../applications/version-management/bugseverywhere {};
 
-  cssmin = callPackage ../development/python-modules/cssmin { };
-
   cdecimal = callPackage ../development/python-modules/cdecimal { };
 
   clustershell = callPackage ../development/python-modules/clustershell { };
@@ -534,7 +532,6 @@ in {
 
   pyzufall = callPackage ../development/python-modules/pyzufall { };
 
-  robot-detection = callPackage ../development/python-modules/robot-detection { };
   rhpl = disabledIf isPy3k (callPackage ../development/python-modules/rhpl {});
 
   rlp = callPackage ../development/python-modules/rlp { };
@@ -616,26 +613,6 @@ in {
   aiohttp = callPackage ../development/python-modules/aiohttp { };
 
   aiohttp-cors = callPackage ../development/python-modules/aiohttp/cors.nix { };
-
-  aiosmtpd = buildPythonPackage rec {
-    name = "aiosmtpd-${version}";
-    version = "1.1";
-
-    src = pkgs.fetchurl {
-      url = "mirror://pypi/a/aiosmtpd/${name}.tar.gz";
-      sha256 = "0mx5f0i9k84kfwxjn2q8800mkzmqvgqg2nw39fq8x7s5n8mwvf4a";
-    };
-
-    propagatedBuildInputs = [ self.atpublic ];
-
-    # network access
-    doCheck = false;
-
-    meta = {
-      license = with licenses; [ asl20 ];
-      homepage = https://pypi.python.org/pypi/aiosmtpd;
-    };
-  };
 
   aiohttp-jinja2 = callPackage ../development/python-modules/aiohttp-jinja2 { };
 
@@ -734,23 +711,6 @@ in {
 
   atomicwrites = callPackage ../development/python-modules/atomicwrites { };
 
-  atpublic = buildPythonPackage rec {
-    version = "0.4";
-    name = "atpublic-${version}";
-
-    src = pkgs.fetchurl {
-      url = "mirror://pypi/a/atpublic/${name}.tar.gz";
-      sha256 = "0ihmmcqaq7py4f8bh20crhaw36avdq9d5ams3ikr4hdlap7ilagk";
-    };
-
-    doCheck = false;
-
-    meta = {
-      homepage = https://pypi.python.org/pypi/atpublic;
-      license = licenses.asl20;
-    };
-  };
-
   # argparse is part of stdlib in 2.7 and 3.2+
   argparse = null;
 
@@ -779,91 +739,6 @@ in {
   awesome-slugify = callPackage ../development/python-modules/awesome-slugify {};
 
   noise = callPackage ../development/python-modules/noise {};
-
-  awscli =
-  let
-    colorama_3_7 = self.colorama.overrideAttrs (old: rec {
-      name = "${pname}-${version}";
-      pname = "colorama";
-      version = "0.3.7";
-      src = fetchPypi {
-        inherit pname version;
-        sha256 = "0avqkn6362v7k2kg3afb35g4sfdvixjgy890clip4q174p9whhz0";
-      };
-    });
-  in buildPythonPackage rec {
-    name = "${pname}-${version}";
-    pname = "awscli";
-    version = "1.14.22";
-    namePrefix = "";
-
-    src = fetchPypi {
-      inherit pname version;
-      sha256 = "13pivyyivwb3xy0l45083gcman2b0xiv00fl9ww0m8jccgxsdzd0";
-    };
-
-    # No tests included
-    doCheck = false;
-
-    propagatedBuildInputs = with self; [
-      botocore
-      bcdoc
-      s3transfer
-      six
-      colorama_3_7
-      docutils
-      rsa
-      pyyaml
-      pkgs.groff
-      pkgs.less
-    ];
-
-    postInstall = ''
-      mkdir -p $out/etc/bash_completion.d
-      echo "complete -C $out/bin/aws_completer aws" > $out/etc/bash_completion.d/awscli
-      mkdir -p $out/share/zsh/site-functions
-      mv $out/bin/aws_zsh_completer.sh $out/share/zsh/site-functions
-      rm $out/bin/aws.cmd
-    '';
-
-    meta = {
-      homepage = https://aws.amazon.com/cli/;
-      description = "Unified tool to manage your AWS services";
-      license = stdenv.lib.licenses.asl20;
-      maintainers = with maintainers; [ muflax ];
-    };
-  };
-
-  aws_shell = buildPythonPackage rec {
-    name = "aws-shell-${version}";
-    version = "0.1.1";
-    src = pkgs.fetchurl {
-        sha256 = "1pw9lrdjl24n6lrs6lnqpyiyic8bdxgvhyqvb2rx6kkbjrfhhgv5";
-        url = "mirror://pypi/a/aws-shell/aws-shell-${version}.tar.gz";
-      };
-
-    # Why does it propagate packages that are used for testing?
-    propagatedBuildInputs = with self; [
-      awscli prompt_toolkit boto3 configobj pygments
-    ];
-
-    #Checks are failing due to missing TTY, which won't exist.
-    doCheck = false;
-    preCheck = ''
-      mkdir -p check-phase
-      export HOME=$(pwd)/check-phase
-    '';
-
-    disabled = isPy35;
-
-
-    meta = {
-      homepage = https://github.com/awslabs/aws-shell;
-      description = "An integrated shell for working with the AWS CLI";
-      license = licenses.asl20;
-      maintainers = [ ];
-    };
-  };
 
   azure = buildPythonPackage rec {
     version = "0.11.0";
@@ -1828,6 +1703,16 @@ in {
     propagatedBuildInputs = with self; [ pyusb ];
   };
 
+  opencv = toPythonModule (pkgs.opencv.override {
+    enablePython = true;
+    pythonPackages = self;
+  });
+ 
+  opencv3 = toPythonModule (pkgs.opencv3.override {
+    enablePython = true;
+    pythonPackages = self;
+  });
+ 
   openidc-client = callPackage ../development/python-modules/openidc-client {};
 
   idna = callPackage ../development/python-modules/idna { };
@@ -2585,57 +2470,6 @@ in {
       homepage = "https://github.com/obsrvbl/flowlogs-reader";
       maintainers = with maintainers; [ cransom ];
       license = licenses.asl20;
-    };
-  };
-
-  flufl-bounce = buildPythonPackage rec {
-    name = "flufl.bounce-2.3";
-
-    src = pkgs.fetchurl {
-      url = "mirror://pypi/f/flufl.bounce/${name}.tar.gz";
-      sha256 = "16czsa3cqf1z1a1ghyrhmzsw3wazwqp488hhrd0sq7i9mxjp4ava";
-    };
-
-    propagatedBuildInputs = [ self.zope_interface ];
-
-    meta = with pkgs.stdenv.lib; {
-      homepage = "https://pypi.python.org/pypi/flufl.bounce";
-      license = licenses.lgpl3;
-    };
-  };
-
-  flufl-i18n = callPackage ../development/python-modules/flufl/i18n.nix { };
-
-  flufl-lock = buildPythonPackage rec {
-    name = "flufl.lock-3.2";
-
-    src = pkgs.fetchurl {
-      url = "mirror://pypi/f/flufl.lock/${name}.tar.gz";
-      sha256 = "0nzzd6l30ff6cwsrlrb94xzfja4wkyrqv3ydc6cz0hdbr766mmm8";
-    };
-
-    propagatedBuildInputs = [ self.atpublic ];
-
-    meta = with pkgs.stdenv.lib; {
-      homepage = "https://pypi.python.org/pypi/flufl.lock";
-      license = licenses.lgpl3;
-    };
-  };
-
-  flufl-testing = buildPythonPackage rec {
-    name = "flufl.testing-0.7";
-
-    src = pkgs.fetchurl {
-      url = "mirror://pypi/f/flufl.testing/${name}.tar.gz";
-      sha256 = "0l02kyfxg0wkn85zznpfx3d7qbhjxhmy6002xp8q0a94nnfrv6if";
-    };
-
-    # does not have any tests
-    doCheck = false;
-
-    meta = with pkgs.stdenv.lib; {
-      homepage = "https://pypi.python.org/pypi/flufl.testing";
-      license = licenses.lgpl3;
     };
   };
 
@@ -4826,15 +4660,11 @@ in {
 
   django-jinja = callPackage ../development/python-modules/django-jinja2 { };
 
-  django-paintstore = callPackage ../development/python-modules/django-paintstore { };
-
   django-pglocks = callPackage ../development/python-modules/django-pglocks { };
 
   django-picklefield = callPackage ../development/python-modules/django-picklefield { };
 
   django_polymorphic = callPackage ../development/python-modules/django-polymorphic { };
-
-  django-q = callPackage ../development/python-modules/django-q { };
 
   django-sampledatahelper = callPackage ../development/python-modules/django-sampledatahelper { };
 
@@ -4855,7 +4685,7 @@ in {
       inherit pname version;
       sha256 = "0617azpmp6jpg3d88v2ir97qrc9aqcs2s9gyvv9bgf2cp55khxhs";
     };
-    propagatedBuildInputs = with self; [ django_1_8 ];
+    propagatedBuildInputs = with self; [ django ];
   });
 
   django_classytags = buildPythonPackage rec {
@@ -6834,8 +6664,6 @@ in {
 
   jsonnet = buildPythonPackage {
     inherit (pkgs.jsonnet) name src;
-    # Python 3 is not yet supported https://github.com/google/jsonnet/pull/335
-    disabled = isPy3k;
   };
 
   jupyter_client = callPackage ../development/python-modules/jupyter_client { };
@@ -6915,61 +6743,6 @@ in {
 
   libnl-python = disabledIf isPy3k
     (toPythonModule (pkgs.libnl.override{pythonSupport=true; inherit python; })).py;
-
-  lazr-config = buildPythonPackage rec {
-    name = "lazr.config-${version}";
-    version = "2.2";
-
-    src = pkgs.fetchurl {
-      url = "mirror://pypi/l/lazr.config/${name}.tar.gz";
-      sha256 = "0xyphxcpld2wa4nm6i4a82vrsvrvy69z7q2q46km6riym4ivpii1";
-    };
-
-    propagatedBuildInputs = [ self.lazr-delegates ];
-    buildInputs = [ self.nose ];
-
-    meta = {
-      homepage = https://pypi.python.org/pypi/lazr.config;
-      license = with licenses; [ lgpl3 ];
-    };
-  };
-
-  lazr-delegates = buildPythonPackage rec {
-    name = "lazr.delegates-${version}";
-    version = "2.0.3";
-
-    src = pkgs.fetchurl {
-      url = "mirror://pypi/l/lazr.delegates/${name}.tar.gz";
-      sha256 = "1s9f166i6qpva2mqs20b78wsdj19cmj738jzqylg9y61q9d0vj2i";
-    };
-
-    doCheck = false;
-
-    propagatedBuildInputs = [ self.zope_interface ];
-    buildInputs = [ self.nose ];
-
-    meta = {
-      homepage = https://pypi.python.org/pypi/lazr.delegates;
-      license = with licenses; [ lgpl3 ];
-    };
-  };
-
-  lazr-smtptest = buildPythonPackage rec {
-    name = "lazr.smtptest-${version}";
-    version = "2.0.3";
-
-    src = pkgs.fetchurl {
-      url = "mirror://pypi/l/lazr.smtptest/${name}.tar.gz";
-      sha256 = "05bfpy77n815jrdwpppjlg9qpsics8nsavp3n4id0zvscy81ijlx";
-    };
-
-    buildInputs = [ self.nose ];
-
-    meta = {
-      homepage = https://pypi.python.org/pypi/lazr.smtptest;
-      license = with licenses; [ lgpl3 ];
-    };
-  };
 
   lark-parser = callPackage ../development/python-modules/lark-parser { };
 
@@ -9995,12 +9768,6 @@ in {
     protobuf = pkgs.protobuf3_1;
   };
 
-  protobuf3_5 = callPackage ../development/python-modules/protobuf {
-    disabled = isPyPy;
-    doCheck = !isPy3k;
-    protobuf = pkgs.protobuf3_5;
-  };
-
   psd-tools = callPackage ../development/python-modules/psd-tools { };
 
   psutil = callPackage ../development/python-modules/psutil { };
@@ -10818,21 +10585,6 @@ in {
   };
 
   pyjwt = callPackage ../development/python-modules/pyjwt { };
-
-  pyjwt_1_3 = buildPythonPackage rec {
-    version = "1.3.0";
-    name = "pyjwt-${version}";
-
-    src = pkgs.fetchurl {
-      url = "http://github.com/progrium/pyjwt/archive/${version}.tar.gz";
-      sha256 = "13189pxn588zgg07nr0bi2qs36i4wvf2k05hww2lxi9f6pbz32hb";
-    };
-
-    buildInputs = with self; [ pytestrunner pytestcov pytest coverage ];
-    propagatedBuildInputs = with self; [ pycrypto ecdsa ];
-
-    meta = self.pyjwt.meta;
-  };
 
   pykickstart = buildPythonPackage rec {
     name = "pykickstart-${version}";
@@ -17028,8 +16780,8 @@ EOF
     else callPackage ../development/python-modules/tensorflow/bin.nix rec {
       cudaSupport = pkgs.config.cudaSupport or false;
       inherit (pkgs.linuxPackages) nvidia_x11;
-      cudatoolkit = pkgs.cudatoolkit9;
-      cudnn = pkgs.cudnn_cudatoolkit9;
+      cudatoolkit = pkgs.cudatoolkit_9_0;
+      cudnn = pkgs.cudnn_cudatoolkit_9_0;
     };
 
   tensorflowWithoutCuda = self.tensorflow.override {

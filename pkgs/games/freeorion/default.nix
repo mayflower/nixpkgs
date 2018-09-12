@@ -22,6 +22,9 @@ stdenv.mkDerivation rec {
 
   enableParallelBuilding = true;
 
+  patches = [
+  ];
+
   postInstall = ''
     mkdir -p $out/fixpaths
     # We need final slashes for XSLT replace to work properly

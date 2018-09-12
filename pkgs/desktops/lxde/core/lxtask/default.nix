@@ -15,8 +15,6 @@ stdenv.mkDerivation rec {
 
   configureFlags = [ "--enable-gtk3" ];
 
-  NIX_LDFLAGS = stdenv.lib.optionalString stdenv.isDarwin "-lintl";
-
   meta = {
     description = "Lightweight and desktop independent task manager";
     longDescription = ''

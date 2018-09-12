@@ -30,6 +30,6 @@ stdenv.mkDerivation {
     homepage = http://diracvideo.org/;
     maintainers = [ maintainers.spwhitt ];
     license = [ licenses.mpl11 licenses.lgpl2 licenses.mit ];
-    platforms = platforms.linux;
+    platforms = platforms.unix;
   };
 }

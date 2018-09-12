@@ -27,10 +27,6 @@ stdenv.mkDerivation rec {
     ./bitcoin-unlimited-const-comparators.patch
   ];
 
-  patches = [
-    ./bitcoin-unlimited-const-comparators.patch
-  ];
-
   configureFlags = [ "--with-boost-libdir=${boost.out}/lib" ]
                      ++ optionals withGui [ "--with-gui=qt4" ];
   enableParallelBuilding = true;

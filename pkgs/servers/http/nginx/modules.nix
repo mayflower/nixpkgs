@@ -15,15 +15,6 @@
     inputs = [ pkgs.brotli ];
   };
 
-  rtmp ={
-    src = fetchFromGitHub {
-      owner = "arut";
-      repo = "nginx-rtmp-module";
-      rev = "v1.2.1";
-      sha256 = "0na1aam176irz6w148hnvamqy1ilbn4abhdzkva0yrm35a3ksbzn";
-    };
-  };
-
   dav = {
     src = fetchFromGitHub {
       owner = "arut";

@@ -27,16 +27,13 @@ buildPythonPackage rec {
   # gcc6 patch was also sent upstream: https://github.com/pyside/Shiboken/pull/86
   patches = [ ./gcc6.patch ] ++ (lib.optional (isPy35 || isPy36) ./shiboken_py35.patch);
 
-  cmakeFlags = lib.optionals isPy3k [
-    "-DUSE_PYTHON3=TRUE" "-DPYTHON3_LIBRARY=${python}/lib/libpython3.so"
-    "-DPYTHON3_INCLUDE_DIR=${python}/include/${python.libPrefix}"
-  ];
+  cmakeFlags = if isPy3k then "-DUSE_PYTHON3=TRUE" else null;
 
-  meta = with lib; {
+  meta = {
     description = "Plugin (front-end) for pyside-generatorrunner, that generates bindings for C++ libraries using CPython source code";
-    license = licenses.gpl2;
+    license = lib.licenses.gpl2;
     homepage = http://www.pyside.org/docs/shiboken/;
-    maintainers = [ maintainers.chaoflow ];
-    platforms = platforms.all;
+    maintainers = [ lib.maintainers.chaoflow ];
+    platforms = lib.platforms.all;
   };
 }

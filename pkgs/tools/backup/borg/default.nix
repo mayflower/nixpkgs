@@ -9,13 +9,7 @@ python3Packages.buildPythonApplication rec {
     sha256 = "f7b51a132e9edfbe1cacb4f478b28caf3622d79fffcb369bdae9f92d8c8a7fdc";
   };
 
-  postPatch = ''
-    # loosen constraint on msgpack version, only 0.5.0 had problems
-    sed -i "s/'msgpack-python.*'/'msgpack-python'/g" setup.py
-  '';
-
   nativeBuildInputs = with python3Packages; [
-    setuptools_scm
     # For building documentation:
     sphinx guzzle_sphinx_theme
   ];

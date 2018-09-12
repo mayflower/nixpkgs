@@ -1,4 +1,4 @@
-{ stdenv, lib, go, buildGoPackage, fetchFromGitHub }:
+{ stdenv, go, buildGoPackage, fetchFromGitHub }:
 
 let
   goPackagePath = "github.com/prometheus/prometheus";
@@ -53,5 +53,4 @@ in rec {
     version = "2.2.1";
     sha256 = "1zwxjmj8jh02i4y3i3zrkz7ml66zyhg3ad1npjzf3319mglsp7ch";
   };
-
 }

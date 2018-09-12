@@ -20,7 +20,6 @@ my %pkgURLs;
 my %pkgHashes;
 my %pkgNames;
 my %pkgRequires;
-my %pkgNativeRequires;
 
 my %pcMap;
 
@@ -61,6 +60,7 @@ while (<>) {
       die unless defined $1;
       $pkg = $1;
       $pkg =~ s/-//g;
+      #next unless $pkg eq "xcbutil";
     }
 
     $tarball =~ /\/([^\/]*)\.tar\.(bz2|gz|xz)$/;
@@ -94,7 +94,6 @@ while (<>) {
     my $provides = `find $pkgDir -name "*.pc.in"`;
     my @provides2 = split '\n', $provides;
     my @requires = ();
-    my @nativeRequires = ();
 
     foreach my $pcFile (@provides2) {
         my $pc = $pcFile;
@@ -135,6 +134,10 @@ while (<>) {
         push @requires, "zlib";
     }
 
+    if ($file =~ /Perl is required/) {
+        push @requires, "perl";
+    }
+
     if ($file =~ /AC_PATH_PROG\(BDFTOPCF/) {
         push @requires, "bdftopcf";
     }
@@ -148,7 +151,7 @@ while (<>) {
     }
 
     if ($file =~ /AM_PATH_PYTHON/) {
-        push @nativeRequires, "python";
+        push @requires, "python";
     }
 
     if ($file =~ /AC_PATH_PROG\(FCCACHE/) {
@@ -215,9 +218,7 @@ while (<>) {
     push @requires, "gperf", "m4", "xproto" if $pkg =~ /xcbutil/;
 
     print "REQUIRES $pkg => @requires\n";
-    print "NATIVE REQUIRES $pkg => @nativeRequires\n";
     $pkgRequires{$pkg} = \@requires;
-    $pkgNativeRequires{$pkg} = \@nativeRequires;
 
     print "done\n";
 }
@@ -231,9 +232,9 @@ print OUT "";
 print OUT <<EOF;
 # THIS IS A GENERATED FILE.  DO NOT EDIT!
 args @ { clangStdenv, fetchurl, fetchgit, fetchpatch, stdenv, pkgconfig, intltool, freetype, fontconfig
-, libxslt, expat, libpng, zlib, mesa_drivers, spice-protocol
+, libxslt, expat, libpng, zlib, perl, mesa_noglu, mesa_drivers, spice-protocol
 , dbus, libuuid, openssl, gperf, m4, libevdev, tradcpp, libinput, mcpp, makeWrapper, autoreconfHook
-, autoconf, automake, libtool, xmlto, asciidoc, flex, bison, mtdev, pixman, buildPackages, ... }: with args;
+, autoconf, automake, libtool, xmlto, asciidoc, flex, bison, python, mtdev, pixman, ... }: with args;
 
 let
 
@@ -257,9 +258,7 @@ foreach my $pkg (sort (keys %pkgURLs)) {
     print "$pkg\n";
 
     my %requires = ();
-    my %nativeRequires = ();
     my $inputs = "";
-    my $nativeInputs = "";
     foreach my $req (sort @{$pkgRequires{$pkg}}) {
         if (defined $pcMap{$req}) {
             # Some packages have .pc that depends on itself.
@@ -267,18 +266,6 @@ foreach my $pkg (sort (keys %pkgURLs)) {
             if (!defined $requires{$pcMap{$req}}) {
                 $inputs .= "$pcMap{$req} ";
                 $requires{$pcMap{$req}} = 1;
-            }
-        } else {
-            print "  NOT FOUND: $req\n";
-        }
-    }
-    foreach my $req (sort @{$pkgNativeRequires{$pkg}}) {
-        if (defined $pcMap{$req}) {
-            # Some packages have .pc that depends on itself.
-            next if $pcMap{$req} eq $pkg;
-            if (!defined $nativeRequires{$pcMap{$req}}) {
-                $nativeInputs .= "$pcMap{$req} ";
-                $nativeRequires{$pcMap{$req}} = 1;
             }
         } else {
             print "  NOT FOUND: $req\n";
@@ -296,7 +283,7 @@ foreach my $pkg (sort (keys %pkgURLs)) {
       url = $pkgURLs{$pkg};
       sha256 = "$pkgHashes{$pkg}";
     };
-    nativeBuildInputs = [ pkgconfig $nativeInputs];
+    nativeBuildInputs = [ pkgconfig ];
     buildInputs = [ $inputs];$extraAttrs
     meta.platforms = stdenv.lib.platforms.unix;
   }) // {inherit $inputs;};

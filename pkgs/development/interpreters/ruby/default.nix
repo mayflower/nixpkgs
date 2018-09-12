@@ -156,7 +156,6 @@ let
           sed -i '/NROFF/d' $out/lib/ruby/*/*/rbconfig.rb
 
           # Bundler tries to create this directory
-          mkdir -pv $out/${passthru.gemPath}
           mkdir -p $out/nix-support
           cat > $out/nix-support/setup-hook <<EOF
           addGemPath() {

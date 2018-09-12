@@ -1,7 +1,7 @@
-{ stdenv, callPackage, lib, enableNpm ? true, ... }@args:
+{ stdenv, callPackage, lib, enableNpm ? true }:
 
 let
-  buildNodejs = callPackage ./nodejs.nix args;
+  buildNodejs = callPackage ./nodejs.nix {};
 in
   buildNodejs {
     inherit enableNpm;

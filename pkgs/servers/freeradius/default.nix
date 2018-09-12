@@ -16,7 +16,7 @@
 , mysql
 , withMysql ? false
 , json_c
-, withJson ? true
+, withJson ? false
 , libyubikey
 , withYubikey ? false
 , collectd

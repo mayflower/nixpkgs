@@ -1,6 +1,6 @@
 { useLua ? !stdenv.isDarwin
 , usePcre ? true
-, stdenv, fetchurl, fetchpatch
+, stdenv, fetchurl
 , openssl, zlib, lua5_3 ? null, pcre ? null
 }:
 
@@ -16,12 +16,6 @@ stdenv.mkDerivation rec {
     url = "https://www.haproxy.org/download/${stdenv.lib.versions.majorMinor version}/src/${name}.tar.gz";
     sha256 = "2bf5dafbb5f1530c0e67ab63666565de948591f8e0ee2a1d3c84c45e738220f1";
   };
-
-  patches = stdenv.lib.optional stdenv.isDarwin (fetchpatch {
-    name = "fix-darwin-no-threads-build.patch";
-    url = "https://git.haproxy.org/?p=haproxy-1.8.git;a=patch;h=fbf09c441a4e72c4a690bc7ef25d3374767fe5c5;hp=3157ef219c493f3b01192f1b809a086a5b119a1e";
-    sha256 = "16ckzb160anf7xih7mmqy59pfz8sdywmyblxnr7lz9xix3jwk55r";
-  });
 
   buildInputs = [ openssl zlib ]
     ++ stdenv.lib.optional useLua lua5_3

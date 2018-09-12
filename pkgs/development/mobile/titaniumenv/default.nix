@@ -14,7 +14,7 @@ rec {
       else throw "Titanium version not supported: "+tiVersion;
     in
     import titaniumSdkFile {
-      inherit (pkgs) stdenv fetchurl unzip makeWrapper;
+      inherit (pkgs) stdenv fetchurl unzip makeWrapper python jdk;
     };
   
   buildApp = import ./build-app.nix {

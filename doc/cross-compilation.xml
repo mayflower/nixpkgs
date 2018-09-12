@@ -111,7 +111,7 @@
        LLVM.
       </para>
       <para>
-       Although the existance of a "target platfom" is arguably a historical
+       Although the existence of a "target platfom" is arguably a historical
        mistake, it is a common one: examples of tools that suffer from it are
        GCC, Binutils, GHC and Autoconf. Nixpkgs tries to avoid sharing in the
        mistake where possible. Still, because the concept of a target platform

@@ -10,7 +10,7 @@ with stdenv.lib;
 let # in mariadb # spans the whole file
 
 mariadb = everything // {
-  inherit client; # mysql binary
+  inherit client; # libmysqlclient.so in .out, necessary headers in .dev and utils in .bin
   server = everything; # a full single-output build, including everything in `client` again
   inherit connector-c; # libmysqlclient.so
   inherit galera;

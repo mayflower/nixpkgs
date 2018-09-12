@@ -1,6 +1,5 @@
 { stdenv, fetchurl, pkgconfig, libevent, openssl, zlib, torsocks
 , libseccomp, systemd, libcap
-, writeText
 
 # for update.nix
 , writeScript
@@ -21,19 +20,6 @@ stdenv.mkDerivation rec {
     url = "https://dist.torproject.org/${name}.tar.gz";
     sha256 = "0vyf5z0dn5jghp2qjp076aq62lsz9g32qv9jiqf08skf096nnd45";
   };
-
-  patches = [
-    # https://github.com/NixOS/nixpkgs/pull/45082#issuecomment-413549813
-    (writeText "disable-test_tortls.diff" ''
-      --- a/src/test/test_tortls.c
-      +++ b/src/test/test_tortls.c
-      @@ -574,3 +574,4 @@
-       test_tortls_cert_matches_key(void *ignored)
-       {
-      +  return;
-         (void)ignored;
-    '')
-  ];
 
   outputs = [ "out" "geoip" ];
 

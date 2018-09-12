@@ -12,7 +12,6 @@ stdenv.mkDerivation rec {
   };
 
   buildInputs = [ openssl ];
-
   configureFlags = [
     "--with-ssl=${openssl.dev}"
     "--sysconfdir=/etc"

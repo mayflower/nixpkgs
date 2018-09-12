@@ -1,4 +1,4 @@
-{ stdenv, fetchurl, fetchpatch, fetchFromGitHub, makeDesktopItem, cmake, boost
+{ stdenv, fetchurl, fetchFromGitHub, makeDesktopItem, cmake, boost
 , zlib, openssl, R, qtbase, qtwebkit, qtwebchannel, libuuid, hunspellDicts
 , unzip, ant, jdk, gnumake, makeWrapper, pandoc
 }:
@@ -26,9 +26,7 @@ stdenv.mkDerivation rec {
   };
 
   # Hack RStudio to only use the input R.
-  patches = [
-    ./r-location.patch
-  ];
+  patches = [ ./r-location.patch ];
   postPatch = "substituteInPlace src/cpp/core/r_util/REnvironmentPosix.cpp --replace '@R@' ${R}";
 
   ginSrc = fetchurl {

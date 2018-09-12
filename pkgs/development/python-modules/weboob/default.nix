@@ -46,7 +46,6 @@ buildPythonPackage rec {
     homepage = http://weboob.org;
     description = "Collection of applications and APIs to interact with websites without requiring the user to open a browser";
     license = stdenv.lib.licenses.agpl3;
-    broken = true; # 2018-04-11
   };
 }
 

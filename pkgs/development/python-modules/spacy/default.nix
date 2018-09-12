@@ -48,12 +48,12 @@ buildPythonPackage rec {
    preshed
    thinc
    plac
-   preshed
-   regex
-   requests
    six
    html5lib
    ujson
+   dill
+   requests
+   regex
    ftfy
    msgpack-python
    msgpack-numpy

@@ -1,5 +1,5 @@
-{ stdenv, fetchurl, python3Packages, gst_all_1, wrapGAppsHook, gobjectIntrospection
-, gtk3, libwnck3, keybinder, intltool, libcanberra-gtk2 }:
+{ stdenv, fetchurl, substituteAll, python3, gst_all_1, wrapGAppsHook, gobjectIntrospection
+, gtk3, libwnck3, keybinder3, intltool, libcanberra-gtk3, libappindicator-gtk3, libpulseaudio }:
 
 python3.pkgs.buildPythonApplication rec {
   name = "kazam-${version}";
