@@ -3552,33 +3552,6 @@ in {
     };
   };
 
-  mailmanclient = buildPythonPackage rec {
-    name = "mailmanclient-${version}";
-    version = "3.2.0b1";
-
-    src = pkgs.fetchFromGitLab {
-      owner = "mailman";
-      repo = "mailmanclient";
-      rev = version;
-      sha256 = "0zqk40gp0bvq8jzvjvwfp6wznmdd68vdn4ygfrgh161aq20farh0";
-    };
-
-    propagatedBuildInputs = with self; [ httplib2 six ];
-
-    # needs access to mailman REST API
-    doCheck = false;
-
-    meta = {
-      homepage = "http://www.gnu.org/software/mailman/";
-      description = "REST client for driving Mailman 3";
-      license = stdenv.lib.licenses.lgpl3;
-      platforms = stdenv.lib.platforms.linux;
-      maintainers = [ stdenv.lib.maintainers.globin ];
-    };
-  };
-
-  mailman-hyperkitty = callPackage ../development/python-modules/mailman-hyperkitty { };
-
   python-mapnik = buildPythonPackage rec {
     name = "python-mapnik-${version}";
     version = "3.0.13";
@@ -4912,8 +4885,6 @@ in {
   django_hijack = callPackage ../development/python-modules/django-hijack { };
 
   django_hijack_admin = callPackage ../development/python-modules/django-hijack-admin { };
-
-  django-mailman3 = callPackage ../development/python-modules/django-mailman3 { };
 
   django_nose = buildPythonPackage rec {
     name = "django-nose-${version}";

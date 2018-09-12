@@ -13163,10 +13163,7 @@ with pkgs;
 
   lighttpd = callPackage ../servers/http/lighttpd { };
 
-  mailman = callPackage ../servers/mail/mailman/2.nix { };
-  mailman3 = callPackage ../servers/mail/mailman { };
-  postorius = callPackage ../servers/mail/mailman/postorius.nix { };
-  hyperkitty = callPackage ../servers/mail/mailman/hyperkitty.nix { };
+  mailman = callPackage ../servers/mail/mailman { };
 
   livepeer = callPackage ../servers/livepeer { ffmpeg = ffmpeg_3; };
 
