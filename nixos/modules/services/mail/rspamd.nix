@@ -154,14 +154,14 @@ in
         bindMilter = mkDefault [ "/run/rspamd/milter.sock mode=0660 owner=${cfg.user} group=${cfg.group}" ];
       };
 
-      users.extraUsers = singleton {
+      users.users = singleton {
         name = cfg.user;
         description = "rspamd daemon";
         uid = config.ids.uids.rspamd;
         group = cfg.group;
       };
 
-      users.extraGroups = singleton {
+      users.groups = singleton {
         name = cfg.group;
         gid = config.ids.gids.rspamd;
       };

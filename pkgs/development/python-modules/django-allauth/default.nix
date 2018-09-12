@@ -1,20 +1,19 @@
 { stdenv, buildPythonPackage, fetchFromGitHub, requests, requests_oauthlib
-, django, python-openid, mock, coverage }:
+, django, python3-openid, mock, coverage }:
 
 buildPythonPackage rec {
   pname = "django-allauth";
-  name = "${pname}-${version}";
-  version = "0.34.0";
+  version = "0.36.0";
 
   # no tests on PyPI
   src = fetchFromGitHub {
     owner = "pennersr";
     repo = pname;
     rev = version;
-    sha256 = "1xbvgng2hgkygmvlymlc8k80lj4mn6d93in1jcc4619agk6jr90d";
+    sha256 = "1c863cmd521j6cwpyd50jxz5y62fdschrhm15jfqihicyr9imjan";
   };
 
-  propagatedBuildInputs = [ requests requests_oauthlib django python-openid ];
+  propagatedBuildInputs = [ requests requests_oauthlib django python3-openid ];
 
   checkInputs = [ coverage mock ];
 

@@ -1,8 +1,6 @@
 let
   pkgs = import ./.. { };
   lib = pkgs.lib;
-  sources = lib.sourceFilesBySuffices ./. [".xml"];
-  sources-langs = ./languages-frameworks;
 in
 pkgs.stdenv.mkDerivation {
   name = "nixpkgs-manual";
@@ -16,7 +14,7 @@ pkgs.stdenv.mkDerivation {
   # $ nix-shell --run "make clean all"
   # otherwise they won't reapply :)
   HIGHLIGHTJS = pkgs.documentation-highlighter;
-  XSL = "${pkgs.docbook5_xsl}/xml/xsl";
+  XSL = "${pkgs.docbook_xsl_ns}/xml/xsl";
   RNG = "${pkgs.docbook5}/xml/rng/docbook/docbook.rng";
   XMLFORMAT_CONFIG = ../nixos/doc/xmlformat.conf;
   xsltFlags = lib.concatStringsSep " " [
@@ -31,7 +29,7 @@ pkgs.stdenv.mkDerivation {
   ];
 
   postPatch = ''
-    echo ${lib.nixpkgsVersion} > .version
+    echo ${lib.version} > .version
   '';
 
   installPhase = ''
@@ -44,5 +42,6 @@ pkgs.stdenv.mkDerivation {
 
     mkdir -p $out/nix-support/
     echo "doc manual $dest manual.html" >> $out/nix-support/hydra-build-products
+    echo "doc manual $dest nixpkgs-manual.epub" >> $out/nix-support/hydra-build-products
   '';
 }

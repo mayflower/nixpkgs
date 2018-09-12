@@ -1,4 +1,4 @@
-{ stdenv, fetchurl, pkgconfig, intltool, gtk3 }:
+{ stdenv, fetchurl, pkgconfig, intltool, gtk3, libintl }:
 
 stdenv.mkDerivation rec {
   name = "lxtask-${version}";
@@ -11,7 +11,7 @@ stdenv.mkDerivation rec {
 
   nativeBuildInputs = [ pkgconfig intltool ];
 
-  buildInputs = [ gtk3 ];
+  buildInputs = [ gtk3 libintl ];
 
   configureFlags = [ "--enable-gtk3" ];
 

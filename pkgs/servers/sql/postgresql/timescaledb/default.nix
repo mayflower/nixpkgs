@@ -8,7 +8,7 @@
 
 stdenv.mkDerivation rec {
   name = "timescaledb-${version}";
-  version = "0.9.1";
+  version = "0.11.0";
 
   nativeBuildInputs = [ cmake ];
   buildInputs = [ postgresql ];
@@ -17,7 +17,7 @@ stdenv.mkDerivation rec {
     owner  = "timescale";
     repo   = "timescaledb";
     rev    = "refs/tags/${version}";
-    sha256 = "00k8fk5a1xpv9nxlmafnngk31wh80h6m72vsl1hnyq7nhby7ylic";
+    sha256 = "06xysf45r0c2sjfl6vgdbrm7pn7nxx2n0k29bm88q0ipyyp9fr0v";
   };
 
   # Fix the install phase which tries to install into the pgsql extension dir,

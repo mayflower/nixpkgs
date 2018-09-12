@@ -2,9 +2,9 @@
 , pkgconfig, which
 , flex, bison
 , linuxHeaders ? stdenv.cc.libc.linuxHeaders
-, python
 , gawk
-, perl
+, withPerl ? stdenv.hostPlatform == stdenv.buildPlatform && perl.meta.available or false, perl
+, withPython ? stdenv.hostPlatform == stdenv.buildPlatform && python.meta.available or false, python
 , swig
 , ncurses
 , pam
@@ -30,15 +30,13 @@ let
   };
 
   prePatchCommon = ''
-    substituteInPlace ./common/Make.rules --replace "/usr/bin/pod2man" "${perl}/bin/pod2man"
-    substituteInPlace ./common/Make.rules --replace "/usr/bin/pod2html" "${perl}/bin/pod2html"
+    substituteInPlace ./common/Make.rules --replace "/usr/bin/pod2man" "${buildPackages.perl}/bin/pod2man"
+    substituteInPlace ./common/Make.rules --replace "/usr/bin/pod2html" "${buildPackages.perl}/bin/pod2html"
     substituteInPlace ./common/Make.rules --replace "/usr/include/linux/capability.h" "${linuxHeaders}/include/linux/capability.h"
     substituteInPlace ./common/Make.rules --replace "/usr/share/man" "share/man"
   '';
 
-  # use 'if c then x else null' to avoid rebuilding
-  # patches = stdenv.lib.optionals stdenv.hostPlatform.isMusl [
-  patches = if stdenv.hostPlatform.isMusl then [
+  patches = stdenv.lib.optionals stdenv.hostPlatform.isMusl [
     (fetchpatch {
       url = "https://git.alpinelinux.org/cgit/aports/plain/testing/apparmor/0002-Provide-missing-secure_getenv-and-scandirat-function.patch?id=74b8427cc21f04e32030d047ae92caa618105b53";
       name = "0002-Provide-missing-secure_getenv-and-scandirat-function.patch";
@@ -55,7 +53,11 @@ let
       sha256 = "1m4dx901biqgnr4w4wz8a2z9r9dxyw7wv6m6mqglqwf2lxinqmp4";
     })
     # (alpine patches {1,4,5,6,8} are needed for apparmor 2.11, but not 2.12)
-  ] else null;
+  ];
+
+  # Set to `true` after the next FIXME gets fixed or this gets some
+  # common derivation infra. Too much copy-paste to fix one by one.
+  doCheck = false;
 
   # FIXME: convert these to a single multiple-outputs package?
 
@@ -73,7 +75,12 @@ let
       swig
       ncurses
       which
+      perl
     ];
+
+    buildInputs = []
+      ++ stdenv.lib.optional withPerl perl
+      ++ stdenv.lib.optional withPython python;
 
     # required to build apparmor-parser
     dontDisableStatic = true;
@@ -85,14 +92,20 @@ let
     inherit patches;
 
     postPatch = "cd ./libraries/libapparmor";
-    configureFlags = "--with-python --with-perl";
+    # https://gitlab.com/apparmor/apparmor/issues/1
+    configureFlags = [
+      (stdenv.lib.withFeature withPerl "perl")
+      (stdenv.lib.withFeature withPython "python")
+    ];
 
-    outputs = [ "out" "python" ];
+    outputs = [ "out" ] ++ stdenv.lib.optional withPython "python";
 
-    postInstall = ''
+    postInstall = stdenv.lib.optionalString withPython ''
       mkdir -p $python/lib
       mv $out/lib/python* $python/lib/
     '';
+
+    inherit doCheck;
 
     meta = apparmor-meta "library";
   };
@@ -126,7 +139,11 @@ let
       done
     '';
 
-    meta = apparmor-meta "user-land utilities";
+    inherit doCheck;
+
+    meta = apparmor-meta "user-land utilities" // {
+      broken = !(withPython && withPerl);
+    };
   };
 
   apparmor-bin-utils = stdenv.mkDerivation {
@@ -148,6 +165,8 @@ let
     postPatch = "cd ./binutils";
     makeFlags = ''LANGS= USE_SYSTEM=1'';
     installFlags = ''DESTDIR=$(out) BINDIR=$(out)/bin'';
+
+    inherit doCheck;
 
     meta = apparmor-meta "binary user-land utilities";
   };
@@ -172,6 +191,8 @@ let
     makeFlags = ''LANGS= USE_SYSTEM=1 INCLUDEDIR=${libapparmor}/include'';
     installFlags = ''DESTDIR=$(out) DISTRO=unknown'';
 
+    inherit doCheck;
+
     meta = apparmor-meta "rule parser";
   };
 
@@ -187,6 +208,8 @@ let
     makeFlags = ''USE_SYSTEM=1'';
     installFlags = ''DESTDIR=$(out)'';
 
+    inherit doCheck;
+
     meta = apparmor-meta "PAM service";
   };
 
@@ -198,6 +221,8 @@ let
 
     postPatch = "cd ./profiles";
     installFlags = ''DESTDIR=$(out) EXTRAS_DEST=$(out)/share/apparmor/extra-profiles'';
+
+    inherit doCheck;
 
     meta = apparmor-meta "profiles";
   };
@@ -212,6 +237,8 @@ let
       mkdir "$out"
       cp -R ./kernel-patches/* "$out"
     '';
+
+    inherit doCheck;
 
     meta = apparmor-meta "kernel patches";
   };

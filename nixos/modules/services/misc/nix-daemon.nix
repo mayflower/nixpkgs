@@ -30,10 +30,10 @@ let
       # /bin/sh in the sandbox as a bind-mount to bash. This means we
       # also need to include the entire closure of bash. Nix >= 2.0
       # provides a /bin/sh by default.
-      sh = pkgs.stdenv.shell;
+      sh = pkgs.runtimeShell;
       binshDeps = pkgs.writeReferencesToFile sh;
     in
-      pkgs.runCommand "nix.conf" { extraOptions = cfg.extraOptions; } ''
+      pkgs.runCommand "nix.conf" { extraOptions = cfg.extraOptions; } (''
         ${optionalString (!isNix20) ''
           extraPaths=$(for i in $(cat ${binshDeps}); do if test -d $i; then echo $i; fi; done)
         ''}
@@ -62,7 +62,11 @@ let
         ''}
         $extraOptions
         END
-      '';
+      '' + optionalString cfg.checkConfig ''
+        echo "Checking that Nix can read nix.conf..."
+        ln -s $out ./nix.conf
+        NIX_CONF_DIR=$PWD ${cfg.package}/bin/nix show-config >/dev/null
+      '');
 
 in
 
@@ -84,7 +88,7 @@ in
       };
 
       maxJobs = mkOption {
-        type = types.int;
+        type = types.either types.int (types.enum ["auto"]);
         default = 1;
         example = 64;
         description = ''
@@ -123,14 +127,16 @@ in
 
       useSandbox = mkOption {
         type = types.either types.bool (types.enum ["relaxed"]);
-        default = false;
+        default = true;
         description = "
           If set, Nix will perform builds in a sandboxed environment that it
-          will set up automatically for each build.  This prevents
-          impurities in builds by disallowing access to dependencies
-          outside of the Nix store. This isn't enabled by default for
-          performance. It doesn't affect derivation hashes, so changing
-          this option will not trigger a rebuild of packages.
+          will set up automatically for each build. This prevents impurities
+          in builds by disallowing access to dependencies outside of the Nix
+          store by using network and mount namespaces in a chroot environment.
+          This is enabled by default even though it has a possible performance
+          impact due to the initial setup time of a sandbox for each build. It
+          doesn't affect derivation hashes, so changing this option will not
+          trigger a rebuild of packages.
         ";
       };
 
@@ -339,7 +345,9 @@ in
       nixPath = mkOption {
         type = types.listOf types.str;
         default =
-          [ "nixpkgs=/nix/var/nix/profiles/per-user/root/channels/nixos/nixpkgs"
+          [
+            "$HOME/.nix-defexpr/channels"
+            "nixpkgs=/nix/var/nix/profiles/per-user/root/channels/nixos"
             "nixos-config=/etc/nixos/configuration.nix"
             "/nix/var/nix/profiles/per-user/root/channels"
           ];
@@ -350,6 +358,13 @@ in
         '';
       };
 
+      checkConfig = mkOption {
+        type = types.bool;
+        default = true;
+        description = ''
+          If enabled (the default), checks that Nix can parse the generated nix.conf.
+        '';
+      };
     };
 
   };
@@ -438,23 +453,22 @@ in
 
     nix.nrBuildUsers = mkDefault (lib.max 32 cfg.maxJobs);
 
-    users.extraUsers = nixbldUsers;
+    users.users = nixbldUsers;
 
     services.xserver.displayManager.hiddenUsers = map ({ name, ... }: name) nixbldUsers;
 
+    # FIXME: use systemd-tmpfiles to create Nix directories.
     system.activationScripts.nix = stringAfter [ "etc" "users" ]
       ''
         # Nix initialisation.
-        mkdir -m 0755 -p \
+        install -m 0755 -d \
           /nix/var/nix/gcroots \
           /nix/var/nix/temproots \
-          /nix/var/nix/manifests \
           /nix/var/nix/userpool \
           /nix/var/nix/profiles \
           /nix/var/nix/db \
-          /nix/var/log/nix/drvs \
-          /nix/var/nix/channel-cache
-        mkdir -m 1777 -p \
+          /nix/var/log/nix/drvs
+        install -m 1777 -d \
           /nix/var/nix/gcroots/per-user \
           /nix/var/nix/profiles/per-user \
           /nix/var/nix/gcroots/tmp

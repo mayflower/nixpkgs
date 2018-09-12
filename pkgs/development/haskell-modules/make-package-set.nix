@@ -38,7 +38,7 @@ let
   inherit (stdenv) buildPlatform hostPlatform;
 
   inherit (stdenv.lib) fix' extends makeOverridable;
-  inherit (haskellLib) overrideCabal getHaskellBuildInputs;
+  inherit (haskellLib) overrideCabal getBuildInputs;
 
   mkDerivationImpl = pkgs.callPackage ./generic-builder.nix {
     inherit stdenv;
@@ -97,7 +97,20 @@ let
       };
     in stdenv.lib.makeOverridable drvScope (auto // manualArgs);
 
-  mkScope = scope: pkgs // pkgs.xorg // pkgs.gnome2 // { inherit stdenv; } // scope;
+  mkScope = scope: let
+      ps = pkgs.__splicedPackages;
+      scopeSpliced = pkgs.splicePackages {
+        pkgsBuildBuild = scope.buildHaskellPackages.buildHaskellPackages;
+        pkgsBuildHost = scope.buildHaskellPackages;
+        pkgsBuildTarget = {};
+        pkgsHostHost = {};
+        pkgsHostTarget = scope;
+        pkgsTargetTarget = {};
+      } // {
+        # Don't splice these
+        inherit (scope) ghc buildHaskellPackages;
+      };
+    in ps // ps.xorg // ps.gnome2 // { inherit stdenv; } // scopeSpliced;
   defaultScope = mkScope self;
   callPackage = drv: args: callPackageWithScope defaultScope drv args;
 
@@ -115,7 +128,7 @@ let
       preferLocalBuild = true;
       phases = ["installPhase"];
       LANG = "en_US.UTF-8";
-      LOCALE_ARCHIVE = pkgs.lib.optionalString buildPlatform.isLinux "${buildPackages.glibcLocales}/lib/locale/locale-archive";
+      LOCALE_ARCHIVE = pkgs.lib.optionalString (buildPlatform.libc == "glibc") "${buildPackages.glibcLocales}/lib/locale/locale-archive";
       installPhase = ''
         export HOME="$TMP"
         mkdir -p "$out"
@@ -150,7 +163,7 @@ let
 
 in package-set { inherit pkgs stdenv callPackage; } self // {
 
-    inherit mkDerivation callPackage haskellSrc2nix hackage2nix;
+    inherit mkDerivation callPackage haskellSrc2nix hackage2nix buildHaskellPackages;
 
     inherit (haskellLib) packageSourceOverrides;
 
@@ -175,6 +188,7 @@ in package-set { inherit pkgs stdenv callPackage; } self // {
     #   , source-overrides : Defaulted (Either Path VersionNumber)
     #   , overrides : Defaulted (HaskellPackageOverrideSet)
     #   , modifier : Defaulted
+    #   , returnShellEnv : Defaulted
     #   } -> NixShellAwareDerivation
     # Given a path to a haskell package directory whose cabal file is
     # named the same as the directory name, an optional set of
@@ -182,11 +196,19 @@ in package-set { inherit pkgs stdenv callPackage; } self // {
     # function, an optional set of arbitrary overrides, and an optional
     # haskell package modifier,  return a derivation appropriate
     # for nix-build or nix-shell to build that package.
-    developPackage = { root, source-overrides ? {}, overrides ? self: super: {}, modifier ? drv: drv }:
-      let name = builtins.baseNameOf root;
-          drv =
-            (extensible-self.extend (pkgs.lib.composeExtensions (self.packageSourceOverrides source-overrides) overrides)).callCabal2nix name root {};
-      in if pkgs.lib.inNixShell then (modifier drv).env else modifier drv;
+    developPackage =
+      { root
+      , source-overrides ? {}
+      , overrides ? self: super: {}
+      , modifier ? drv: drv
+      , returnShellEnv ? pkgs.lib.inNixShell }:
+      let drv =
+        (extensible-self.extend
+           (pkgs.lib.composeExtensions
+              (self.packageSourceOverrides source-overrides)
+              overrides))
+        .callCabal2nix (builtins.baseNameOf root) root {};
+      in if returnShellEnv then (modifier drv).env else modifier drv;
 
     ghcWithPackages = selectFrom: withPackages (selectFrom self);
 
@@ -228,7 +250,7 @@ in package-set { inherit pkgs stdenv callPackage; } self // {
     shellFor = { packages, withHoogle ? false, ... } @ args:
       let
         selected = packages self;
-        packageInputs = builtins.map getHaskellBuildInputs selected;
+        packageInputs = builtins.map getBuildInputs selected;
         haskellInputs =
           builtins.filter
             (input: pkgs.lib.all (p: input.outPath != p.outPath) selected)

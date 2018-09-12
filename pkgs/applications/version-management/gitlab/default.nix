@@ -1,4 +1,4 @@
-{ pkgs, stdenv, lib, bundler, fetchurl, fetchFromGitLab, bundlerEnv, libiconv
+{ stdenv, lib, fetchurl, fetchFromGitLab, bundlerEnv
 , ruby, tzdata, git, procps, nettools
 }:
 
@@ -8,12 +8,6 @@ let
     inherit ruby;
     gemdir = ./.;
     groups = [ "default" "unicorn" "ed25519" "metrics" ];
-    meta = with lib; {
-      homepage = http://www.gitlab.com/;
-      platforms = platforms.linux;
-      maintainers = with maintainers; [ fpletz globin ];
-      license = licenses.mit;
-    };
   };
 
   version = "11.1.2";
@@ -103,5 +97,12 @@ stdenv.mkDerivation rec {
   passthru = {
     inherit rubyEnv;
     ruby = rubyEnv.wrappedRuby;
+  };
+
+  meta = with stdenv.lib; {
+    description = "Web-based Git-repository manager";
+    homepage = https://gitlab.com;
+    license = licenses.mit;
+    maintainers = with maintainers; [ fpletz globin ];
   };
 }

@@ -1,4 +1,4 @@
-{ stdenv, buildGoPackage, fetchFromGitHub, fetchgit, clang }:
+{ stdenv, buildGoPackage, fetchFromGitHub, fetchgit }:
 
 buildGoPackage rec {
   name = "ethsign-${version}";
@@ -52,7 +52,7 @@ buildGoPackage rec {
   ];
 
   meta = with stdenv.lib; {
-    homepage = http://github.com/dapphub/ethsign;
+    homepage = https://github.com/dapphub/ethsign;
     description = "Make raw signed Ethereum transactions";
     license = [licenses.gpl3];
   };

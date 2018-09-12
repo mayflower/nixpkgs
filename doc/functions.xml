@@ -1,5 +1,6 @@
 <chapter xmlns="http://docbook.org/ns/docbook"
 	 xmlns:xlink="http://www.w3.org/1999/xlink"
+         xmlns:xi="http://www.w3.org/2001/XInclude"
 	 xml:id="chap-functions">
  <title>Functions reference</title>
  <para>
@@ -209,15 +210,69 @@
 
   <para>
    All generators follow a similar call interface: <code>generatorName
-   configFunctions data</code>, where <literal>configFunctions</literal> is a
-   set of user-defined functions that format variable parts of the content.
+   configFunctions data</code>, where <literal>configFunctions</literal> is an
+   attrset of user-defined functions that format nested parts of the content.
    They each have common defaults, so often they do not need to be set
    manually. An example is <code>mkSectionName ? (name: libStr.escape [ "[" "]"
-   ] name)</code> from the <literal>INI</literal> generator. It gets the name
-   of a section and returns a sanitized name. The default
+   ] name)</code> from the <literal>INI</literal> generator. It receives the
+   name of a section and sanitizes it. The default
    <literal>mkSectionName</literal> escapes <literal>[</literal> and
    <literal>]</literal> with a backslash.
   </para>
+
+  <para>
+   Generators can be fine-tuned to produce exactly the file format required by
+   your application/service. One example is an INI-file format which uses
+   <literal>: </literal> as separator, the strings
+   <literal>"yes"</literal>/<literal>"no"</literal> as boolean values and
+   requires all string values to be quoted:
+  </para>
+
+<programlisting>
+with lib;
+let
+  customToINI = generators.toINI {
+    # specifies how to format a key/value pair
+    mkKeyValue = generators.mkKeyValueDefault {
+      # specifies the generated string for a subset of nix values
+      mkValueString = v:
+             if v == true then ''"yes"''
+        else if v == false then ''"no"''
+        else if isString v then ''"${v}"''
+        # and delegats all other values to the default generator
+        else generators.mkValueStringDefault {} v;
+    } ":";
+  };
+
+# the INI file can now be given as plain old nix values
+in customToINI {
+  main = {
+    pushinfo = true;
+    autopush = false;
+    host = "localhost";
+    port = 42;
+  };
+  mergetool = {
+    merge = "diff3";
+  };
+}
+</programlisting>
+
+  <para>
+   This will produce the following INI file as nix string:
+  </para>
+
+<programlisting>
+[main]
+autopush:"no"
+host:"localhost"
+port:42
+pushinfo:"yes"
+str\:ange:"very::strange"
+
+[mergetool]
+merge:"diff3"
+</programlisting>
 
   <note>
    <para>
@@ -229,6 +284,24 @@
   <para>
    Detailed documentation for each generator can be found in
    <literal>lib/generators.nix</literal>.
+  </para>
+ </section>
+ <section xml:id="sec-debug">
+  <title>Debugging Nix Expressions</title>
+
+  <para>
+   Nix is a unityped, dynamic language, this means every value can potentially
+   appear anywhere. Since it is also non-strict, evaluation order and what
+   ultimately is evaluated might surprise you. Therefore it is important to be
+   able to debug nix expressions.
+  </para>
+
+  <para>
+   In the <literal>lib/debug.nix</literal> file you will find a number of
+   functions that help (pretty-)printing values while evaluation is runnnig.
+   You can even specify how deep these values should be printed recursively,
+   and transform them on the fly. Please consult the docstrings in
+   <literal>lib/debug.nix</literal> for usage information.
   </para>
  </section>
  <section xml:id="sec-fhs-environments">
@@ -372,6 +445,7 @@
    <filename>./bin/start.sh</filename> -- relative paths are supported.
   </para>
  </section>
+ <xi:include href="shell.section.xml" />
  <section xml:id="sec-pkgs-dockerTools">
   <title>pkgs.dockerTools</title>
 
@@ -449,7 +523,8 @@
     <callout arearefs='ex-dockerTools-buildImage-2'>
      <para>
       <varname>tag</varname> specifies the tag of the resulting image. By
-      default it's <literal>latest</literal>.
+      default it's <literal>null</literal>, which indicates that the nix output
+      hash will be used as tag.
      </para>
     </callout>
     <callout arearefs='ex-dockerTools-buildImage-3'>
@@ -560,10 +635,9 @@
 
    <para>
     This function is analogous to the <command>docker pull</command> command,
-    in that can be used to fetch a Docker image from a Docker registry.
-    Currently only registry <literal>v1</literal> is supported. By default
-    <link xlink:href="https://hub.docker.com/">Docker Hub</link> is used to
-    pull images.
+    in that can be used to pull a Docker image from a Docker registry. By
+    default <link xlink:href="https://hub.docker.com/">Docker Hub</link> is
+    used to pull images.
    </para>
 
    <para>
@@ -574,13 +648,12 @@
     <title>Docker pull</title>
 <programlisting>
   pullImage {
-    imageName = "debian"; <co xml:id='ex-dockerTools-pullImage-1' />
-    imageTag = "jessie"; <co xml:id='ex-dockerTools-pullImage-2' />
-    imageId = null; <co xml:id='ex-dockerTools-pullImage-3' />
-    sha256 = "1bhw5hkz6chrnrih0ymjbmn69hyfriza2lr550xyvpdrnbzr4gk2"; <co xml:id='ex-dockerTools-pullImage-4' />
-
-    indexUrl = "https://index.docker.io"; <co xml:id='ex-dockerTools-pullImage-5' />
-    registryVersion = "v1";
+    imageName = "nixos/nix"; <co xml:id='ex-dockerTools-pullImage-1' />
+    imageDigest = "sha256:20d9485b25ecfd89204e843a962c1bd70e9cc6858d65d7f5fadc340246e2116b"; <co xml:id='ex-dockerTools-pullImage-2' />
+    finalImageTag = "1.11";  <co xml:id='ex-dockerTools-pullImage-3' />
+    sha256 = "0mqjy3zq2v6rrhizgb9nvhczl87lcfphq9601wcprdika2jz7qh8"; <co xml:id='ex-dockerTools-pullImage-4' />
+    os = "linux"; <co xml:id='ex-dockerTools-pullImage-5' />
+    arch = "x86_64"; <co xml:id='ex-dockerTools-pullImage-6' />
   }
   </programlisting>
    </example>
@@ -590,22 +663,32 @@
      <para>
       <varname>imageName</varname> specifies the name of the image to be
       downloaded, which can also include the registry namespace (e.g.
-      <literal>library/debian</literal>). This argument is required.
+      <literal>nixos</literal>). This argument is required.
      </para>
     </callout>
     <callout arearefs='ex-dockerTools-pullImage-2'>
      <para>
-      <varname>imageTag</varname> specifies the tag of the image to be
-      downloaded. By default it's <literal>latest</literal>.
+      <varname>imageDigest</varname> specifies the digest of the image to be
+      downloaded. Skopeo can be used to get the digest of an image, with its
+      <varname>inspect</varname> subcommand. Since a given
+      <varname>imageName</varname> may transparently refer to a manifest list
+      of images which support multiple architectures and/or operating systems,
+      supply the `--override-os` and `--override-arch` arguments to specify
+      exactly which image you want. By default it will match the OS and
+      architecture of the host the command is run on.
+<programlisting>
+  $ nix-shell --packages skopeo jq --command "skopeo --override-os linux --override-arch x86_64 inspect docker://docker.io/nixos/nix:1.11 | jq -r '.Digest'"
+  sha256:20d9485b25ecfd89204e843a962c1bd70e9cc6858d65d7f5fadc340246e2116b
+  </programlisting>
+      This argument is required.
      </para>
     </callout>
     <callout arearefs='ex-dockerTools-pullImage-3'>
      <para>
-      <varname>imageId</varname>, if specified this exact image will be
-      fetched, instead of <varname>imageName/imageTag</varname>. However, the
-      resulting repository will still be named
-      <varname>imageName/imageTag</varname>. By default it's
-      <literal>null</literal>.
+      <varname>finalImageTag</varname>, if specified, this is the tag of the
+      image to be created. Note it is never used to fetch the image since we
+      prefer to rely on the immutable digest ID. By default it's
+      <literal>latest</literal>.
      </para>
     </callout>
     <callout arearefs='ex-dockerTools-pullImage-4'>
@@ -613,18 +696,17 @@
       <varname>sha256</varname> is the checksum of the whole fetched image.
       This argument is required.
      </para>
-     <note>
-      <para>
-       The checksum is computed on the unpacked directory, not on the final
-       tarball.
-      </para>
-     </note>
     </callout>
     <callout arearefs='ex-dockerTools-pullImage-5'>
      <para>
-      In the above example the default values are shown for the variables
-      <varname>indexUrl</varname> and <varname>registryVersion</varname>. Hence
-      by default the Docker.io registry is used to pull the images.
+      <varname>os</varname>, if specified, is the operating system of the
+      fetched image. By default it's <literal>linux</literal>.
+     </para>
+    </callout>
+    <callout arearefs='ex-dockerTools-pullImage-6'>
+     <para>
+      <varname>arch</varname>, if specified, is the cpu architecture of the
+      fetched image. By default it's <literal>x86_64</literal>.
      </para>
     </callout>
    </calloutlist>

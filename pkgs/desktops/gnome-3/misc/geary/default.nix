@@ -1,4 +1,4 @@
-{ stdenv, fetchurl, intltool, pkgconfig, gtk3, vala_0_38, enchant
+{ stdenv, fetchurl, intltool, pkgconfig, gtk3, vala_0_40, enchant
 , wrapGAppsHook, gdk_pixbuf, cmake, ninja, desktop-file-utils
 , libnotify, libcanberra-gtk3, libsecret, gmime, isocodes
 , gobjectIntrospection, libpthreadstubs, sqlite
@@ -6,17 +6,17 @@
 
 let
   pname = "geary";
-  version = "0.12.3";
+  version = "0.12.4";
 in
 stdenv.mkDerivation rec {
   name = "${pname}-${version}";
 
   src = fetchurl {
     url = "mirror://gnome/sources/${pname}/${stdenv.lib.versions.majorMinor version}/${name}.tar.xz";
-    sha256 = "18zzjzs075zja00xpnyvjrrdzm54icdhfw4ywhpr6rqfcpnzifw7";
+    sha256 = "01ykhkjfkprvh9kp4rzrl6xs2pqibiw44ckvqsn5cs3xy2rlq8mm";
   };
 
-  nativeBuildInputs = [ vala_0_38 intltool pkgconfig wrapGAppsHook cmake ninja desktop-file-utils gnome-doc-utils gobjectIntrospection ];
+  nativeBuildInputs = [ vala_0_40 intltool pkgconfig wrapGAppsHook cmake ninja desktop-file-utils gnome-doc-utils gobjectIntrospection ];
   buildInputs = [
     gtk3 enchant webkitgtk libnotify libcanberra-gtk3 gnome3.libgee libsecret gmime sqlite
     libpthreadstubs gnome3.gsettings-desktop-schemas gnome3.gcr isocodes

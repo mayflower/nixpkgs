@@ -8,7 +8,7 @@ let
     builtins.substring 0 1 x == "/"      # absolute path
     || builtins.substring 0 1 x == "."   # relative path
     || builtins.match "[.*:.*]" == null; # not machine:path
-
+ 
   mkExcludeFile = cfg:
     # Write each exclude pattern to a new line
     pkgs.writeText "excludefile" (concatStringsSep "\n" cfg.exclude);
@@ -68,7 +68,7 @@ let
       { BORG_PASSPHRASE = passphrase; }
     else { };
 
-  mkBackupService = name: cfg:
+  mkBackupService = name: cfg: 
     let
       userHome = config.users.users.${cfg.user}.home;
     in nameValuePair "borgbackup-job-${name}" {
@@ -106,7 +106,7 @@ let
       nameValuePair "borgbackup-job-${name}" (stringAfter [ "users" ] (''
         # Eensure that the home directory already exists
         # We can't assert createHome == true because that's not the case for root
-        cd "${config.users.users.${cfg.user}.home}"
+        cd "${config.users.users.${cfg.user}.home}"                                                                                                         
         ${install} -d .config/borg
         ${install} -d .cache/borg
       '' + optionalString (isLocalPath cfg.repo) ''
@@ -510,9 +510,9 @@ in {
     '';
     default = { };
     type = types.attrsOf (types.submodule (
-      { name, config, ... }: {
+      { ... }: {
         options = {
-
+          
           path = mkOption {
             type = types.path;
             description = ''

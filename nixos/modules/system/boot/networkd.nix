@@ -30,10 +30,14 @@ let
     (assertValueOneOf "UDPSegmentationOffload" boolValues)
     (assertValueOneOf "GenericReceiveOffload" boolValues)
     (assertValueOneOf "LargeReceiveOffload" boolValues)
-    (assertRange "RxChannels" 1 4294967295)
-    (assertRange "TxChannels" 1 4294967295)
-    (assertRange "OtherChannels" 1 4294967295)
-    (assertRange "CombinedChannels" 1 4294967295)
+    (assertInt "RxChannels")
+    (assertMinimum "RxChannels" 1)
+    (assertInt "TxChannels")
+    (assertMinimum "TxChannels" 1)
+    (assertInt "OtherChannels")
+    (assertMinimum "OtherChannels" 1)
+    (assertInt "CombinedChannels")
+    (assertMinimum "CombinedChannels" 1)
   ];
 
   checkNetdev = checkUnitConfig "Netdev" [
@@ -226,7 +230,8 @@ let
     (assertValueOneOf "UseTimezone" boolValues)
     (assertValueOneOf "CriticalConnection" boolValues)
     (assertValueOneOf "RequestBroadcast" boolValues)
-    (assertRange "RouteTable" 0 4294967295)
+    (assertInt "RouteTable")
+    (assertMinimum "RouteTable" 0)
     (assertValueOneOf "RapidCommit" boolValues)
   ];
 
@@ -250,7 +255,7 @@ let
     (assertByteFormat "MTUBytes")
     (assertValueOneOf "ARP" boolValues)
     (assertValueOneOf "Unmanaged" boolValues)
-    (assertValueOneOf "RequiredForOnline" boolValues)
+    (assertValueOneOf "RquiredForOnline" boolValues)
   ];
 
 
@@ -651,7 +656,7 @@ let
 
   };
 
-  networkConfig = { name, config, ... }: {
+  networkConfig = { config, ... }: {
     config = {
       matchConfig = optionalAttrs (config.name != null) {
         Name = config.name;

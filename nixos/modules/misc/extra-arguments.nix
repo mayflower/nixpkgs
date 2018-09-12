@@ -1,4 +1,4 @@
-{ lib, pkgs, config, ... }:
+{ config, pkgs, ... }:
 
 {
   _module.args = {

@@ -12,11 +12,19 @@ buildGoPackage rec {
   nativeBuildInputs = [ pkgconfig ];
   buildInputs = [ libvirt ];
 
-  postInstall = "mv $bin/bin/kvm $bin/bin/docker-machine-driver-kvm2";
+  preBuild = ''
+    export buildFlagsArray=(-ldflags="-X k8s.io/minikube/pkg/drivers/kvm/version.VERSION=v${version}")
+  '';
+
+  postInstall = ''
+    mv $bin/bin/kvm $bin/bin/docker-machine-driver-kvm2
+  '';
 
   meta = with stdenv.lib; {
-    description = "KVM driver for docker-machine.";
+    homepage = https://github.com/kubernetes/minikube/blob/master/docs/drivers.md;
+    description = "KVM2 driver for docker-machine.";
     license = licenses.asl20;
+    maintainers = with maintainers; [ tadfisher ];
     platforms = platforms.unix;
   };
 }

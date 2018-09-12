@@ -1,28 +1,32 @@
-{ stdenv, buildGoPackage, fetchFromGitHub, go-bindata
-, libvirt, qemu, docker-machine-kvm, docker-machine-kvm2
-, gpgme, makeWrapper, hostPlatform, vmnet, python, kubectl }:
+{ stdenv, buildGoPackage, fetchFromGitHub, go-bindata, libvirt, qemu
+, gpgme, makeWrapper, vmnet, python
+, docker-machine-kvm, docker-machine-kvm2
+, extraDrivers ? []
+}:
 
 let
-  version = "0.27.0";
-  src = fetchFromGitHub {
-    owner  = "kubernetes";
-    repo   = "minikube";
-    rev    = "v${version}";
-    sha256 = "00gj8x5p0vxwy0y0g5nnddmq049h7zxvhb73lb4gii5mghr9mkws";
-  };
+  drivers = stdenv.lib.filter (d: d != null) (extraDrivers
+            ++ stdenv.lib.optionals stdenv.isLinux [ docker-machine-kvm docker-machine-kvm2 ]);
 
-  binPath = stdenv.lib.optionals stdenv.isLinux [ libvirt qemu docker-machine-kvm docker-machine-kvm2 kubectl ];
+  binPath = drivers
+            ++ stdenv.lib.optionals stdenv.isLinux ([ libvirt qemu ]);
 
 in buildGoPackage rec {
   pname   = "minikube";
   name    = "${pname}-${version}";
-  inherit src;
-  inherit version;
+  version = "0.28.1";
 
   goPackagePath = "k8s.io/minikube";
 
-  buildInputs = [ go-bindata makeWrapper gpgme ] ++ stdenv.lib.optional hostPlatform.isDarwin vmnet;
-  subPackages = [ "cmd/minikube" ] ++ stdenv.lib.optional hostPlatform.isDarwin "cmd/drivers/hyperkit";
+  src = fetchFromGitHub {
+    owner  = "kubernetes";
+    repo   = "minikube";
+    rev    = "v${version}";
+    sha256 = "0c36rzsdzxf9q6l4hl506bsd4qwmw033i0k1xhqszv9agg7qjlmm";
+  };
+
+  buildInputs = [ go-bindata makeWrapper gpgme ] ++ stdenv.lib.optional stdenv.hostPlatform.isDarwin vmnet;
+  subPackages = [ "cmd/minikube" ] ++ stdenv.lib.optional stdenv.hostPlatform.isDarwin "cmd/drivers/hyperkit";
 
   preBuild = ''
     pushd go/src/${goPackagePath} >/dev/null
@@ -52,7 +56,7 @@ in buildGoPackage rec {
 
   postFixup = ''
     wrapProgram $bin/bin/${pname} --prefix PATH : $bin/bin:${stdenv.lib.makeBinPath binPath}
-  '' + stdenv.lib.optionalString hostPlatform.isDarwin ''
+  '' + stdenv.lib.optionalString stdenv.hostPlatform.isDarwin ''
     mv $bin/bin/hyperkit $bin/bin/docker-machine-driver-hyperkit
   '';
 

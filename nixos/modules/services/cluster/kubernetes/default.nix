@@ -36,9 +36,6 @@ let
     })}
   '';
 
-  skipAttrs = attrs: map (filterAttrs (k: v: k != "enable"))
-    (filter (v: !(hasAttr "enable" v) || v.enable) attrs);
-
   infraContainer = pkgs.dockerTools.buildImage {
     name = "pause";
     tag = "latest";
@@ -1122,8 +1119,8 @@ in {
         description = "Kubernetes addon manager";
         wantedBy = [ "kubernetes.target" ];
         after = [ "kube-apiserver.service" ];
-        path = with pkgs; [ gawk ];
         environment.ADDON_PATH = "/etc/kubernetes/addons/";
+        path = [ pkgs.gawk ];
         serviceConfig = {
           Slice = "kubernetes.slice";
           ExecStart = "${cfg.package}/bin/kube-addons";
@@ -1153,7 +1150,7 @@ in {
       ];
 
       environment.systemPackages = [ cfg.package ];
-      users.extraUsers = singleton {
+      users.users = singleton {
         name = "kubernetes";
         uid = config.ids.uids.kubernetes;
         description = "Kubernetes user";
@@ -1162,7 +1159,7 @@ in {
         home = cfg.dataDir;
         createHome = true;
       };
-      users.extraGroups.kubernetes.gid = config.ids.gids.kubernetes;
+      users.groups.kubernetes.gid = config.ids.gids.kubernetes;
 
 			# dns addon is enabled by default
       services.kubernetes.addons.dns.enable = mkDefault true;

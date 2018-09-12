@@ -10,25 +10,25 @@ import ./make-test.nix ({ pkgs, ...} : {
     maintainers = [ mbbx6spp fpletz ];
   };
 
-  nodes = let
-    commonConfig = customCfg:
-      { lib, ... }:
-      lib.mkMerge [
-        { services.nginx.enable = true;
-          services.nginx.commonHttpConfig = ''
-          log_format ceeformat '@cee: {"status":"$status",'
-            '"request_time":$request_time,'
-            '"upstream_response_time":$upstream_response_time,'
-            '"pipe":"$pipe","bytes_sent":$bytes_sent,'
-            '"connection":"$connection",'
-            '"remote_addr":"$remote_addr",'
-            '"host":"$host",'
-            '"timestamp":"$time_iso8601",'
-            '"request":"$request",'
-            '"http_referer":"$http_referer",'
-            '"upstream_addr":"$upstream_addr"}';
-          '';
-          services.nginx.virtualHosts."_".extraConfig = ''
+  nodes = {
+    webserver =
+      { ... }:
+      { services.nginx.enable = true;
+        services.nginx.commonHttpConfig = ''
+        log_format ceeformat '@cee: {"status":"$status",'
+          '"request_time":$request_time,'
+          '"upstream_response_time":$upstream_response_time,'
+          '"pipe":"$pipe","bytes_sent":$bytes_sent,'
+          '"connection":"$connection",'
+          '"remote_addr":"$remote_addr",'
+          '"host":"$host",'
+          '"timestamp":"$time_iso8601",'
+          '"request":"$request",'
+          '"http_referer":"$http_referer",'
+          '"upstream_addr":"$upstream_addr"}';
+        '';
+        services.nginx.virtualHosts."0.my.test" = {
+          extraConfig = ''
             access_log syslog:server=unix:/dev/log,facility=user,tag=mytag,severity=info ceeformat;
           '';
         }

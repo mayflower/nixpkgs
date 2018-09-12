@@ -18,19 +18,21 @@ let
   #  systemd service must be provided by specifying either
   #  `serviceOpts.script` or `serviceOpts.serviceConfig.ExecStart`
   exporterOpts = {
-    blackbox = import ./exporters/blackbox.nix { inherit config lib pkgs; };
-    collectd = import ./exporters/collectd.nix { inherit config lib pkgs; };
-    dovecot  = import ./exporters/dovecot.nix  { inherit config lib pkgs; };
-    fritzbox = import ./exporters/fritzbox.nix { inherit config lib pkgs; };
-    json     = import ./exporters/json.nix     { inherit config lib pkgs; };
-    minio    = import ./exporters/minio.nix    { inherit config lib pkgs; };
-    nginx    = import ./exporters/nginx.nix    { inherit config lib pkgs; };
-    node     = import ./exporters/node.nix     { inherit config lib pkgs; };
-    postfix  = import ./exporters/postfix.nix  { inherit config lib pkgs; };
-    rspamd   = import ./exporters/rspamd.nix   { inherit config lib pkgs; };
-    snmp     = import ./exporters/snmp.nix     { inherit config lib pkgs; };
-    unifi    = import ./exporters/unifi.nix    { inherit config lib pkgs; };
-    varnish  = import ./exporters/varnish.nix  { inherit config lib pkgs; };
+    blackbox  = import ./exporters/blackbox.nix  { inherit config lib pkgs; };
+    collectd  = import ./exporters/collectd.nix  { inherit config lib pkgs; };
+    dnsmasq   = import ./exporters/dnsmasq.nix   { inherit config lib pkgs; };
+    dovecot   = import ./exporters/dovecot.nix   { inherit config lib pkgs; };
+    fritzbox  = import ./exporters/fritzbox.nix  { inherit config lib pkgs; };
+    json      = import ./exporters/json.nix      { inherit config lib pkgs; };
+    minio     = import ./exporters/minio.nix     { inherit config lib pkgs; };
+    nginx     = import ./exporters/nginx.nix     { inherit config lib pkgs; };
+    node      = import ./exporters/node.nix      { inherit config lib pkgs; };
+    postfix   = import ./exporters/postfix.nix   { inherit config lib pkgs; };
+    rspamd    = import ./exporters/rspamd.nix    { inherit config lib pkgs; };
+    snmp      = import ./exporters/snmp.nix      { inherit config lib pkgs; };
+    surfboard = import ./exporters/surfboard.nix { inherit config lib pkgs; };
+    unifi     = import ./exporters/unifi.nix     { inherit config lib pkgs; };
+    varnish   = import ./exporters/varnish.nix   { inherit config lib pkgs; };
   };
 
   mkExporterOpts = ({ name, port }: {
@@ -93,7 +95,7 @@ let
     };
   });
 
-  mkSubModule = { name, port, extraOpts, serviceOpts }: {
+  mkSubModule = { name, port, extraOpts, ... }: {
     ${name} = mkOption {
       type = types.submodule {
         options = (mkExporterOpts {
@@ -160,7 +162,7 @@ in
       '';
     }];
   }] ++ [(mkIf config.services.minio.enable {
-    services.prometheus.exporters.minio.minioAddress = mkDefault "http://localhost:9000";
+    services.prometheus.exporters.minio.minioAddress  = mkDefault "http://localhost:9000";
     services.prometheus.exporters.minio.minioAccessKey = mkDefault config.services.minio.accessKey;
     services.prometheus.exporters.minio.minioAccessSecret = mkDefault config.services.minio.secretKey;
   })] ++ [(mkIf config.services.postfix.enable {

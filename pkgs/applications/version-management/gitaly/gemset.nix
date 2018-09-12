@@ -61,10 +61,10 @@
     dependencies = ["multipart-post"];
     source = {
       remotes = ["https://rubygems.org"];
-      sha256 = "157c4cmb5g1b3ny6k9qf9z57rfijl54fcq3hnqqf6g31g1m096b2";
+      sha256 = "1c3x3s8vb5nf7inyfvhdxwa4q3swmnacpxby6pish5fgmhws7zrr";
       type = "gem";
     };
-    version = "0.12.2";
+    version = "0.14.0";
   };
   gemojione = {
     dependencies = ["json"];

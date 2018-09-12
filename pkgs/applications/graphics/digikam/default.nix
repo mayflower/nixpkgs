@@ -1,4 +1,4 @@
-{ mkDerivation, lib, fetchFromGitHub, cmake, doxygen, extra-cmake-modules, wrapGAppsHook, fetchpatch
+{ mkDerivation, lib, fetchFromGitHub, cmake, doxygen, extra-cmake-modules, wrapGAppsHook
 
 # For `digitaglinktree`
 , perl, sqlite
@@ -35,7 +35,6 @@
 , libusb1
 , marble
 , libGLU_combined
-, mysql
 , opencv3
 , pcre
 , threadweaver
@@ -50,13 +49,13 @@
 
 mkDerivation rec {
   name    = "digikam-${version}";
-  version = "5.8.0";
+  version = "5.9.0";
 
   src = fetchFromGitHub {
     owner  = "KDE";
     repo   = "digikam";
     rev    = "v${version}";
-    sha256 = "1bvidg0fn92xvw5brhb34lm7m4iy4jb5xpvnhbgh8vik2m4n41w1";
+    sha256 = "09diw273h9i7rss89ba82yrfy6jb2njv3k0dknrrg7bb998vrw2d";
   };
 
   nativeBuildInputs = [ cmake doxygen extra-cmake-modules kdoctools wrapGAppsHook ];
@@ -116,7 +115,7 @@ mkDerivation rec {
   meta = with lib; {
     description = "Photo Management Program";
     license = licenses.gpl2;
-    homepage = http://www.digikam.org;
+    homepage = https://www.digikam.org;
     maintainers = with maintainers; [ the-kenny ];
     platforms = platforms.linux;
   };

@@ -1,8 +1,8 @@
-{ stdenv, fetchurl, fetchpatch, lib
+{ stdenv, fetchurl, lib
 , ncurses, openssl, aspell, gnutls
 , zlib, curl, pkgconfig, libgcrypt
 , cmake, makeWrapper, libobjc, libresolv, libiconv
-, writeScriptBin, symlinkJoin # for withPlugins
+, writeScriptBin # for withPlugins
 , asciidoctor # manpages
 , guileSupport ? true, guile
 , luaSupport ? true, lua5
@@ -15,7 +15,7 @@
 , runCommand }:
 
 let
-  inherit (pythonPackages) python pycrypto pync;
+  inherit (pythonPackages) python;
   plugins = [
     { name = "perl"; enabled = perlSupport; cmakeFlag = "ENABLE_PERL"; buildInputs = [ perl ]; }
     { name = "tcl"; enabled = tclSupport; cmakeFlag = "ENABLE_TCL"; buildInputs = [ tcl ]; }
@@ -72,6 +72,11 @@ let
       meta = {
         homepage = http://www.weechat.org/;
         description = "A fast, light and extensible chat client";
+        longDescription = ''
+          You can find more documentation as to how to customize this package
+          (eg. adding python modules for scripts that would require them, etc.)
+          on https://nixos.org/nixpkgs/manual/#sec-weechat .
+        '';
         license = stdenv.lib.licenses.gpl3;
         maintainers = with stdenv.lib.maintainers; [ lovek323 garbas the-kenny lheckemann ];
         platforms = stdenv.lib.platforms.unix;
@@ -117,4 +122,8 @@ in if configure == null then weechat else
     export WEECHAT_EXTRA_LIBDIR=${pluginsDir}
     ${lib.concatMapStringsSep "\n" (p: lib.optionalString (p ? extraEnv) p.extraEnv) plugins}
     exec ${weechat}/bin/weechat "$@"
-  '') // { unwrapped = weechat; }
+  '') // {
+    name = weechat.name;
+    unwrapped = weechat;
+    meta = weechat.meta;
+  }

@@ -1,12 +1,12 @@
-{ lib, stdenv, buildPythonPackage, fetchPypi, aiohttp }:
+{ lib, buildPythonPackage, fetchPypi, aiohttp }:
 
 buildPythonPackage rec {
   pname = "aiohue";
-  version = "1.3.1";
+  version = "1.7.0";
 
   src = fetchPypi {
     inherit pname version;
-    sha256 = "05b2fj8pzbij8hglx6p5ckfx0h1b7wcfpys306l853vp56d882yh";
+    sha256 = "26989babdc3f38575164b60b9536309271d58db005a03045b6e9cca4fc5201d8";
   };
 
   propagatedBuildInputs = [ aiohttp ];

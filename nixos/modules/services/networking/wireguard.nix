@@ -10,7 +10,7 @@ let
 
   # interface options
 
-  interfaceOpts = { name, ... }: {
+  interfaceOpts = { ... }: {
 
     options = {
 
@@ -190,8 +190,8 @@ let
     nameValuePair "wireguard-${name}"
       {
         description = "WireGuard Tunnel - ${name}";
-        unitConfig.Documentation = "man:wg(8) https://www.wireguard.io/";
-        after = [ "network.target" ];
+        requires = [ "network-online.target" ];
+        after = [ "network.target" "network-online.target" ];
         wantedBy = [ "multi-user.target" ];
         environment.DEVICE = name;
         path = with pkgs; [ kmod iproute wireguard-tools ];
@@ -237,7 +237,7 @@ let
           ${values.postSetup}
         '';
 
-        preStop = ''
+        postStop = ''
           ip link del dev ${name}
           ${values.postShutdown}
         '';

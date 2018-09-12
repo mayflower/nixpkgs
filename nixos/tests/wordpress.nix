@@ -8,7 +8,7 @@ import ./make-test.nix ({ pkgs, ... }:
 
   nodes =
     { web =
-        { config, pkgs, ... }:
+        { pkgs, ... }:
         {
           time.timeZone = "UTC";
           services.mysql = {
@@ -19,9 +19,6 @@ import ./make-test.nix ({ pkgs, ... }:
             enable = true;
             logPerVirtualHost = true;
             adminAddr="js@lastlog.de";
-            extraModules = [
-              { name = "php7"; path = "${pkgs.php}/modules/libphp7.so"; }
-            ];
 
             virtualHosts = [
               {
@@ -31,7 +28,7 @@ import ./make-test.nix ({ pkgs, ... }:
                     {
                       serviceType = "wordpress";
                       dbPassword = "wordpress";
-                      wordpressUploads = "/data/uploads";
+                      dbHost = "127.0.0.1";
                       languages = [ "de_DE" "en_GB" ];
                     }
                   ];
@@ -42,7 +39,7 @@ import ./make-test.nix ({ pkgs, ... }:
     };
 
   testScript =
-    { nodes, ... }:
+    { ... }:
     ''
       startAll;
 

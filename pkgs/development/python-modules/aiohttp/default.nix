@@ -25,7 +25,7 @@ buildPythonPackage rec {
     sha256 = "f20deec7a3fbaec7b5eb7ad99878427ad2ee4cc16a46732b705e8121cbb3cc12";
   };
 
-  disabled = pythonOlder "3.4";
+  disabled = pythonOlder "3.5";
 
   checkInputs = [ pytest gunicorn pytest-mock async_generator pytestrunner pytest-timeout ];
 

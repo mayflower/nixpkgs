@@ -507,7 +507,7 @@ in {
 
       serviceConfig = {
         ExecStart = ''
-          ${pkgs.prometheus2}/bin/prometheus \
+          ${pkgs.prometheus_2}/bin/prometheus \
             --config.file=${prometheusYml} \
             ${concatStringsSep " \\\n  " cmdlineArgs}
         '';

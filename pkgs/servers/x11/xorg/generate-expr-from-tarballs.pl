@@ -1,4 +1,4 @@
-#! /usr/bin/perl -w
+#! /usr/bin/env perl
 
 # Typical command to generate the list of tarballs:
 
@@ -11,6 +11,7 @@
 
 
 use strict;
+use warnings;
 
 my $tmpDir = "/tmp/xorg-unpack";
 
@@ -26,7 +27,7 @@ my %pcMap;
 my %extraAttrs;
 
 
-my @missingPCs = ("fontconfig", "libdrm", "libXaw", "zlib", "mesa", "mkfontscale", "mkfontdir", "bdftopcf", "libxslt", "openssl", "gperf", "m4");
+my @missingPCs = ("fontconfig", "libdrm", "libXaw", "zlib", "perl", "python", "mkfontscale", "mkfontdir", "bdftopcf", "libxslt", "openssl", "gperf", "m4");
 $pcMap{$_} = $_ foreach @missingPCs;
 $pcMap{"freetype2"} = "freetype";
 $pcMap{"libpng12"} = "libpng";
@@ -34,8 +35,8 @@ $pcMap{"libpng"} = "libpng";
 $pcMap{"dbus-1"} = "dbus";
 $pcMap{"uuid"} = "libuuid";
 $pcMap{"libudev"} = "udev";
-$pcMap{"gl"} = "mesa";
-$pcMap{"python"} = "buildPackages.python";
+$pcMap{"gl"} = "libGL";
+$pcMap{"gbm"} = "mesa_noglu";
 $pcMap{"\$PIXMAN"} = "pixman";
 $pcMap{"\$RENDERPROTO"} = "renderproto";
 $pcMap{"\$DRI3PROTO"} = "dri3proto";
@@ -174,7 +175,7 @@ while (<>) {
     }
 
     if ($isFont) {
-        $extraAttrs{$pkg} = " configureFlags = \"--with-fontrootdir=\$(out)/lib/X11/fonts\"; ";
+        $extraAttrs{$pkg} = " configureFlags = [ \"--with-fontrootdir=\$(out)/lib/X11/fonts\" ]; ";
     }
 
     sub process {

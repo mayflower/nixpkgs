@@ -8,10 +8,10 @@
 
 stdenv.mkDerivation rec {
   name = "hdf-${version}";
-  version = "4.2.12";
+  version = "4.2.14";
   src = fetchurl {
     url = "https://support.hdfgroup.org/ftp/HDF/releases/HDF${version}/src/hdf-${version}.tar.bz2";
-    sha256 = "020jh563sjyxsgml8l809d2i1d4ms9shivwj3gbm7n0ilxbll8id";
+    sha256 = "0n29klrrbwan9307np0d9hr128dlpc4nnlf57a140080ll3jmp8l";
   };
 
   buildInputs = [

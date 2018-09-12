@@ -2,7 +2,7 @@
 
 buildPythonPackage rec {
   pname = "netdisco";
-  version = "1.4.0";
+  version = "2.0.0";
 
   disabled = !isPy3k;
 
@@ -11,7 +11,7 @@ buildPythonPackage rec {
     owner = "home-assistant";
     repo = pname;
     rev = version;
-    sha256 = "0q1cl76a0fwxm80lkk7cpd4p23r2bvf1a45nb7n61cgzrqcv43q1";
+    sha256 = "08x5ab7v6a20753y9br7pvfm6a054ywn7y7gh6fydqski0gad6l7";
   };
 
   propagatedBuildInputs = [ requests zeroconf netifaces ];
@@ -24,7 +24,7 @@ buildPythonPackage rec {
 
   meta = with stdenv.lib; {
     description = "Python library to scan local network for services and devices";
-    homepage = https://github.com/home-assistant/netdisco/;
+    homepage = https://github.com/home-assistant/netdisco;
     license = licenses.asl20;
     platforms = platforms.unix;
     maintainers = with maintainers; [ dotlambda ];
