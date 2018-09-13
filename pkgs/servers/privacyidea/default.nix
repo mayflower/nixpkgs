@@ -19,7 +19,7 @@ pythonPackages.buildPythonPackage rec {
       --replace 'pkg_resources.get_distribution("privacyidea").version' \
                 '"${version}"'
     substituteInPlace setup.py \
-      --replace "ldap3==2.1.1" "ldap3==2.4.1"
+      --replace "ldap3==2.1.1" "ldap3==2.5.1"
     sed -i '/argparse/d' setup.py
   '';
 
