@@ -8,7 +8,7 @@
 { fetchurl, stdenv, lua, callPackage, unzip, zziplib, pkgconfig
 , pcre, oniguruma, gnulib, tre, glibc, sqlite, openssl, expat
 , glib, gobjectIntrospection, libevent, zlib, autoreconfHook, gnum4
-, mysql, postgresql, cyrus_sasl, openssl_1_0_2
+, mysql, postgresql, cyrus_sasl, openssl_1_0_2, openldap
 , fetchFromGitHub, libmpack, which, fetchpatch, writeText
 }:
 
