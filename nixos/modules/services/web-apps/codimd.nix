@@ -835,7 +835,7 @@ in
               '';
             };
             idpCert = mkOption {
-              type = types.path;
+              type = types.str;
               default = "";
               example = "/path/to/cert.pem";
               description = ''
