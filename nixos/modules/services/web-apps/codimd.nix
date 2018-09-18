@@ -834,8 +834,8 @@ in
                 IdP authentication endpoint.
               '';
             };
-            idPCert = mkOption {
-              type = types.str;
+            idpCert = mkOption {
+              type = types.path;
               default = "";
               example = "/path/to/cert.pem";
               description = ''
