@@ -32,7 +32,7 @@ buildGoPackage rec {
     sha256 = "1y4fb5jbks6xab7zim10s112h11bq04hh3lddmhm4f2nyqcmlrqh";
   };
 
-  patches = [ ./fix-shell-path.patch ./increase-timeouts.patch ];
+  patches = [ ./fix-shell-path.patch ];
 
   postInstall = ''
     touch $bin/bin/hello
