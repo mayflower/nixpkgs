@@ -1,4 +1,4 @@
-{ stdenv, lib, pkgs, fetchurl, buildEnv
+{ stdenv, lib, pkgs, fetchurl, fetchFromGitHub, buildEnv
 , coreutils, gnused, getopt, git, tree, gnupg, openssl, which, procps
 , qrencode , makeWrapper
 
@@ -28,6 +28,13 @@ let
       buildInputs = concatMap (x: x.buildInputs) selected;
     };
 
+  passmenu-plus = fetchFromGitHub {
+    owner = "ciil";
+    repo = "passmenu-plus";
+    rev = "40e5b0b02e57292c6cf1921da226430ec95b9ef4";
+    sha256 = "0cv4xz5c7672yaxl6yk89dnqim1lr5xzfai8fmr0ghsa24ijcrwy";
+  };
+
   generic = extensionsEnv: extraPassthru: stdenv.mkDerivation rec {
     version = "1.7.3";
     name    = "password-store-${version}";
@@ -53,7 +60,7 @@ let
       mkdir -p "$out/share/emacs/site-lisp"
       cp "contrib/emacs/password-store.el" "$out/share/emacs/site-lisp/"
     '' + optionalString x11Support ''
-      cp "contrib/dmenu/passmenu" "$out/bin/"
+      cp "contrib/dmenu/passmenu" "${passmenu-plus}/passmenu-plus" "$out/bin/"
     '';
 
     wrapperPath = with stdenv.lib; makeBinPath ([
@@ -84,8 +91,10 @@ let
     '' + stdenv.lib.optionalString x11Support ''
       # We just wrap passmenu with the same PATH as pass. It doesn't
       # need all the tools in there but it doesn't hurt either.
-      wrapProgram $out/bin/passmenu \
-        --prefix PATH : "$out/bin:${wrapperPath}"
+      for f in $out/bin/passmenu*; do
+        wrapProgram $f \
+          --prefix PATH : "$out/bin:${wrapperPath}"
+      done
     '';
 
     # Turn "check" into "installcheck", since we want to test our pass,
