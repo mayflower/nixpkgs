@@ -3709,11 +3709,8 @@ with pkgs;
     enableNpm = false;
   };
 
-  nodejs-8_x = callPackage ../development/web/nodejs/v8.nix {
-    openssl = openssl_1_0_2;
-  };
+  nodejs-8_x = callPackage ../development/web/nodejs/v8.nix { };
   nodejs-slim-8_x = callPackage ../development/web/nodejs/v8.nix {
-    openssl = openssl_1_0_2;
     enableNpm = false;
   };
 
