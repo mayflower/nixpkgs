@@ -104,5 +104,6 @@ stdenv.mkDerivation rec {
     homepage = https://gitlab.com;
     license = licenses.mit;
     maintainers = with maintainers; [ fpletz globin ];
+    platforms = platforms.linux;
   };
 }
