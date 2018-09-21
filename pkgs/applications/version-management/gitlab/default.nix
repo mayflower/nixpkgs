@@ -1,5 +1,5 @@
 { stdenv, lib, fetchurl, fetchFromGitLab, bundlerEnv
-, ruby, tzdata, git, procps, nettools
+, ruby, tzdata, git, procps, nettools,
 }:
 
 let
@@ -10,11 +10,17 @@ let
     groups = [ "default" "unicorn" "ed25519" "metrics" ];
   };
 
-  version = "11.1.2";
+  version = "11.2.3";
 
   gitlabDeb = fetchurl {
-    url = "https://packages.gitlab.com/gitlab/gitlab-ce/packages/debian/jessie/gitlab-ce_${version}-ce.0_amd64.deb/download";
-    sha256 = "0hnj0jb76h6bwf59k43rcipgn63ljcgjr4pvgskr0q081k06x8wi";
+    url = "https://packages.gitlab.com/gitlab/gitlab-ce/packages/debian/stretch/gitlab-ce_${version}-ce.0_amd64.deb/download.deb";
+    sha256 = "1z7mj412zj88ia24caq41bi5p1jbcfwnrvak3bqf1113f0snkb0x";
+  };
+  gitlab = fetchFromGitLab {
+    owner = "gitlab-org";
+    repo = "gitlab-ce";
+    rev = "v${version}";
+    sha256 = "1j8y2phwdj6dv55racypm8r2v8bnzcxh2g1z33v9212hrgyjzrrh";
   };
 
 in
@@ -22,20 +28,13 @@ in
 stdenv.mkDerivation rec {
   name = "gitlab-${version}";
 
-  src = fetchFromGitLab {
-    owner = "gitlab-org";
-    repo = "gitlab-ce";
-    rev = "v${version}";
-    sha256 = "1bga80lhk1w8rl1yy175ad0g9ghjny1hc6n1qvig2vk1hrrkk9n4";
-  };
+  src = gitlab;
 
   buildInputs = [
     rubyEnv rubyEnv.wrappedRuby rubyEnv.bundler tzdata git procps nettools
   ];
 
-  patches = [
-    ./remove-hardcoded-locations.patch
-  ];
+  patches = [ ./remove-hardcoded-locations.patch ];
 
   postPatch = ''
     # For reasons I don't understand "bundle exec" ignores the
@@ -66,13 +65,14 @@ stdenv.mkDerivation rec {
   buildPhase = ''
     mv config/gitlab.yml.example config/gitlab.yml
 
-    # work around unpacking deb containing binary with suid bit
+    # Building this requires yarn, node &c, so we just get it from the deb
     ar p ${gitlabDeb} data.tar.gz | gunzip > gitlab-deb-data.tar
+    # Work around unpacking deb containing binary with suid bit
     tar -f gitlab-deb-data.tar --delete ./opt/gitlab/embedded/bin/ksu
     tar -xf gitlab-deb-data.tar
 
     mv -v opt/gitlab/embedded/service/gitlab-rails/public/assets public
-    rm -rf opt
+    rm -rf opt # only directory in data.tar.gz
 
     mv config/gitlab.yml config/gitlab.yml.example
     rm -f config/secrets.yml
@@ -99,11 +99,12 @@ stdenv.mkDerivation rec {
     ruby = rubyEnv.wrappedRuby;
   };
 
-  meta = with stdenv.lib; {
-    description = "Web-based Git-repository manager";
-    homepage = https://gitlab.com;
-    license = licenses.mit;
-    maintainers = with maintainers; [ fpletz globin ];
+  meta = with lib; {
+    homepage = http://www.gitlab.com/;
     platforms = platforms.linux;
+    maintainers = with maintainers; [ fpletz globin krav ];
+    license = licenses.mit;
+    description = "GitLab Community Edition";
+    longDescription = "GitLab Community Edition (CE) is an open source end-to-end software development platform with built-in version control, issue tracking, code review, CI/CD, and more. Self-host GitLab CE on your own servers, in a container, or on a cloud provider.";
   };
 }
