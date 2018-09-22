@@ -117,9 +117,19 @@ in {
         description = "Database User";
       };
       dbpass = mkOption {
-        type = types.str;
-        default = "";
-        description = "Database Password";
+        type = types.nullOr types.str;
+        default = null;
+        description = ''
+          Database password.  Use <literal>dbpassFile</literal> to avoid this
+          being world-readable in the <literal>/nix/store</literal>.
+        '';
+      };
+      dbpassFile = mkOption {
+        type = types.nullOr types.str;
+        default = null;
+        description = ''
+          The full path to a file that contains the database password.
+        '';
       };
       dbhost = mkOption {
         type = types.str;
@@ -137,8 +147,19 @@ in {
         description = "Admin Username";
       };
       adminpass = mkOption {
-        type = types.str;
-        description = "Admin Password";
+        type = types.nullOr types.str;
+        default = null;
+        description = ''
+          Database password.  Use <literal>adminpassFile</literal> to avoid this
+          being world-readable in the <literal>/nix/store</literal>.
+        '';
+      };
+      adminpassFile = mkOption {
+        type = types.nullOr types.str;
+        default = null;
+        description = ''
+          The full path to a file that contains the admin's password.
+        '';
       };
     };
 
@@ -172,6 +193,17 @@ in {
   };
 
   config = mkIf cfg.enable (mkMerge [
+    { assertions = let acfg = cfg.autoconfig; in [
+        { assertion = ((acfg.dbpass != null || acfg.dbpassFile != null)
+            && !(acfg.dbpass != null && acfg.dbpassFile != null));
+          message = "Please specify exactly one of dbpass or dbpassFile";
+        }
+        { assertion = ((acfg.adminpass != null || acfg.adminpassFile != null)
+            && !(acfg.adminpass != null && acfg.adminpassFile != null));
+          message = "Please specify exactly one of adminpass or adminpassFile";
+        }
+      ];
+    }
 
     { systemd.timers."nextcloud-cron" = {
         wantedBy = [ "timers.target" ];
@@ -195,17 +227,25 @@ in {
               'log_type' => 'syslog',
             ];
           '';
-          autoConfig = pkgs.writeText "nextcloud-autoconfig.php" (let acfg = cfg.autoconfig; in ''
+          autoConfig = pkgs.writeText "nextcloud-autoconfig.php" (let
+            acfg = cfg.autoconfig;
+            adminpass = if acfg.adminpass == null
+              then ''file_get_contents("${builtins.toString acfg.adminpassFile}")''
+              else ''"${builtins.toString acfg.adminpass}"'';
+            dbpass = if acfg.dbpass == null
+              then ''file_get_contents("${builtins.toString acfg.dbpassFile}")''
+              else ''"${builtins.toString acfg.dbpass}"'';
+          in ''
             <?php
             $AUTOCONFIG = [
               "dbtype"        => "${acfg.dbtype}",
               "dbname"        => "${acfg.dbname}",
               "dbuser"        => "${acfg.dbuser}",
-              "dbpass"        => "${acfg.dbpass}",
+              "dbpass"        => ${dbpass},
               "dbhost"        => "${acfg.dbhost}",
               "dbtableprefix" => "${acfg.dbtableprefix}",
               "adminlogin"    => "${acfg.adminlogin}",
-              "adminpass"     => "${acfg.adminpass}",
+              "adminpass"     => ${adminpass},
               "directory"     => "${cfg.home}/data",
             ];
           '');

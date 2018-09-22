@@ -12,6 +12,7 @@ import ./make-test.nix ({ pkgs, ...} : {
         nginx.enable = true;
         hostName = "nextcloud";
         autoconfig.adminpass = "notproduction";
+        autoconfig.dbpass = "notproduction";
       };
 
       networking.firewall.enable = false;
