@@ -102,7 +102,7 @@ in {
 
     autoconfig = {
       dbtype = mkOption {
-        type = types.str;
+        type = types.enum [ "sqlite" "pgsql" "mysql" ];
         default = "sqlite";
         description = "Database Type";
       };
