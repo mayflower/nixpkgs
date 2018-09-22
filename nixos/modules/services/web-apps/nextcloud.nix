@@ -177,7 +177,7 @@ in {
         description = ''
           Whether to load the Redis module into PHP.
           You still need to enable Redis in your config.php.
-          See https://docs.nextcloud.com/server/13/admin_manual/configuration_server/caching_configuration.html
+          See https://docs.nextcloud.com/server/14/admin_manual/configuration_server/caching_configuration.html
         '';
       };
       memcached = mkOption {
@@ -186,7 +186,7 @@ in {
         description = ''
           Whether to load the Memcached module into PHP.
           You still need to enable Memcached in your config.php.
-          See https://docs.nextcloud.com/server/13/admin_manual/configuration_server/caching_configuration.html
+          See https://docs.nextcloud.com/server/14/admin_manual/configuration_server/caching_configuration.html
         '';
       };
     };
