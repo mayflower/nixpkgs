@@ -104,17 +104,17 @@ in {
       dbtype = mkOption {
         type = types.enum [ "sqlite" "pgsql" "mysql" ];
         default = "sqlite";
-        description = "Database Type";
+        description = "Database type.";
       };
       dbname = mkOption {
         type = types.str;
         default = "nextcloud";
-        description = "Database Name";
+        description = "Database name.";
       };
       dbuser = mkOption {
         type = types.str;
         default = "nextcloud";
-        description = "Database User";
+        description = "Database user.";
       };
       dbpass = mkOption {
         type = types.nullOr types.str;
@@ -134,17 +134,17 @@ in {
       dbhost = mkOption {
         type = types.str;
         default = "localhost";
-        description = "Database Host";
+        description = "Database host.";
       };
       dbtableprefix = mkOption {
         type = types.str;
         default = "";
-        description = "Table Prefix in Nextcloud Database";
+        description = "Table prefix in Nextcloud database.";
       };
       adminlogin = mkOption {
         type = types.str;
         default = "root";
-        description = "Admin Username";
+        description = "Admin username.";
       };
       adminpass = mkOption {
         type = types.nullOr types.str;
