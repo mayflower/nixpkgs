@@ -139,7 +139,7 @@ in {
       dbtableprefix = mkOption {
         type = types.str;
         default = "";
-        description = "Table Prefix in Nextlcoud Database";
+        description = "Table Prefix in Nextcloud Database";
       };
       adminlogin = mkOption {
         type = types.str;
