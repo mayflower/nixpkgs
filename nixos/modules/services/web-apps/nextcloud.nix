@@ -17,7 +17,7 @@ let
     post_max_size = cfg.maxUploadSize;
     memory_limit = cfg.maxUploadSize;
   } // cfg.phpOptions;
-  phpOptionsStr = phpOptionsExtensions + (concatStringsSep "\n" (mapAttrsToList (k: v: "k = v") phpOptions));
+  phpOptionsStr = phpOptionsExtensions + (concatStringsSep "\n" (mapAttrsToList (k: v: "${k} = ${v}") phpOptions));
 
   occ = pkgs.writeScriptBin "nextcloud-occ" ''
     #! ${pkgs.stdenv.shell}
