@@ -380,37 +380,36 @@ let
 
   luadbi = buildLuaPackage rec {
     name = "luadbi-${version}";
-    version = "2014-02-25";
+    version = "0.6";
 
     src = fetchFromGitHub {
-      owner = "snatchev";
-      repo = "Luadbi";
-      rev = "661ea54c750957852bd66f27ee970c95bf07b2d9";
-      sha256 = "0wl6bg3h1kqkb138gqqjlv6iqsx1wrhhw3218jzqs4fh17iikdk6";
+      owner = "mwild1";
+      repo = "luadbi";
+      rev = "v${version}";
+      sha256 = "1cpl84pl75wqd9zph3w4srd5lxij359p8xmmf7xpdbxz67695vah";
     };
 
-    buildInputs = [ mysql.connector-c postgresql sqlite ];
+    MYSQL_INC="-I${mysql.connector-c}/include/mysql";
 
-    preConfigure = ''
-      substituteInPlace Makefile --replace CC=gcc CC=cc
-    '' + stdenv.lib.optionalString stdenv.isDarwin ''
+    buildInputs = [ mysql postgresql sqlite ];
+
+    preConfigure = stdenv.lib.optionalString stdenv.isDarwin ''
       substituteInPlace Makefile \
         --replace '-shared' '-bundle -undefined dynamic_lookup -all_load'
     '';
 
-    NIX_CFLAGS_COMPILE = [
-      "-I${mysql.connector-c}/include/mysql"
-      "-L${mysql.connector-c}/lib/mysql"
-      "-I${postgresql}/include/server"
+    installFlags = [
+      "LUA_CDIR=$(out)/lib/lua/${lua.luaversion}"
+      "LUA_LDIR=$(out)/share/lua/${lua.luaversion}"
     ];
 
-    installPhase = ''
-      mkdir -p $out/lib/lua/${lua.luaversion}
-      install -p DBI.lua *.so $out/lib/lua/${lua.luaversion}
-    '';
+    installTargets = [
+      "install_lua" "install_mysql" "install_psql" "install_sqlite3"
+    ];
 
     meta = with stdenv.lib; {
-      homepage = "https://code.google.com/archive/p/luadbi/";
+      homepage = https://github.com/mwild1/luadbi;
+      license = licenses.mit;
       platforms = stdenv.lib.platforms.unix;
     };
   };

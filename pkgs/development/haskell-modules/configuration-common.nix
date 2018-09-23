@@ -1137,4 +1137,23 @@ self: super: {
   safe-money-serialise = super.safe-money-serialise.override { safe-money = self.safe-money_0_7; };
   safe-money-xmlbf = super.safe-money-xmlbf.override { safe-money = self.safe-money_0_7; };
 
+  # https://github.com/adinapoli/mandrill/pull/52
+  mandrill = appendPatch super.mandrill (pkgs.fetchpatch {
+    url = https://github.com/adinapoli/mandrill/commit/30356d9dfc025a5f35a156b17685241fc3882c55.patch;
+    sha256 = "1qair09xs6vln3vsjz7sy4hhv037146zak4mq3iv6kdhmp606hqv";
+  });
+
+  # Can be removed once vinyl >= 0.10 is in the LTS.
+  Frames = super.Frames.override { vinyl = super.vinyl_0_10_0; };
+
+  # https://github.com/Euterpea/Euterpea2/pull/22
+  Euterpea = overrideSrc super.Euterpea {
+    src = pkgs.fetchFromGitHub {
+      owner = "Euterpea";
+      repo = "Euterpea2";
+      rev = "6f49b790adfb8b65d95a758116c20098fb0cd34c";
+      sha256 = "0qz1svb96n42nmig16vyphwxas34hypgayvwc91ri7w7xd6yi1ba";
+    };
+  };
+
 } // import ./configuration-tensorflow.nix {inherit pkgs haskellLib;} self super
