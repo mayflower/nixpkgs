@@ -82,7 +82,6 @@ in {
       default = {
         "short_open_tag" = "Off";
         "expose_php" = "Off";
-        "disable_functions" = "pcntl_alarm,pcntl_fork,pcntl_waitpid,pcntl_wait,pcntl_wifexited,pcntl_wifstopped,pcntl_wifsignaled,pcntl_wexitstatus,pcntl_wtermsig,pcntl_wstopsig,pcntl_signal,pcntl_signal_dispatch,pcntl_get_last_error,pcntl_strerror,pcntl_sigprocmask,pcntl_sigwaitinfo,pcntl_sigtimedwait,pcntl_exec,pcntl_getpriority,pcntl_setpriority";
         "error_reporting" = "E_ALL & ~E_DEPRECATED & ~E_STRICT";
         "display_errors" = "stderr";
         "opcache.enable_cli" = "1";
