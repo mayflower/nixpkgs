@@ -92,7 +92,6 @@ in {
         "opcache.revalidate_freq" = "1";
         "opcache.fast_shutdown" = "1";
         "openssl.cafile" = "/etc/ssl/certs/ca-certificates.crt";
-        "sendmail_path" = "/var/setuid-wrappers/sendmail -t -i";
         "catch_workers_output" = "yes";
       };
       description = ''
