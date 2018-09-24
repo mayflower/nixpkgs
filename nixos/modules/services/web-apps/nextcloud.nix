@@ -276,7 +276,6 @@ in {
 
       services.phpfpm = {
         phpOptions = phpOptionsExtensions;
-        phpPackage = pkgs.php71;
         pools.nextcloud = let
           phpAdminValues = concatStringsSep "\n" (flip mapAttrsToList phpOptions
             (k: v: "php_admin_value[${k}] = ${v}"));
