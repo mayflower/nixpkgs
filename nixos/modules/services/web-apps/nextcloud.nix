@@ -5,6 +5,10 @@ with lib;
 let
   cfg = config.services.nextcloud;
 
+  toKeyValue = generators.toKeyValue {
+    mkKeyValue = generators.mkKeyValueDefault {} " = ";
+  };
+
   phpOptionsExtensions = ''
     ${optionalString cfg.caching.apcu "extension=${pkgs.php71Packages.apcu}/lib/php/extensions/apcu.so"}
     ${optionalString cfg.caching.redis "extension=${pkgs.php71Packages.redis}/lib/php/extensions/redis.so"}
@@ -17,7 +21,7 @@ let
     post_max_size = cfg.maxUploadSize;
     memory_limit = cfg.maxUploadSize;
   } // cfg.phpOptions;
-  phpOptionsStr = phpOptionsExtensions + (concatStringsSep "\n" (mapAttrsToList (k: v: "${k} = ${v}") phpOptions));
+  phpOptionsStr = phpOptionsExtensions + (toKeyValue phpOptions);
 
   occ = pkgs.writeScriptBin "nextcloud-occ" ''
     #! ${pkgs.stdenv.shell}
@@ -275,8 +279,10 @@ in {
       services.phpfpm = {
         phpOptions = phpOptionsExtensions;
         pools.nextcloud = let
-          phpAdminValues = concatStringsSep "\n" (flip mapAttrsToList phpOptions
-            (k: v: "php_admin_value[${k}] = ${v}"));
+          phpAdminValues = (toKeyValue
+            (foldr (a: b: a // b) {}
+              (mapAttrsToList (k: v: { "php_admin_value[${k}]" = v; })
+                phpOptions)));
         in {
           listen = "/run/phpfpm/nextcloud";
           extraConfig = ''
