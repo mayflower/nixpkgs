@@ -296,7 +296,7 @@ in {
             pm.min_spare_servers = 2
             pm.max_spare_servers = 4
             env[NEXTCLOUD_CONFIG_DIR] = ${cfg.home}/config
-            env[PATH] = /bin
+            env[PATH] = /run/wrappers/bin:/nix/var/nix/profiles/default/bin:/run/current-system/sw/bin:/usr/bin:/bin
             ${phpAdminValues}
           '';
         };
