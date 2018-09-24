@@ -10,9 +10,9 @@ let
   };
 
   phpOptionsExtensions = ''
-    ${optionalString cfg.caching.apcu "extension=${pkgs.php71Packages.apcu}/lib/php/extensions/apcu.so"}
-    ${optionalString cfg.caching.redis "extension=${pkgs.php71Packages.redis}/lib/php/extensions/redis.so"}
-    ${optionalString cfg.caching.memcached "extension=${pkgs.php71Packages.memcached}/lib/php/extensions/memcached.so"}
+    ${optionalString cfg.caching.apcu "extension=${cfg.phpPackages.apcu}/lib/php/extensions/apcu.so"}
+    ${optionalString cfg.caching.redis "extension=${cfg.phpPackages.redis}/lib/php/extensions/redis.so"}
+    ${optionalString cfg.caching.memcached "extension=${cfg.phpPackages.memcached}/lib/php/extensions/memcached.so"}
     zend_extension = opcache.so
     opcache.enable = 1
   '';
@@ -78,6 +78,18 @@ in {
       description = ''
         Enable this option if you plan on using the webfinger plugin.
         The appropriate nginx rewrite rules will be added to your configuration.
+      '';
+    };
+
+    phpPackages = mkOption {
+      type = types.attrs;
+      default = pkgs.phpPackages;
+      defaultText = "pkgs.phpPackages";
+      description = ''
+        Overridable attribute of the PHP packages set to use.  If any caching
+        module is enabled, it will be taken from here.  Therefore it should
+        match the version of PHP given to
+        <literal>services.phpfpm.phpPackage</literal>.
       '';
     };
 
