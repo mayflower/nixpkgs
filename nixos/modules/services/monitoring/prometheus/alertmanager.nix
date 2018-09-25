@@ -108,27 +108,11 @@ in {
         '';
       };
 
-      meshPeers = mkOption {
+      clusterPeers = mkOption {
         type = types.listOf types.str;
         default = [];
         description = ''
-          Initial peers for HA mesh cluster.
-        '';
-      };
-
-      meshNickName = mkOption {
-        type = types.nullOr types.str;
-        default = null;
-        description = ''
-          Nick name of this alertmanager instance. Defaults to the hostname.
-        '';
-      };
-
-      meshPassword = mkOption {
-        type = types.nullOr types.str;
-        default = null;
-        description = ''
-          Password for the alertmanager mesh. Disables encryption if null.
+          Initial peers for HA cluster.
         '';
       };
     };
@@ -156,9 +140,7 @@ in {
           --storage.path ${cfg.stateDir} \
           ${optionalString (cfg.webExternalUrl != null) ''--web.external-url ${cfg.webExternalUrl}''} \
           ${optionalString (cfg.logFormat != null) "--log.format ${cfg.logFormat}"} \
-          ${optionalString (cfg.meshNickName != null) "--mesh.nickname ${cfg.meshNickName}"} \
-          ${optionalString (cfg.meshPassword != null) "--mesh.password ${cfg.meshPassword}"} \
-          ${toString (map (peer: "--mesh.peer ${peer}:6783") cfg.meshPeers)}
+          ${toString (map (peer: "--cluster.peer ${peer}:6783") cfg.clusterPeers)}
       '';
 
       serviceConfig = {
