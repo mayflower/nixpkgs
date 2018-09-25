@@ -285,7 +285,7 @@ in {
             (i: v: ''
               ${occ}/bin/nextcloud-occ config:system:set trusted_domains \
                 ${toString i} --value="${toString v}"
-            '') cfg.config.trustedDomains);
+            '') ([ cfg.hostName ] ++ cfg.config.extraTrustedDomains));
 
         in {
           wantedBy = [ "multi-user.target" ];
