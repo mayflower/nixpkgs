@@ -176,11 +176,13 @@ in {
         '';
       };
 
-      trustedDomains = mkOption {
+      extraTrustedDomains = mkOption {
         type = types.listOf types.str;
-        default = [ "localhost" ];
+        default = [];
         description = ''
-          Trusted domains, from which the nextcloud installation will be acessible
+          Trusted domains, from which the nextcloud installation will be
+          acessible.  You don't need to add
+          <literal>services.nextcloud.hostname</literal> here.
         '';
       };
     };
