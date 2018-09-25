@@ -285,7 +285,7 @@ in {
             chown -R nextcloud:nginx ${cfg.home}/config ${cfg.home}/data ${cfg.home}/store-apps
 
             # Do not install if already installed
-            if [[ ! -e ${cfg.home}/config/config.php ]];then
+            if [[ ! -e ${cfg.home}/config/config.php ]]; then
               ${occInstallCmd}
             fi
             ${occ}/bin/nextcloud-occ config:system:delete trusted_domains
