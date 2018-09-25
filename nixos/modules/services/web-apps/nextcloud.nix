@@ -114,7 +114,7 @@ in {
       '';
     };
 
-    autoconfig = {
+    config = {
       dbtype = mkOption {
         type = types.enum [ "sqlite" "pgsql" "mysql" ];
         default = "sqlite";
@@ -175,6 +175,14 @@ in {
           The full path to a file that contains the admin's password.
         '';
       };
+
+      trustedDomains = mkOption {
+        type = types.listOf types.str;
+        default = [ "localhost" ];
+        description = ''
+          Trusted domains, from which the nextcloud installation will be acessible
+        '';
+      };
     };
 
     caching = {
@@ -207,7 +215,7 @@ in {
   };
 
   config = mkIf cfg.enable (mkMerge [
-    { assertions = let acfg = cfg.autoconfig; in [
+    { assertions = let acfg = cfg.config; in [
         { assertion = ((acfg.dbpass != null || acfg.dbpassFile != null)
             && !(acfg.dbpass != null && acfg.dbpassFile != null));
           message = "Please specify exactly one of dbpass or dbpassFile";
@@ -241,28 +249,28 @@ in {
               'log_type' => 'syslog',
             ];
           '';
-          autoConfig = pkgs.writeText "nextcloud-autoconfig.php" (let
-            acfg = cfg.autoconfig;
-            adminpass = if acfg.adminpass == null
-              then ''file_get_contents("${builtins.toString acfg.adminpassFile}")''
-              else ''"${builtins.toString acfg.adminpass}"'';
-            dbpass = if acfg.dbpass == null
-              then ''file_get_contents("${builtins.toString acfg.dbpassFile}")''
-              else ''"${builtins.toString acfg.dbpass}"'';
-          in ''
-            <?php
-            $AUTOCONFIG = [
-              "dbtype"        => "${acfg.dbtype}",
-              "dbname"        => "${acfg.dbname}",
-              "dbuser"        => "${acfg.dbuser}",
-              "dbpass"        => ${dbpass},
-              "dbhost"        => "${acfg.dbhost}",
-              "dbtableprefix" => "${acfg.dbtableprefix}",
-              "adminlogin"    => "${acfg.adminlogin}",
-              "adminpass"     => ${adminpass},
-              "directory"     => "${cfg.home}/data",
-            ];
-          '');
+          occInstallCmd = (let
+            c = cfg.config;
+            adminpass = if c.adminpass == null
+              then ''$(cat "${builtins.toString c.adminpassFile}")''
+              else ''"${builtins.toString c.adminpass}"'';
+            dbpass = if c.dbpass == null
+              then ''$(cat "${builtins.toString c.dbpassFile}")''
+              else ''"${builtins.toString c.dbpassFile}"'';
+            in ''
+            ${occ}/bin/nextcloud-occ maintenance:install \
+              --database "${c.dbtype}" \
+              --database-name "${c.dbname}" \
+              --database-host "${c.dbhost}" \
+              --database-user "${c.dbuser}" \
+              --database-pass ${dbpass} \
+              --database-table-prefix "${cfg.config.dbtableprefix}" \
+              --admin-user "${cfg.config.adminpass}" \
+              --admin-pass ${adminpass} \
+              --data-dir "${cfg.home}/data"
+            '');
+            occSetTrustedDomainsCmd = lib.concatStringsSep "\n" (imap0 (i: v: ''${occ}/bin/nextcloud-occ config:system:set trusted_domains ${builtins.toString i} --value="${builtins.toString v}"'') cfg.config.trustedDomains);
+
         in {
           wantedBy = [ "multi-user.target" ];
           before = [ "phpfpm-nextcloud.service" ];
@@ -272,11 +280,14 @@ in {
             mkdir -p ${cfg.home}/config ${cfg.home}/data ${cfg.home}/store-apps
             ln -sf ${overrideConfig} ${cfg.home}/config/override.config.php
 
-            # Do not create autoconfig if already installed
-            [ -e ${cfg.home}/config/config.php ] && exit 0
-
-            ln -sf ${autoConfig} ${cfg.home}/config/autoconfig.php
             chown -R nextcloud:nginx ${cfg.home}/config ${cfg.home}/data ${cfg.home}/store-apps
+
+            # Do not install if already installed
+            if [[ ! -e ${cfg.home}/config/config.php ]];then
+              ${occInstallCmd}
+            fi
+            ${occ}/bin/nextcloud-occ config:system:delete trusted_domains
+            ${occSetTrustedDomainsCmd}
           '';
           serviceConfig.Type = "oneshot";
         };
