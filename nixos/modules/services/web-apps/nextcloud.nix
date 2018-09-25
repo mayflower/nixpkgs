@@ -252,10 +252,10 @@ in {
           occInstallCmd = (let
             c = cfg.config;
             adminpass = if c.adminpass == null
-              then ''$(cat "${builtins.toString c.adminpassFile}")''
+              then ''$(<"${builtins.toString c.adminpassFile}")''
               else ''"${builtins.toString c.adminpass}"'';
             dbpass = if c.dbpass == null
-              then ''$(cat "${builtins.toString c.dbpassFile}")''
+              then ''$(<"${builtins.toString c.dbpassFile}")''
               else ''"${builtins.toString c.dbpassFile}"'';
             in ''
             ${occ}/bin/nextcloud-occ maintenance:install \
