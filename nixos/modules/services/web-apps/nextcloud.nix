@@ -121,12 +121,12 @@ in {
         description = "Database type.";
       };
       dbname = mkOption {
-        type = types.str;
+        type = types.nullOr types.str;
         default = "nextcloud";
         description = "Database name.";
       };
       dbuser = mkOption {
-        type = types.str;
+        type = types.nullOr types.str;
         default = "nextcloud";
         description = "Database user.";
       };
@@ -146,13 +146,13 @@ in {
         '';
       };
       dbhost = mkOption {
-        type = types.str;
+        type = types.nullOr types.str;
         default = "localhost";
         description = "Database host.";
       };
       dbtableprefix = mkOption {
-        type = types.str;
-        default = "";
+        type = types.nullOr types.str;
+        default = null;
         description = "Table prefix in Nextcloud database.";
       };
       adminlogin = mkOption {
@@ -218,9 +218,8 @@ in {
 
   config = mkIf cfg.enable (mkMerge [
     { assertions = let acfg = cfg.config; in [
-        { assertion = ((acfg.dbpass != null || acfg.dbpassFile != null)
-            && !(acfg.dbpass != null && acfg.dbpassFile != null));
-          message = "Please specify exactly one of dbpass or dbpassFile";
+        { assertion = !(acfg.dbpass != null && acfg.dbpassFile != null);
+          message = "Please specify no more than one of dbpass or dbpassFile";
         }
         { assertion = ((acfg.adminpass != null || acfg.adminpassFile != null)
             && !(acfg.adminpass != null && acfg.adminpassFile != null));
@@ -251,27 +250,42 @@ in {
               'log_type' => 'syslog',
             ];
           '';
-          occInstallCmd = (let
+          occInstallCmd = let
             c = cfg.config;
-            adminpass = if c.adminpass == null
-              then ''$(<"${builtins.toString c.adminpassFile}")''
-              else ''"${builtins.toString c.adminpass}"'';
-            dbpass = if c.dbpass == null
-              then ''$(<"${builtins.toString c.dbpassFile}")''
-              else ''"${builtins.toString c.dbpassFile}"'';
-            in ''
+            adminpass = if c.adminpassFile != null
+              then ''"$(<"${toString c.adminpassFile}")"''
+              else ''"${toString c.adminpass}"'';
+            dbpass = if c.dbpassFile != null
+              then ''"$(<"${toString c.dbpassFile}")"''
+              else if c.dbpass != null
+              then ''"${toString c.dbpass}"''
+              else null;
+            installFlags = concatStringsSep " \\\n    "
+              (mapAttrsToList (k: v: "${k} ${toString v}") {
+              "--database" = ''"${c.dbtype}"'';
+              # The following attributes are optional depending on the type of
+              # database.  Those that evaluate to null on the left hand side
+              # will be omitted.
+              ${if c.dbname != null then "--database-name" else null} = ''"${c.dbname}"'';
+              ${if c.dbhost != null then "--database-host" else null} = ''"${c.dbhost}"'';
+              ${if c.dbuser != null then "--database-user" else null} = ''"${c.dbuser}"'';
+              ${if (any (x: x != null) [c.dbpass c.dbpassFile])
+                 then "--database-pass" else null} = dbpass;
+              ${if c.dbtableprefix != null
+                then "--database-table-prefix" else null} = ''"${toString c.dbtableprefix}"'';
+              "--admin-user" = ''"${c.adminlogin}"'';
+              "--admin-pass" = adminpass;
+              "--data-dir" = ''"${cfg.home}/data"'';
+            });
+          in ''
             ${occ}/bin/nextcloud-occ maintenance:install \
-              --database "${c.dbtype}" \
-              --database-name "${c.dbname}" \
-              --database-host "${c.dbhost}" \
-              --database-user "${c.dbuser}" \
-              --database-pass ${dbpass} \
-              --database-table-prefix "${cfg.config.dbtableprefix}" \
-              --admin-user "${cfg.config.adminpass}" \
-              --admin-pass ${adminpass} \
-              --data-dir "${cfg.home}/data"
-            '');
-            occSetTrustedDomainsCmd = lib.concatStringsSep "\n" (imap0 (i: v: ''${occ}/bin/nextcloud-occ config:system:set trusted_domains ${builtins.toString i} --value="${builtins.toString v}"'') cfg.config.trustedDomains);
+                ${installFlags}
+          '';
+          occSetTrustedDomainsCmd = concatStringsSep "\n" (imap0
+            (i: v: ''
+              ${occ}/bin/nextcloud-occ config:system:set trusted_domains \
+                ${toString i} --value="${toString v}"
+            '') cfg.config.trustedDomains);
 
         in {
           wantedBy = [ "multi-user.target" ];
