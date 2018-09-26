@@ -302,6 +302,9 @@ in {
             if [[ ! -e ${cfg.home}/config/config.php ]]; then
               ${occInstallCmd}
             fi
+
+            ${occ}/bin/nextcloud-occ upgrade
+
             ${occ}/bin/nextcloud-occ config:system:delete trusted_domains
             ${occSetTrustedDomainsCmd}
           '';
