@@ -140,7 +140,7 @@ in {
           --storage.path ${cfg.stateDir} \
           ${optionalString (cfg.webExternalUrl != null) ''--web.external-url ${cfg.webExternalUrl}''} \
           ${optionalString (cfg.logFormat != null) "--log.format ${cfg.logFormat}"} \
-          ${toString (map (peer: "--cluster.peer ${peer}:6783") cfg.clusterPeers)}
+          ${toString (map (peer: "--cluster.peer ${peer}:9094") cfg.clusterPeers)}
       '';
 
       serviceConfig = {
