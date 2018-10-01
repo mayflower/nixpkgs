@@ -95,7 +95,7 @@ in
     environment.etc."clamav/freshclam.conf".source = freshclamConfigFile;
     environment.etc."clamav/clamd.conf".source = clamdConfigFile;
 
-    systemd.services.clamav-daemon = optionalAttrs cfg.daemon.enable {
+    systemd.services.clamav-daemon = mkIf cfg.daemon.enable {
       description = "ClamAV daemon (clamd)";
       after = optional cfg.updater.enable "clamav-freshclam.service";
       requires = optional cfg.updater.enable "clamav-freshclam.service";
@@ -108,7 +108,7 @@ in
       '';
 
       serviceConfig = {
-        ExecStart = "${pkg}/bin/clamd -c ${clamdConfigFile}";
+        ExecStart = "${pkg}/bin/clamd";
         ExecReload = "${pkgs.coreutils}/bin/kill -USR2 $MAINPID";
         PrivateTmp = "yes";
         PrivateDevices = "yes";
@@ -136,7 +136,7 @@ in
 
       serviceConfig = {
         Type = "oneshot";
-        ExecStart = "${pkg}/bin/freshclam --config-file ${freshclamConfigFile}";
+        ExecStart = "${pkg}/bin/freshclam";
         SuccessExitStatus = "1"; # if databases are up to date
         PrivateTmp = "yes";
         PrivateDevices = "yes";
