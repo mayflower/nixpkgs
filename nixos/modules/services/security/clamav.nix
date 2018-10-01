@@ -137,6 +137,7 @@ in
       serviceConfig = {
         Type = "oneshot";
         ExecStart = "${pkg}/bin/freshclam --config-file ${freshclamConfigFile}";
+        SuccessExitStatus = "1"; # if databases are up to date
         PrivateTmp = "yes";
         PrivateDevices = "yes";
       };
