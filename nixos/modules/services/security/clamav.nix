@@ -116,7 +116,7 @@ in
       };
     };
 
-    systemd.timers.clamav-freshclam = optionalAttrs cfg.updater.enable {
+    systemd.timers.clamav-freshclam = mkIf cfg.updater.enable {
       description = "Timer for ClamAV virus database updater (freshclam)";
       wantedBy = [ "timers.target" ];
       timerConfig = {
@@ -125,7 +125,7 @@ in
       };
     };
 
-    systemd.services.clamav-freshclam = optionalAttrs cfg.updater.enable {
+    systemd.services.clamav-freshclam = mkIf cfg.updater.enable {
       description = "ClamAV virus database updater (freshclam)";
       restartTriggers = [ freshclamConfigFile ];
 
