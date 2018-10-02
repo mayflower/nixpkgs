@@ -108,7 +108,7 @@ in
       '';
 
       serviceConfig = {
-        ExecStart = "${pkg}/bin/clamd -c ${clamdConfigFile}";
+        ExecStart = "${pkg}/bin/clamd";
         ExecReload = "${pkgs.coreutils}/bin/kill -USR2 $MAINPID";
         PrivateTmp = "yes";
         PrivateDevices = "yes";
