@@ -2198,27 +2198,9 @@ in {
 
   elasticsearch = callPackage ../development/python-modules/elasticsearch { };
 
-  elasticsearchdsl = buildPythonPackage (rec {
-    name = "elasticsearch-dsl-0.0.9";
-
-    src = pkgs.fetchurl {
-      url = "mirror://pypi/e/elasticsearch-dsl/${name}.tar.gz";
-      sha256 = "1gdcdshk881vy18p0czcmbb3i4s5hl8llnfg6961b6x7jkvhihbj";
-    };
-
-    buildInputs = with self; [ covCore dateutil elasticsearch mock pytest pytestcov unittest2 urllib3 pytz ];
-
-    # ImportError: No module named test_elasticsearch_dsl
-    # Tests require a local instance of elasticsearch
-    doCheck = false;
-
-    meta = {
-      description = "Python client for Elasticsearch";
-      homepage = https://github.com/elasticsearch/elasticsearch-dsl-py;
-      license = licenses.asl20;
-      maintainers = with maintainers; [ desiderius ];
-    };
-  });
+  elasticsearch-dsl = callPackage ../development/python-modules/elasticsearch-dsl { };
+  # alias
+  elasticsearchdsl = self.elasticsearch-dsl;
 
   elasticsearch-curator = callPackage ../development/python-modules/elasticsearch-curator { };
 
@@ -3398,19 +3380,43 @@ in {
 
   python-mapnik = buildPythonPackage rec {
     name = "python-mapnik-${version}";
-    version = "3.0.13";
+    version = "3.0.16";
 
     src = pkgs.fetchFromGitHub {
       owner = "mapnik";
       repo = "python-mapnik";
       rev = "v${version}";
-      sha256 = "0biw9bfkbsgfyjihyvkj4abx9s9r3h81rk6dc1y32022rypsqhkp";
+      sha256 = "1gqs4kvmjawdgl80j0ab5r8y0va9kw0rvwix3093xsv4hwd00lcc";
     };
 
     disabled = isPyPy;
     doCheck = false; # doesn't find needed test data files
-    buildInputs = with pkgs;
-      [ boost cairo harfbuzz icu libjpeg libpng libtiff libwebp mapnik proj zlib ];
+    preBuild = let
+      pythonVersion = with stdenv.lib.versions; "${major python.version}${minor python.version}";
+    in ''
+      export BOOST_PYTHON_LIB="boost_python${pythonVersion}"
+      export BOOST_THREAD_LIB="boost_thread"
+      export BOOST_SYSTEM_LIB="boost_system"
+    '';
+    buildInputs = with pkgs; [
+        (boost.override {
+          enablePython = true;
+          inherit python;
+        })
+        (mapnik.override {
+          inherit python;
+          boost = (boost.override { enablePython = true; inherit python; });
+        })
+        cairo
+        harfbuzz
+        icu
+        libjpeg
+        libpng
+        libtiff
+        libwebp
+        proj
+        zlib
+      ];
     propagatedBuildInputs = with self; [ pillow pycairo ];
 
     meta = with stdenv.lib; {
@@ -9914,6 +9920,8 @@ in {
   };
 
   python-pushover = callPackage ../development/python-modules/pushover {};
+
+  pystemd = callPackage ../development/python-modules/pystemd { systemd = pkgs.systemd; };
 
   mongodict = buildPythonPackage rec {
     name = "mongodict-${version}";
@@ -17339,6 +17347,11 @@ EOF
   libtorrentRasterbar = (toPythonModule (pkgs.libtorrentRasterbar.override {
     inherit python;
   })).python;
+
+  libiio = (toPythonModule (pkgs.libiio.override {
+    inherit python;
+  })).python;
+
 });
 
 in fix' (extends overrides packages)
