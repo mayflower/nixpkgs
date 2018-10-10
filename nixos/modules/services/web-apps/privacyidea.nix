@@ -212,9 +212,9 @@ in
             reload-mercy = 8;
             stats = "${cfg.runDir}/stats.socket";
             max-requests = 2000;
-            limit-as = 512;
-            reload-on-as = 256;
-            reload-on-rss = 192;
+            limit-as = 1024;
+            reload-on-as = 512;
+            reload-on-rss = 256;
             no-orphans = true;
             vacuum = true;
             pyargv = piCfgFile;
