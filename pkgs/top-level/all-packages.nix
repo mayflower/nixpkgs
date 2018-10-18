@@ -2034,7 +2034,7 @@ with pkgs;
     zlibSupport = true;
     sslSupport = zlibSupport;
     scpSupport = zlibSupport && !stdenv.isSunOS && !stdenv.isCygwin;
-    gssSupport = true;
+    gssSupport = !stdenv.hostPlatform.isWindows;
   };
 
   curl = callPackage ../tools/networking/curl rec {
@@ -2043,7 +2043,7 @@ with pkgs;
     zlibSupport = true;
     sslSupport = zlibSupport;
     scpSupport = zlibSupport && !stdenv.isSunOS && !stdenv.isCygwin;
-    gssSupport = true;
+    gssSupport = !stdenv.hostPlatform.isWindows;
   };
 
   curl_unix_socket = callPackage ../tools/networking/curl-unix-socket rec { };

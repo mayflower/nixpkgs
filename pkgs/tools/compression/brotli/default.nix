@@ -15,6 +15,8 @@ stdenv.mkDerivation rec {
 
   nativeBuildInputs = [ cmake ];
 
+  cmakeFlags = [];
+
   outputs = [ "out" "dev" "lib" ];
 
   doCheck = true;
@@ -56,4 +58,3 @@ stdenv.mkDerivation rec {
     platforms = platforms.all;
   };
 }
-
