@@ -33,7 +33,7 @@ let
   source = import ./source.nix { inherit fetchurl fetchpatch; };
 
 in with stdenv; mkDerivation rec {
-  inherit (source) src version patches;
+  inherit (source) src version;
 
   name = "quassel${tag}-${version}";
 
@@ -71,7 +71,7 @@ in with stdenv; mkDerivation rec {
           --prefix GIO_EXTRA_MODULES : "${dconf}/lib/gio/modules"
     '';
 
-  patches = [ ./qt5_11.patch ];
+  patches = sources.patches ++ [ ./qt5_11.patch ];
 
   meta = with stdenv.lib; {
     homepage = https://quassel-irc.org/;

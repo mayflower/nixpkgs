@@ -6959,8 +6959,6 @@ with pkgs;
 
   oraclejre10 = lowPrio (pkgs.oraclejdk10distro "JRE" false);
 
-  oracleserverjre9 = lowPrio (pkgs.oraclejdk9distro "ServerJRE" false);
-
   oracleserverjre10 = lowPrio (pkgs.oraclejdk10distro "ServerJRE" false);
 
   jrePlugin = jre8Plugin;

@@ -9592,8 +9592,6 @@ in {
 
   pika-pool = callPackage ../development/python-modules/pika-pool { };
 
-  platformio = callPackage ../development/python-modules/platformio { };
-
   kmsxx = (callPackage ../development/libraries/kmsxx {
     inherit (pkgs.kmsxx) stdenv;
   }).overrideAttrs (oldAttrs: {
