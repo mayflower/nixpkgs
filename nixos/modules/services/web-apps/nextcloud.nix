@@ -114,6 +114,21 @@ in {
       '';
     };
 
+    poolConfig = mkOption {
+      type = types.lines;
+      default = ''
+        pm = dynamic
+        pm.max_children = 32
+        pm.start_servers = 2
+        pm.min_spare_servers = 2
+        pm.max_spare_servers = 4
+        pm.max_requests = 500
+      '';
+      description = ''
+        Options for nextcloud's PHP pool. See the documentation on <literal>php-fpm.conf</literal> for details on configuration directives.
+      '';
+    };
+
     config = {
       dbtype = mkOption {
         type = types.enum [ "sqlite" "pgsql" "mysql" ];
@@ -150,12 +165,17 @@ in {
         default = "localhost";
         description = "Database host.";
       };
+      dbport = mkOption {
+        type = with types; nullOr (either int str);
+        default = null;
+        description = "Database port.";
+      };
       dbtableprefix = mkOption {
         type = types.nullOr types.str;
         default = null;
         description = "Table prefix in Nextcloud database.";
       };
-      adminlogin = mkOption {
+      adminuser = mkOption {
         type = types.str;
         default = "root";
         description = "Admin username.";
@@ -268,12 +288,13 @@ in {
               # will be omitted.
               ${if c.dbname != null then "--database-name" else null} = ''"${c.dbname}"'';
               ${if c.dbhost != null then "--database-host" else null} = ''"${c.dbhost}"'';
+              ${if c.dbport != null then "--database-port" else null} = ''"${toString c.dbport}"'';
               ${if c.dbuser != null then "--database-user" else null} = ''"${c.dbuser}"'';
               ${if (any (x: x != null) [c.dbpass c.dbpassFile])
                  then "--database-pass" else null} = dbpass;
               ${if c.dbtableprefix != null
                 then "--database-table-prefix" else null} = ''"${toString c.dbtableprefix}"'';
-              "--admin-user" = ''"${c.adminlogin}"'';
+              "--admin-user" = ''"${c.adminuser}"'';
               "--admin-pass" = adminpass;
               "--data-dir" = ''"${cfg.home}/data"'';
             });
@@ -333,11 +354,7 @@ in {
             listen.group = nginx
             user = nextcloud
             group = nginx
-            pm = dynamic
-            pm.max_children = 32
-            pm.start_servers = 2
-            pm.min_spare_servers = 2
-            pm.max_spare_servers = 4
+            ${cfg.poolConfig}
             env[NEXTCLOUD_CONFIG_DIR] = ${cfg.home}/config
             env[PATH] = /run/wrappers/bin:/nix/var/nix/profiles/default/bin:/run/current-system/sw/bin:/usr/bin:/bin
             ${phpAdminValues}
