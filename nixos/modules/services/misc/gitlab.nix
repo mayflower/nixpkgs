@@ -53,6 +53,7 @@ let
     repos_path = "${cfg.statePath}/repositories";
     secret_file = "${cfg.statePath}/config/gitlab_shell_secret";
     log_file = "${cfg.statePath}/log/gitlab-shell.log";
+    custom_hooks_dir = "${cfg.statePath}/custom_hooks";
     redis = {
       bin = "${pkgs.redis}/bin/redis-cli";
       host = "127.0.0.1";
@@ -462,6 +463,9 @@ in {
       "d ${cfg.statePath}/tmp/pids 0750 ${cfg.user} ${cfg.group} -"
       "d ${cfg.statePath}/tmp/sockets 0750 ${cfg.user} ${cfg.group} -"
       "d ${cfg.statePath}/uploads 0700 ${cfg.user} ${cfg.group} -"
+      "d ${cfg.statePath}/custom_hooks/pre-receive.d 0700 ${cfg.user} ${cfg.group} -"
+      "d ${cfg.statePath}/custom_hooks/post-receive.d 0700 ${cfg.user} ${cfg.group} -"
+      "d ${cfg.statePath}/custom_hooks/update.d 0700 ${cfg.user} ${cfg.group} -"
       "d ${gitlabConfig.production.shared.path}/artifacts 0750 ${cfg.user} ${cfg.group} -"
       "d ${gitlabConfig.production.shared.path}/lfs-objects 0750 ${cfg.user} ${cfg.group} -"
       "d ${gitlabConfig.production.shared.path}/pages 0750 ${cfg.user} ${cfg.group} -"
