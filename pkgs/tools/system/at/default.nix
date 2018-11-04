@@ -23,7 +23,7 @@ stdenv.mkDerivation rec {
 
   nativeBuildInputs = [ bison flex ];
 
-  buildInputs = [ pam ];
+  buildInputs = [ flex pam ];
 
   preConfigure =
     ''
