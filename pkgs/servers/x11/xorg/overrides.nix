@@ -1,5 +1,5 @@
 { abiCompat ? null,
-  stdenv, makeWrapper, lib, fetchurl, fetchpatch,
+  stdenv, makeWrapper, lib, fetchurl, fetchpatch, buildPackages,
 
   automake, autoconf, libtool, intltool, mtdev, libevdev, libinput,
   freetype, apple_sdk, tradcpp, fontconfig,
@@ -91,6 +91,7 @@ self: super:
     outputs = [ "out" "dev" "man" ];
     configureFlags = attrs.configureFlags or []
       ++ malloc0ReturnsNullCrossFlag;
+    depsBuildBuild = [ buildPackages.stdenv.cc ];
     preConfigure = ''
       sed 's,^as_dummy.*,as_dummy="\$PATH",' -i configure
     '';
