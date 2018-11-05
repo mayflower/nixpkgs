@@ -1,4 +1,4 @@
-{ stdenv, fetchurl
+{ stdenv, fetchurl, buildPackages
 , CoreServices ? null }:
 
 let version = "4.19"; in
@@ -16,6 +16,7 @@ stdenv.mkDerivation {
 
   preConfigure = ''
     cd nspr
+    substituteInPlace configure.in --replace '$host' '$build'
   '' + stdenv.lib.optionalString stdenv.isDarwin ''
     substituteInPlace configure --replace '@executable_path/' "$out/lib/"
     substituteInPlace configure.in --replace '@executable_path/' "$out/lib/"
@@ -31,7 +32,10 @@ stdenv.mkDerivation {
     moveToOutput share "$dev" # just aclocal
   '';
 
-  buildInputs = [] ++ stdenv.lib.optionals stdenv.isDarwin [ CoreServices ];
+  # upstream misnomer
+  HOST_CC = "${buildPackages.stdenv.cc}/bin/cc";
+  depsBuildBuild = [ buildPackages.stdenv.cc ];
+  buildInputs = stdenv.lib.optional stdenv.isDarwin CoreServices;
 
   enableParallelBuilding = true;
 
