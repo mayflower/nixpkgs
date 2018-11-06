@@ -1800,7 +1800,7 @@ with pkgs;
 
   libceph = ceph.lib;
   ceph = callPackage ../tools/filesystems/ceph {
-    boost = boost166.override { enablePython = true; };
+    boost = boost167.override { enablePython = true; };
   };
   ceph-dev = ceph;
 
