@@ -10,7 +10,7 @@
 
 # Optional Dependencies
 , yasm ? null, fcgi ? null, expat ? null
-, curl ? null, fuse ? null,
+, curl ? null, fuse ? null
 , libedit ? null, libatomic_ops ? null, kinetic-cpp-client ? null
 , libs3 ? null
 

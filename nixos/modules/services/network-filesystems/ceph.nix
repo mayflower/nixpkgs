@@ -54,7 +54,6 @@ let
         description = "Ceph target allowing to start/stop all ceph-${daemonType} services at once";
         partOf = [ "ceph.target" ];
         before = [ "ceph.target" ];
-        wantedBy = [ "ceph.target" ];
       };
     }
   );
