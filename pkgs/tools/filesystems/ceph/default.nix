@@ -127,6 +127,7 @@ stdenv.mkDerivation {
     # require LD_LIBRARY_PATH for pybind/rgw to find internal dep
     export LD_LIBRARY_PATH="$PWD/build/lib:$LD_LIBRARY_PATH"
     patchShebangs src/spdk
+    # Since Boost 1.67 this seems to have changed
     substituteInPlace CMakeLists.txt --replace "list(APPEND BOOST_COMPONENTS python)" "list(APPEND BOOST_COMPONENTS python27)"
     substituteInPlace src/CMakeLists.txt --replace "Boost::python" "Boost::python27"
   '';
