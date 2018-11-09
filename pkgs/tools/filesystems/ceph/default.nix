@@ -127,12 +127,14 @@ stdenv.mkDerivation {
     # require LD_LIBRARY_PATH for pybind/rgw to find internal dep
     export LD_LIBRARY_PATH="$PWD/build/lib:$LD_LIBRARY_PATH"
     patchShebangs src/spdk
+    substituteInPlace CMakeLists.txt --replace "list(APPEND BOOST_COMPONENTS python)" "list(APPEND BOOST_COMPONENTS python27)"
+    substituteInPlace src/CMakeLists.txt --replace "Boost::python" "Boost::python27"
   '';
 
   cmakeFlags = [
     "-DWITH_SYSTEM_ROCKSDB=ON"
     "-DROCKSDB_INCLUDE_DIR=${rocksdb}/include/rocksdb"
-    "-DWITH_SYSTEM_BOOST=OFF"
+    "-DWITH_SYSTEM_BOOST=ON"
     "-DWITH_SYSTEMD=OFF"
     "-DWITH_TESTS=OFF"
     # TODO breaks with sandbox, tries to download stuff with npm
