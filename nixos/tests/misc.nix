@@ -136,13 +136,5 @@ import ./make-test.nix ({ pkgs, ...} : rec {
       subtest "bootparam", sub {
           $machine->succeed('grep -Fq vsyscall=emulate /proc/cmdline');
       };
-
-      # Test sysctl
-      subtest "sysctl", sub {
-          $machine->waitForUnit("systemd-sysctl.service");
-          $machine->succeed('[ `sysctl -ne vm.swappiness` = 1 ]');
-          $machine->execute('sysctl vm.swappiness=60');
-          $machine->succeed('[ `sysctl -ne vm.swappiness` = 60 ]');
-      };
     '';
 })

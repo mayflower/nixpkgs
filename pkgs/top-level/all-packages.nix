@@ -13040,7 +13040,6 @@ with pkgs;
   cayley = callPackage ../servers/cayley { };
 
   charybdis = callPackage ../servers/irc/charybdis { };
-  charybdis-darkfasel = callPackage ../servers/irc/charybdis/darkfasel.nix {};
 
   clamsmtp = callPackage ../servers/mail/clamsmtp { };
 
