@@ -50,7 +50,7 @@ in rec {
   };
 
   prometheus_2 = generic {
-    version = "2.2.1";
-    sha256 = "1zwxjmj8jh02i4y3i3zrkz7ml66zyhg3ad1npjzf3319mglsp7ch";
+    version = "2.5.0";
+    sha256 = "07sgsmazjr5lgkbaz63qanpg536pyfb7asljz67rqz6c47ngzifp";
   };
 }

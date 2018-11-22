@@ -13478,12 +13478,9 @@ with pkgs;
 
   postgresql_jdbc = callPackage ../servers/sql/postgresql/jdbc { };
 
-  inherit (callPackage ../servers/monitoring/prometheus {
-    buildGoPackage = buildGo110Package;
-  })
+  inherit (callPackage ../servers/monitoring/prometheus { })
       prometheus_1
-      prometheus_2
-      ;
+      prometheus_2;
 
   prom2json = callPackage ../servers/monitoring/prometheus/prom2json.nix { };
   prometheus = prometheus_1;
