@@ -17308,6 +17308,8 @@ EOF
 
   srptools = callPackage ../development/python-modules/srptools { };
 
+  curve25519-donna = callPackage ../development/python-modules/curve25519-donna { };
+
 });
 
 in fix' (extends overrides packages)
