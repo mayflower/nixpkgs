@@ -1,6 +1,5 @@
 { stdenv, fetchFromGitHub, cmake, perl
-, file, glib, gmime, libevent, luajit, openssl, pcre, pkgconfig, sqlite, ragel
-, icu, libfann, gd }:
+, file, glib, gmime, libevent, luajit, openssl, pcre, pkgconfig, sqlite, ragel, icu, libfann }:
 
 let libmagic = file;  # libmagic provided by file package ATM
 in
