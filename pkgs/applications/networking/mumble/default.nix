@@ -1,6 +1,7 @@
-{ stdenv, fetchurl, fetchFromGitHub, fetchpatch, pkgconfig
+{ stdenv, lib, fetchurl, fetchFromGitHub, fetchpatch, pkgconfig
 , qt4, qmake4Hook, qt5, avahi, boost, libopus, libsndfile, protobuf, speex, libcap
 , alsaLib, python
+, libGL
 , jackSupport ? false, libjack2 ? null
 , speechdSupport ? false, speechd ? null
 , pulseSupport ? false, libpulseaudio ? null
@@ -71,7 +72,7 @@ let
     type = "mumble";
 
     nativeBuildInputs = optionals (source.qtVersion == 5) [ qt5.qttools ];
-    buildInputs = [ libopus libsndfile speex ]
+    buildInputs = [ libopus libsndfile speex libGL ]
       ++ optional (source.qtVersion == 5) qt5.qtsvg
       ++ optional stdenv.isLinux alsaLib
       ++ optional jackSupport libjack2
@@ -91,6 +92,13 @@ let
       mkdir -p $out/share/icons{,/hicolor/scalable/apps}
       cp icons/mumble.svg $out/share/icons
       ln -s $out/share/icons/mumble.svg $out/share/icons/hicolor/scalable/apps
+    '';
+
+    postFixup = ''
+      so=$out/lib/libmumble.so.*
+      patchelf --add-needed libGL.so.1 $so
+      rpath=$(patchelf --print-rpath $so)
+      patchelf --set-rpath "$rpath:${lib.getLib libGL}/lib" $so
     '';
   } source;
 
