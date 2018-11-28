@@ -12,6 +12,10 @@ import ./make-test.nix ({ pkgs, ...} : {
         nginx.enable = true;
         database.password = "notproduction";
       };
+      services.nginx.virtualHosts.roundcube = {
+        forceSSL = false;
+        enableACME = false;
+      };
     };
   };
 

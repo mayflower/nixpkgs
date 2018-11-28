@@ -98,10 +98,6 @@ in
 
     services.postgresql = mkIf (cfg.database.host == "localhost") {
       enable = true;
-      initialScript = pkgs.writeText "psql-init" ''
-        create role ${cfg.database.username} with login password '${cfg.database.password}';
-        create database ${cfg.database.dbname} with owner ${cfg.database.username};
-      '';
     };
 
     services.phpfpm.poolConfigs.${cfg.hostName} = ''
@@ -124,13 +120,20 @@ in
     '';
     systemd.services.phpfpm-roundcube.after = [ "roundcube-setup.service" ];
 
-    systemd.services.roundcube-setup = {
+    systemd.services.roundcube-setup = let
+      pgSuperUser = config.services.postgresql.superUser;
+    in {
       requires = [ "postgresql.service" ];
       after = [ "postgresql.service" ];
       wantedBy = [ "multi-user.target" ];
+      path = [ config.services.postgresql.package ];
       script = ''
         mkdir -p /var/lib/roundcube
         if [ ! -f /var/lib/roundcube/db-created ]; then
+          if [ "${cfg.database.host}" = "localhost" ]; then
+            ${pkgs.sudo}/bin/sudo -u ${pgSuperUser} psql postgres -c "create role ${cfg.database.username} with login password '${cfg.database.password}'";
+            ${pkgs.sudo}/bin/sudo -u ${pgSuperUser} psql postgres -c "create database ${cfg.database.dbname} with owner ${cfg.database.username}";
+          fi
           PGPASSWORD=${cfg.database.password} ${pkgs.postgresql}/bin/psql -U ${cfg.database.username} \
             -f ${pkgs.roundcube}/SQL/postgres.initial.sql \
             -h ${cfg.database.host} ${cfg.database.dbname}
