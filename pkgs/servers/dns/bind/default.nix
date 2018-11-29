@@ -61,7 +61,7 @@ stdenv.mkDerivation rec {
     "--without-purify"
     "--with-randomdev=/dev/random"
     "--with-ecdsa"
-    # "--with-gost" openssl 1.1
+    "--with-gost=no" # openssl 1.1
     "--without-eddsa"
     "--with-aes"
   ] ++ lib.optional stdenv.isLinux "--with-libcap=${libcap.dev}"
