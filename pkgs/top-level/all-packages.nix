@@ -864,7 +864,8 @@ with pkgs;
     filebeat6
     heartbeat6
     metricbeat6
-    packetbeat6;
+    packetbeat6
+    journalbeat6;
 
   filebeat = filebeat6;
   heartbeat = heartbeat6;
@@ -2349,7 +2350,7 @@ with pkgs;
 
   # The latest version used by elasticsearch, logstash, kibana and the the beats from elastic.
   elk5Version = "5.6.9";
-  elk6Version = "6.3.2";
+  elk6Version = "6.5.1";
 
   elasticsearch5 = callPackage ../servers/search/elasticsearch/5.x.nix { };
   elasticsearch6 = callPackage ../servers/search/elasticsearch { };
@@ -2785,11 +2786,11 @@ with pkgs;
   gitlab-runner = callPackage ../development/tools/continuous-integration/gitlab-runner { };
   gitlab-runner_1_11 = callPackage ../development/tools/continuous-integration/gitlab-runner/v1.nix { };
 
-  gitlab-shell = callPackage ../applications/version-management/gitlab-shell { };
+  gitlab-shell = callPackage ../applications/version-management/gitlab/gitlab-shell { };
 
-  gitlab-workhorse = callPackage ../applications/version-management/gitlab-workhorse { };
+  gitlab-workhorse = callPackage ../applications/version-management/gitlab/gitlab-workhorse { };
 
-  gitaly = callPackage ../applications/version-management/gitaly { };
+  gitaly = callPackage ../applications/version-management/gitlab/gitaly { };
 
   gitstats = callPackage ../applications/version-management/gitstats { };
 
@@ -3443,6 +3444,8 @@ with pkgs;
 
   jp2a = callPackage ../applications/misc/jp2a { };
 
+  jpeginfo = callPackage ../applications/graphics/jpeginfo { };
+
   jpegoptim = callPackage ../applications/graphics/jpegoptim { };
 
   jpegrescan = callPackage ../applications/graphics/jpegrescan { };
@@ -3492,6 +3495,7 @@ with pkgs;
   kexectools = callPackage ../os-specific/linux/kexectools { };
 
   keybase = callPackage ../tools/security/keybase {
+    inherit (darwin) cf-private;
     # Reasoning for the inherited apple_sdk.frameworks:
     # 1. specific compiler errors about: AVFoundation, AudioToolbox, MediaToolbox
     # 2. the rest are added from here: https://github.com/keybase/client/blob/68bb8c893c5214040d86ea36f2f86fbb7fac8d39/go/chat/attachments/preview_darwin.go#L7
@@ -4561,6 +4565,10 @@ with pkgs;
   pandoc = haskell.lib.overrideCabal (haskell.lib.justStaticExecutables haskellPackages.pandoc) (drv: {
     configureFlags = drv.configureFlags or [] ++ ["-fembed_data_files"];
     buildDepends = drv.buildDepends or [] ++ [haskellPackages.file-embed];
+    postInstall = ''
+      mkdir -p $out/share/man/man1
+      cp man/pandoc.1 $out/share/man/man1/
+    '';
   });
 
   pamtester = callPackage ../tools/security/pamtester { };
@@ -6785,7 +6793,7 @@ with pkgs;
 
   haskell = callPackage ./haskell-packages.nix { };
 
-  haskellPackages = haskell.packages.ghc843.override {
+  haskellPackages = haskell.packages.ghc844.override {
     overrides = config.haskellPackageOverrides or haskell.packageOverrides;
   };
 
@@ -11126,7 +11134,9 @@ with pkgs;
 
   libxdg_basedir = callPackage ../development/libraries/libxdg-basedir { };
 
-  libxkbcommon = callPackage ../development/libraries/libxkbcommon { };
+  libxkbcommon = libxkbcommon_8;
+  libxkbcommon_8 = callPackage ../development/libraries/libxkbcommon { };
+  libxkbcommon_7 = callPackage ../development/libraries/libxkbcommon/libxkbcommon_7.nix { };
 
   libxklavier = callPackage ../development/libraries/libxklavier { };
 
@@ -15689,6 +15699,7 @@ with pkgs;
 
   bitwig-studio1 =  callPackage ../applications/audio/bitwig-studio/bitwig-studio1.nix {
     inherit (gnome3) zenity;
+    libxkbcommon = libxkbcommon_7;
   };
   bitwig-studio2 =  callPackage ../applications/audio/bitwig-studio/bitwig-studio2.nix {
     inherit (gnome3) zenity;
