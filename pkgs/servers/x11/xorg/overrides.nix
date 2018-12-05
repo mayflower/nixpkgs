@@ -140,6 +140,7 @@ self: super:
     '';
     configureFlags = attrs.configureFlags or []
       ++ malloc0ReturnsNullCrossFlag;
+    depsBuildBuild = [ buildPackages.stdenv.cc ];
     propagatedBuildInputs = [ self.libSM ];
     depsBuildBuild = [ buildPackages.stdenv.cc ];
     CPP = if stdenv.isDarwin then "clang -E -" else "${stdenv.cc.targetPrefix}cc -E -";
