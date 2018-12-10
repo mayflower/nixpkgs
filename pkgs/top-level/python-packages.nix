@@ -7963,7 +7963,9 @@ in {
     };
   };
 
-  pygraphviz = callPackage ../development/python-modules/pygraphviz { };
+  pygraphviz = callPackage ../development/python-modules/pygraphviz {
+    graphviz = pkgs.graphviz; # not the python package
+  };
 
   pymc3 = callPackage ../development/python-modules/pymc3 { };
 
