@@ -17,6 +17,11 @@ stdenv.mkDerivation rec {
     "--with-audio=alsa"
   ];
 
+  postPatch = ''
+    substituteInPlace config/common_make_rules \
+      --replace ' ar ' ' $(AR) '
+  '';
+
   enableParallelBuilding = true;
 
   meta = {
