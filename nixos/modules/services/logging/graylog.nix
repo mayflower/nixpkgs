@@ -137,6 +137,7 @@ in
     systemd.services.graylog = with pkgs; {
       description = "Graylog Server";
       wantedBy = [ "multi-user.target" ];
+      after = [ "mongodb.service" ];
       environment = {
         JAVA_HOME = jre;
         GRAYLOG_CONF = "${confFile}";
@@ -163,6 +164,7 @@ in
         User="${cfg.user}";
         PermissionsStartOnly=true;
         ExecStart = "${cfg.package}/bin/graylogctl run";
+        Restart = "on-failure";
       };
     };
   };
