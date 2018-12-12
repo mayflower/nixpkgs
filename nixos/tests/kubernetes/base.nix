@@ -1,4 +1,7 @@
-{ system ? builtins.currentSystem }:
+{ system ? builtins.currentSystem,
+  config ? {},
+  pkgs ? import ../../.. { inherit system config; }
+}:
 
 with import ../../lib/testing.nix { inherit system; };
 with pkgs.lib;
