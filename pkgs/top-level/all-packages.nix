@@ -3663,6 +3663,8 @@ with pkgs;
 
   mxt-app = callPackage ../misc/mxt-app { };
 
+  mxisd = callPackage ../servers/mxisd { };
+
   nagstamon = callPackage ../tools/misc/nagstamon {
     pythonPackages = python3Packages;
   };
@@ -4282,7 +4284,11 @@ with pkgs;
 
   nextcloud = callPackage ../servers/nextcloud { };
 
-  nextcloud-client = libsForQt5.callPackage ../applications/networking/nextcloud-client { };
+  nextcloud-client-unwrapped = libsForQt5.callPackage ../applications/networking/nextcloud-client { };
+
+  nextcloud-client = callPackage ../applications/networking/nextcloud-client/wrapper.nix {
+    nextcloud-client = nextcloud-client-unwrapped;
+  };
 
   nextcloud-news-updater = callPackage ../servers/nextcloud/news-updater.nix { };
 
@@ -7314,6 +7320,7 @@ with pkgs;
   rustracerd = callPackage ../development/tools/rust/racerd { };
   rust-bindgen = callPackage ../development/tools/rust/bindgen { };
   rust-cbindgen = callPackage ../development/tools/rust/cbindgen { };
+  rust-cbindgen_0_6_7 = callPackage ../development/tools/rust/cbindgen/0_6_7.nix { };
   rustup = callPackage ../development/tools/rust/rustup {
     inherit (darwin.apple_sdk.frameworks) Security;
   };
