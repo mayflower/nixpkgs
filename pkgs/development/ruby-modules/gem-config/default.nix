@@ -251,13 +251,6 @@ in
     ] ++ lib.optional stdenv.isDarwin "--with-iconv-dir=${libiconv}";
   };
 
-  oxidized = attrs: {
-    postInstall = ''
-      cd "$(cat "$out/nix-support/gem-meta/install-path")"
-      patch -p1 < ${../../../tools/admin/oxidized/temporary-x-series.patch}
-    '';
-  };
-
   pango = attrs: {
     nativeBuildInputs = [ pkgconfig ];
     buildInputs = [ gtk2 xorg.libXdmcp pcre xorg.libpthreadstubs ];
