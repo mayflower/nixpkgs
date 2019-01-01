@@ -17310,7 +17310,7 @@ EOF
 
   curve25519-donna = callPackage ../development/python-modules/curve25519-donna { };
 
-  pyatv = callPackage ../development/python-modules/curve25519-donna { };
+  pyatv = callPackage ../development/python-modules/pyatv { };
 
 });
 

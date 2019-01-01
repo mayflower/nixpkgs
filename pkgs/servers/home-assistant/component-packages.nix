@@ -40,7 +40,7 @@
     "android_ip_webcam" = ps: with ps; [  ];
     "apcupsd" = ps: with ps; [  ];
     "api" = ps: with ps; [ aiohttp-cors ];
-    "apple_tv" = ps: with ps; [  ];
+    "apple_tv" = ps: with ps; [ pyatv ];
     "arduino" = ps: with ps; [  ];
     "arlo" = ps: with ps; [  ];
     "asterisk_mbox" = ps: with ps; [  ];
@@ -592,7 +592,7 @@
     "media_extractor" = ps: with ps; [ aiohttp-cors youtube-dl-light ];
     "media_player" = ps: with ps; [ aiohttp-cors ];
     "media_player.anthemav" = ps: with ps; [  ];
-    "media_player.apple_tv" = ps: with ps; [  ];
+    "media_player.apple_tv" = ps: with ps; [ pyatv ];
     "media_player.aquostv" = ps: with ps; [  ];
     "media_player.blackbird" = ps: with ps; [  ];
     "media_player.bluesound" = ps: with ps; [ xmltodict ];
@@ -765,7 +765,7 @@
     "recorder.util" = ps: with ps; [  ];
     "remember_the_milk" = ps: with ps; [ httplib2 ];
     "remote" = ps: with ps; [  ];
-    "remote.apple_tv" = ps: with ps; [  ];
+    "remote.apple_tv" = ps: with ps; [ pyatv ];
     "remote.demo" = ps: with ps; [  ];
     "remote.harmony" = ps: with ps; [  ];
     "remote.itach" = ps: with ps; [  ];
