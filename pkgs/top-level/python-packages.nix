@@ -17306,6 +17306,8 @@ EOF
     inherit python;
   })).python;
 
+  srptools = callPackage ../development/python-modules/srptools { };
+
 });
 
 in fix' (extends overrides packages)
