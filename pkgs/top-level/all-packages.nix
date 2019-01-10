@@ -8063,6 +8063,8 @@ with pkgs;
 
   electron = callPackage ../development/tools/electron { };
 
+  electron_3 = callPackage ../development/tools/electron/3.x.nix { };
+
   autobuild = callPackage ../development/tools/misc/autobuild { };
 
   autoconf = callPackage ../development/tools/misc/autoconf { };
@@ -14205,6 +14207,7 @@ with pkgs;
         # when adding a new linux version
         # kernelPatches.cpu-cgroup-v2."4.11"
         kernelPatches.modinst_arg_list_too_long
+        kernelPatches.raspberry_pi_wifi_fix
       ];
   };
 
