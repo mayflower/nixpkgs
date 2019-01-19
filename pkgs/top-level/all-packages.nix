@@ -17419,11 +17419,9 @@ with pkgs;
 
   kubecfg = callPackage ../applications/networking/cluster/kubecfg { };
 
-  kubernetes = callPackage ../applications/networking/cluster/kubernetes {  };
+  kubernetes = callPackage ../applications/networking/cluster/kubernetes { };
 
-  kubectl = (kubernetes.override { components = [ "cmd/kubectl" ]; }).overrideAttrs(oldAttrs: {
-    name = "kubectl-${oldAttrs.version}";
-  });
+  kubectl = callPackage ../applications/networking/cluster/kubectl { };
 
   kubernetes-helm = callPackage ../applications/networking/cluster/helm { };
 
