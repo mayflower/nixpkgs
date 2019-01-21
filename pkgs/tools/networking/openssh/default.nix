@@ -1,4 +1,8 @@
+<<<<<<< HEAD
 { stdenv, fetchurl, fetchpatch, zlib, openssl_1_0_2, libedit, pkgconfig, pam, autoreconfHook
+=======
+{ stdenv, fetchurl, fetchpatch, zlib, openssl, libedit, pkgconfig, pam, autoreconfHook, patchutils
+>>>>>>> upstream/release-18.09
 , etcDir ? null
 , hpnSupport ? false
 , withKerberos ? true
@@ -50,6 +54,20 @@ stdenv.mkDerivation rec {
       ./dont_create_privsep_path.patch
       # originally from https://src.fedoraproject.org/rpms/openssh/blob/fffad0579c5aa8c634ef50cd7b290d743e1a5471/f/openssh-7.3p1-openssl-1.1.0.patch
       # FIXME ./openssl-1.1.0.patch
+
+      # CVE-2018-20685, can probably be dropped with next version bump
+      # See https://sintonen.fi/advisories/scp-client-multiple-vulnerabilities.txt
+      # for details
+      (fetchpatch {
+        name = "CVE-2018-20685.patch";
+        url = https://github.com/openssh/openssh-portable/commit/6010c0303a422a9c5fa8860c061bf7105eb7f8b2.patch;
+        sha256 = "1bzbdfww5rbr3kwlvr1hg9glxkz5xr1qg2pc3zmd5z3z5k4sx5fs";
+        # remove the CVS headers since they do not apply to this OpenSSH version
+        postFetch = ''
+          ${patchutils}/bin/filterdiff --lines=1100-1200 --clean "$out" > "$TMPDIR/postFetch"
+          mv "$TMPDIR/postFetch" "$out"
+        '';
+      })
     ]
     ++ optional withGssapiPatches (assert withKerberos; gssapiPatch);
 

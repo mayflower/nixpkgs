@@ -586,6 +586,8 @@ with pkgs;
 
   awslogs = callPackage ../tools/admin/awslogs { };
 
+  aws-google-auth = pythonPackages.callPackage ../tools/admin/aws-google-auth { };
+
   aws-okta = callPackage ../tools/security/aws-okta { };
 
   aws-rotate-key = callPackage ../tools/admin/aws-rotate-key { };
@@ -7017,11 +7019,17 @@ with pkgs;
 
   oraclejdk8distro = installjdk: pluginSupport:
     (if pluginSupport then appendToName "with-plugin" else x: x)
-      (callPackage ../development/compilers/oraclejdk/jdk8cpu-linux.nix { inherit installjdk pluginSupport; });
+      (callPackage ../development/compilers/oraclejdk/jdk8cpu-linux.nix {
+        inherit installjdk pluginSupport;
+        licenseAccepted = config.oraclejdk.accept_license or false;
+      });
 
   oraclejdk8psu_distro = installjdk: pluginSupport:
     (if pluginSupport then appendToName "with-plugin" else x: x)
-      (callPackage ../development/compilers/oraclejdk/jdk8psu-linux.nix { inherit installjdk pluginSupport; });
+      (callPackage ../development/compilers/oraclejdk/jdk8psu-linux.nix {
+        inherit installjdk pluginSupport;
+        licenseAccepted = config.oraclejdk.accept_license or false;
+      });
 
   oraclejdk10distro = packageType: _:
       (callPackage ../development/compilers/oraclejdk/jdk10-linux.nix { inherit packageType; });
@@ -17341,9 +17349,9 @@ with pkgs;
 
   inherit (kdeApplications)
     akonadi akregator ark dolphin dragon ffmpegthumbs filelight gwenview k3b
-    kaddressbook kate kcachegrind kcalc kcolorchooser kcontacts kdenlive kdf kdialog keditbookmarks
-    kget kgpg khelpcenter kig kleopatra kmail kmix kolourpaint kompare konsole kpkpass kitinerary
-    kontact korganizer krdc krfb ksystemlog kwalletmanager marble minuet okular spectacle;
+    kaddressbook kate kcachegrind kcalc kcharselect kcolorchooser kcontacts kdenlive kdf kdialog
+    keditbookmarks kget kgpg khelpcenter kig kleopatra kmail kmix kolourpaint kompare konsole
+    kpkpass kitinerary kontact korganizer krdc krfb ksystemlog ktouch kwalletmanager marble minuet okular spectacle;
 
   okteta = libsForQt5.callPackage ../applications/editors/okteta { };
 

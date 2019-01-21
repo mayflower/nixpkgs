@@ -9,6 +9,17 @@ let
     if cfg.configText != null then
       pkgs.writeText "alertmanager.yml" cfg.configText
     else mkConfigFile;
+  cmdlineArgs = cfg.extraFlags ++ [
+    "--config.file ${alertmanagerYml}"
+    "--web.listen-address ${cfg.listenAddress}:${toString cfg.port}"
+    "--log.level ${cfg.logLevel}"
+    "--storage.path ${cfg.stateDir}"
+    (toString (map (peer: "--cluster.peer ${peer}:9094") cfg.clusterPeers))
+    ] ++ (optional (cfg.webExternalUrl != null)
+      "--web.external-url ${cfg.webExternalUrl}"
+    ) ++ (optional (cfg.logFormat != null)
+      "--log.format ${cfg.logFormat}"
+  );
 in {
   options = {
     services.prometheus.alertmanager = {
@@ -115,6 +126,14 @@ in {
           Initial peers for HA cluster.
         '';
       };
+
+      extraFlags = mkOption {
+        type = types.listOf types.str;
+        default = [];
+        description = ''
+          Extra commandline options when launching the Alertmanager.
+        '';
+      };
     };
   };
 
@@ -134,13 +153,7 @@ in {
       after    = [ "network.target" ];
       script = ''
         ${pkgs.prometheus-alertmanager.bin}/bin/alertmanager \
-          --config.file ${alertmanagerYml} \
-          --web.listen-address ${cfg.listenAddress}:${toString cfg.port} \
-          --log.level ${cfg.logLevel} \
-          --storage.path ${cfg.stateDir} \
-          ${optionalString (cfg.webExternalUrl != null) ''--web.external-url ${cfg.webExternalUrl}''} \
-          ${optionalString (cfg.logFormat != null) "--log.format ${cfg.logFormat}"} \
-          ${toString (map (peer: "--cluster.peer ${peer}:9094") cfg.clusterPeers)}
+          ${concatStringsSep " \\\n  " cmdlineArgs}
       '';
 
       serviceConfig = {
