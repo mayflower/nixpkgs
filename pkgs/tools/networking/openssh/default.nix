@@ -1,8 +1,4 @@
-<<<<<<< HEAD
-{ stdenv, fetchurl, fetchpatch, zlib, openssl_1_0_2, libedit, pkgconfig, pam, autoreconfHook
-=======
-{ stdenv, fetchurl, fetchpatch, zlib, openssl, libedit, pkgconfig, pam, autoreconfHook, patchutils
->>>>>>> upstream/release-18.09
+{ stdenv, fetchurl, fetchpatch, zlib, openssl_1_0_2, libedit, pkgconfig, pam, autoreconfHook, patchutils
 , etcDir ? null
 , hpnSupport ? false
 , withKerberos ? true
