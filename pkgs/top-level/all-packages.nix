@@ -586,7 +586,7 @@ with pkgs;
 
   awslogs = callPackage ../tools/admin/awslogs { };
 
-  aws-google-auth = pythonPackages.callPackage ../tools/admin/aws-google-auth { };
+  aws-google-auth = python3Packages.callPackage ../tools/admin/aws-google-auth { };
 
   aws-okta = callPackage ../tools/security/aws-okta { };
 
@@ -1533,7 +1533,7 @@ with pkgs;
   riot-web = callPackage ../applications/networking/instant-messengers/riot/riot-web.nix {
     conf = config.riot-web.conf or null;
   };
-  
+
   roundcube = callPackage ../servers/roundcube { };
 
   rsbep = callPackage ../tools/backup/rsbep { };
@@ -2030,15 +2030,6 @@ with pkgs;
     ldapSupport = true;
     gssSupport = true;
     brotliSupport = true;
-  };
-
-  curl_7_59 = callPackage ../tools/networking/curl/7_59.nix rec {
-    fetchurl = fetchurlBoot;
-    http2Support = true;
-    zlibSupport = true;
-    sslSupport = zlibSupport;
-    scpSupport = zlibSupport && !stdenv.isSunOS && !stdenv.isCygwin;
-    gssSupport = !stdenv.hostPlatform.isWindows;
   };
 
   curl = callPackage ../tools/networking/curl rec {
@@ -5559,7 +5550,7 @@ with pkgs;
 
   ted = callPackage ../tools/typesetting/ted { };
 
-  teamviewer = libsForQt5.callPackage ../applications/networking/remote/teamviewer { };
+  teamviewer = libsForQt56.callPackage ../applications/networking/remote/teamviewer { };
 
   telegraf = callPackage ../servers/monitoring/telegraf { };
 
@@ -21838,7 +21829,6 @@ with pkgs;
   inherit (callPackages ../tools/package-management/nix {
       storeDir = config.nix.storeDir or "/nix/store";
       stateDir = config.nix.stateDir or "/nix/var";
-      curl = curl_7_59;
       boehmgc = boehmgc.override { enableLargeConfig = true; };
       })
     nix
