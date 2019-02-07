@@ -134,6 +134,21 @@ in
           apiGroups = ["*"];
           resources = ["*"];
           verbs = ["list"];
+        } {
+          # needed to be able to create system:coredns
+          apiGroups = ["rbac.authorization.k8s.io"];
+          resources = ["clusterroles" "clusterrolebindings"];
+          verbs = ["get" "create"];
+        } {
+          # needed to be able to grant those permissions to system:coredns
+          apiGroups = [""];
+          resources = ["endpoints" "namespaces" "pods" "services"];
+          verbs = ["watch"];
+        } {
+          # needed to be able to grant those permissions to system:coredns
+          apiGroups = [""];
+          resources = ["nodes"];
+          verbs = ["get"];
         }];
       };
 
