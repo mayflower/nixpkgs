@@ -119,8 +119,7 @@ in {
     systemd.services.flannel = {
       description = "Flannel Service";
       wantedBy = [ "multi-user.target" ];
-      after = [ "network-online.target" ];
-      bindsTo = [ "etcd.service" ];
+      after = [ "network.target" ];
       environment = {
         FLANNELD_PUBLIC_IP = cfg.publicIp;
         FLANNELD_ETCD_ENDPOINTS = concatStringsSep "," cfg.etcd.endpoints;
@@ -134,11 +133,6 @@ in {
         ETCDCTL_PEERS = concatStringsSep "," cfg.etcd.endpoints;
       };
       preStart = ''
-        while [ -z "$(${pkgs.iproute}/bin/ip r s default)" ]
-        do
-          echo "Waiting for IPv4 default route"
-          sleep 1
-        done
         echo "setting network configuration"
         until ${pkgs.etcdctl.bin}/bin/etcdctl set /coreos.com/network/config '${builtins.toJSON networkConfig}'
         do
@@ -149,13 +143,10 @@ in {
       postStart = ''
         while [ ! -f /run/flannel/subnet.env ]
         do
-          sleep .1
+          sleep 1
         done
       '';
-      serviceConfig = {
-        ExecStart = "${cfg.package}/bin/flannel";
-        KillSignal = "SIGKILL";
-      };
+      serviceConfig.ExecStart = "${cfg.package}/bin/flannel";
     };
 
     services.etcd.enable = mkDefault (cfg.etcd.endpoints == ["http://127.0.0.1:2379"]);

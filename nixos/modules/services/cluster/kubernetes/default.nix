@@ -1042,7 +1042,7 @@ in {
         description = "Kubernetes Proxy Service";
         wantedBy = [ "kubernetes.target" ];
         after = [ "kube-apiserver.service" ];
-        path = with pkgs; [ iptables conntrack_tools ipset ];
+        path = [pkgs.iptables pkgs.conntrack_tools];
         serviceConfig = {
           Slice = "kubernetes.slice";
           ExecStart = ''${cfg.package}/bin/kube-proxy \
@@ -1181,11 +1181,9 @@ in {
 
       systemd.services."mk-docker-opts" = {
         description = "Pre-Docker Actions";
-        wantedBy = [ "multi-user.target" ];
-        requiredBy = [ "docker.service" ];
-        requires = [ "flannel.service" ];
-        after = [ "flannel.service" ];
+        wantedBy = [ "flannel.service" ];
         before = [ "docker.service" ];
+        after = [ "flannel.service" ];
         path = [ pkgs.gawk pkgs.gnugrep ];
         script = ''
           mkdir -p /run/flannel
