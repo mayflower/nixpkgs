@@ -54,7 +54,7 @@ in {
     services.kubernetes.kubelet.seedDockerImages =
       singleton (pkgs.dockerTools.pullImage cfg.coredns);
 
-    services.kubernetes.addonManager.addons = {
+    services.kubernetes.addonManager.bootstrapAddons = {
       coredns-sa = {
         apiVersion = "v1";
         kind = "ServiceAccount";
