@@ -60,9 +60,7 @@ in {
         kind = "ServiceAccount";
         metadata = {
           labels = {
-            "addonmanager.kubernetes.io/mode" = "Reconcile";
             "k8s-app" = "kube-dns";
-            "kubernetes.io/cluster-service" = "true";
           };
           name = "coredns";
           namespace = "kube-system";
@@ -74,9 +72,7 @@ in {
         kind = "ClusterRole";
         metadata = {
           labels = {
-            "addonmanager.kubernetes.io/mode" = "Reconcile";
             "k8s-app" = "kube-dns";
-            "kubernetes.io/cluster-service" = "true";
             "kubernetes.io/bootstrapping" = "rbac-defaults";
           };
           name = "system:coredns";
@@ -103,9 +99,7 @@ in {
             "rbac.authorization.kubernetes.io/autoupdate" = "true";
           };
           labels = {
-            "addonmanager.kubernetes.io/mode" = "Reconcile";
             "k8s-app" = "kube-dns";
-            "kubernetes.io/cluster-service" = "true";
             "kubernetes.io/bootstrapping" = "rbac-defaults";
           };
           name = "system:coredns";
@@ -129,9 +123,7 @@ in {
         kind = "ConfigMap";
         metadata = {
           labels = {
-            "addonmanager.kubernetes.io/mode" = "Reconcile";
             "k8s-app" = "kube-dns";
-            "kubernetes.io/cluster-service" = "true";
           };
           name = "coredns";
           namespace = "kube-system";
@@ -160,9 +152,7 @@ in {
         kind = "Deployment";
         metadata = {
           labels = {
-            "addonmanager.kubernetes.io/mode" = "Reconcile";
             "k8s-app" = "kube-dns";
-            "kubernetes.io/cluster-service" = "true";
             "kubernetes.io/name" = "CoreDNS";
           };
           name = "coredns";
@@ -286,9 +276,7 @@ in {
             "prometheus.io/scrape" = "true";
           };
           labels = {
-            "addonmanager.kubernetes.io/mode" = "Reconcile";
             "k8s-app" = "kube-dns";
-            "kubernetes.io/cluster-service" = "true";
             "kubernetes.io/name" = "CoreDNS";
           };
           name = "kube-dns";
