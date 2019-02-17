@@ -316,6 +316,9 @@ in
                 "--kubelet-client-certificate=${cfg.kubeletClientCertFile}"} \
               ${optionalString (cfg.kubeletClientKeyFile != null)
                 "--kubelet-client-key=${cfg.kubeletClientKeyFile}"} \
+              –-requestheader-client-ca-file=${top.pki.frontProxyCaCertPathPrefix}.pem \
+              --proxy-client-key-file=${top.pki.certs.frontProxyClient.key} \
+              --proxy-client-cert-file=${top.pki.certs.frontProxyClient.cert} \
               --insecure-bind-address=${cfg.insecureBindAddress} \
               --insecure-port=${toString cfg.insecurePort} \
               ${optionalString (cfg.runtimeConfig != "")

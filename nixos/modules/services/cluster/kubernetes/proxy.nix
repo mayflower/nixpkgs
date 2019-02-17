@@ -75,6 +75,13 @@ in
         label = "kubernetes_ca";
         action = "systemctl restart kube-proxy.service";
       };
+      frontProxyClient = top.lib.mkCert {
+        name = "front-proxy-client";
+        CN = "front-proxy-client";
+        profile = "client";
+        label = "kubernetes_front_proxy_ca";
+        action = "systemctl restart kube-proxy.service";
+      };
     };
 
     services.kubernetes.proxy.kubeconfig.server = mkDefault top.apiserverAddress;
