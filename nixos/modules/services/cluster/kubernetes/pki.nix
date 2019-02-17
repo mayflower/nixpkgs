@@ -16,6 +16,7 @@ let
         server = top.apiserverAddress;
         certFile = cert;
         keyFile = key;
+        caFile = "${cfg.kubernetesCaCertPathPrefix}.pem";
     };
 
   cfsslPort = toString config.services.cfssl.port;
@@ -331,6 +332,7 @@ in
             server = top.apiserverAddress;
             certFile = cert;
             keyFile = key;
+            caFile = "${cfg.kubernetesCaCertPathPrefix}.pem";
           };
         }
 
@@ -406,58 +408,66 @@ in
       services.etcd = with cfg.certs.etcd; {
         certFile = mkDefault cert;
         keyFile = mkDefault key;
-        trustedCaFile = mkDefault caCert;
-      };
+        trustedCaFile = mkDefault "${cfg.etcdCaCertPathPrefix}.pem";
+      } // (with cfg.certs.etcdPeer; {
+        peerCertFile = mkDefault cert;
+        peerKeyFile = mkDefault key;
+        peerTrustedCaFile = mkDefault "${cfg.etcdCaCertPathPrefix}.pem";
+      });
 
       services.flannel.etcd = with cfg.certs.flannelEtcdClient; {
         certFile = mkDefault cert;
         keyFile = mkDefault key;
-        caFile = mkDefault caCert;
+        caFile = mkDefault "${cfg.etcdCaCertPathPrefix}.pem";
       };
 
       services.kubernetes = {
-
+        caFile = mkDefault "${cfg.caCertPathPrefix}.pem";
         apiserver = mkIf top.apiserver.enable (with cfg.certs.apiServer; {
           etcd = with cfg.certs.apiserverEtcdClient; {
             certFile = mkDefault cert;
             keyFile = mkDefault key;
-            caFile = mkDefault caCert;
+            caFile = mkDefault "${cfg.etcdCaCertPathPrefix}.pem";
           };
-          clientCaFile = mkDefault caCert;
+          clientCaFile = mkDefault "${cfg.kubernetesCaCertPathPrefix}.pem";
           tlsCertFile = mkDefault cert;
           tlsKeyFile = mkDefault key;
           serviceAccountKeyFile = mkDefault cfg.certs.serviceAccount.cert;
-          kubeletClientCaFile = mkDefault caCert;
+          kubeletClientCaFile = mkDefault "${cfg.kubernetesCaCertPathPrefix}.pem";
           kubeletClientCertFile = mkDefault cfg.certs.apiserverKubeletClient.cert;
           kubeletClientKeyFile = mkDefault cfg.certs.apiserverKubeletClient.key;
         });
         controllerManager = mkIf top.controllerManager.enable {
           serviceAccountKeyFile = mkDefault cfg.certs.serviceAccount.key;
-          rootCaFile = cfg.certs.controllerManagerClient.caCert;
+          rootCaFile = mkDefault "${cfg.kubernetesCaCertPathPrefix}.pem";
           kubeconfig = with cfg.certs.controllerManagerClient; {
             certFile = mkDefault cert;
             keyFile = mkDefault key;
+            caFile = mkDefault "${cfg.kubernetesCaCertPathPrefix}.pem";
           };
         };
         scheduler = mkIf top.scheduler.enable {
           kubeconfig = with cfg.certs.schedulerClient; {
             certFile = mkDefault cert;
             keyFile = mkDefault key;
+            caFile = mkDefault "${cfg.kubernetesCaCertPathPrefix}.pem";
           };
         };
         kubelet = mkIf top.kubelet.enable {
-          clientCaFile = mkDefault cfg.certs.kubelet.caCert;
+          clientCaFile =  mkDefault "${cfg.kubernetesCaCertPathPrefix}.pem";
           tlsCertFile = mkDefault cfg.certs.kubelet.cert;
           tlsKeyFile = mkDefault cfg.certs.kubelet.key;
           kubeconfig = with cfg.certs.kubeletClient; {
             certFile = mkDefault cert;
             keyFile = mkDefault key;
+            caFile = mkDefault "${cfg.kubernetesCaCertPathPrefix}.pem";
           };
         };
         proxy = mkIf top.proxy.enable {
           kubeconfig = with cfg.certs.kubeProxyClient; {
             certFile = mkDefault cert;
             keyFile = mkDefault key;
+            caFile = mkDefault "${cfg.kubernetesCaCertPathPrefix}.pem";
           };
         };
       };

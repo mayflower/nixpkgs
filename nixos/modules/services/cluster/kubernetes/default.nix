@@ -10,7 +10,7 @@ let
     kind = "Config";
     clusters = [{
       name = "local";
-      cluster.certificate-authority = cfg.caFile;
+      cluster.certificate-authority = conf.caFile;
       cluster.server = conf.server;
     }];
     users = [{
@@ -29,14 +29,12 @@ let
     }];
   });
 
-  caCert = secret "ca";
-
   etcdEndpoints = ["https://${cfg.masterAddress}:2379"];
 
   mkCert = { name, CN, hosts ? [], fields ? {}, action ? "",
              privateKeyOwner ? "kubernetes",
              label ? "kubernetes_ca", profile ? "client" }: rec {
-    inherit name caCert CN hosts fields action label profile;
+    inherit name CN hosts fields action label profile;
     cert = secret name;
     key = secret "${name}-key";
     privateKeyOptions = {
@@ -179,7 +177,6 @@ in {
   config = mkMerge [
     (mkIf cfg.easyCerts {
       services.kubernetes.pki.enable = mkDefault true;
-      services.kubernetes.caFile = caCert;
     })
 
     (mkIf (elem "master" cfg.roles) {
