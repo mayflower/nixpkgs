@@ -331,8 +331,8 @@ in
         kubelet = mkCert {
           name = "kubelet";
           CN = top.kubelet.hostname;
+          profile = "server";
           action = "systemctl restart kubelet.service";
-
         };
         kubeletClient = mkCert {
           name = "kubelet-client";

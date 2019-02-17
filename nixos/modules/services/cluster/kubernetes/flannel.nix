@@ -72,6 +72,8 @@ in
       flannelEtcdClient = top.lib.mkCert {
         name = "flannel-etcd-client";
         CN = "flannel-etcd-client";
+        profile = "client";
+        label = "etcd_ca";
         action = "systemctl restart flannel.service";
       };
     };

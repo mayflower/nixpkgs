@@ -380,23 +380,38 @@ in
           name = "kube-apiserver";
           CN = "kubernetes";
           hosts = [
+                    "kubernetes"
+                    "kubernetes.default"
                     "kubernetes.default.svc"
                     "kubernetes.default.svc.${top.addons.dns.clusterDomain}"
                     cfg.advertiseAddress
                     top.masterAddress
                     apiserverServiceIP
+                    "localhost"
                     "127.0.0.1"
                   ] ++ cfg.extraSANs;
+          profile = "server";
+          label = "kubernetes_ca";
           action = "systemctl restart kube-apiserver.service";
         };
         apiserverKubeletClient = mkCert {
           name = "kube-apiserver-kubelet-client";
           CN = "system:kube-apiserver";
+          fields = {
+            O = "system:masters";
+          };
+          profile = "client";
+          label = "kubernetes_ca";
           action = "systemctl restart kube-apiserver.service";
         };
         apiserverEtcdClient = mkCert {
           name = "kube-apiserver-etcd-client";
           CN = "etcd-client";
+          fields = {
+            O = "system:masters";
+          };
+          profile = "client";
+          label = "etcd_ca";
           action = "systemctl restart kube-apiserver.service";
         };
         clusterAdmin = mkCert {
@@ -405,16 +420,43 @@ in
           fields = {
             O = "system:masters";
           };
+          profile = "client";
+          label = "kubernetes_ca";
           privateKeyOwner = "root";
         };
         etcd = mkCert {
-          name = "etcd";
-          CN = top.masterAddress;
+          name = "kube-etcd";
+          CN = "kube-etcd";
+          hosts = [
+                    top.masterAddress
+                    "localhost"
+                    "127.0.0.1"
+                  ];
+          profile = "peer";
+          label = "etcd_ca";
+          privateKeyOwner = "etcd";
+          action = "systemctl restart etcd.service";
+        };
+        etcdPeer = mkCert {
+          name = "kube-etcd-peer";
+          CN = "kube-etcd-peer";
           hosts = [
                     "etcd.${top.addons.dns.clusterDomain}"
                     top.masterAddress
                     cfg.advertiseAddress
+                    "localhost"
+                    "127.0.0.1"
                   ];
+          profile = "peer";
+          label = "etcd_ca";
+          privateKeyOwner = "etcd";
+          action = "systemctl restart etcd.service";
+        };
+        etcdHealthCheckClient = mkCert {
+          name = "kube-etcd-healthcheck-client";
+          CN = "kube-etcd-healthcheck-client";
+          profile = "client";
+          label = "etcd_ca";
           privateKeyOwner = "etcd";
           action = "systemctl restart etcd.service";
         };

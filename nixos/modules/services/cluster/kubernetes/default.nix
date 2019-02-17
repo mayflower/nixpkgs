@@ -34,8 +34,9 @@ let
   etcdEndpoints = ["https://${cfg.masterAddress}:2379"];
 
   mkCert = { name, CN, hosts ? [], fields ? {}, action ? "",
-             privateKeyOwner ? "kubernetes" }: rec {
-    inherit name caCert CN hosts fields action;
+             privateKeyOwner ? "kubernetes",
+             label ? "kubernetes_ca", profile ? "client" }: rec {
+    inherit name caCert CN hosts fields action label profile;
     cert = secret name;
     key = secret "${name}-key";
     privateKeyOptions = {

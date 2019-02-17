@@ -297,10 +297,11 @@ in
             inherit (cert) action;
             authority = {
               inherit remote;
-              file.path = cert.caCert;
-              root_ca = cert.caCert;
-              profile = "default";
-              auth_key_file = certmgrAPITokenPath;
+              file.path = "${labelPrefix cert.label}.pem";
+              root_ca = top.caFile;
+              profile = cert.profile;
+              label = cert.label;
+              auth_key_file = "${certmgrAPITokenPath}";
             };
             certificate = {
               path = cert.cert;

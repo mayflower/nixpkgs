@@ -71,6 +71,8 @@ in
       kubeProxyClient = top.lib.mkCert {
         name = "kube-proxy-client";
         CN = "system:kube-proxy";
+        profile = "client";
+        label = "kubernetes_ca";
         action = "systemctl restart kube-proxy.service";
       };
     };
