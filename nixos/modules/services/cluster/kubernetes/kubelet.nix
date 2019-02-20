@@ -270,7 +270,7 @@ in
       systemd.services.kubelet = {
         description = "Kubernetes Kubelet Service";
         wantedBy = [ "kubernetes.target" ];
-        after = [ "network.target" "docker.service" "kube-apiserver.service" "kubelet-bootstrap.service" ];
+        after = [ "network.target" "docker.service" "kube-apiserver.service" "etcd.service" "kubelet-bootstrap.service" ];
         path = with pkgs; [ gitMinimal openssh docker utillinux iproute ethtool thin-provisioning-tools iptables socat ] ++ top.path;
         serviceConfig = {
           Slice = "kubernetes.slice";

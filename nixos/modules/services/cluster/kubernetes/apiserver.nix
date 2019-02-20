@@ -276,7 +276,7 @@ in
         systemd.services.kube-apiserver = {
           description = "Kubernetes APIServer Service";
           wantedBy = [ "kubernetes.target" ];
-          after = [ "network.target" ];
+          after = [ "network.target" "certmgr.service" ];
           serviceConfig = {
             Slice = "kubernetes.slice";
             ExecStart = ''${top.package}/bin/kube-apiserver \

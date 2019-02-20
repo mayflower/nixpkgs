@@ -49,7 +49,7 @@ in
     systemd.services.kube-proxy = {
       description = "Kubernetes Proxy Service";
       wantedBy = [ "kubernetes.target" ];
-      after = [ "kube-apiserver.service" ];
+      after = [ "kube-apiserver.service" "etcd.service" ];
       path = with pkgs; [ iptables conntrack_tools ];
       serviceConfig = {
         Slice = "kubernetes.slice";

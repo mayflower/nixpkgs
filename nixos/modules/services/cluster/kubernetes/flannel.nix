@@ -30,6 +30,7 @@ in
       enable = mkDefault true;
       network = mkDefault top.clusterCidr;
     };
+    systemd.services.flannel.after = [ "kube-apiserver.service" "etcd.service" ];
 
     services.kubernetes.kubelet = {
       networkPlugin = mkDefault "cni";

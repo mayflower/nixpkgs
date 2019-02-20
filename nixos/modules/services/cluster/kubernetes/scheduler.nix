@@ -60,7 +60,7 @@ in
     systemd.services.kube-scheduler = {
       description = "Kubernetes Scheduler Service";
       wantedBy = [ "kubernetes.target" ];
-      after = [ "kube-apiserver.service" ];
+      after = [ "kube-apiserver.service" "etcd.service" ];
       serviceConfig = {
         Slice = "kubernetes.slice";
         ExecStart = ''${top.package}/bin/kube-scheduler \

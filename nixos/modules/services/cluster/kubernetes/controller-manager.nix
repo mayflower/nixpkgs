@@ -108,7 +108,7 @@ in
     systemd.services.kube-controller-manager = {
       description = "Kubernetes Controller Manager Service";
       wantedBy = [ "kubernetes.target" ];
-      after = [ "kube-apiserver.service" ];
+      after = [ "kube-apiserver.service" "etcd.service" ];
       serviceConfig = {
         RestartSec = "30s";
         Restart = "on-failure";

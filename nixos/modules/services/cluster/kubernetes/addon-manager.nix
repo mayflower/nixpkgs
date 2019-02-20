@@ -72,7 +72,7 @@ in
     systemd.services.kube-addon-manager = {
       description = "Kubernetes addon manager";
       wantedBy = [ "kubernetes.target" ];
-      after = [ "kube-apiserver.service" ];
+      after = [ "kube-apiserver.service" "etcd.service" ];
       environment.ADDON_PATH = "/etc/kubernetes/addons/";
       path = [ pkgs.gawk ];
       serviceConfig = {

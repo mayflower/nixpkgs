@@ -224,9 +224,8 @@ in
       frontProxyCa = cfg.frontProxyCaCertPathPrefix;
     in {
       description = "Multiroot authenticated signer service";
-      wantedBy = [ "kube-certmgr-bootstrap.service" ];
-      before = [ "kube-certmgr-bootstrap.service" ];
-      after = [ "cfssl.service" ];
+      wantedBy = [ "kube-certificate-signing-online.service" ];
+      before = [ "kube-certificate-signing-online.service" ];
       preStart = ''
         set -e
         mkdir -p ${top.secretsPath}
@@ -251,12 +250,30 @@ in
         RestartSec = "10s";
         Restart = "on-failure";
       };
+    });
+
+    systemd.services.kube-certificate-signing-online = {
+      description = "Wait for multirootca to be reachable.";
+      wantedBy = [ "kube-certmgr-bootstrap.service" ];
+      before = [ "kube-certmgr-bootstrap.service" ];
+      path = with pkgs; [ libressl.nc ];
+      preStart = ''
+        while ! nc -z ${top.masterAddress} ${cfsslPort} ; do
+          echo Waiting for ${top.masterAddress}:${cfsslPort} to be reachable.
+          sleep 2
+        done
+      '';
+      script = "echo ${top.masterAddress}:${cfsslPort} is reachable";
+      serviceConfig = {
+        Timeout = "5m";
+      };
     };
 
     systemd.services.kube-certmgr-bootstrap = {
       description = "Kubernetes certmgr bootstrapper";
       wantedBy = [ "certmgr.service" ];
-      after = [ "cfssl.target" ];
+      before = [ "certmgr.service" ];
+      after = [ "kube-certificate-signing-online.service" ];
       preStart = ''
         mkdir -p ${top.secretsPath}
         mkdir -p $(dirname ${top.caFile})
@@ -320,6 +337,25 @@ in
         in
           mapAttrs mkSpec cfg.certs;
       };
+
+      systemd.services.certmgr.before = [
+        "etcd.service"
+        "flannel.service"
+        "kube-addon-manager.service"
+        "kube-apiserver.service"
+        "kube-controller-manager.service"
+        "kube-scheduler.service"
+        "kube-proxy.service"
+        "kubelet.service"
+      ];
+
+      systemd.services.certmgr.postStart = lib.concatMapStrings
+        (cert: ''
+          while [[ ! -f ${cert.cert} ]] ; do
+            echo Waiting for ${cert.cert} to be present.
+            sleep 2
+          done
+        '') (lib.attrValues cfg.certs);
 
       #TODO: Get rid of kube-addon-manager in the future for the following reasons
       # - it is basically just a shell script wrapped around kubectl
