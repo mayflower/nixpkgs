@@ -13,9 +13,10 @@ if 1 == len(sys.argv):
     exit(1)
 
 name = sys.argv[1]
+nixpkgs = Path(__file__).resolve().parents[6]
    
 kubernetes = subprocess.run(
-    ['nix-build', '--no-out-link', '<nixpkgs>', '-A', 'kubernetes.src'],
+    ['nix-build', '--no-out-link', nixpkgs, '-A', 'kubernetes.src'],
     stdout=subprocess.PIPE)
 
 source = str(kubernetes.stdout.strip(), 'utf-8')
