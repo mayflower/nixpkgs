@@ -132,11 +132,11 @@ in {
     version = "1.1.0i";
     sha256 = "16fgaf113p6s5ixw227sycvihh3zx6f6rf0hvjjhxk68m12cigzb";
     patches = [
-      ./1.0.2/nix-ssl-cert-file.patch
+      ./1.1.0/nix-ssl-cert-file.patch
 
       (if stdenv.hostPlatform.isDarwin
-       then ./use-etc-ssl-certs-darwin-1.1.patch
-       else ./use-etc-ssl-certs-1.1.patch)
+       then ./1.1.0/use-etc-ssl-certs-darwin.patch
+       else ./1.1.0/use-etc-ssl-certs.patch)
     ];
   };
 }
