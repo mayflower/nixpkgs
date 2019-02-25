@@ -81,8 +81,7 @@ with pkgs;
     { deps = [ autoconf264 automake111x gettext libtool ]; }
     ../build-support/setup-hooks/autoreconf.sh;
 
-  autoPatchelfHook = makeSetupHook
-    { name = "auto-patchelf-hook"; deps = [ file ]; }
+  autoPatchelfHook = makeSetupHook { name = "auto-patchelf-hook"; }
     ../build-support/setup-hooks/auto-patchelf.sh;
 
   ensureNewerSourcesHook = { year }: makeSetupHook {}
@@ -4502,7 +4501,7 @@ with pkgs;
 
   opae = callPackage ../development/libraries/opae { };
 
-  opentracing-cpp = callPackages ../development/libraries/opentracing-cpp { };
+  opentracing-cpp = callPackage ../development/libraries/opentracing-cpp { };
 
   openvswitch = callPackage ../os-specific/linux/openvswitch { };
 
@@ -6391,11 +6390,9 @@ with pkgs;
     then callPackage adoptopenjdk-bin-11-packages-linux.jdk-openj9 {}
     else callPackage adoptopenjdk-bin-11-packages-darwin.jdk-openj9 {};
 
-  # openj9 jre builds for mac are currently missing (upstream)
-  #adoptopenjdk-jre-openj9-bin-11 = if stdenv.isLinux
-  #  then callPackage adoptopenjdk-bin-11-packages-linux.jre-openj9 {}
-  #  else callPackage adoptopenjdk-bin-11-packages-darwin.jre-openj9 {};
-  adoptopenjdk-jre-openj9-bin-11 = callPackage adoptopenjdk-bin-11-packages-linux.jre-openj9 {};
+  adoptopenjdk-jre-openj9-bin-11 = if stdenv.isLinux
+    then callPackage adoptopenjdk-bin-11-packages-linux.jre-openj9 {}
+    else callPackage adoptopenjdk-bin-11-packages-darwin.jre-openj9 {};
 
   adoptopenjdk-bin = adoptopenjdk-hotspot-bin-11;
   adoptopenjdk-jre-bin = adoptopenjdk-jre-hotspot-bin-11;
@@ -11824,7 +11821,7 @@ with pkgs;
   qt56 = recurseIntoAttrs (makeOverridable
     (import ../development/libraries/qt-5/5.6) {
       inherit newScope;
-      inherit stdenv fetchurl makeSetupHook;
+      inherit stdenv fetchurl fetchpatch makeSetupHook;
       bison = bison2; # error: too few arguments to function 'int yylex(...
       inherit cups;
       harfbuzz = harfbuzzFull;
@@ -11838,7 +11835,7 @@ with pkgs;
   qt59 = recurseIntoAttrs (makeOverridable
     (import ../development/libraries/qt-5/5.9) {
       inherit newScope;
-      inherit stdenv fetchurl makeSetupHook;
+      inherit stdenv fetchurl fetchpatch makeSetupHook;
       bison = bison2; # error: too few arguments to function 'int yylex(...
       inherit cups;
       harfbuzz = harfbuzzFull;
@@ -14203,16 +14200,6 @@ with pkgs;
       ];
   };
 
-  linux_4_18 = callPackage ../os-specific/linux/kernel/linux-4.18.nix {
-    kernelPatches =
-      [ kernelPatches.bridge_stp_helper
-        # See pkgs/os-specific/linux/kernel/cpu-cgroup-v2-patches/README.md
-        # when adding a new linux version
-        # kernelPatches.cpu-cgroup-v2."4.11"
-        kernelPatches.modinst_arg_list_too_long
-      ];
-  };
-
   linux_4_19 = callPackage ../os-specific/linux/kernel/linux-4.19.nix {
     kernelPatches =
       [ kernelPatches.bridge_stp_helper
@@ -14425,7 +14412,6 @@ with pkgs;
   linuxPackages_4_4 = recurseIntoAttrs (linuxPackagesFor pkgs.linux_4_4);
   linuxPackages_4_9 = recurseIntoAttrs (linuxPackagesFor pkgs.linux_4_9);
   linuxPackages_4_14 = recurseIntoAttrs (linuxPackagesFor pkgs.linux_4_14);
-  linuxPackages_4_18 = recurseIntoAttrs (linuxPackagesFor pkgs.linux_4_18);
   linuxPackages_4_19 = recurseIntoAttrs (linuxPackagesFor pkgs.linux_4_19);
   # Don't forget to update linuxPackages_latest!
 
@@ -17505,10 +17491,12 @@ with pkgs;
   libreoffice-unwrapped =callPackage ../applications/office/libreoffice
   (libreoffice-args // {
   });
-  libreoffice-still-unwrapped =callPackage ../applications/office/libreoffice/still.nix
-  (libreoffice-args // {
-      poppler = poppler_0_61;
-  });
+  # vulnerable and EOL; Fresh has already become Still anyway
+  #libreoffice-still-unwrapped =callPackage ../applications/office/libreoffice/still.nix
+  #(libreoffice-args // {
+  #    poppler = poppler_0_61;
+  #});
+  libreoffice-still-unwrapped = libreoffice-unwrapped;
 
   libreoffice-fresh = lowPrio (callPackage ../applications/office/libreoffice/wrapper.nix {
     libreoffice = libreoffice-unwrapped;
