@@ -229,6 +229,7 @@ in
         in ''
           mkdir -p ${cfg.stateDir} ${cfg.runDir}
           chown ${cfg.user}:${cfg.group} -R ${cfg.stateDir} ${cfg.runDir}
+          ln -sf ${piCfgFile} ${cfg.stateDir}/privacyidea.cfg
           if ! test -e "${cfg.stateDir}/db-created"; then
             ${pkgs.sudo}/bin/sudo -u postgres ${pkgs.postgresql}/bin/createuser --no-superuser --no-createdb --no-createrole ${cfg.user}
             ${pkgs.sudo}/bin/sudo -u postgres ${pkgs.postgresql}/bin/createdb --owner ${cfg.user} privacyidea
