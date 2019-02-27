@@ -17290,6 +17290,8 @@ EOF
 
   pyatv = callPackage ../development/python-modules/pyatv { };
 
+  croniter = callPackage ../development/python-modules/croniter { };
+
 });
 
 in fix' (extends overrides packages)
