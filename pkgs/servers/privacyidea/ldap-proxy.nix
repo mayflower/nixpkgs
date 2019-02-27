@@ -4,13 +4,13 @@ let
 
   self = pythonPackages.buildPythonApplication rec {
     name = "privacyidea-ldap-proxy-${version}";
-    version = "0.5";
+    version = "0.6.1";
 
     src = fetchFromGitHub {
       owner = "NetKnights-GmbH";
       repo = "privacyidea-ldap-proxy";
       rev = "v${version}";
-      sha256 = "0zmdrym7hb2x7bhv1xsrai0lyznc51kv4gxlzs0na9lv41a632bi";
+      sha256 = "1kc1n9wr1a66xd5zvl6dq78xnkqkn5574jpzashc99pvm62dr24j";
     };
 
     checkPhase = ''
