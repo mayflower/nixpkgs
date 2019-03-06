@@ -290,25 +290,7 @@ in
   ###### implementation
   config = mkMerge [
 
-    (mkIf cfg.enable (let
-      apiserverPaths = [
-        cfg.clientCaFile
-        cfg.etcd.caFile
-        cfg.etcd.certFile
-        cfg.etcd.keyFile
-        cfg.kubeletClientCaFile
-        cfg.kubeletClientCertFile
-        cfg.kubeletClientKeyFile
-        cfg.serviceAccountKeyFile
-        cfg.tlsCertFile
-        cfg.tlsKeyFile
-      ];
-      etcdPaths = [
-        config.services.etcd.certFile
-        config.services.etcd.keyFile
-        config.services.etcd.trustedCaFile
-      ];
-    in {
+    (mkIf cfg.enable {
         systemd.services.kube-apiserver = {
           description = "Kubernetes APIServer Service";
           wantedBy = [ "kube-control-plane-online.target" ];
@@ -383,25 +365,6 @@ in
             AmbientCapabilities = "cap_net_bind_service";
             Restart = "on-failure";
             RestartSec = 5;
-          };
-          unitConfig.ConditionPathExists = apiserverPaths;
-        };
-
-        systemd.paths.kube-apiserver = {
-          wantedBy = [ "kube-apiserver.service" ];
-          pathConfig = {
-            PathExists = apiserverPaths;
-            PathChanged = apiserverPaths;
-          };
-        };
-
-        systemd.services.etcd.unitConfig.ConditionPathExists = etcdPaths;
-
-        systemd.paths.etcd = {
-          wantedBy = [ "etcd.service" ];
-          pathConfig = {
-            PathExists = etcdPaths;
-            PathChanged = etcdPaths;
           };
         };
 
@@ -488,7 +451,7 @@ in
         };
       };
 
-    }))
+    })
     {
       systemd.targets.kube-control-plane-online = {
         wantedBy = [ "kubernetes.target" ];
