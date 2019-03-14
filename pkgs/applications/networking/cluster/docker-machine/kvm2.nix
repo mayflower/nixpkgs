@@ -1,13 +1,14 @@
-{ stdenv, buildGoPackage, minikube, libvirt, pkgconfig }:
+{ stdenv, buildGoPackage, fetchFromGitHub, libvirt, pkgconfig, minikube }:
 
 buildGoPackage rec {
-  name = "docker-machine-kvm2-${version}";
+  pname = "docker-machine-kvm2";
+  name = "${pname}-${version}";
   version = minikube.version;
-
-  inherit (minikube) src;
 
   goPackagePath = "k8s.io/minikube";
   subPackages = [ "cmd/drivers/kvm" ];
+
+  src = minikube.src;
 
   nativeBuildInputs = [ pkgconfig ];
   buildInputs = [ libvirt ];

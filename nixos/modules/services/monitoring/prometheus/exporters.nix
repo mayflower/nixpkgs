@@ -31,8 +31,10 @@ let
     rspamd    = import ./exporters/rspamd.nix    { inherit config lib pkgs; };
     snmp      = import ./exporters/snmp.nix      { inherit config lib pkgs; };
     surfboard = import ./exporters/surfboard.nix { inherit config lib pkgs; };
+    tor       = import ./exporters/tor.nix       { inherit config lib pkgs; };
     unifi     = import ./exporters/unifi.nix     { inherit config lib pkgs; };
     varnish   = import ./exporters/varnish.nix   { inherit config lib pkgs; };
+    bind      = import ./exporters/bind.nix      { inherit config lib pkgs; };
   };
 
   mkExporterOpts = ({ name, port }: {

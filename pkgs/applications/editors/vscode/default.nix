@@ -6,6 +6,8 @@
 
 let
   executableName = "code" + lib.optionalString isInsiders "-insiders";
+  longName = "Visual Studio Code" + lib.optionalString isInsiders " - Insiders";
+  shortName = "Code" + lib.optionalString isInsiders " - Insiders";
 
   inherit (stdenv.hostPlatform) system;
 
@@ -39,12 +41,24 @@ in
 
     desktopItem = makeDesktopItem {
       name = executableName;
+      desktopName = longName;
+      comment = "Code Editing. Redefined.";
+      genericName = "Text Editor";
       exec = executableName;
       icon = "@out@/share/pixmaps/code.png";
-      comment = "Code editor redefined and optimized for building and debugging modern web and cloud applications";
-      desktopName = "Visual Studio Code" + lib.optionalString isInsiders " Insiders";
-      genericName = "Text Editor";
-      categories = "GNOME;GTK;Utility;TextEditor;Development;";
+      startupNotify = "true";
+      categories = "Utility;TextEditor;Development;IDE;";
+      mimeType = "text/plain;inode/directory;";
+      extraEntries = ''
+        StartupWMClass=${shortName}
+        Actions=new-empty-window;
+        Keywords=vscode;
+
+        [Desktop Action new-empty-window]
+        Name=New Empty Window
+        Exec=${executableName} --new-window %F
+        Icon=@out@/share/pixmaps/code.png
+      '';
     };
 
     buildInputs = (if stdenv.isDarwin
@@ -72,6 +86,8 @@ in
 
         mkdir -p $out/share/applications
         substitute $desktopItem/share/applications/${executableName}.desktop $out/share/applications/${executableName}.desktop \
+          --subst-var out
+        substitute $urlHandlerDesktopItem/share/applications/${executableName}-url-handler.desktop $out/share/applications/${executableName}-url-handler.desktop \
           --subst-var out
 
         mkdir -p $out/share/pixmaps

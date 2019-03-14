@@ -48,14 +48,14 @@ let
 
     translations = fetchSrc {
       name = "translations";
-      sha256 = "1rk8f77gwqyrnrxpfrvmr03n49bb09idxwzzindxxgcagh3d0p5f";
+      sha256 = "1lgyns8zmwky1p78rvilnixqmicpfaal6x6286l4m7hv46pha181";
     };
 
     # TODO: dictionaries
 
     help = fetchSrc {
       name = "help";
-      sha256 = "076xq1vlsyi2fv3r7rw595075pi08slbzwwc5h9gda3frx1jkj4i";
+      sha256 = "0ia490xksnhh4m5fas6irr7qbnkaap7zs3fg8jbq4qrfjh81bcpm";
     };
 
   };
@@ -68,7 +68,10 @@ in stdenv.mkDerivation rec {
   # of rasqal/rasqal.h
   NIX_CFLAGS_COMPILE = [ "-I${librdf_rasqal}/include/rasqal" ];
 
-  patches = [ ./xdg-open-brief.patch ];
+  patches = [
+    ./xdg-open-brief.patch
+    ./poppler.patch
+  ];
 
   postUnpack = ''
     mkdir -v $sourceRoot/src
@@ -224,6 +227,8 @@ in stdenv.mkDerivation rec {
 
     # Without these, configure does not finish
     "--without-junit"
+
+    "--disable-libnumbertext" # system-libnumbertext"
 
     # I imagine this helps. Copied from go-oo.
     # Modified on every upgrade, though

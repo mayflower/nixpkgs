@@ -2,10 +2,10 @@
 
 let wrapper = stdenv.mkDerivation rec {
   name = "wrapper-${version}";
-  version = "3.5.32";
+  version = "3.5.35";
   src = fetchurl {
     url = "https://wrapper.tanukisoftware.com/download/${version}/wrapper_${version}_src.tar.gz";
-    sha256 = "1v388p5jjbpwybw0zjv5glzny17fwdwppaci2lqcsnm6qw0667f1";
+    sha256 = "0mjyw9ays9v6lnj21pmfd3qdvd9b6rwxfmw3pg6z0kyf2jadixw2";
   };
   buildInputs = [ jdk ];
   buildPhase = ''

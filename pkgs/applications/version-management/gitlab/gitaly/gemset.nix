@@ -25,14 +25,14 @@
     };
     version = "0.2.0";
   };
-  addressable = {
-    dependencies = ["public_suffix"];
+  adamantium = {
+    dependencies = ["ice_nine" "memoizable"];
     source = {
       remotes = ["https://rubygems.org"];
-      sha256 = "0viqszpkggqi8hq87pqp0xykhvz60g99nwmkwsb0v45kc2liwxvk";
+      sha256 = "0165r2ikgfwv2rm8dzyijkp74fvg0ni72hpdx8ay2v7cj08dqyak";
       type = "gem";
     };
-    version = "2.5.2";
+    version = "0.2.0";
   };
   ast = {
     source = {
@@ -464,7 +464,8 @@
     };
     version = "0.0.3";
   };
-  public_suffix = {
+  proc_to_ast = {
+    dependencies = ["coderay" "parser" "unparser"];
     source = {
       remotes = ["https://rubygems.org"];
       sha256 = "08q64b5br692dd3v0a9wq9q5dvycc6kmiqmjbdxkxbfizggsvx6l";

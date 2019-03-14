@@ -1,5 +1,5 @@
 { stdenv, fetchFromGitHub, asciidoc-full, gettext
-, gobjectIntrospection, gtk3, hicolor-icon-theme, libappindicator-gtk3, libnotify, librsvg
+, gobject-introspection, gtk3, hicolor-icon-theme, libappindicator-gtk3, libnotify, librsvg
 , udisks2, wrapGAppsHook
 , buildPythonApplication
 , docopt
@@ -9,13 +9,13 @@
 
 buildPythonApplication rec {
   name = "udiskie-${version}";
-  version = "1.7.5";
+  version = "1.7.7";
 
   src = fetchFromGitHub {
     owner = "coldfix";
     repo = "udiskie";
     rev = version;
-    sha256 = "1mcdn8ha5d5nsmrzk6xnnsqrmk94rdrzym9sqm38zk5r8gpyl1k4";
+    sha256 = "1j17z26vy44il2s9zgchvhq280vq8ag64ddi35f35b444wz2azlb";
   };
 
   buildInputs = [
@@ -26,7 +26,7 @@ buildPythonApplication rec {
   ];
 
   propagatedBuildInputs = [
-    gettext gobjectIntrospection gtk3 libnotify docopt
+    gettext gobject-introspection gtk3 libnotify docopt
     pygobject3 pyyaml udisks2 libappindicator-gtk3
   ];
 

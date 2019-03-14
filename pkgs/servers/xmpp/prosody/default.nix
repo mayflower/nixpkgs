@@ -25,18 +25,21 @@ let
 in
 
 stdenv.mkDerivation rec {
-  version = "0.10.3";
+  version = "0.11.2"; # also update communityModules
   name = "prosody-${version}";
 
   src = fetchurl {
     url = "https://prosody.im/downloads/source/${name}.tar.gz";
-    sha256 = "0w8q7w5vpvp8w3fxl59r94cxblr8xrrgyg0ak76ydchbm8hy4whc";
+    sha256 = "0ca8ivqb4hxqka08pwnaqi1bqxrdl8zw47g6z7nw9q5r57fgc4c9";
   };
 
+  # A note to all those merging automated updates: Please also update this
+  # attribute as some modules might not be compatible with a newer prosody
+  # version.
   communityModules = fetchhg {
     url = "https://hg.prosody.im/prosody-modules";
-    rev = "e55172ce68d4";
-    sha256 = "1ib35bfajpv2mca39fsr4622jjhznd438ijr35whii32wg94vl4a";
+    rev = "b54e98d5c4a1";
+    sha256 = "0bzn92j48krb2zhp9gn5bbn5sg0qv15j5lpxfszwqdln3lpmrvzg";
   };
 
   patches = [ ./muc-host-affiliation.patch ];

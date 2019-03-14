@@ -4,46 +4,49 @@
 , libxml2
 , pkgconfig
 , gtk3
-, granite
 , gnome3
-, gobjectIntrospection
+, gobject-introspection
 , json-glib
 , cmake
 , ninja
 , libgudev
 , libevdev
-, vala
+, libsoup
+, pantheon
 , wrapGAppsHook }:
 
 stdenv.mkDerivation rec {
   name = "spice-up-${version}";
-  version = "1.3.2";
+  version = "1.7.0";
 
   src = fetchFromGitHub {
     owner = "Philip-Scott";
     repo = "Spice-up";
     rev = version;
-    sha256 = "087cdi7na93pgz7vf046h94v5ydvpiccpwhllq85ix8g4pa5rp85";
+    sha256 = "1qb1hlw7g581dmgg5mh832ixjkcgqm3lqzj6xma2cz8wdncwwjaq";
   };
+
   USER = "nix-build-user";
 
   nativeBuildInputs = [
-    pkgconfig
-    wrapGAppsHook
-    vala
     cmake
-    ninja
     gettext
+    gobject-introspection # For setup hook
     libxml2
-    gobjectIntrospection # For setup hook
+    ninja
+    pkgconfig
+    pantheon.vala
+    wrapGAppsHook
   ];
   buildInputs = [
-    gtk3
-    granite
+    pantheon.elementary-icon-theme
+    pantheon.granite
     gnome3.libgee
+    gtk3
     json-glib
-    libgudev
     libevdev
+    libgudev
+    libsoup
   ];
 
   meta = with stdenv.lib; {

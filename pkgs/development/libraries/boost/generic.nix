@@ -111,8 +111,9 @@ stdenv.mkDerivation {
     description = "Collection of C++ libraries";
     license = stdenv.lib.licenses.boost;
 
-    platforms = (if versionOlder version "1.59" then remove "aarch64-linux" else id) (platforms.unix ++ platforms.windows);
-    maintainers = with maintainers; [ peti wkennington ];
+    platforms = (platforms.unix ++ platforms.windows);
+    badPlatforms = stdenv.lib.optional (versionOlder version "1.59") "aarch64-linux";
+    maintainers = with maintainers; [ peti ];
   };
 
   preConfigure = ''
@@ -168,7 +169,7 @@ stdenv.mkDerivation {
   postFixup = ''
     # Make boost header paths relative so that they are not runtime dependencies
     cd "$dev" && find include \( -name '*.hpp' -or -name '*.h' -or -name '*.ipp' \) \
-      -exec sed '1i#line 1 "{}"' -i '{}' \;
+      -exec sed '1s/^\xef\xbb\xbf//;1i#line 1 "{}"' -i '{}' \;
   '' + optionalString (stdenv.hostPlatform.libc == "msvcrt") ''
     $RANLIB "$out/lib/"*.a
   '';

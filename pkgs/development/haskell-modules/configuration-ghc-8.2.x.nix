@@ -39,8 +39,8 @@ self: super: {
   # These are now core libraries in GHC 8.4.x.
   mtl = self.mtl_2_2_2;
   parsec = self.parsec_3_1_13_0;
-  stm = self.stm_2_4_5_1;
-  text = self.text_1_2_3_0;
+  stm = self.stm_2_5_0_0;
+  text = self.text_1_2_3_1;
 
   # Make sure we can still build Cabal 1.x.
   Cabal_1_24_2_0 = overrideCabal super.Cabal_1_24_2_0 (drv: {
@@ -91,9 +91,9 @@ self: super: {
   distribution-nixpkgs = super.distribution-nixpkgs.overrideScope (self: super: { Cabal = self.Cabal_2_2_0_1; });
   hackage-db_2_0_1 = super.hackage-db_2_0_1.overrideScope (self: super: { Cabal = self.Cabal_2_2_0_1; });
   stack = super.stack.overrideScope (self: super: { Cabal = self.Cabal_2_2_0_1; });
-  stylish-cabal = dontCheck (super.stylish-cabal.overrideScope (self: super: {
-    Cabal = self.Cabal_2_2_0_1;
-    haddock-library = dontHaddock (dontCheck self.haddock-library_1_5_0_1);
-  }));
+
+  # Older GHC versions need these additional dependencies.
+  ListLike = addBuildDepend super.ListLike self.semigroups;
+  base-compat-batteries = addBuildDepend super.base-compat-batteries self.contravariant;
 
 }

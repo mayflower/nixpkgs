@@ -7,6 +7,7 @@ with lib.attrsets;
 with lib.strings;
 
 rec {
+
   /* Returns true when the given argument is an option
 
      Type: isOption :: a -> bool
@@ -47,8 +48,6 @@ rec {
     visible ? null,
     # Whether the option can be set only once
     readOnly ? null,
-    # Obsolete, used by types.optionSet.
-    options ? null
     } @ attrs:
     attrs // { _type = "option"; };
 

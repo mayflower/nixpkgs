@@ -1,5 +1,7 @@
 { stdenv, fetchFromGitHub, writeScript, glibcLocales, diffPlugins
-, pythonPackages, imagemagick, gobjectIntrospection, gst_all_1
+, pythonPackages, imagemagick, gobject-introspection, gst_all_1
+, runtimeShell
+, fetchpatch
 
 # Attributes needed for tests of the external plugins
 , callPackage, beets
@@ -120,7 +122,7 @@ in pythonPackages.buildPythonApplication rec {
     pythonPackages.unidecode
     pythonPackages.gst-python
     pythonPackages.pygobject3
-    gobjectIntrospection
+    gobject-introspection
   ] ++ optional enableAcoustid      pythonPackages.pyacoustid
     ++ optional (enableFetchart
               || enableEmbyupdate
@@ -155,6 +157,14 @@ in pythonPackages.buildPythonApplication rec {
   patches = [
     ./replaygain-default-bs1770gain.patch
     ./keyfinder-default-bin.patch
+
+    # Fix Python 3.7 compatibility
+    (fetchpatch {
+      url = "https://github.com/beetbox/beets/commit/"
+          + "15d44f02a391764da1ce1f239caef819f08beed8.patch";
+      sha256 = "12rjb4959nvnrm3fvvki7chxjkipa0cy8i0yi132xrcn8141dnpm";
+      excludes = [ "docs/changelog.rst" ];
+    })
   ];
 
   postPatch = ''
@@ -218,7 +228,7 @@ in pythonPackages.buildPythonApplication rec {
     tmphome="$(mktemp -d)"
 
     EDITOR="${writeScript "beetconfig.sh" ''
-      #!${stdenv.shell}
+      #!${runtimeShell}
       cat > "$1" <<CFG
       plugins: ${concatStringsSep " " allEnabledPlugins}
       CFG

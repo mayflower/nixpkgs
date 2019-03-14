@@ -3,7 +3,7 @@
   pkgs ? import ../../.. { inherit system config; }
 }:
 
-with import ../../lib/testing.nix { inherit system; };
+with import ../../lib/testing.nix { inherit system pkgs; };
 with pkgs.lib;
 
 let
@@ -65,7 +65,6 @@ let
             }
             (optionalAttrs (any (role: role == "master") machine.roles) {
               networking.firewall.allowedTCPPorts = [
-                2379 2380  # etcd
                 443 # kubernetes apiserver
               ];
             })

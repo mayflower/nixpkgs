@@ -1,4 +1,16 @@
-{ stdenv, fetchurl, python3, python3Packages, zbar }:
+{ stdenv, fetchFromGitHub, python3, python3Packages, zbar, secp256k1 }:
+
+let
+  qdarkstyle = python3Packages.buildPythonPackage rec {
+    pname = "QDarkStyle";
+    version = "2.5.4";
+    src = python3Packages.fetchPypi {
+      inherit pname version;
+      sha256 = "1w715m1i5pycfqcpkrggpn0rs9cakx6cm5v8rggcxnf4p0i0kdiy";
+    };
+    doCheck = false; # no tests
+  };
+in
 
 let
   qdarkstyle = python3Packages.buildPythonPackage rec {
@@ -13,15 +25,20 @@ let
 in
 
 python3Packages.buildPythonApplication rec {
-  name = "electrum-${version}";
-  version = "3.2.4";
+  pname = "electrum";
+  version = "3.3.4";
 
-  src = fetchurl {
-    url = "https://download.electrum.org/${version}/Electrum-${version}.tar.gz";
-    sha256 = "0nwipn1alk3r54zpsv2bdwsqxw4f08bxnfmygnwakfkiaifmmhxg";
+  src = fetchFromGitHub {
+    owner = "spesmilo";
+    repo = "electrum";
+    rev = version;
+    sha256 = "0yxdpc602jnd14xz3px85ka0b6db98zwbgfi9a3vj8p1k3mmiwaj";
   };
 
   propagatedBuildInputs = with python3Packages; [
+    aiorpcx
+    aiohttp
+    aiohttp-socks
     dnspython
     ecdsa
     jsonrpclib-pelix
@@ -35,24 +52,21 @@ python3Packages.buildPythonApplication rec {
     qdarkstyle
     qrcode
     requests
-    tlslite
-    typing
+    tlslite-ng
 
     # plugins
     keepkey
     trezor
+    btchip
 
     # TODO plugins
     # amodem
-    # btchip
   ];
 
   preBuild = ''
     sed -i 's,usr_share = .*,usr_share = "'$out'/share",g' setup.py
-    pyrcc5 icons.qrc -o electrum/gui/qt/icons_rc.py
-    # Recording the creation timestamps introduces indeterminism to the build
-    sed -i '/Created: .*/d' electrum/gui/qt/icons_rc.py
     sed -i "s|name = 'libzbar.*'|name='${zbar}/lib/libzbar.so'|" electrum/qrscanner.py
+    substituteInPlace ./electrum/ecc_fast.py --replace libsecp256k1.so.0 ${secp256k1}/lib/libsecp256k1.so.0
   '';
 
   postInstall = ''
@@ -65,10 +79,10 @@ python3Packages.buildPythonApplication rec {
       --replace "Exec=electrum %u" "Exec=$out/bin/electrum %u"
   '';
 
-  doCheck = false;
+  checkInputs = with python3Packages; [ pytest ];
 
-  doInstallCheck = true;
-  installCheckPhase = ''
+  checkPhase = ''
+    py.test electrum/tests
     $out/bin/electrum help >/dev/null
   '';
 

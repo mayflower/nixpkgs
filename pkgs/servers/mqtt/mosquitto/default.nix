@@ -3,18 +3,22 @@
 
 stdenv.mkDerivation rec {
   name = "mosquitto-${version}";
-  version = "1.5.4";
+  version = "1.5.5";
 
   src = fetchFromGitHub {
     owner  = "eclipse";
     repo   = "mosquitto";
     rev    = "v${version}";
-    sha256 = "0pb38y6m682xqrkzhp41mj54x5ic43761xzschgnw055mzksbgk2";
+    sha256 = "1sfwmvrglfy5gqfk004kvbjldqr36dqz6xmppbgfhr47j5zs66xc";
   };
 
   postPatch = ''
     substituteInPlace man/manpage.xsl \
       --replace /usr/share/xml/docbook/stylesheet/ ${docbook_xsl}/share/xml/
+
+    for f in {lib,lib/cpp,src}/CMakeLists.txt ; do
+      substituteInPlace $f --replace /sbin/ldconfig ldconfig
+    done
 
     # the manpages are not generated when using cmake
     pushd man
@@ -30,6 +34,7 @@ stdenv.mkDerivation rec {
 
   cmakeFlags = [
     "-DWITH_THREADING=ON"
+    "-DWITH_WEBSOCKETS=ON"
   ];
 
   meta = with stdenv.lib; {

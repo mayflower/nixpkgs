@@ -1,7 +1,7 @@
 { stdenv, fetchurl, makeWrapper, electron_3, dpkg, gtk3, glib, gnome3, wrapGAppsHook }:
 
 stdenv.mkDerivation rec {
-  name = "typora-${version}";
+  pname = "typora";
   version = "0.9.64";
 
   src = fetchurl {

@@ -2,7 +2,7 @@
 
 # build-tools
 , bootPkgs
-, autoconf, automake, coreutils, fetchurl, fetchpatch, perl, python3, m4
+, autoconf, automake, coreutils, fetchurl, fetchpatch, perl, python3, m4, sphinx
 
 , libiconv ? null, ncurses
 
@@ -171,14 +171,14 @@ stdenv.mkDerivation (rec {
   dontAddExtraLibs = true;
 
   nativeBuildInputs = [
-    perl autoconf automake m4 python3
+    perl autoconf automake m4 python3 sphinx
     ghc bootPkgs.alex bootPkgs.happy bootPkgs.hscolour
   ];
 
   # For building runtime libs
   depsBuildTarget = toolsForTarget;
 
-  buildInputs = libDeps hostPlatform;
+  buildInputs = [ perl ] ++ (libDeps hostPlatform);
 
   propagatedBuildInputs = [ targetPackages.stdenv.cc ]
     ++ stdenv.lib.optional useLLVM llvmPackages.llvm;
@@ -192,14 +192,9 @@ stdenv.mkDerivation (rec {
 
   checkTarget = "test";
 
-  hardeningDisable = [ "format" ];
+  hardeningDisable = [ "format" ] ++ stdenv.lib.optional stdenv.targetPlatform.isMusl "pie";
 
   postInstall = ''
-    for bin in "$out"/lib/${name}/bin/*; do
-      isELF "$bin" || continue
-      paxmark m "$bin"
-    done
-
     # Install the bash completion file.
     install -D -m 444 utils/completion/ghc.bash $out/share/bash-completion/completions/${targetPrefix}ghc
 
@@ -218,7 +213,7 @@ stdenv.mkDerivation (rec {
     inherit enableShared;
 
     # Our Cabal compiler name
-    haskellCompilerName = "ghc-8.4.3";
+    haskellCompilerName = "ghc-8.6.1";
   };
 
   meta = {

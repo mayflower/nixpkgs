@@ -1,5 +1,5 @@
 { stdenv, fetchurl, pkgconfig, libvirt, glib, libxml2, intltool, libtool, yajl
-, nettle, libgcrypt, pythonPackages, gobjectIntrospection, libcap_ng, numactl
+, nettle, libgcrypt, pythonPackages, gobject-introspection, libcap_ng, numactl
 , libapparmor, vala
 , xen ? null, enableXen ? false
 }:
@@ -7,19 +7,19 @@
 let
   inherit (pythonPackages) python pygobject2;
 in stdenv.mkDerivation rec {
-  name = "libvirt-glib-1.0.0";
+  name = "libvirt-glib-2.0.0";
 
   outputs = [ "out" "dev" ];
 
   src = fetchurl {
     url = "https://libvirt.org/sources/glib/${name}.tar.gz";
-    sha256 = "0iwa5sdbii52pjpdm5j37f67sdmf0kpcky4liwhy1nf43k85i4fa";
+    sha256 = "0six9ckmvlwwyavyjkgc262qkpvfqgi8rjij7cyk00bmqq8c9s4l";
   };
 
   nativeBuildInputs = [ pkgconfig vala ];
   buildInputs = [
     libvirt glib libxml2 intltool libtool yajl nettle libgcrypt
-    python pygobject2 gobjectIntrospection libcap_ng numactl libapparmor
+    python pygobject2 gobject-introspection libcap_ng numactl libapparmor
   ] ++ stdenv.lib.optionals (stdenv.isx86_64 && enableXen) [
     xen
   ];

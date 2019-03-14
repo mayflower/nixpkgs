@@ -22,7 +22,7 @@ in
 
     bootstrapAddons = mkOption {
       description = ''
-        Bootstrap addons are like regular addons, but they are applied with cluster-admin rights.
+        Bootstrap addons are like regular addons, but they are applied with cluster-admin rigths.
         They are applied at addon-manager startup only.
       '';
       default = { };
