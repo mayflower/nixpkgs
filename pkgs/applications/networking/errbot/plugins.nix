@@ -73,6 +73,6 @@ rec {
       rev = "7c1aefd0829c0a144e6ff6a6ad43daf6073b0de3";
       sha256 = "18126pc8hxxqb60fwrmxrcpv1vyddbncp72sp2ik88gq7qf6ghcn";
     };
-    withPackages = ps: with ps; [ jira oauth2 tlslite ];
+    withPackages = ps: with ps; [ jira oauth2 tlslite-ng ];
   };
 }
