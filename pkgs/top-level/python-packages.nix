@@ -486,6 +486,9 @@ in {
     mpi = pkgs.openmpi;
   };
 
+  msrestazure = callPackage ../development/python-modules/msrestazure { };
+  msrest = callPackage ../development/python-modules/msrest { };
+
   multiset = callPackage ../development/python-modules/multiset { };
 
   mwclient = callPackage ../development/python-modules/mwclient { };
@@ -683,7 +686,6 @@ in {
   pyres = callPackage ../development/python-modules/pyres { };
 
   pyqt4 = callPackage ../development/python-modules/pyqt/4.x.nix {
-    pythonPackages = self;
     inherit (pkgs) pkgconfig;
   };
 
@@ -1284,11 +1286,15 @@ in {
 
   canmatrix = callPackage ../development/python-modules/canmatrix {};
 
-  cairocffi = callPackage ../development/python-modules/cairocffi {};
 
-  cairosvg1 = callPackage ../development/python-modules/cairosvg/1_x.nix {};
+  cairocffi = let
+    inherit (callPackage ../development/python-modules/cairocffi {}) cairocffi_1_0 cairocffi_0_9;
+  in if isPy3k then cairocffi_1_0 else cairocffi_0_9;
 
-  cairosvg = callPackage ../development/python-modules/cairosvg {};
+  cairosvg = if isPy3k then
+    callPackage ../development/python-modules/cairosvg {}
+  else
+    callPackage ../development/python-modules/cairosvg/1_x.nix {};
 
   carrot = callPackage ../development/python-modules/carrot {};
 
@@ -1512,9 +1518,15 @@ in {
 
   pyhepmc = callPackage ../development/python-modules/pyhepmc { };
 
-  pytest = self.pytest_39;
+  pytest = self.pytest_42;
 
-  pytest_39 = callPackage ../development/python-modules/pytest {
+  pytest_42 = callPackage ../development/python-modules/pytest {
+    # hypothesis tests require pytest that causes dependency cycle
+    hypothesis = self.hypothesis.override { doCheck = false; };
+  };
+
+  # Keep 3 because many test suites are not yet compatible with Pytest 4.
+  pytest_3 = callPackage ../development/python-modules/pytest/3.10.nix {
     # hypothesis tests require pytest that causes dependency cycle
     hypothesis = self.hypothesis.override { doCheck = false; };
   };
@@ -1555,7 +1567,7 @@ in {
 
   pytest-flake8 = callPackage ../development/python-modules/pytest-flake8 { };
 
-  pytestflakes = callPackage ../development/python-modules/pytest-flakes { };
+  pytest-flakes = callPackage ../development/python-modules/pytest-flakes { };
 
   pytest-isort = callPackage ../development/python-modules/pytest-isort { };
 
@@ -1578,6 +1590,8 @@ in {
   pytestquickcheck = callPackage ../development/python-modules/pytest-quickcheck { };
 
   pytest-server-fixtures = callPackage ../development/python-modules/pytest-server-fixtures { };
+
+  pytest-services = callPackage ../development/python-modules/pytest-services { };
 
   pytest-shutil = callPackage ../development/python-modules/pytest-shutil { };
 
@@ -2153,7 +2167,9 @@ in {
 
   python-axolotl-curve25519 = callPackage ../development/python-modules/python-axolotl-curve25519 { };
 
-  pythonix = toPythonModule (callPackage ../development/python-modules/pythonix { });
+  pythonix = callPackage ../development/python-modules/pythonix {
+    inherit (pkgs) pkgconfig;
+  };
 
   pyramid = callPackage ../development/python-modules/pyramid { };
 
@@ -2963,7 +2979,7 @@ in {
 
   fs-s3fs = callPackage ../development/python-modules/fs-s3fs { };
 
-  libarcus = callPackage ../development/python-modules/libarcus { };
+  libarcus = callPackage ../development/python-modules/libarcus { inherit (pkgs) protobuf; };
 
   libcloud = callPackage ../development/python-modules/libcloud { };
 
@@ -3941,6 +3957,8 @@ in {
 
   retry_decorator = callPackage ../development/python-modules/retry_decorator { };
 
+  qdarkstyle = callPackage ../development/python-modules/qdarkstyle { };
+
   quamash = callPackage ../development/python-modules/quamash { };
 
   quandl = callPackage ../development/python-modules/quandl { };
@@ -3949,8 +3967,8 @@ in {
 
   qscintilla-qt4 = callPackage ../development/python-modules/qscintilla { };
 
-  qscintilla-qt5 = callPackage ../development/python-modules/qscintilla-qt5 {
-    qscintillaCpp = pkgs.libsForQt5.qscintilla;
+  qscintilla-qt5 = pkgs.libsForQt5.callPackage ../development/python-modules/qscintilla-qt5 {
+    pythonPackages = self;
     lndir = pkgs.xorg.lndir;
   };
 
@@ -4007,6 +4025,8 @@ in {
   isodate = callPackage ../development/python-modules/isodate { };
 
   owslib = callPackage ../development/python-modules/owslib { };
+
+  readthedocs-sphinx-ext = callPackage ../development/python-modules/readthedocs-sphinx-ext { };
 
   resampy = callPackage ../development/python-modules/resampy { };
 
@@ -4478,6 +4498,8 @@ in {
 
   sorl_thumbnail = callPackage ../development/python-modules/sorl_thumbnail { };
 
+  soupsieve = callPackage ../development/python-modules/soupsieve { };
+
   sphinx_rtd_theme = callPackage ../development/python-modules/sphinx_rtd_theme { };
 
   sphinxcontrib-blockdiag = callPackage ../development/python-modules/sphinxcontrib-blockdiag { };
@@ -4607,6 +4629,8 @@ in {
   webtest = callPackage ../development/python-modules/webtest { };
 
   wsgiproxy2 = callPackage ../development/python-modules/wsgiproxy2 { };
+
+  wurlitzer = callPackage ../development/python-modules/wurlitzer { };
 
   xcaplib = callPackage ../development/python-modules/xcaplib { };
 
@@ -5003,17 +5027,19 @@ in {
 
   zerobin = callPackage ../development/python-modules/zerobin { };
 
+  tensorflow-estimator = callPackage ../development/python-modules/tensorflow-estimator { };
+
   tensorflow-tensorboard = callPackage ../development/python-modules/tensorflow-tensorboard { };
 
-  tensorflow = disabledIf isPy37 (
+  tensorflow =
     if stdenv.isDarwin
     then callPackage ../development/python-modules/tensorflow/bin.nix { }
     else callPackage ../development/python-modules/tensorflow/bin.nix rec {
       cudaSupport = pkgs.config.cudaSupport or false;
       inherit (pkgs.linuxPackages) nvidia_x11;
-      cudatoolkit = pkgs.cudatoolkit_9_0;
-      cudnn = pkgs.cudnn_cudatoolkit_9_0;
-    });
+      cudatoolkit = pkgs.cudatoolkit_10_0;
+      cudnn = pkgs.cudnn_cudatoolkit_10_0;
+    };
 
   tensorflowWithoutCuda = self.tensorflow.override {
     cudaSupport = false;
@@ -5061,7 +5087,9 @@ in {
 
   inflect = callPackage ../development/python-modules/inflect { };
 
-  more-itertools = callPackage ../development/python-modules/more-itertools { };
+  more-itertools = if isPy27 then
+    callPackage ../development/python-modules/more-itertools/2.7.nix { }
+  else callPackage ../development/python-modules/more-itertools { };
 
   jaraco_functools = callPackage ../development/python-modules/jaraco_functools { };
 
