@@ -5363,6 +5363,27 @@ in {
 
   croniter = callPackage ../development/python-modules/croniter { };
 
+  pyrad = buildPythonPackage rec {
+    name = "pyrad-2.1";
+    src = pkgs.fetchurl {
+      url = "mirror://pypi/p/pyrad/${name}.tar.gz";
+      sha256 = "1fkqk5095cwkq44jq8mpblbnw8gzxvm5yn17ypva78cflmachz3m";
+    };
+    buildInputs = with self; [ nose ];
+    propagatedBuildInputs = with self; [ six netaddr ];
+    doCheck = false; # needs extra data
+  };
+  sqlsoup = buildPythonPackage rec {
+    name = "sqlsoup-0.9.1";
+    src = pkgs.fetchurl {
+      url = "mirror://pypi/s/sqlsoup/${name}.tar.gz";
+      sha256 = "1mj00fhxj75ac3i8xk9jmm7hvcjz9p4x2r3yndcwsgb659rvgbrg";
+    };
+ 
+    buildInputs = with self; [ nose ];
+    propagatedBuildInputs = with self; [ sqlalchemy ];
+  };
+
 });
 
 in fix' (extends overrides packages)
