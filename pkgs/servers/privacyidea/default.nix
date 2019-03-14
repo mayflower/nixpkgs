@@ -2,13 +2,13 @@
 
 pythonPackages.buildPythonPackage rec {
   name = "privacyidea-${version}";
-  version = "2.22.1";
+  version = "2.23.4";
 
   src = fetchgit {
     url = "https://github.com/privacyidea/privacyidea.git";
     rev = "refs/tags/v${version}";
     fetchSubmodules = true;
-    sha256 = "10hls53g3dvvy4lczqj8qr8vwhcl5ka4i766y02pr6p2822fp1l1";
+    sha256 = "066cwpx61van8vizwkawhlvzcsvljn8fda1xwnzpw5fzm7bsw8yi";
   };
 
   patches = [ ./add-description.patch ./subscription.patch ];
@@ -34,7 +34,7 @@ pythonPackages.buildPythonPackage rec {
     funcparserlib pyopenssl passlib beautifulsoup4 flask_migrate lxml
     requests netaddr configobj ldap3 pygments pymysql sqlsoup pyjwt
     bcrypt pyrad qrcode defusedxml flaskbabel pycrypto-original matplotlib psycopg2
-    pandas
+    pandas croniter
   ];
 
   doCheck = false;

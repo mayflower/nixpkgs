@@ -67,20 +67,6 @@ in {
       singleton (pkgs.dockerTools.pullImage cfg.coredns);
 
     services.kubernetes.addonManager.bootstrapAddons = {
-      coredns-sa = {
-        apiVersion = "v1";
-        kind = "ServiceAccount";
-        metadata = {
-          labels = {
-            "addonmanager.kubernetes.io/mode" = "Reconcile";
-            "k8s-app" = "kube-dns";
-            "kubernetes.io/cluster-service" = "true";
-          };
-          name = "coredns";
-          namespace = "kube-system";
-        };
-      };
-
       coredns-cr = {
         apiVersion = "rbac.authorization.k8s.io/v1beta1";
         kind = "ClusterRole";

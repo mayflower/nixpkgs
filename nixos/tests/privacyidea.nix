@@ -7,6 +7,9 @@ import ./make-test.nix ({ pkgs, ...} : rec {
   };
 
   machine = { ... }: {
+    virtualisation.cores = 2;
+    virtualisation.memorySize = 512;
+
     services.privacyidea = {
       enable = true;
       secretKey = "testing";
@@ -26,5 +29,6 @@ import ./make-test.nix ({ pkgs, ...} : rec {
     $machine->start;
     $machine->waitForUnit("multi-user.target");
     $machine->succeed("curl --fail http://localhost | grep privacyIDEA");
+    $machine->succeed("curl --fail http://localhost/auth -F username=admin -F password=testing | grep token");
   '';
 })

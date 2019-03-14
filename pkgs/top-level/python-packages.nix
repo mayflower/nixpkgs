@@ -5361,6 +5361,8 @@ in {
 
   casttube = callPackage ../development/python-modules/casttube { };
 
+  croniter = callPackage ../development/python-modules/croniter { };
+
 });
 
 in fix' (extends overrides packages)
