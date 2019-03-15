@@ -190,6 +190,18 @@ in
       default = null;
     };
 
+    proxyClientCertFile = mkOption {
+      description = "Client certificate to use for connections to proxy.";
+      default = null;
+      type = nullOr path;
+    };
+
+    proxyClientKeyFile = mkOption {
+      description = "Key to use for connections to proxy.";
+      default = null;
+      type = nullOr path;
+    };
+
     runtimeConfig = mkOption {
       description = ''
         Api runtime configuration. See
@@ -324,6 +336,10 @@ in
                 "--kubelet-client-key=${cfg.kubeletClientKeyFile}"} \
               ${optionalString (cfg.preferredAddressTypes != null)
                 "--kubelet-preferred-address-types=${cfg.preferredAddressTypes}"} \
+              ${optionalString (cfg.proxyClientCertFile != null)
+                "--proxy-client-cert-file=${cfg.proxyClientCertFile}"} \
+              ${optionalString (cfg.proxyClientKeyFile != null)
+                "--proxy-client-key-file=${cfg.proxyClientKeyFile}"} \
               --insecure-bind-address=${cfg.insecureBindAddress} \
               --insecure-port=${toString cfg.insecurePort} \
               ${optionalString (cfg.runtimeConfig != "")
@@ -395,6 +411,11 @@ in
                     apiserverServiceIP
                     "127.0.0.1"
                   ] ++ cfg.extraSANs;
+          action = "systemctl restart kube-apiserver.service";
+        };
+        apiserverProxyClient = mkCert {
+          name = "kube-apiserver-proxy-client";
+          CN = "front-proxy-client";
           action = "systemctl restart kube-apiserver.service";
         };
         apiserverKubeletClient = mkCert {
