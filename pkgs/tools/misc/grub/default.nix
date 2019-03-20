@@ -1,7 +1,5 @@
 { stdenv, fetchurl, autoreconfHook, texinfo, buggyBiosCDSupport ? true }:
 
-let
-in
 stdenv.mkDerivation {
   name = "grub-0.97-73";
 

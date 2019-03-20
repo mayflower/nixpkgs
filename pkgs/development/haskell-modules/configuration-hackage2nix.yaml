@@ -720,7 +720,6 @@ default-package-overrides:
   - fileplow ==0.1.0.0
   - filter-logger ==0.6.0.0
   - filtrable ==0.1.1.0
-  - Fin ==0.2.5.0
   - fin ==0.0.1
   - FindBin ==0.0.5
   - fingertree ==0.1.4.2

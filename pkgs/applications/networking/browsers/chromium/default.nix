@@ -15,7 +15,6 @@
 , commandLineArgs ? ""
 }:
 
-assert stdenv.cc.isClang -> (stdenv == llvmPackages.stdenv);
 let
   stdenv_ = if stdenv.isAarch64 then gcc8Stdenv else llvmPackages_7.stdenv;
   llvmPackages_ = if stdenv.isAarch64 then llvmPackages else llvmPackages_7;

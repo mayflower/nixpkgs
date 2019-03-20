@@ -7125,7 +7125,7 @@ in
 
   haskellPackages = dontRecurseIntoAttrs (haskell.packages.ghc864.override {
     overrides = config.haskellPackageOverrides or haskell.packageOverrides;
-  };
+  });
 
   inherit (haskellPackages) ghc;
 

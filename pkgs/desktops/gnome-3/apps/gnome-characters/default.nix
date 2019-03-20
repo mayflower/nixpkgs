@@ -31,7 +31,7 @@ stdenv.mkDerivation rec {
   ];
 
   mesonFlags = [
-    "-Ddbus_service_dir=share/dbus-1/services"
+    "-Ddbus_service_dir=${placeholder "out"}/share/dbus-1/services"
   ];
 
   meta = with stdenv.lib; {

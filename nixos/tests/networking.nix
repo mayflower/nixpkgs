@@ -234,8 +234,8 @@ let
           useNetworkd = networkd;
           useDHCP = false;
           bonds.bond = {
-            mode = "balance-rr";
             interfaces = [ "eth1" "eth2" ];
+            driverOptions.mode = "balance-rr";
           };
           interfaces.eth1.ipv4.addresses = mkOverride 0 [ ];
           interfaces.eth2.ipv4.addresses = mkOverride 0 [ ];

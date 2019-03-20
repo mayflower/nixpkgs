@@ -17,6 +17,11 @@ stdenv.mkDerivation rec {
 
   patches = [
     (substituteAll {
+      src = ./fix-test-paths.patch;
+      inherit coreutils gettext glibcLocales;
+      hicolorIconTheme = hicolor-icon-theme;
+    })
+    (substituteAll {
       src = ./fix-paths.patch;
       p11 = p11-kit;
     })

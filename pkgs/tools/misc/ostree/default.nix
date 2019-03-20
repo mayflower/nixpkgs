@@ -57,7 +57,6 @@ stdenv.mkDerivation rec {
     "installed_test_metadir=${placeholder "installedTests"}/share/installed-tests/libostree"
   ];
 
-
   meta = with stdenv.lib; {
     description = "Git for operating system binaries";
     homepage = https://ostree.readthedocs.io/en/latest/;

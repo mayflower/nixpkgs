@@ -63,5 +63,4 @@ in
     services.upower.enable = config.powerManagement.enable;
   };
 
-
 }

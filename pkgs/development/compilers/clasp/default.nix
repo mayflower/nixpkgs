@@ -127,6 +127,5 @@ stdenv.mkDerivation rec {
     # Large, long to build, a private build of clang is needed, a prerelease.
     hydraPlatforms = [];
     homepage = "https://github.com/drmeister/clasp";
-    broken = true; # 2018-09-08, no successful build since 2018-01-03
   };
 }

@@ -13,7 +13,6 @@ buildPythonPackage rec {
 
   propagatedBuildInputs = [ pytest ];
 
-  # disable tests that fail with pytest 3.7.4
   checkPhase = ''
     py.test test_pytest_rerunfailures.py
   '';

@@ -3,11 +3,11 @@ rec {
   baseName = ''simple-date'';
   version = ''postmodern-20190107-git'';
 
-  parasites = [ "simple-date/postgres-glue" ];
+  parasites = [ "simple-date/postgres-glue" "simple-date/tests" ];
 
   description = '''';
 
-  deps = [ args."cl-postgres" args."md5" args."usocket" ];
+  deps = [ args."cl-postgres" args."fiveam" args."md5" args."usocket" ];
 
   src = fetchurl {
     url = ''http://beta.quicklisp.org/archive/postmodern/2019-01-07/postmodern-20190107-git.tgz'';

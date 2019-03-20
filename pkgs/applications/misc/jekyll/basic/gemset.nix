@@ -292,6 +292,7 @@
     dependencies = ["sass-listen"];
     source = {
       remotes = ["https://rubygems.org"];
+      sha256 = "18c6prbw9wl8bqhb2435pd9s0lzarl3g7xf8pmyla28zblvwxmyh";
       type = "gem";
     };
     version = "3.6.0";

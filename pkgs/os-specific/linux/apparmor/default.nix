@@ -65,9 +65,7 @@ let
       autoreconfHook
       bison
       flex
-      perl
       pkgconfig
-      buildPackages.python
       swig
       ncurses
       which

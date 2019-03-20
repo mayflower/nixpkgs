@@ -113,13 +113,6 @@ in
           When NVIDIA Optimus via PRIME is enabled, the GPU bus IDs must configured.
         '';
       }
-      {
-        assertion = !optimusCfg.enable ||
-          (optimusCfg.nvidiaBusId != "" && optimusCfg.intelBusId != "");
-        message = ''
-          When NVIDIA Optimus via PRIME is enabled, the GPU bus IDs must configured.
-        '';
-      }
     ];
 
     # If Optimus/PRIME is enabled, we:

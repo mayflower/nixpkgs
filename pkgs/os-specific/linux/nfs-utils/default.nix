@@ -45,9 +45,7 @@ stdenv.mkDerivation rec {
       "--with-krb5=${lib.getLib kerberos}"
       "--with-systemd=${placeholder "out"}/etc/systemd/system"
       "--enable-libmount-mount"
-      # need an absolute path to lib output here.
-      # TODO: use ${placeholder lib} when nix 1.1 is no longer supported
-      "--with-pluginpath=@lib@/lib/libnfsidmap" # this installs libnfsidmap
+      "--with-pluginpath=${placeholder "lib"}/lib/libnfsidmap" # this installs libnfsidmap
     ]
     ++ lib.optional (stdenv ? glibc) "--with-rpcgen=${stdenv.glibc.bin}/bin/rpcgen";
 
@@ -79,11 +77,6 @@ stdenv.mkDerivation rec {
 
       sed '1i#include <stdint.h>' -i support/nsm/rpc.c
     '';
-
-  # TODO: remove when placeholders are allowed (see configureFlags)
-  postConfigure = ''
-    substituteInPlace support/include/config.h --replace '@lib@' "$lib"
-  '';
 
   makeFlags = [
     "sbindir=$(out)/bin"

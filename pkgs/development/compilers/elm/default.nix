@@ -42,7 +42,6 @@ let
 
         # Needed for elm-format
         indents = self.callPackage ./packages/indents.nix {};
-        tasty-quickcheck = self.callPackage ./packages/tasty-quickcheck.nix {};
       };
   };
 in hsPkgs.elmPkgs

@@ -11,7 +11,10 @@ stdenv.mkDerivation rec {
   };
 
   nativeBuildInputs = [ pkgconfig ];
-  buildInputs = [ udev ];
+  buildInputs = [
+    udev
+    runtimeShellPackage # So patchShebangs finds a bash suitable for the installed scripts
+  ];
 
   prePatch = ''
     substituteInPlace hooks/dhcpcd-run-hooks.in --replace /bin/sh ${runtimeShell}

@@ -176,6 +176,7 @@ in {
   ###### implementation
 
   config = mkMerge [
+
     (mkIf cfg.easyCerts {
       services.kubernetes.pki.enable = mkDefault true;
       services.kubernetes.caFile = caCert;

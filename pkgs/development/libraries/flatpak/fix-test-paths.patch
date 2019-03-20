@@ -1,16 +1,5 @@
 --- a/tests/libtest.sh
 +++ b/tests/libtest.sh
-<<<<<<< HEAD
-@@ -296,7 +296,7 @@
-         # running installed-tests: assume we know what we're doing
-         :
-     elif ! "$FLATPAK_BWRAP" --unshare-ipc --unshare-net --unshare-pid \
--            --ro-bind / / /bin/true > bwrap-result 2>&1; then
-+            --ro-bind / / @coreutils@/bin/true > bwrap-result 2>&1; then
-         sed -e 's/^/# /' < bwrap-result
-         echo "1..0 # SKIP Cannot run bwrap"
-         exit 0
-=======
 @@ -328,7 +328,7 @@
      # running installed-tests: assume we know what we're doing
      _flatpak_bwrap_works=true
@@ -20,7 +9,6 @@
      _flatpak_bwrap_works=false
  else
      _flatpak_bwrap_works=true
->>>>>>> upstream/release-19.03
 @@ -309,12 +309,12 @@
  export DBUS_SESSION_BUS_ADDRESS="$(cat dbus-session-bus-address)"
  DBUS_SESSION_BUS_PID="$(cat dbus-session-bus-pid)"

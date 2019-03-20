@@ -71,6 +71,5 @@ stdenv.mkDerivation rec {
     maintainers = with maintainers; [ ekleog fpletz ];
     platforms = platforms.unix;
     license = licenses.gpl3Plus;
-    knownVulnerabilities = [ "No longer maintained" ];
   };
 }

@@ -61,6 +61,22 @@ in
       '';
     };
 
+    urlHandlerDesktopItem = makeDesktopItem {
+      name = executableName + "-url-handler";
+      desktopName = longName + " - URL Handler";
+      comment = "Code Editing. Redefined.";
+      genericName = "Text Editor";
+      exec = executableName + " --open-url %U";
+      icon = "@out@/share/pixmaps/code.png";
+      startupNotify = "true";
+      categories = "Utility;TextEditor;Development;IDE;";
+      mimeType = "x-scheme-handler/vscode;";
+      extraEntries = ''
+        NoDisplay=true
+        Keywords=vscode;
+      '';
+    };
+
     buildInputs = (if stdenv.isDarwin
       then [ unzip ]
       else [ gtk2 at-spi2-atk wrapGAppsHook ] ++ atomEnv.packages)

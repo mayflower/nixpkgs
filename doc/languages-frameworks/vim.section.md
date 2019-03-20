@@ -118,40 +118,6 @@ The resulting package can be added to `packageOverrides` in `~/.nixpkgs/config.n
   };
 }
 ```
-neovim.override {
-  configure = {
-    customRC = ''
-      # here your custom configuration goes!
-    '';
-    packages.myVimPackage = with pkgs.vimPlugins; {
-      # see examples below how to use custom packages
-      start = [ ];
-      opt = [ ];
-    };
-  };
-}
-```
-
-The resulting package can be added to `packageOverrides` in `~/.nixpkgs/config.nix` to make it installable:
-
-```
-{
-  packageOverrides = pkgs: with pkgs; {
-    myVim = vim_configurable.customize {
-      # `name` specifies the name of the executable and package
-      name = "vim-with-plugins";
-      # add here code from the example section
-    };
-    myNeovim = neovim.override {
-      configure = {
-      # add here code from the example section
-      };
-    };
-  };
-}
-```
-
-After that you can install your special grafted `myVim` or `myNeovim` packages.
 
 After that you can install your special grafted `myVim` or `myNeovim` packages.
 
