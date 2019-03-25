@@ -4804,6 +4804,8 @@ in
 
   parted = callPackage ../tools/misc/parted { };
 
+  paulstretch = callPackage ../applications/audio/paulstretch { };
+
   pell = callPackage ../applications/misc/pell { };
 
   pepper = callPackage ../tools/admin/salt/pepper { };
@@ -11028,9 +11030,7 @@ in
   libgudev = callPackage ../development/libraries/libgudev { };
 
   libguestfs-appliance = callPackage ../development/libraries/libguestfs/appliance.nix {};
-  libguestfs = callPackage ../development/libraries/libguestfs {
-    appliance = libguestfs-appliance;
-  };
+  libguestfs = callPackage ../development/libraries/libguestfs { };
 
   libhangul = callPackage ../development/libraries/libhangul { };
 
@@ -14728,13 +14728,6 @@ in
       ];
   };
 
-  linux_4_20 = callPackage ../os-specific/linux/kernel/linux-4.20.nix {
-    kernelPatches =
-      [ kernelPatches.bridge_stp_helper
-        kernelPatches.modinst_arg_list_too_long
-      ];
-  };
-
   linux_5_0 = callPackage ../os-specific/linux/kernel/linux-5.0.nix {
     kernelPatches =
       [ kernelPatches.bridge_stp_helper
@@ -14919,7 +14912,7 @@ in
   });
 
   # The current default kernel / kernel modules.
-  linuxPackages = linuxPackages_4_14;
+  linuxPackages = linuxPackages_4_19;
   linux = linuxPackages.kernel;
 
   # Update this when adding the newest kernel major version!
@@ -14933,7 +14926,6 @@ in
   linuxPackages_4_9 = recurseIntoAttrs (linuxPackagesFor pkgs.linux_4_9);
   linuxPackages_4_14 = recurseIntoAttrs (linuxPackagesFor pkgs.linux_4_14);
   linuxPackages_4_19 = recurseIntoAttrs (linuxPackagesFor pkgs.linux_4_19);
-  linuxPackages_4_20 = recurseIntoAttrs (linuxPackagesFor pkgs.linux_4_20);
   linuxPackages_5_0 = recurseIntoAttrs (linuxPackagesFor pkgs.linux_5_0);
   # When adding to this list:
   # - Update linuxPackages_latest to the latest version
@@ -20699,7 +20691,7 @@ in
 
   drumkv1 = callPackage ../applications/audio/drumkv1 { };
 
-  duckmarines = callPackage ../games/duckmarines { love = love_0_9; };
+  duckmarines = callPackage ../games/duckmarines { love = love_0_10; };
 
   dwarf-fortress-packages = recurseIntoAttrs (callPackage ../games/dwarf-fortress { });
 
