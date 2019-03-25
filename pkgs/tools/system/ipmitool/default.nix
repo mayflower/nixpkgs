@@ -1,4 +1,4 @@
-{ stdenv, lib, fetchurl, openssl, static ? false }:
+{ stdenv, lib, fetchurl, openssl_1_0_2, static ? false }:
 
 let
   pkgname = "ipmitool";
@@ -16,7 +16,7 @@ stdenv.mkDerivation {
     substituteInPlace src/plugins/ipmi_intf.c --replace "s6_addr16" "s6_addr"
   '';
 
-  buildInputs = [ openssl ];
+  buildInputs = [ openssl_1_0_2 ];
 
   preConfigure = ''
     configureFlagsArray=(
