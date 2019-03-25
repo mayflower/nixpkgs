@@ -202,9 +202,9 @@ in {
           ${sksPkg}/bin/sks pbuild -cache 20 -ptree_cache 70 || true
 
           # link the configuration files
-          ln -sfn ${sksConf} ${home}/sksconf
-          ln -sfn ${membershipConf} ${home}/membership
-          ln -sfn ${mailsyncConf} ${home}/mailsync
+          ln -sfn ${sksConf} sksconf
+          ln -sfn ${membershipConf} membership
+          ln -sfn ${mailsyncConf} mailsync
         '';
         serviceConfig = {
           WorkingDirectory = "~";
