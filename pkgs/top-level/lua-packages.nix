@@ -8,7 +8,7 @@
 { fetchurl, stdenv, lua, callPackage, unzip, zziplib, pkgconfig
 , pcre, oniguruma, gnulib, tre, glibc, sqlite, openssl, openssl_1_0_2, expat
 , glib, gobject-introspection, libevent, zlib, autoreconfHook, gnum4
-, mysql, postgresql, cyrus_sasl
+, mysql, postgresql, cyrus_sasl, openldap
 , fetchFromGitHub, libmpack, which, fetchpatch, writeText
 , pkgs
 , fetchgit
@@ -347,6 +347,30 @@ with self; {
       homepage = "https://github.com/keplerproject/luafilesystem";
       license = licenses.mit;
       maintainers = with maintainers; [ flosse ];
+      platforms = platforms.unix;
+    };
+  };
+
+  lualdap = buildLuaPackage rec {
+    name = "ldap-${version}";
+    version = "1.2.3";
+
+    src = fetchFromGitHub {
+      owner = "lualdap";
+      repo = "lualdap";
+      rev = "v${version}";
+      sha256 = "0abzwszgahqkjhmrs251488dxlv70w844cf1siidrv6kxjqmv0qg";
+    };
+
+    buildInputs = [ openldap ];
+
+    patches = [ ../development/lua-modules/lualdap-ldaps.patch ];
+
+    meta = with stdenv.lib; {
+      description = "Lua bindings for the OpenLDAP client libraries";
+      homepage = "https://github.com/lualdap/lualdap";
+      license = licenses.mit;
+      maintainers = with maintainers; [ fpletz globin ];
       platforms = platforms.unix;
     };
   };
