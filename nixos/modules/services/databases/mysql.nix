@@ -242,7 +242,7 @@ in
       ${optionalString (cfg.bind != null) "bind-address = ${cfg.bind}" }
       ${optionalString (cfg.replication.role == "master" || cfg.replication.role == "slave") "log-bin=mysql-bin"}
       ${optionalString (cfg.replication.role == "master" || cfg.replication.role == "slave") "server-id = ${toString cfg.replication.serverId}"}
-      ${optionalString (cfg.ensureUsers != [])
+      ${optionalString (cfg.ensureUsers != [] || cfg.enableSocketAuth)
       ''
         plugin-load-add = auth_socket.so
       ''}
