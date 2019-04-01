@@ -5405,6 +5405,8 @@ in {
     propagatedBuildInputs = with self; [ sqlalchemy ];
   };
 
+
+  aioesphomeapi = callPackage ../development/python-modules/aioesphomeapi { };
 });
 
 in fix' (extends overrides packages)
