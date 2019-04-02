@@ -217,6 +217,7 @@ in
   switchTest = handleTest ./switch-test.nix {};
   syncthing-relay = handleTest ./syncthing-relay.nix {};
   systemd = handleTest ./systemd.nix {};
+  systemd-confinement = handleTest ./systemd-confinement.nix {};
   taskserver = handleTest ./taskserver.nix {};
   telegraf = handleTest ./telegraf.nix {};
   tomcat = handleTest ./tomcat.nix {};
@@ -226,6 +227,7 @@ in
   upnp = handleTest ./upnp.nix {};
   vault = handleTest ./vault.nix {};
   virtualbox = handleTestOn ["x86_64-linux"] ./virtualbox.nix {};
+  wireguard = handleTest ./wireguard {};
   wordpress = handleTest ./wordpress.nix {};
   xautolock = handleTest ./xautolock.nix {};
   xdg-desktop-portal = handleTest ./xdg-desktop-portal.nix {};
