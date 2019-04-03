@@ -11,7 +11,7 @@ buildPythonPackage rec {
     sha256 = "1awlb4q1l9iv794qjjxxyhcv4i69j77kh7nsg17a6kb909mglml3";
   };
 
-  checkInputs = optional isPy3k glibcLocales;
+  checkInputs = [ flask ] ++ optional isPy3k glibcLocales;
   propagatedBuildInputs = [ flask flask_sqlalchemy flask_script alembic ];
 
   # tests invoke the flask cli which uses click and therefore has py3k encoding troubles
