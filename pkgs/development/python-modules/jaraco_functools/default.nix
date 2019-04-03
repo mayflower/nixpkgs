@@ -1,4 +1,4 @@
-{ lib, buildPythonPackage, fetchPypi
+{ lib, buildPythonPackage, fetchPypi, python
 , setuptools_scm
 , more-itertools, backports_functools_lru_cache }:
 
@@ -16,6 +16,10 @@ buildPythonPackage rec {
   doCheck = false;
 
   buildInputs = [ setuptools_scm ];
+
+  postInstall = ''
+    rm $out/${python.sitePackages}/jaraco/__pycache__/__init__.*.pyc
+  '';
 
   meta = with lib; {
     description = "Additional functools in the spirit of stdlib's functools";

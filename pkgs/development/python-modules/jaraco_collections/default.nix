@@ -1,5 +1,5 @@
 { buildPythonPackage, fetchPypi, setuptools_scm
-, six, jaraco_classes, jaraco_text
+, six, jaraco_classes, jaraco_text, python
 }:
 
 buildPythonPackage rec {
@@ -17,5 +17,8 @@ buildPythonPackage rec {
   # break dependency cycle
   patchPhase = ''
     sed -i "/'jaraco.text',/d" setup.py
+  '';
+  postInstall = ''
+    rm $out/${python.sitePackages}/jaraco/__pycache__/__init__.*.pyc
   '';
 }

@@ -1,5 +1,5 @@
 { lib, buildPythonPackage, fetchPypi, setuptools_scm
-, tempora, six, pytest
+, tempora, six, pytest, python
 }:
 
 buildPythonPackage rec {
@@ -19,6 +19,9 @@ buildPythonPackage rec {
 
   checkPhase = ''
     PYTHONPATH=".:$PYTHONPATH" pytest
+  '';
+  postInstall = ''
+    rm $out/${python.sitePackages}/jaraco/__pycache__/__init__.*.pyc
   '';
 
   meta = with lib; {

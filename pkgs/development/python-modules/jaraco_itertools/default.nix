@@ -1,5 +1,5 @@
 { lib, buildPythonPackage, fetchPypi, setuptools_scm
-, inflect, more-itertools, six, pytest
+, inflect, more-itertools, six, pytest, python
 }:
 
 buildPythonPackage rec {
@@ -19,6 +19,9 @@ buildPythonPackage rec {
 
   checkPhase = ''
     pytest
+  '';
+  postInstall = ''
+    rm $out/${python.sitePackages}/jaraco/__pycache__/__init__.*.pyc
   '';
 
   meta = with lib; {
