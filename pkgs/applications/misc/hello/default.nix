@@ -13,6 +13,8 @@ stdenv.mkDerivation rec {
 
   postInstall = ''
     echo foobar
+    sleep 120
+    echo finished
   '';
 
   meta = with stdenv.lib; {
