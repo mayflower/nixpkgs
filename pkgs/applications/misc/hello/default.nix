@@ -11,6 +11,10 @@ stdenv.mkDerivation rec {
 
   doCheck = true;
 
+  postInstall = ''
+    echo foobar
+  '';
+
   meta = with stdenv.lib; {
     description = "A program that produces a familiar, friendly greeting";
     longDescription = ''
