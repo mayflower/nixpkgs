@@ -19,6 +19,7 @@ let
 
     propagatedBuildInputs = with pythonPackages; [ twisted ldaptor configobj ]
       ++ twisted.extras.tls;
+    checkInputs = with pythonPackages; [ twisted ];
 
     passthru.env = pythonPackages.python.buildEnv.override {
       extraLibs = propagatedBuildInputs ++ [self];
