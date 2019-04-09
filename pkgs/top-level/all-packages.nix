@@ -965,6 +965,8 @@ in
 
   bluemix-cli = callPackage ../tools/admin/bluemix-cli { };
 
+  blur-effect = callPackage ../tools/graphics/blur-effect { };
+
   charles = charles4;
   inherit (callPackage ../applications/networking/charles {})
     charles3
@@ -3932,20 +3934,10 @@ in
 
   nodejs = hiPrio nodejs-8_x;
 
-  nodejs-slim = nodejs-slim-6_x;
+  nodejs-slim = nodejs-slim-8_x;
 
-  nodejs-6_x = callPackage ../development/web/nodejs/v6.nix {
-    openssl = openssl_1_0_2;
-  };
-  nodejs-slim-6_x = callPackage ../development/web/nodejs/v6.nix {
-    openssl = openssl_1_0_2;
-    enableNpm = false;
-  };
-
-  nodejs-8_x = callPackage ../development/web/nodejs/v8.nix { };
-  nodejs-slim-8_x = callPackage ../development/web/nodejs/v8.nix {
-    enableNpm = false;
-  };
+  nodejs-8_x = callPackage ../development/web/nodejs/v8.nix {};
+  nodejs-slim-8_x = callPackage ../development/web/nodejs/v8.nix { enableNpm = false; };
 
   nodejs-10_x = callPackage ../development/web/nodejs/v10.nix { };
   nodejs-slim-10_x = callPackage ../development/web/nodejs/v10.nix {
@@ -3962,10 +3954,6 @@ in
 
   nodePackages_8_x = dontRecurseIntoAttrs (callPackage ../development/node-packages/default-v8.nix {
     nodejs = pkgs.nodejs-8_x;
-  });
-
-  nodePackages_6_x = dontRecurseIntoAttrs (callPackage ../development/node-packages/default-v6.nix {
-    nodejs = pkgs.nodejs-6_x;
   });
 
   nodePackages = nodePackages_10_x;
@@ -5056,6 +5044,8 @@ in
   proot = callPackage ../tools/system/proot { };
 
   prototypejs = callPackage ../development/libraries/prototypejs { };
+
+  proxmark3 = callPackage ../tools/security/proxmark3 { };
 
   proxychains = callPackage ../tools/networking/proxychains { };
 
@@ -6450,6 +6440,8 @@ in
 
   xclip = callPackage ../tools/misc/xclip { };
 
+  xcur2png = callPackage ../tools/graphics/xcur2png { };
+
   xcwd = callPackage ../tools/X11/xcwd { };
 
   xtitle = callPackage ../tools/misc/xtitle { };
@@ -7203,6 +7195,10 @@ in
   };
 
   go_1_11 = callPackage ../development/compilers/go/1.11.nix {
+    inherit (darwin.apple_sdk.frameworks) Security Foundation;
+  };
+
+  go_1_12 = callPackage ../development/compilers/go/1.12.nix {
     inherit (darwin.apple_sdk.frameworks) Security Foundation;
   };
 
