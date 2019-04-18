@@ -75,7 +75,11 @@ let
   promConfig2 = {
     global = filterValidPrometheus cfg2.globalConfig;
     rule_files = map (prom2toolCheck "check rules" "rules") (cfg2.ruleFiles ++ [
-      (pkgs.writeText "prometheus.rules" (concatStringsSep "\n" cfg2.rules))
+      (writePrettyJSON "prometheus.rules.yml" {
+        groups = [
+          { name = "nixos-rules"; rules = cfg.rules; }
+        ];
+      })
     ]);
     scrape_configs = filterValidPrometheus cfg2.scrapeConfigs;
     alerting = optionalAttrs (cfg2.alertmanagerURL != []) {
@@ -97,6 +101,7 @@ let
 
   cmdlineArgs2 = cfg2.extraFlags ++ [
     "--storage.tsdb.path=${workingDir2}/data/"
+    "--storage.tsdb.retention=${cfg2.retention}"
     "--config.file=${prometheus2Yml}"
     "--web.listen-address=${cfg2.listenAddress}"
     "--alertmanager.notification-queue-capacity=${toString cfg2.alertmanagerNotificationQueueCapacity}"
@@ -592,7 +597,7 @@ in {
       };
 
       rules = mkOption {
-        type = types.listOf types.str;
+        type = types.listOf types.attrs;
         default = [];
         description = ''
           Alerting and/or Recording rules to evaluate at runtime.
@@ -683,6 +688,14 @@ in {
           Directory below <literal>${stateDirBase}</literal> to store Prometheus metrics data.
           This directory will be created automatically using systemd's StateDirectory mechanism.
           Defaults to <literal>prometheus2</literal>.
+        '';
+      };
+
+      retention = mkOption {
+        type = types.str;
+        default = "15d";
+        description = ''
+          How long to retain samples in the storage.
         '';
       };
 
