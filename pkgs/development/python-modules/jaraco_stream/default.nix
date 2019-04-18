@@ -11,6 +11,6 @@ buildPythonPackage rec {
   buildInputs = [ setuptools_scm ];
   propagatedBuildInputs = [ six ];
   postInstall = ''
-    rm $out/${python.sitePackages}/jaraco/__pycache__/__init__.*.pyc
+    rm -f $out/${python.sitePackages}/jaraco/__pycache__/__init__.*.pyc
   '';
 }

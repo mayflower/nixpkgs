@@ -21,7 +21,7 @@ buildPythonPackage rec {
     pytest
   '';
   postInstall = ''
-    rm $out/${python.sitePackages}/jaraco/__pycache__/__init__.*.pyc
+    rm -f $out/${python.sitePackages}/jaraco/__pycache__/__init__.*.pyc
   '';
 
   meta = with lib; {

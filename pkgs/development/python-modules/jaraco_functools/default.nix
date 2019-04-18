@@ -18,7 +18,7 @@ buildPythonPackage rec {
   buildInputs = [ setuptools_scm ];
 
   postInstall = ''
-    rm $out/${python.sitePackages}/jaraco/__pycache__/__init__.*.pyc
+    rm -f $out/${python.sitePackages}/jaraco/__pycache__/__init__.*.pyc
   '';
 
   meta = with lib; {

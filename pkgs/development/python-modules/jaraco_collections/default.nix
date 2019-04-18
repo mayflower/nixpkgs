@@ -19,6 +19,6 @@ buildPythonPackage rec {
     sed -i "/'jaraco.text',/d" setup.py
   '';
   postInstall = ''
-    rm $out/${python.sitePackages}/jaraco/__pycache__/__init__.*.pyc
+    rm -f $out/${python.sitePackages}/jaraco/__pycache__/__init__.*.pyc
   '';
 }
