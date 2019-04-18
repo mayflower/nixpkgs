@@ -158,6 +158,9 @@ in
         if [ ! -f "${cfg.caCertPathPrefix}.pem" ]; then
           ${cfssl}/bin/cfssl genkey -initca ${csrCA} | \
             ${cfssl}/bin/cfssljson -bare ${cfg.caCertPathPrefix}
+
+          # allow cfssl group to read ca-key
+          chmod 640 ${cfg.caCertPathPrefix}/ca-key.pem
         fi
       '')
       (optionalString cfg.genCfsslAPICerts ''

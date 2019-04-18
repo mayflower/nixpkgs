@@ -167,7 +167,7 @@ in {
       serviceConfig = {
         WorkingDirectory = cfg.dataDir;
         StateDirectory = cfg.dataDir;
-        StateDirectoryMode = 700;
+        StateDirectoryMode = 750;
         Restart = "always";
         User = "cfssl";
 
