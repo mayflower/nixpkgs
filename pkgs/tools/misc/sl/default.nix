@@ -1,4 +1,4 @@
-{ stdenv, fetchFromGitHub, fetchpatch, ncurses }:
+{ stdenv, fetchFromGitHub, ncurses }:
 
 stdenv.mkDerivation rec {
   name = "sl-${version}";
@@ -13,16 +13,12 @@ stdenv.mkDerivation rec {
 
   buildInputs = [ ncurses ];
 
-  outputs = [ "out" "man" ];
-
-  patches = [ (fetchpatch {
-    url = "https://github.com/mtoyoda/sl/pull/24.patch";
-    sha256 = "0hv0rmq6cp60jg5f91lb10b1r6ynkpgk6p7x2cx2yn6xiiidn9gy";
-  }) ];
+  buildFlags = [ "CC=cc" ];
 
   installPhase = ''
-    install -vD sl -t $out/bin
-    install -vD sl.1 -t $man/share/man/man1
+    mkdir -p $out/bin $out/share/man/man1
+    cp sl $out/bin
+    cp sl.1 $out/share/man/man1
   '';
 
   meta = {

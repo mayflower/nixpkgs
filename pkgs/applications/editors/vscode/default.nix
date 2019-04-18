@@ -6,6 +6,8 @@
 
 let
   executableName = "code" + lib.optionalString isInsiders "-insiders";
+  longName = "Visual Studio Code" + lib.optionalString isInsiders " - Insiders";
+  shortName = "Code" + lib.optionalString isInsiders " - Insiders";
 
   inherit (stdenv.hostPlatform) system;
 
@@ -16,16 +18,16 @@ let
   }.${system};
 
   sha256 = {
-    "i686-linux" = "04kbx1cx40lsy9irxy1arp1rixzk49ldhg34w3llmfbx63a4hchf";
-    "x86_64-linux" = "1plvx0mjcbizl6iffib95p5224r9frf0mn6c5xp14p3qnrp32jhm";
-    "x86_64-darwin" = "14h9gs6jpxydgd1h16ybq3ifw5jc7k83yg22pw3sk6vhy7hx7pxr";
+    "i686-linux" = "0n2k134yx0zirddi5xig4zihn73s8xiga11pwk90f01wp1i0hygg";
+    "x86_64-linux" = "0ljijcqfyrfck5imldis3hx9d9iacnspgnm58kvlziam8y0imwzv";
+    "x86_64-darwin" = "00fg106rggsbng90k1jjp1c6nmnwni5s0fgmbz6k45shfa3iqamc";
   }.${system};
 
   archive_fmt = if system == "x86_64-darwin" then "zip" else "tar.gz";
 in
   stdenv.mkDerivation rec {
     name = "vscode-${version}";
-    version = "1.31.1";
+    version = "1.33.1";
 
     src = fetchurl {
       name = "VSCode_${version}_${plat}.${archive_fmt}";
@@ -39,12 +41,40 @@ in
 
     desktopItem = makeDesktopItem {
       name = executableName;
+      desktopName = longName;
+      comment = "Code Editing. Redefined.";
+      genericName = "Text Editor";
       exec = executableName;
       icon = "@out@/share/pixmaps/code.png";
-      comment = "Code editor redefined and optimized for building and debugging modern web and cloud applications";
-      desktopName = "Visual Studio Code" + lib.optionalString isInsiders " Insiders";
+      startupNotify = "true";
+      categories = "Utility;TextEditor;Development;IDE;";
+      mimeType = "text/plain;inode/directory;";
+      extraEntries = ''
+        StartupWMClass=${shortName}
+        Actions=new-empty-window;
+        Keywords=vscode;
+
+        [Desktop Action new-empty-window]
+        Name=New Empty Window
+        Exec=${executableName} --new-window %F
+        Icon=@out@/share/pixmaps/code.png
+      '';
+    };
+
+    urlHandlerDesktopItem = makeDesktopItem {
+      name = executableName + "-url-handler";
+      desktopName = longName + " - URL Handler";
+      comment = "Code Editing. Redefined.";
       genericName = "Text Editor";
-      categories = "GNOME;GTK;Utility;TextEditor;Development;";
+      exec = executableName + " --open-url %U";
+      icon = "@out@/share/pixmaps/code.png";
+      startupNotify = "true";
+      categories = "Utility;TextEditor;Development;IDE;";
+      mimeType = "x-scheme-handler/vscode;";
+      extraEntries = ''
+        NoDisplay=true
+        Keywords=vscode;
+      '';
     };
 
     buildInputs = (if stdenv.isDarwin
@@ -72,6 +102,8 @@ in
 
         mkdir -p $out/share/applications
         substitute $desktopItem/share/applications/${executableName}.desktop $out/share/applications/${executableName}.desktop \
+          --subst-var out
+        substitute $urlHandlerDesktopItem/share/applications/${executableName}-url-handler.desktop $out/share/applications/${executableName}-url-handler.desktop \
           --subst-var out
 
         mkdir -p $out/share/pixmaps

@@ -116,9 +116,8 @@ in
         ExecStart = ''${top.package}/bin/kube-controller-manager \
           --allocate-node-cidrs=${boolToString cfg.allocateNodeCIDRs} \
           --bind-address=${cfg.bindAddress} \
-          ${if (cfg.clusterCidr!=null)
-            then "--cluster-cidr=${cfg.clusterCidr} --allocate-node-cidrs=true"
-            else "--allocate-node-cidrs=false"} \
+          ${optionalString (cfg.clusterCidr!=null)
+            "--cluster-cidr=${cfg.clusterCidr}"} \
           ${optionalString (cfg.featureGates != [])
             "--feature-gates=${concatMapStringsSep "," (feature: "${feature}=true") cfg.featureGates}"} \
           --kubeconfig=${top.lib.mkKubeConfig "kube-controller-manager" cfg.kubeconfig} \
@@ -132,7 +131,7 @@ in
           ${optionalString (cfg.tlsCertFile!=null)
             "--tls-cert-file=${cfg.tlsCertFile}"} \
           ${optionalString (cfg.tlsKeyFile!=null)
-            "--tls-key-file=${cfg.tlsKeyFile}"} \
+            "--tls-private-key-file=${cfg.tlsKeyFile}"} \
           ${optionalString (elem "RBAC" top.apiserver.authorizationMode)
             "--use-service-account-credentials"} \
           ${optionalString (cfg.verbosity != null) "--v=${toString cfg.verbosity}"} \

@@ -10,7 +10,7 @@ let
     kind = "Config";
     clusters = [{
       name = "local";
-      cluster.certificate-authority = cfg.caFile;
+      cluster.certificate-authority = conf.caFile or cfg.caFile;
       cluster.server = conf.server;
     }];
     users = [{
@@ -176,6 +176,7 @@ in {
   ###### implementation
 
   config = mkMerge [
+
     (mkIf cfg.easyCerts {
       services.kubernetes.pki.enable = mkDefault true;
       services.kubernetes.caFile = caCert;

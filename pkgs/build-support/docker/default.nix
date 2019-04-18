@@ -22,7 +22,9 @@
   referencesByPopularity,
   writeScript,
   writeText,
-  closureInfo
+  closureInfo,
+  substituteAll,
+  runtimeShell
 }:
 
 # WARNING: this API is unstable and may be subject to backwards-incompatible changes in the future.
@@ -118,7 +120,7 @@ rec {
     export PATH=${shadow}/bin:$PATH
     mkdir -p /etc/pam.d
     if [[ ! -f /etc/passwd ]]; then
-      echo "root:x:0:0::/root:${stdenv.shell}" > /etc/passwd
+      echo "root:x:0:0::/root:${runtimeShell}" > /etc/passwd
       echo "root:!x:::::::" > /etc/shadow
     fi
     if [[ ! -f /etc/group ]]; then
@@ -197,7 +199,7 @@ rec {
       # Unpack all of the parent layers into the image.
       lowerdir=""
       extractionID=0
-      for layerTar in $(cat layer-list); do
+      for layerTar in $(tac layer-list); do
         echo "Unpacking layer $layerTar"
         extractionID=$((extractionID + 1))
 
@@ -260,7 +262,7 @@ rec {
   # things like `ls` or `echo` will be missing.
   shellScript = name: text:
     writeScript name ''
-      #!${stdenv.shell}
+      #!${runtimeShell}
       set -e
       export PATH=${coreutils}/bin:/bin
       ${text}
@@ -279,6 +281,13 @@ rec {
     # of room for extension
     maxLayers ? 24
   }:
+    let
+      storePathToLayer = substituteAll
+      { shell = runtimeShell;
+        isExecutable = true;
+        src = ./store-path-to-layer.sh;
+      };
+    in
     runCommand "${name}-granular-docker-layers" {
       inherit maxLayers;
       paths = referencesByPopularity closure;
@@ -298,9 +307,9 @@ rec {
       # following head and tail call lines, double-check that your
       # code behaves properly when the number of layers equals:
       #      maxLayers-1, maxLayers, and maxLayers+1
-      head -n $((maxLayers - 1)) $paths | cat -n | xargs -P$NIX_BUILD_CORES -n2 ${./store-path-to-layer.sh}
+      head -n $((maxLayers - 1)) $paths | cat -n | xargs -P$NIX_BUILD_CORES -n2 ${storePathToLayer}
       if [ $(cat $paths | wc -l) -ge $maxLayers ]; then
-        tail -n+$maxLayers $paths | xargs ${./store-path-to-layer.sh} $maxLayers
+        tail -n+$maxLayers $paths | xargs ${storePathToLayer} $maxLayers
       fi
 
       echo "Finished building layer '$name'"
@@ -316,18 +325,25 @@ rec {
     # Files to add to the layer.
     contents,
     baseJson,
+    extraCommands,
     uid ? 0, gid ? 0,
   }:
     runCommand "${name}-customisation-layer" {
       buildInputs = [ jshon rsync tarsum ];
+      inherit extraCommands;
     }
     ''
       cp -r ${contents}/ ./layer
 
+      if [[ -n $extraCommands ]]; then
+        chmod ug+w layer
+        (cd layer; eval "$extraCommands")
+      fi
+
       # Tar up the layer and throw it into 'layer.tar'.
       echo "Packing layer..."
       mkdir $out
-      tar -C layer --sort=name --mtime="@$SOURCE_DATE_EPOCH" --owner=${toString uid} --group=${toString gid} -cf $out/layer.tar .
+      tar --transform='s|^\./||' -C layer --sort=name --mtime="@$SOURCE_DATE_EPOCH" --owner=${toString uid} --group=${toString gid} -cf $out/layer.tar .
 
       # Compute a checksum of the tarball.
       echo "Computing layer checksum..."
@@ -494,6 +510,8 @@ rec {
     # Time of creation of the image. Passing "now" will make the
     # created date be the time of building.
     created ? "1970-01-01T00:00:01Z",
+    # Optional bash script to run on the files prior to fixturizing the layer.
+    extraCommands ? "", uid ? 0, gid ? 0,
     # Docker's lowest maximum layer limit is 42-layers for an old
     # version of the AUFS graph driver. We pick 24 to ensure there is
     # plenty of room for extension. I believe the actual maximum is
@@ -501,8 +519,6 @@ rec {
     maxLayers ? 24
   }:
     let
-      uid = 0;
-      gid = 0;
       baseName = baseNameOf name;
       contentsEnv = symlinkJoin { name = "bulk-layers"; paths = (if builtins.isList contents then contents else [ contents ]); };
 
@@ -531,20 +547,25 @@ rec {
           name = baseName;
           contents = contentsEnv;
           baseJson = configJson;
-          inherit uid gid;
+          inherit uid gid extraCommands;
         };
       result = runCommand "docker-image-${baseName}.tar.gz" {
         buildInputs = [ jshon pigz coreutils findutils jq ];
         # Image name and tag must be lowercase
         imageName = lib.toLower name;
-        imageTag = if tag == null then "" else lib.toLower tag;
         baseJson = configJson;
+        passthru.imageTag =
+          if tag == null
+          then lib.head (lib.splitString "-" (lib.last (lib.splitString "/" result)))
+          else lib.toLower tag;
       } ''
-        ${lib.optionalString (tag == null) ''
+        ${if (tag == null) then ''
           outName="$(basename "$out")"
           outHash=$(echo "$outName" | cut -d - -f 1)
 
           imageTag=$outHash
+        '' else ''
+          imageTag="${tag}"
         ''}
 
         find ${bulkLayers} -mindepth 1 -maxdepth 1 | sort -t/ -k5 -n > layer-list
@@ -764,7 +785,7 @@ rec {
         imageJson=$(cat ${baseJson} | jq ". + {\"rootfs\": {\"diff_ids\": [], \"type\": \"layers\"}}")
         manifestJson=$(jq -n "[{\"RepoTags\":[\"$imageName:$imageTag\"]}]")
 
-        for layerTar in $(cat ./layer-list); do
+        for layerTar in $(tac ./layer-list); do
           layerChecksum=$(sha256sum image/$layerTar | cut -d ' ' -f1)
           imageJson=$(echo "$imageJson" | jq ".history |= [{\"created\": \"$(jq -r .created ${baseJson})\"}] + .")
           imageJson=$(echo "$imageJson" | jq ".rootfs.diff_ids |= [\"sha256:$layerChecksum\"] + .")

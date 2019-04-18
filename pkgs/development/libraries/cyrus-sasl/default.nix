@@ -1,64 +1,48 @@
-{ lib, stdenv, buildPackages, fetchurl, openssl, openldap, kerberos, db, gettext,
-  pam, fixDarwinDylibNames, autoreconfHook, fetchpatch, enableLdap ? false }:
+{ lib, stdenv, fetchurl, openssl, openldap, kerberos, db, gettext
+, pam, fixDarwinDylibNames, autoreconfHook, fetchpatch, enableLdap ? false
+, buildPackages, pruneLibtoolFiles }:
 
 with stdenv.lib;
 stdenv.mkDerivation rec {
   name = "cyrus-sasl-${version}${optionalString (kerberos == null) "-without-kerberos"}";
-  version = "2.1.27-rc5";
+  version = "2.1.27";
 
   src = fetchurl {
-    url = "ftp://ftp.cyrusimap.org/cyrus-sasl/cyrus-sasl-${version}.tar.gz";
-    sha256 = "0pnkp00xlqrh5ph7j8m4xwfgcca5hr9xvrpvn8k1lxa8xhnh8d6p";
+    urls =
+      [ "http://www.cyrusimap.org/releases/${name}.tar.gz"
+        "http://www.cyrusimap.org/releases/old/${name}.tar.gz"
+      ];
+    sha256 = "1m85zcpgfdhm43cavpdkhb1s2zq1b31472hq1w1gs3xh94anp1i6";
   };
 
   outputs = [ "bin" "dev" "out" "man" "devdoc" ];
 
-  nativeBuildInputs = [ autoreconfHook buildPackages.stdenv.cc ];
-  propagatedBuildInputs = [ kerberos ];
+  depsBuildBuild = [ buildPackages.stdenv.cc ];
+  nativeBuildInputs = [ autoreconfHook fixDarwinDylibNames pruneLibtoolFiles ];
   buildInputs =
-    [ openssl db gettext ]
+    [ openssl db gettext kerberos ]
     ++ lib.optional enableLdap openldap
-    ++ lib.optional stdenv.isFreeBSD autoreconfHook
-    ++ lib.optional stdenv.isLinux pam
-    ++ lib.optional stdenv.isDarwin fixDarwinDylibNames;
+    ++ lib.optional stdenv.isLinux pam;
 
   patches = [
     ./missing-size_t.patch # https://bugzilla.redhat.com/show_bug.cgi?id=906519
-  ] ++ lib.optional stdenv.isFreeBSD (
-      fetchurl {
-        url = "http://www.linuxfromscratch.org/patches/blfs/svn/cyrus-sasl-2.1.26-fixes-3.patch";
-        sha256 = "1vh4pc2rxxm6yvykx0b7kg09jbcwcxwv5rs6yq2ag3y8p6a9x86w";
-      }
-    );
+    ./cyrus-sasl-ac-try-run-fix.patch
+  ];
 
   configureFlags = [
     "--with-openssl=${openssl.dev}"
-  ] ++ lib.optional enableLdap "--with-ldap=${openldap.dev}"
-    # The GSSAPI configure checks require runtime checks.
-    ++ lib.optional (stdenv.buildPlatform != stdenv.hostPlatform) "--disable-gssapi";
-
-  # Set this variable at build-time to make sure $out can be evaluated.
-  preConfigure = ''
-    configureFlagsArray=( --with-plugindir=$out/lib/sasl2
-                          --with-saslauthd=/run/saslauthd
-                          --enable-login
-                        )
-  '';
+    "--with-plugindir=${placeholder "out"}/lib/sasl2"
+    "--with-saslauthd=/run/saslauthd"
+    "--enable-login"
+    "--enable-shared"
+  ] ++ lib.optional enableLdap "--with-ldap=${openldap.dev}";
 
   installFlags = lib.optional stdenv.isDarwin [ "framedir=$(out)/Library/Frameworks/SASL2.framework" ];
 
-  # Due to format warnings in plugins/scram.c
-  hardeningDisable = [ "format" ];
-
-  postInstall = ''
-    for f in $out/lib/*.la $out/lib/sasl2/*.la; do
-      substituteInPlace $f --replace "${openssl.dev}/lib" "${openssl.out}/lib"
-    done
-  '';
-
   meta = {
-    homepage = http://cyrusimap.web.cmu.edu/;
+    homepage = https://www.cyrusimap.org/sasl;
     description = "Library for adding authentication support to connection-based protocols";
     platforms = platforms.unix;
+    license = licenses.bsdOriginal;
   };
 }

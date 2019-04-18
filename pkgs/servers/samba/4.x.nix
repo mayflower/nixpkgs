@@ -3,10 +3,8 @@
 , docbook_xml_dtd_42, readline, talloc
 , popt, iniparser, libbsd, libarchive, libiconv, gettext
 , krb5Full, zlib, openldap, cups, pam, avahi, acl, libaio, fam, libceph, glusterfs
-, gnutls
-, ncurses, libunwind, libibverbs, librdmacm, systemd
+, gnutls, ncurses, libunwind, systemd
 
-, enableInfiniband ? false
 , enableLDAP ? false
 , enablePrinting ? false
 , enableMDNS ? false
@@ -47,7 +45,6 @@ stdenv.mkDerivation rec {
       libbsd libarchive zlib fam libiconv gettext libunwind krb5Full
     ]
     ++ optionals stdenv.isLinux [ libaio systemd ]
-    ++ optionals (enableInfiniband && stdenv.isLinux) [ libibverbs librdmacm ]
     ++ optional enableLDAP openldap
     ++ optional (enablePrinting && stdenv.isLinux) cups
     ++ optional enableMDNS avahi
@@ -105,7 +102,6 @@ stdenv.mkDerivation rec {
     homepage = https://www.samba.org/;
     description = "The standard Windows interoperability suite of programs for Linux and Unix";
     license = licenses.gpl3;
-    maintainers = with maintainers; [ wkennington ];
     platforms = platforms.unix;
   };
 }

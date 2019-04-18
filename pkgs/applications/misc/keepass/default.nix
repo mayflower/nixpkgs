@@ -3,16 +3,11 @@
 
 with builtins; buildDotnetPackage rec {
   baseName = "keepass";
-  version = "2.39.1";
+  version = "2.40";
 
   src = fetchurl {
     url = "mirror://sourceforge/keepass/KeePass-${version}-Source.zip";
-    sha256 = "0y69w9zzxqj7xrn632bw6bibrknjbx1k3qcvi9axn67sqmzaka00";
-  };
-
-  httpPlugin = fetchurl {
-    url = "https://raw.github.com/pfn/keepasshttp/master/KeePassHttp.plgx";
-    sha256 = "4803ea799962ec3e294691922d6255e63c5a96df36941f99ef633775829e7289";
+    sha256 = "1gldl74wz2lvsci6rn71d6q1zmnhr52z6fjib9nsragsazq5byz9";
   };
 
   sourceRoot = ".";
@@ -96,8 +91,6 @@ with builtins; buildDotnetPackage rec {
   ''
     mkdir -p "$out/share/applications"
     cp ${desktopItem}/share/applications/* $out/share/applications
-    mkdir "$out/lib/dotnet/keepass/plugins"
-    cp ${httpPlugin} "$out/lib/dotnet/keepass/plugins/KeePassHttp.plgx"
     wrapProgram $out/bin/keepass \
       --prefix PATH : "$binPaths" \
       --prefix LD_LIBRARY_PATH : "$dynlibPath"

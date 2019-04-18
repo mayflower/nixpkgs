@@ -22,7 +22,8 @@ let
       password = cfg.databasePassword;
       username = cfg.databaseUsername;
       encoding = "utf8";
-    };
+      pool = cfg.databasePool;
+    } // cfg.extraDatabaseConfig;
   };
 
   gitalyToml = pkgs.writeText "gitaly.toml" ''
@@ -159,6 +160,20 @@ let
      '';
   };
 
+  gitlab-rails = pkgs.stdenv.mkDerivation rec {
+    name = "gitlab-rails";
+    buildInputs = [ pkgs.makeWrapper ];
+    dontBuild = true;
+    unpackPhase = ":";
+    installPhase = ''
+      mkdir -p $out/bin
+      makeWrapper ${cfg.packages.gitlab.rubyEnv}/bin/rails $out/bin/gitlab-rails \
+          ${concatStrings (mapAttrsToList (name: value: "--set ${name} '${value}' ") gitlabEnv)} \
+          --set PATH '${lib.makeBinPath [ pkgs.nodejs pkgs.gzip pkgs.git pkgs.gnutar config.services.postgresql.package pkgs.coreutils pkgs.procps ]}:$PATH' \
+          --run 'cd ${cfg.packages.gitlab}/share/gitlab'
+     '';
+  };
+
   smtpSettings = pkgs.writeText "gitlab-smtp-settings.rb" ''
     if Rails.env.production?
       Rails.application.config.action_mailer.delivery_method = :smtp
@@ -251,6 +266,18 @@ in {
         type = types.str;
         default = "gitlab";
         description = "Gitlab database user.";
+      };
+
+      databasePool = mkOption {
+        type = types.int;
+        default = 5;
+        description = "Database connection pool size.";
+      };
+
+      extraDatabaseConfig = mkOption {
+        type = types.attrs;
+        default = {};
+        description = "Extra configuration in config/database.yml.";
       };
 
       host = mkOption {
@@ -426,7 +453,7 @@ in {
 
   config = mkIf cfg.enable {
 
-    environment.systemPackages = [ pkgs.git gitlab-rake cfg.packages.gitlab-shell ];
+    environment.systemPackages = [ pkgs.git gitlab-rake gitlab-rails cfg.packages.gitlab-shell ];
 
     # Redis is required for the sidekiq queue runner.
     services.redis.enable = mkDefault true;
@@ -497,7 +524,15 @@ in {
     systemd.services.gitaly = {
       after = [ "network.target" ];
       wantedBy = [ "multi-user.target" ];
-      path = with pkgs; [ gitAndTools.git cfg.packages.gitaly.rubyEnv cfg.packages.gitaly.rubyEnv.wrappedRuby ];
+      path = with pkgs; [
+        openssh
+        procps  # See https://gitlab.com/gitlab-org/gitaly/issues/1562
+        gitAndTools.git
+        cfg.packages.gitaly.rubyEnv
+        cfg.packages.gitaly.rubyEnv.wrappedRuby
+        gzip
+        bzip2
+      ];
       serviceConfig = {
         Type = "simple";
         User = cfg.user;
