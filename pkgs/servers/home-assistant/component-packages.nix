@@ -374,7 +374,7 @@
     "denon" = ps: with ps; [  ];
     "denon.media_player" = ps: with ps; [  ];
     "denonavr" = ps: with ps; [  ];
-    "denonavr.media_player" = ps: with ps; [  ];
+    "denonavr.media_player" = ps: with ps; [ denonavr ];
     "deutsche_bahn" = ps: with ps; [  ];
     "deutsche_bahn.sensor" = ps: with ps; [  ];
     "device_sun_light_trigger" = ps: with ps; [  ];

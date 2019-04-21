@@ -1697,6 +1697,8 @@ in {
 
   demjson = callPackage ../development/python-modules/demjson { };
 
+  denonavr = callPackage ../development/python-modules/denonavr { };
+
   deprecation = callPackage ../development/python-modules/deprecation { };
 
   derpconf = callPackage ../development/python-modules/derpconf { };
