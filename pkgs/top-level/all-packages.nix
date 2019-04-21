@@ -25176,6 +25176,8 @@ in
     thumbnail = callPackage ../applications/video/mpv/scripts/thumbnail.nix { };
   };
 
+  mrouted = callPackage ../applications/networking/mrouted { };
+
   mrpeach = callPackage ../applications/audio/pd-plugins/mrpeach { };
 
   mtpaint = callPackage ../applications/graphics/mtpaint { };
