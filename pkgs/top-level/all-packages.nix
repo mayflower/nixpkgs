@@ -18554,6 +18554,8 @@ in
     mpris = callPackage ../applications/video/mpv/scripts/mpris.nix {};
   };
 
+  mrouted = callPackage ../applications/networking/mrouted { };
+
   mrpeach = callPackage ../applications/audio/pd-plugins/mrpeach { };
 
   mrxvt = callPackage ../applications/misc/mrxvt { };
