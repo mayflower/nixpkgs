@@ -25796,6 +25796,8 @@ in
 
   pika-backup = callPackage ../applications/backup/pika-backup { };
 
+  pimd = callPackage ../applications/networking/pimd { };
+
   purple-discord = callPackage ../applications/networking/instant-messengers/pidgin-plugins/purple-discord { };
 
   purple-hangouts = callPackage ../applications/networking/instant-messengers/pidgin-plugins/purple-hangouts { };
