@@ -12183,7 +12183,7 @@ in
     buildPythonApplication click future six;
   };
 
-  protobuf = protobuf3_7;
+  protobuf = protobuf3_6;
 
   protobuf3_7 = callPackage ../development/libraries/protobuf/3.7.nix { };
   protobuf3_6 = callPackage ../development/libraries/protobuf/3.6.nix { };
