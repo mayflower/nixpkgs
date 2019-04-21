@@ -22562,6 +22562,8 @@ in
 
   pidgin-window-merge = callPackage ../applications/networking/instant-messengers/pidgin-plugins/window-merge { };
 
+  pimd = callPackage ../applications/networking/pimd { };
+
   purple-discord = callPackage ../applications/networking/instant-messengers/pidgin-plugins/purple-discord { };
 
   purple-hangouts = callPackage ../applications/networking/instant-messengers/pidgin-plugins/purple-hangouts { };
