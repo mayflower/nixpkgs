@@ -273,7 +273,7 @@ in {
         wantedBy = [ "kube-control-plane-online.target" ];
         after = [ "kube-scheduler.service" "kube-controller-manager.service" ];
         before = [ "kube-control-plane-online.target" ];
-        environment.KUBECONFIG = "/etc/${cfg.pki.etcClusterAdminKubeconfig}";
+        environment.KUBECONFIG = cfg.lib.mkKubeConfig "default" cfg.kubeconfig;
         path = [ pkgs.kubectl ];
         preStart = ''
           until kubectl get --raw=/healthz 2>/dev/null; do
