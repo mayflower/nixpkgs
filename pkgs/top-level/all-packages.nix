@@ -3970,7 +3970,9 @@ in
 
   nodejs-slim = nodejs-slim-8_x;
 
-  nodejs-8_x = callPackage ../development/web/nodejs/v8.nix {};
+  nodejs-8_x = callPackage ../development/web/nodejs/v8.nix {
+    openssl = openssl_1_0_2;
+  };
   nodejs-slim-8_x = callPackage ../development/web/nodejs/v8.nix { enableNpm = false; };
 
   nodejs-10_x = callPackage ../development/web/nodejs/v10.nix { };
