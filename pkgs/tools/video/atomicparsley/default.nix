@@ -18,6 +18,10 @@ stdenv.mkDerivation rec {
       cf-private
     ];
 
+  postPatch = ''
+    sed -i /AC_FUNC_MALLOC/d configure.ac
+  '';
+
   installPhase = "install -D AtomicParsley $out/bin/AtomicParsley";
 
   meta = with stdenv.lib; {
