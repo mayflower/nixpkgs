@@ -4,7 +4,7 @@
  
  buildscript {
      repositories {
--        mavenCentral()
+-        jcenter()
 +    REPLACE
      }
  
@@ -13,7 +13,7 @@
  }
  
  repositories {
--    mavenCentral()
+-    jcenter()
 -    maven { url "https://kamax.io/maven/releases/" }
 -    maven { url "https://kamax.io/maven/snapshots/" }
 +REPLACE
