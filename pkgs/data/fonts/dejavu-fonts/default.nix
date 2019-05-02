@@ -66,9 +66,9 @@ in stdenv.mkDerivation {
     cp ${full-ttf}/share/fonts/truetype/*.ttf $out/share/fonts/truetype/
     ln -s --relative --force --target-directory=$out/share/fonts/truetype ${minimal}/share/fonts/truetype/DejaVuSans.ttf
   '';
-  outputHashAlgo = "sha256";
-  outputHashMode = "recursive";
-  outputHash = "15l93xm9mg2ziaxv4nqy2a4jaz54d05xf0hfz1h84bclzb882llh";
+  #outputHashAlgo = "sha256";
+  #outputHashMode = "recursive";
+  #outputHash = "15l93xm9mg2ziaxv4nqy2a4jaz54d05xf0hfz1h84bclzb882llh";
   inherit meta;
 
   passthru.minimal = minimal;
