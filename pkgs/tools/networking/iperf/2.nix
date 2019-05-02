@@ -1,4 +1,4 @@
-{ stdenv, fetchurl }:
+{ stdenv, fetchurl, buildPackages }:
 
 stdenv.mkDerivation rec {
   name = "iperf-2.0.13";
@@ -8,6 +8,7 @@ stdenv.mkDerivation rec {
     sha256 = "1bbq6xr0vrd88zssfiadvw3awyn236yv94fsdl9q2sh9cv4xx2n8";
   };
 
+  depsBuildBuild = [ buildPackages.stdenv.cc ];
   hardeningDisable = [ "format" ];
   configureFlags = [ "--enable-fastsampling" ];
 
