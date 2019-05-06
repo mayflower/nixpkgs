@@ -3338,6 +3338,8 @@ in
 
   halide = callPackage ../development/compilers/halide { };
 
+  ham = pkgs.perlPackages.ham;
+
   hardinfo = callPackage ../tools/system/hardinfo { };
 
   hdapsd = callPackage ../os-specific/linux/hdapsd { };
@@ -5632,6 +5634,8 @@ in
   sonarr = callPackage ../servers/sonarr { };
 
   sonata = callPackage ../applications/audio/sonata { };
+
+  soundkonverter = kdeApplications.callPackage ../applications/audio/soundkonverter {};
 
   souper = callPackage ../development/compilers/souper { };
 
@@ -18139,7 +18143,11 @@ in
 
   kubetail = callPackage ../applications/networking/cluster/kubetail { } ;
 
-  kupfer = callPackage ../applications/misc/kupfer { };
+  kupfer = callPackage ../applications/misc/kupfer {
+    # using python36 as there appears to be a waf issue with python37
+    # see https://github.com/NixOS/nixpkgs/issues/60498
+    python3Packages = python36Packages;
+  };
 
   lame = callPackage ../development/libraries/lame { };
 
