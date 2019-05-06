@@ -77,7 +77,7 @@ let
     rule_files = map (prom2toolCheck "check rules" "rules") (cfg2.ruleFiles ++ [
       (writePrettyJSON "prometheus.rules.yml" {
         groups = [
-          { name = "nixos-rules"; rules = cfg.rules; }
+          { name = "nixos-rules"; rules = cfg2.rules; }
         ];
       })
     ]);
@@ -727,7 +727,7 @@ in {
       };
 
       rules = mkOption {
-        type = types.listOf types.str;
+        type = types.listOf types.attrs;
         default = [];
         description = ''
           Alerting and/or Recording rules to evaluate at runtime.
