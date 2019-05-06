@@ -6,7 +6,7 @@ buildPythonApplication rec {
 
     disabled = pythonOlder "3.4";
 
-    buildInputs = [ pytest ];
+    checkInputs = [ pytest ];
     propagatedBuildInputs = [ aiodns slixmpp pyinotify potr mpd2 cffi ];
     nativeBuildInputs = [ pkgconfig ];
 
