@@ -42,7 +42,7 @@ let
   # Pretty-print JSON to a file
   writePrettyJSON = name: x:
     pkgs.runCommand name { preferLocalBuild = true; } ''
-      echo '${builtins.toJSON x}' | ${pkgs.jq}/bin/jq . > $out
+      ${pkgs.jq}/bin/jq . ${pkgs.writeText "rules" (builtins.toJSON x)} > $out
     '';
 
   # This becomes the main config file for Prometheus 1
