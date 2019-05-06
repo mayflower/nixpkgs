@@ -1,46 +1,43 @@
-{ stdenv, curl, fetchFromGitHub, cjson, olm, luaffi }:
+{ stdenv, fetchFromGitHub, python }:
 
-stdenv.mkDerivation {
-  name = "weechat-matrix-bridge-2018-11-19";
+let
+self = python.pkgs.buildPythonPackage rec {
+  name = "weechat-matrix-2019-04-25";
+
   src = fetchFromGitHub {
-    owner = "torhve";
-    repo = "weechat-matrix-protocol-script";
-    rev = "8d32e90d864a8f3f09ecc2857cd5dd6e39a8c3f7";
-    sha256 = "0qqd6qmkrdc0r3rnl53c3yp93fbcz7d3mdw3vq5gmdqxyym4s9lj";
+    owner = "poljar";
+    repo = "weechat-matrix";
+    rev = "c1cfc4a8e4a67989d526a2c9142575e447f88cd7";
+    sha256 = "0q16xr1lfc7qybm3ny7clb4gpmv4vknsppmaaafza6xvysvnm4r6";
   };
 
-  patches = [
-    ./library-path.patch
-  ];
+  format = "other";
+  makeFlags = [ "PREFIX=${placeholder "out"}/share" ];
 
-  buildInputs = [ curl cjson olm luaffi ];
+  passthru = {
+    scripts = [ "python/matrix.py" ];
+    withPyPackages = ps: with ps; [
+      webcolors pyopenssl typing future atomicwrites
+      attrs Logbook pygments matrix-nio matrix-client self
+    ];
+  };
 
-  postPatch = ''
-    substituteInPlace matrix.lua \
-      --replace "/usr/bin/curl" "${curl}/bin/curl" \
-      --replace "__NIX_LIB_PATH__" "$out/lib/?.so" \
-      --replace "__NIX_OLM_PATH__" "$out/share/?.lua"
-
-    substituteInPlace olm.lua \
-      --replace "__NIX_LIB_PATH__" "$out/lib/?.so"
+  postInstall = ''
+    mkdir -p $out/${python.sitePackages}
+    ln -s $out/share/python/matrix $out/${python.sitePackages}/matrix
   '';
 
-  passthru.scripts = [ "matrix.lua" ];
-
-  installPhase = ''
-    mkdir -p $out/{share,lib}
-
-    cp {matrix.lua,olm.lua} $out/share
-    cp ${cjson}/lib/lua/5.2/cjson.so $out/lib/cjson.so
-    cp ${olm}/lib/libolm.so $out/lib/libolm.so
-    cp ${luaffi}/lib/ffi.so $out/lib/ffi.so
+  #doCheck = true;
+  checkInputs = with python.pkgs; [ pytest hypothesis ] ++ passthru.withPyPackages python.pkgs;
+  checkPhase = ''
+    python -m pytest
   '';
 
   meta = with stdenv.lib; {
-    description = "A WeeChat script in Lua that implements the matrix.org chat protocol";
-    homepage = https://github.com/torhve/weechat-matrix-protocol-script;
-    maintainers = with maintainers; [ ma27 ];
-    license = licenses.mit; # see https://github.com/torhve/weechat-matrix-protocol-script/blob/0052e7275ae149dc5241226391c9b1889ecc3c6b/matrix.lua#L53
+    description = " Weechat Matrix protocol script written in python";
+    homepage = https://github.com/poljar/weechat-matrix;
+    maintainers = with maintainers; [ globin ma27 ];
+    license = licenses.mit;
     platforms = platforms.unix;
   };
-}
+}; in self

@@ -5408,13 +5408,16 @@ in {
       url = "mirror://pypi/s/sqlsoup/${name}.tar.gz";
       sha256 = "1mj00fhxj75ac3i8xk9jmm7hvcjz9p4x2r3yndcwsgb659rvgbrg";
     };
- 
+
     buildInputs = with self; [ nose ];
     propagatedBuildInputs = with self; [ sqlalchemy ];
   };
 
-
   aioesphomeapi = callPackage ../development/python-modules/aioesphomeapi { };
+
+  matrix-nio = callPackage ../development/python-modules/matrix-nio { };
+
+  python-olm-dev = callPackage ../development/python-modules/python-olm-dev { };
 });
 
 in fix' (extends overrides packages)

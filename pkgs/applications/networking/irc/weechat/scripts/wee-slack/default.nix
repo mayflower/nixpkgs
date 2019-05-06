@@ -1,4 +1,4 @@
-{ stdenv, substituteAll, buildEnv, fetchFromGitHub, pythonPackages }:
+{ stdenv, fetchFromGitHub }:
 
 stdenv.mkDerivation rec {
   name = "wee-slack-${version}";
@@ -11,17 +11,10 @@ stdenv.mkDerivation rec {
     sha256 = "1iy70q630cgs7fvk2151fq9519dwxrlqq862sbrwypzr6na6yqpg";
   };
 
-  patches = [
-    (substituteAll {
-      src = ./libpath.patch;
-      env = "${buildEnv {
-        name = "wee-slack-env";
-        paths = with pythonPackages; [ websocket_client six ];
-      }}/${pythonPackages.python.sitePackages}";
-    })
-  ];
-
-  passthru.scripts = [ "wee_slack.py" ];
+  passthru = {
+    scripts = [ "wee_slack.py" ];
+    withPyPackages = ps: with ps; [ websocket_client six ];
+  };
 
   installPhase = ''
     mkdir -p $out/share

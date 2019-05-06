@@ -1,6 +1,8 @@
-{ stdenv, lib, runCommand, writeScriptBin, buildEnv
-, pythonPackages, perlPackages, runtimeShell
+{ stdenv, runCommand, writeScriptBin, buildEnv
+, perlPackages, runtimeShell
 }:
+
+with stdenv.lib;
 
 weechat:
 
@@ -11,27 +13,20 @@ let
 
   let
     perlInterpreter = perlPackages.perl;
+    scriptsPyPackages = ps: flatten (flip map config.scripts (s: (s.withPyPackages or (_: [])) ps));
     availablePlugins = let
-        simplePlugin = name: {pluginFile = "${weechat.${name}}/lib/weechat/plugins/${name}.so";};
+        simplePlugin = name: { pluginFile = "${weechat.${name}}/lib/weechat/plugins/${name}.so"; };
       in rec {
         python = {
           pluginFile = "${weechat.python}/lib/weechat/plugins/python.so";
-          withPackages = pkgsFun: (python // {
-            extraEnv = ''
-              export PYTHONHOME="${pythonPackages.python.withPackages pkgsFun}"
-            '';
-          });
+          extraEnv = ''
+            export PYTHONHOME="${weechat.pythonPkg.withPackages scriptsPyPackages}"
+          '';
         };
         perl = (simplePlugin "perl") // {
           extraEnv = ''
             export PATH="${perlInterpreter}/bin:$PATH"
           '';
-          withPackages = pkgsFun: (perl // {
-            extraEnv = ''
-              ${perl.extraEnv}
-              export PERL5LIB=${perlPackages.makeFullPerlPath (pkgsFun perlPackages)}
-            '';
-          });
         };
         tcl = simplePlugin "tcl";
         ruby = simplePlugin "ruby";
@@ -45,7 +40,7 @@ let
 
     pluginsDir = runCommand "weechat-plugins" {} ''
       mkdir -p $out/plugins
-      for plugin in ${lib.concatMapStringsSep " " (p: p.pluginFile) plugins} ; do
+      for plugin in ${concatMapStringsSep " " (p: p.pluginFile) plugins} ; do
         ln -s $plugin $out/plugins
       done
     '';
@@ -53,17 +48,17 @@ let
     init = let
       init = builtins.replaceStrings [ "\n" ] [ ";" ] (config.init or "");
 
-      mkScript = drv: lib.flip map drv.scripts (script: "/script load ${drv}/share/${script}");
+      mkScript = drv: flip map drv.scripts (script: "/script load ${drv}/share/${script}");
 
-      scripts = builtins.concatStringsSep ";" (lib.foldl (scripts: drv: scripts ++ mkScript drv)
+      scripts = builtins.concatStringsSep ";" (foldl (scripts: drv: scripts ++ mkScript drv)
         [ ] (config.scripts or []));
     in "${scripts};${init}";
 
     mkWeechat = bin: (writeScriptBin bin ''
       #!${runtimeShell}
       export WEECHAT_EXTRA_LIBDIR=${pluginsDir}
-      ${lib.concatMapStringsSep "\n" (p: lib.optionalString (p ? extraEnv) p.extraEnv) plugins}
-      exec ${weechat}/bin/${bin} "$@" --run-command ${lib.escapeShellArg init}
+      ${concatMapStringsSep "\n" (p: p.extraEnv or "") plugins}
+      exec ${weechat}/bin/${bin} "$@" --run-command ${escapeShellArg init}
     '') // {
       inherit (weechat) name;
       unwrapped = weechat;
@@ -77,4 +72,4 @@ let
     meta = builtins.removeAttrs weechat.meta [ "outputsToInstall" ];
   };
 
-in lib.makeOverridable wrapper
+in makeOverridable wrapper
