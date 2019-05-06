@@ -13,7 +13,7 @@ let
 
   let
     perlInterpreter = perlPackages.perl;
-    scriptsPyPackages = ps: flatten (flip map config.scripts (s: (s.withPyPackages or (_: [])) ps));
+    scriptsPyPackages = ps: flatten (flip map (config.scripts or []) (s: (s.withPyPackages or (_: [])) ps));
     availablePlugins = let
         simplePlugin = name: { pluginFile = "${weechat.${name}}/lib/weechat/plugins/${name}.so"; };
       in rec {
