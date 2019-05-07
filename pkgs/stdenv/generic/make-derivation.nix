@@ -87,6 +87,7 @@ in rec {
     , hardeningDisable ? []
 
     , patches ? []
+    , __structuredAttrs ? true
 
     , ... } @ attrs:
 
@@ -211,6 +212,7 @@ in rec {
 
           userHook = config.stdenv.userHook or null;
           __ignoreNulls = true;
+          inherit __structuredAttrs;
 
           inherit strictDeps;
 
