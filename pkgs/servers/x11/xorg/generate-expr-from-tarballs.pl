@@ -225,7 +225,8 @@ while (<>) {
     process \@requires, $1 while $file =~ /XORG_DRIVER_CHECK_EXT\([^,]*,([^\)]*)\)/g;
 
     push @requires, "libxslt" if $pkg =~ /libxcb/;
-    push @requires, "gperf", "m4", "xorgproto" if $pkg =~ /xcbutil/;
+    push @nativeRequires, "m4" if $pkg =~ /xcbutil/;
+    push @requires, "gperf", "xorgproto" if $pkg =~ /xcbutil/;
 
     print "REQUIRES $pkg => @requires\n";
     print "NATIVE_REQUIRES $pkg => @nativeRequires\n";
