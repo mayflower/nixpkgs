@@ -1766,6 +1766,11 @@
     github = "Gerschtli";
     name = "Tobias Happ";
   };
+  ggpeti = {
+    email = "ggpeti@gmail.com";
+    github = "ggpeti";
+    name = "Peter Ferenczy";
+  };
   gilligan = {
     email = "tobias.pflug@gmail.com";
     github = "gilligan";
@@ -2492,6 +2497,11 @@
     email = "nikola@knezevic.co";
     github = "knl";
     name = "Nikola Knežević";
+  };
+  kolaente = {
+    email = "k@knt.li";
+    github = "kolaente";
+    name = "Konrad Langenberg";
   };
   konimex = {
     email = "herdiansyah@netc.eu";
