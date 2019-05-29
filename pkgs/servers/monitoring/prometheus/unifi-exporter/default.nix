@@ -2,8 +2,8 @@
 
 buildGoPackage rec {
   name = "unifi-exporter-${version}";
-  version = "0.4.0+git1";
-  rev = "9a4e69fdea91dd0033bda4842998d751b40a6130";
+  version = "0.4.0+git2";
+  rev = "85455df7c491b44c8589b95b6b9401881762b9e2";
 
   goPackagePath = "github.com/mdlayher/unifi_exporter";
 
@@ -11,7 +11,7 @@ buildGoPackage rec {
     inherit rev;
     owner = "mdlayher";
     repo = "unifi_exporter";
-    sha256 = "08zqvwvdqnc301f8jfh7bdvc138szw6xszx884b2v8w2x38w3rmn";
+    sha256 = "1cs6zris9jx9w4h9qa50rrwcmjw5ncs66xjaq13dkg69yyrn2a5k";
   };
 
   meta = with stdenv.lib; {
