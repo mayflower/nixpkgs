@@ -10030,6 +10030,8 @@ in
 
   gcab = callPackage ../development/libraries/gcab { };
 
+  gcovr = with python3Packages; toPythonApplication gcovr;
+
   gcr = callPackage ../development/libraries/gcr { };
 
   gdl = callPackage ../development/libraries/gdl { };
@@ -11887,7 +11889,6 @@ in
 
   mu = callPackage ../tools/networking/mu {
     texinfo = texinfo4;
-    gst-plugins-base = gst_all_1.gst-plugins-base;
   };
 
   mueval = callPackage ../development/tools/haskell/mueval { };
