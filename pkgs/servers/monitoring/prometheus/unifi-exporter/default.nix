@@ -3,15 +3,15 @@
 buildGoPackage rec {
   name = "unifi-exporter-${version}";
   version = "0.4.0+git2";
-  rev = "85455df7c491b44c8589b95b6b9401881762b9e2";
+  rev = "5527cc436d27094c97eaeaf4c78dff8497d106bd";
 
-  goPackagePath = "github.com/mdlayher/unifi_exporter";
+  goPackagePath = "github.com/mayflower/unifi_exporter";
 
   src= fetchFromGitHub {
     inherit rev;
-    owner = "mdlayher";
+    owner = "mayflower";
     repo = "unifi_exporter";
-    sha256 = "1cs6zris9jx9w4h9qa50rrwcmjw5ncs66xjaq13dkg69yyrn2a5k";
+    sha256 = "0fqwa176fms0a49wwd4896r4wn7g7p2awrlrhzx64ryrylnfbq4a";
   };
 
   meta = with stdenv.lib; {

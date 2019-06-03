@@ -54,12 +54,17 @@ in
       DynamicUser = true;
       ExecStart = ''
         ${pkgs.prometheus-unifi-exporter}/bin/unifi_exporter \
-          -telemetry.addr ${cfg.listenAddress}:${toString cfg.port} \
-          -unifi.addr ${cfg.unifiAddress} \
-          -unifi.username ${cfg.unifiUsername} \
-          -unifi.password ${cfg.unifiPassword} \
-          -unifi.timeout ${cfg.unifiTimeout} \
-          ${optionalString cfg.unifiInsecure "-unifi.insecure" } \
+          -config.file ${pkgs.writeText "unifi-exporter-config.yml"
+          (builtins.toJSON {
+            listen = { address = "${cfg.listenAddress}:${builtins.toString cfg.port}"; metricspath = "/metrics"; };
+            unifi = {
+              address = cfg.unifiAddress;
+              username = cfg.unifiUsername;
+              password = cfg.unifiPassword;
+              insecure = if cfg.unifiInsecure then "true" else "false";
+              timeout = cfg.unifiTimeout;
+            };
+          })} \
           ${concatStringsSep " \\\n  " cfg.extraFlags}
       '';
     };
