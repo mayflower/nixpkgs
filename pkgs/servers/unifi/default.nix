@@ -54,8 +54,8 @@ in rec {
   };
 
   unifiTesting = generic {
-    version = "5.11.26";
-    suffix = "-1ecdee774d";
-    sha256 = "1yrkaj8z33d7aslyhlgsds14cdfqywrd21c1s3l8aiigix1qhnqv";
+    version = "5.11.29";
+    suffix = "-633651c4a7";
+    sha256 = "1vjbw34ygs90199m3g55m41cpwg59sf3wxap8h1qw98gr03as1vj";
   };
 }
