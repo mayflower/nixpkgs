@@ -143,6 +143,7 @@ in {
     users.users.docker-registry = {
       createHome = true;
       home = cfg.storagePath;
+      isSystemUser = true;
     };
   };
 }
