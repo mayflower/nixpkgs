@@ -665,6 +665,7 @@ in
     inherit (darwin.apple_sdk.frameworks) Security CoreServices;
   };
 
+  bitwarden_rs_ldap = callPackage ../tools/security/bitwarden_rs/ldap.nix { };
   bitwarden_rs-vault = callPackage ../tools/security/bitwarden_rs/vault.nix { };
 
   bitwarden-cli = callPackage ../tools/security/bitwarden-cli { };
