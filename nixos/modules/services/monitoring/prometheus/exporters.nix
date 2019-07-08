@@ -18,12 +18,14 @@ let
   #  systemd service must be provided by specifying either
   #  `serviceOpts.script` or `serviceOpts.serviceConfig.ExecStart`
   exporterOpts = {
+    bind      = import ./exporters/bind.nix      { inherit config lib pkgs; };
     blackbox  = import ./exporters/blackbox.nix  { inherit config lib pkgs; };
     collectd  = import ./exporters/collectd.nix  { inherit config lib pkgs; };
     dnsmasq   = import ./exporters/dnsmasq.nix   { inherit config lib pkgs; };
     dovecot   = import ./exporters/dovecot.nix   { inherit config lib pkgs; };
     fritzbox  = import ./exporters/fritzbox.nix  { inherit config lib pkgs; };
     json      = import ./exporters/json.nix      { inherit config lib pkgs; };
+    mail      = import ./exporters/mail.nix      { inherit config lib pkgs; };
     minio     = import ./exporters/minio.nix     { inherit config lib pkgs; };
     nginx     = import ./exporters/nginx.nix     { inherit config lib pkgs; };
     node      = import ./exporters/node.nix      { inherit config lib pkgs; };
@@ -34,7 +36,7 @@ let
     tor       = import ./exporters/tor.nix       { inherit config lib pkgs; };
     unifi     = import ./exporters/unifi.nix     { inherit config lib pkgs; };
     varnish   = import ./exporters/varnish.nix   { inherit config lib pkgs; };
-    bind      = import ./exporters/bind.nix      { inherit config lib pkgs; };
+    wireguard = import ./exporters/wireguard.nix { inherit config lib pkgs; };
   };
 
   mkExporterOpts = ({ name, port }: {
