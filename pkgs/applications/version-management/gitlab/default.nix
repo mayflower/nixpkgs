@@ -18,9 +18,7 @@ let
           dontBuild = false;
         };
       };
-    groups = [
-      "default" "unicorn" "ed25519" "metrics" "development" "puma" "test"
-    ];
+    groups = [ "default" "unicorn" "ed25519" "metrics" ];
     # N.B. omniauth_oauth2_generic and apollo_upload_server both provide a
     # `console` executable.
     ignoreCollisions = true;
