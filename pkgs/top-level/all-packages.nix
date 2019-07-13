@@ -6595,6 +6595,8 @@ in
   yarn2nix = callPackage ../development/tools/yarn2nix { };
   inherit (yarn2nix) mkYarnPackage;
 
+  yarn2nix-moretea = callPackage ../development/tools/yarn2nix-moretea/yarn2nix { };
+
   yasr = callPackage ../applications/audio/yasr { };
 
   yank = callPackage ../tools/misc/yank { };
