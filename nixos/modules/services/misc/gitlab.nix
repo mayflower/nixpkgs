@@ -479,8 +479,9 @@ in {
       "d ${cfg.backupPath} 0750 ${cfg.user} ${cfg.group} -"
       "d ${cfg.statePath} 0750 ${cfg.user} ${cfg.group} -"
       "d ${cfg.statePath}/builds 0750 ${cfg.user} ${cfg.group} -"
-      "d ${cfg.statePath}/config 0750 ${cfg.user} ${cfg.group} -"
-      "d ${cfg.statePath}/db 0750 ${cfg.user} ${cfg.group} -"
+      "D ${cfg.statePath}/config 0750 ${cfg.user} ${cfg.group} -"
+      "D ${cfg.statePath}/config/initializers 0750 ${cfg.user} ${cfg.group} -"
+      "D ${cfg.statePath}/db 0750 ${cfg.user} ${cfg.group} -"
       "d ${cfg.statePath}/log 0750 ${cfg.user} ${cfg.group} -"
       "d ${cfg.statePath}/repositories 2770 ${cfg.user} ${cfg.group} -"
       "d ${cfg.statePath}/shell 0750 ${cfg.user} ${cfg.group} -"
@@ -508,6 +509,8 @@ in {
       "L+ ${cfg.statePath}/config/database.yml - - - - ${pkgs.writeText "database.yml" (builtins.toJSON databaseConfig)}"
       "L+ ${cfg.statePath}/config/secrets.yml - - - - ${pkgs.writeText "secrets.yml" (builtins.toJSON secretsConfig)}"
       "L+ ${cfg.statePath}/config/unicorn.rb - - - - ${./defaultUnicornConfig.rb}"
+
+      "L+ ${cfg.statePath}/config/initializers/extra-gitlab.rb - - - - ${extraGitlabRb}"
     ] ++ optional cfg.smtp.enable
       "L+ ${cfg.statePath}/config/initializers/smtp_settings.rb - - - - ${smtpSettings}" ;
 
@@ -602,11 +605,11 @@ in {
       ];
       preStart = ''
         ${pkgs.sudo}/bin/sudo -u ${cfg.user} cp -f ${cfg.packages.gitlab}/share/gitlab/VERSION ${cfg.statePath}/VERSION
-        ${pkgs.sudo}/bin/sudo -u ${cfg.user} rm -rf ${cfg.statePath}/db/*
-        ${pkgs.sudo}/bin/sudo -u ${cfg.user} cp -rf --no-preserve=mode ${cfg.packages.gitlab}/share/gitlab/config.dist/* ${cfg.statePath}/config
-        ${pkgs.sudo}/bin/sudo -u ${cfg.user} cp -rf --no-preserve=mode ${cfg.packages.gitlab}/share/gitlab/db/* ${cfg.statePath}/db
+        ${pkgs.sudo}/bin/sudo -u ${cfg.user} cp -rf ${cfg.packages.gitlab}/share/gitlab/config.dist/* ${cfg.statePath}/config
+        ${pkgs.sudo}/bin/sudo -u ${cfg.user} cp -rf ${cfg.packages.gitlab}/share/gitlab/db/* ${cfg.statePath}/db
+        ${pkgs.sudo}/bin/sudo -u ${cfg.user} chmod u+w ${cfg.statePath}/db/*
 
-        ${pkgs.openssl}/bin/openssl rand -hex 32 > ${cfg.statePath}/gitlab_shell_secret
+        ${pkgs.openssl}/bin/openssl rand -hex 32 > ${cfg.statePath}/config/gitlab_shell_secret
 
         ${pkgs.sudo}/bin/sudo -u ${cfg.user} ${cfg.packages.gitlab-shell}/bin/install
 
@@ -634,7 +637,7 @@ in {
         fi
 
         # We remove potentially broken links to old gitlab-shell versions
-        rm -rf ${cfg.statePath}/repositories/**/*.git/hooks
+        rm -f ${cfg.statePath}/repositories/**/*.git/hooks
 
         ${pkgs.sudo}/bin/sudo -u ${cfg.user} -H ${pkgs.git}/bin/git config --global core.autocrlf "input"
       '';
