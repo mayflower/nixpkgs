@@ -4271,6 +4271,8 @@ in
 
   memtest86 = callPackage ../tools/misc/memtest86 { };
 
+  memtest86-efi = callPackage ../tools/misc/memtest86-efi { };
+
   memtest86plus = callPackage ../tools/misc/memtest86+ { };
 
   meo = callPackage ../tools/security/meo {
@@ -11131,6 +11133,8 @@ in
 
   libguestfs-appliance = callPackage ../development/libraries/libguestfs/appliance.nix {};
   libguestfs = callPackage ../development/libraries/libguestfs { };
+  libguestfs-with-appliance = libguestfs.override { appliance = libguestfs-appliance; };
+
 
   libhangul = callPackage ../development/libraries/libhangul { };
 
