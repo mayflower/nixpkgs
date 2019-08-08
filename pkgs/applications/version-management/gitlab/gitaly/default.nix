@@ -1,4 +1,4 @@
-{ stdenv, fetchFromGitLab, buildGoPackage, ruby, bundlerEnv, pkgconfig, libgit2 }:
+{ stdenv, fetchFromGitLab, buildGoModule, ruby, bundlerEnv, pkgconfig, libgit2 }:
 
 let
   rubyEnv = bundlerEnv rec {
@@ -16,7 +16,7 @@ let
         };
       };
   };
-in buildGoPackage rec {
+in buildGoModule rec {
   version = "1.47.0";
   name = "gitaly-${version}";
 
@@ -27,16 +27,15 @@ in buildGoPackage rec {
     sha256 = "1b8gshvwiypwl0f4963l37y7sjrn851marr77fhczx128axrniiw";
   };
 
-  goPackagePath = "gitlab.com/gitlab-org/gitaly";
+  modSha256 = "0w4mglrwmid5bi71m0g7plw2q60641q1m00k3pl82wggkgvjx0n3";
 
   passthru = {
     inherit rubyEnv;
   };
 
   nativeBuildInputs = [ pkgconfig ];
+
   buildInputs = [ rubyEnv.wrappedRuby libgit2 ];
-  goDeps = ./deps.nix;
-  preBuild = "rm -r go/src/gitlab.com/gitlab-org/labkit/vendor";
 
   postInstall = ''
     mkdir -p $ruby
@@ -50,7 +49,7 @@ in buildGoPackage rec {
        "'/run/gitlab/shell-config.yml'"
   '';
 
-  outputs = [ "bin" "out" "ruby" ];
+  outputs = [ "out" "ruby" ];
 
   meta = with stdenv.lib; {
     homepage = http://www.gitlab.com/;
