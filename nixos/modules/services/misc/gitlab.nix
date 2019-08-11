@@ -184,7 +184,8 @@ let
         domain: "${cfg.smtp.domain}",
         ${optionalString (cfg.smtp.authentication != null) "authentication: :${cfg.smtp.authentication},"}
         enable_starttls_auto: ${toString cfg.smtp.enableStartTLSAuto},
-        openssl_verify_mode: '${cfg.smtp.opensslVerifyMode}'
+        openssl_verify_mode: '${cfg.smtp.opensslVerifyMode}',
+        ca_file: '${cfg.smtp.CAFile}'
       }
     end
   '';
@@ -399,6 +400,12 @@ in {
           default = "peer";
           description = "How OpenSSL checks the certificate, see http://api.rubyonrails.org/classes/ActionMailer/Base.html";
         };
+
+        CAFile = mkOption {
+          type = types.str;
+          default = "/etc/ssl/certs/ca-certificates.crt";
+          description = "Which CA to use";
+        };
       };
 
       secrets.secret = mkOption {
@@ -477,7 +484,7 @@ in {
     # We use postgres as the main data store.
     services.postgresql.enable = mkDefault true;
     # Use postfix to send out mails.
-    services.postfix.enable = mkDefault true;
+    services.postfix.enable = mkDefault (cfg.smtp.address == "localhost");
 
     users.users = [
       { name = cfg.user;
