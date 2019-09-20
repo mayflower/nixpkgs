@@ -106,6 +106,8 @@ in
       isSystemUser = true;
     };
 
+    networking.resolvconf.useLocalResolver = mkDefault true;
+
     systemd.services.unbound = {
       description = "Unbound recursive Domain Name Server";
       after = [ "network.target" ];

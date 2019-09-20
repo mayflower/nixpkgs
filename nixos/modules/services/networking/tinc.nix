@@ -153,14 +153,8 @@ in
       ({
         description = "Tinc Daemon - ${network}";
         wantedBy = [ "multi-user.target" ];
-        after = [ "network.target" ];
-        path = [ data.package ] ++ optional data.chroot pkgs.utillinux;
-        restartTriggers =
-          let
-            drvlist = [ config.environment.etc."tinc/${network}/tinc.conf".source ]
-                        ++ mapAttrsToList (host: _: config.environment.etc."tinc/${network}/hosts/${host}".source) data.hosts;
-          in # drvlist might be too long to be used directly
-            [ (builtins.hashString "sha256" (concatMapStrings (d: d.outPath) drvlist)) ];
+        path = [ data.package ];
+        restartTriggers = [ config.environment.etc."tinc/${network}/tinc.conf".source ];
         serviceConfig = {
           Type = "simple";
           Restart = "always";

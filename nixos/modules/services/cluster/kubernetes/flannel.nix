@@ -14,10 +14,9 @@ let
     buildInputs = [ pkgs.makeWrapper ];
   } ''
     mkdir -p $out
-    cp ${pkgs.kubernetes.src}/cluster/centos/node/bin/mk-docker-opts.sh $out/mk-docker-opts.sh
 
     # bashInteractive needed for `compgen`
-    makeWrapper ${pkgs.bashInteractive}/bin/bash $out/mk-docker-opts --add-flags "$out/mk-docker-opts.sh"
+    makeWrapper ${pkgs.bashInteractive}/bin/bash $out/mk-docker-opts --add-flags "${pkgs.kubernetes}/bin/mk-docker-opts.sh"
   '';
 in
 {
@@ -72,7 +71,7 @@ in
     };
 
     systemd.paths.flannel-subnet-env = {
-      wantedBy = [ "mk-docker-opts.service" ];
+      wantedBy = [ "flannel.service" ];
       pathConfig = {
         PathExists = [ "/run/flannel/subnet.env" ];
         PathChanged = [ "/run/flannel/subnet.env" ];

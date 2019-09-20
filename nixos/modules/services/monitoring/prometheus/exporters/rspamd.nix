@@ -1,4 +1,4 @@
-{ config, lib, pkgs }:
+{ config, lib, pkgs, options }:
 
 with lib;
 
@@ -7,15 +7,13 @@ let
 
   prettyJSON = conf:
     pkgs.runCommand "rspamd-exporter-config.yml" { } ''
-      echo '${builtins.toJSON conf}' | ${pkgs.jq}/bin/jq '.' > $out
+      echo '${builtins.toJSON conf}' | ${pkgs.buildPackages.jq}/bin/jq '.' > $out
     '';
 
   generateConfig = extraLabels: (map (path: {
     name = "rspamd_${replaceStrings [ "." " " ] [ "_" "_" ] path}";
     path = "$.${path}";
-    labels = {
-      host = mkDefault config.networking.hostName;
-    } // extraLabels;
+    labels = extraLabels;
   }) [
     "actions.'add header'"
     "actions.'no action'"
@@ -42,10 +40,10 @@ let
     name = "rspamd_statfiles";
     type = "object";
     path = "$.statfiles[*]";
-    labels = {
+    labels = recursiveUpdate {
       symbol = "$.symbol";
       type = "$.type";
-    } // extraLabels;
+    } extraLabels;
     values = {
       revision = "$.revision";
       size = "$.size";
@@ -79,21 +77,16 @@ in
       example = literalExample ''
         {
           host = config.networking.hostName;
-          environment = "staging";
+          custom_label = "some_value";
         }
       '';
       description = "Set of labels added to each metric.";
     };
   };
-  serviceOpts = {
-    serviceConfig = {
-      DynamicUser = true;
-      ExecStart = ''
-        ${pkgs.prometheus-json-exporter}/bin/prometheus-json-exporter \
-          --port ${toString cfg.port} \
-          ${cfg.url} ${prettyJSON (generateConfig cfg.extraLabels)} \
-          ${concatStringsSep " \\\n  " cfg.extraFlags}
-      '';
-    };
-  };
+  serviceOpts.serviceConfig.ExecStart = ''
+    ${pkgs.prometheus-json-exporter}/bin/prometheus-json-exporter \
+      --port ${toString cfg.port} \
+      ${cfg.url} ${prettyJSON (generateConfig cfg.extraLabels)} \
+      ${concatStringsSep " \\\n  " cfg.extraFlags}
+  '';
 }

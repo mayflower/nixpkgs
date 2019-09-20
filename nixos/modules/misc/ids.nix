@@ -145,7 +145,7 @@
       #notbit = 111; # unused
       aerospike = 111;
       ngircd = 112;
-      btsync = 113;
+      #btsync = 113; # unused
       minecraft = 114;
       vault = 115;
       rippled = 116;
@@ -251,7 +251,7 @@
       gale = 223;
       matrix-synapse = 224;
       rspamd = 225;
-      # rmilter = 226; # unused, removed 2018-01-18
+      # rmilter = 226; # unused, removed 2019-08-22
       cfdyndns = 227;
       gammu-smsd = 228;
       pdnsd = 229;
@@ -265,8 +265,8 @@
       syncthing = 237;
       caddy = 239;
       taskd = 240;
-      factorio = 241;
-      emby = 242;
+      # factorio = 241; # DynamicUser = true
+      # emby = 242; # unusued, removed 2019-05-01
       graylog = 243;
       sniproxy = 244;
       nzbget = 245;
@@ -339,6 +339,8 @@
       rss2email = 312;
       cockroachdb = 313;
       zoneminder = 314;
+      paperless = 315;
+      #mailman = 316;  # removed 2019-08-30
       sks = 399;
 
       # When adding a uid, make sure it doesn't match an existing gid. And don't use uids above 399!
@@ -457,7 +459,7 @@
       #notbit = 111; # unused
       aerospike = 111;
       #ngircd = 112; # unused
-      btsync = 113;
+      #btsync = 113; # unused
       #minecraft = 114; # unused
       vault = 115;
       #ripped = 116; # unused
@@ -516,7 +518,7 @@
       tss = 176;
       #memcached = 177; # unused, removed 2018-01-03
       #ntp = 179; # unused
-      #zabbix = 180; # unused
+      zabbix = 180;
       #redis = 181; # unused, removed 2018-01-03
       #unifi = 183; # unused
       #uptimed = 184; # unused
@@ -559,7 +561,7 @@
       gale = 223;
       matrix-synapse = 224;
       rspamd = 225;
-      # rmilter = 226; # unused, removed 2018-01-18
+      # rmilter = 226; # unused, removed 2019-08-22
       cfdyndns = 227;
       pdnsd = 229;
       octoprint = 230;
@@ -567,8 +569,8 @@
       syncthing = 237;
       caddy = 239;
       taskd = 240;
-      factorio = 241;
-      emby = 242;
+      # factorio = 241; # unused
+      # emby = 242; # unused, removed 2019-05-01
       sniproxy = 244;
       nzbget = 245;
       mosquitto = 246;
@@ -639,6 +641,8 @@
       rss2email = 312;
       cockroachdb = 313;
       zoneminder = 314;
+      paperless = 315;
+      #mailman = 316;  # removed 2019-08-30
       sks = 399;
 
       # When adding a gid, make sure it doesn't match an existing

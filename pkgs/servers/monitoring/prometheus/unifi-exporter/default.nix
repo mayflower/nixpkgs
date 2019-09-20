@@ -1,7 +1,7 @@
 { stdenv, buildGoPackage, fetchFromGitHub }:
 
 buildGoPackage rec {
-  name = "unifi-exporter-${version}";
+  pname = "unifi-exporter";
   version = "0.4.0+git2";
   rev = "5527cc436d27094c97eaeaf4c78dff8497d106bd";
 
@@ -18,7 +18,7 @@ buildGoPackage rec {
     description = "Prometheus exporter that exposes metrics from a Ubiquiti UniFi Controller and UniFi devices";
     homepage = https://github.com/mdlayher/unifi_exporter;
     license = licenses.mit;
-    maintainers = with maintainers; [ bachp ];
+    maintainers = with maintainers; [ bachp globin ];
     platforms = platforms.unix;
   };
 }

@@ -27,17 +27,15 @@ self = python.pkgs.buildPythonPackage rec {
     ln -s $out/share/python/matrix $out/${python.sitePackages}/matrix
   '';
 
-  #doCheck = true;
-  checkInputs = with python.pkgs; [ pytest hypothesis ] ++ passthru.withPyPackages python.pkgs;
-  checkPhase = ''
-    python -m pytest
-  '';
-
   meta = with stdenv.lib; {
     description = " Weechat Matrix protocol script written in python";
     homepage = https://github.com/poljar/weechat-matrix;
     maintainers = with maintainers; [ globin ma27 ];
     license = licenses.mit;
     platforms = platforms.unix;
+
+    # As of 2019-06-30, all of the dependencies are available on macOS but the
+    # package itself does not build.
+    broken = stdenv.isDarwin;
   };
 }; in self

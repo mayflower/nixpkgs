@@ -73,15 +73,6 @@
       the runtime closure of the service.
      </para>
    </listitem>
-   <listitem>
-     <para>
-       A UEFI installer image for Aarch64 is now
-       <link xlink:href="https://hydra.nixos.org/job/nixos/release-19.03/nixos.iso_minimal.aarch64-linux/latest">
-         built by Hydra</link>.
-       It should work on all devices with a UEFI implementation
-       such as upstream u-boot.
-     </para>
-   </listitem>
   </itemizedlist>
  </section>
 
@@ -107,6 +98,11 @@
      <literal>nixos/modules/virtualisation/google-compute-config.nix</literal>.
     </para>
    </listitem>
+   <listitem>
+    <para>
+     <literal>./services/misc/beanstalkd.nix</literal>
+    </para>
+   </listitem>
 
    <listitem>
     <para><filename>services/misc/beanstalkd.nix</filename></para>
@@ -120,7 +116,7 @@
 
    <listitem>
     <para>
-     <filename>security/duosec.nix</filename>
+     <literal>./security/duosec.nix</literal>
     </para>
     <para>
      The <link xlink:href="https://duo.com/docs/duounix">PAM module for Duo
@@ -488,7 +484,7 @@
      account module verification was exited prematurely in case a nss module
      provided the account name to <literal>pam_unix</literal>. The LDAP and
      SSSD NixOS modules already add their NSS modules when enabled. In case
-     your setup breaks due to some later PAM account module previously
+     your setup breaks due to some later PAM account module previosuly
      shadowed, or failing NSS lookups, please file a bug. You can get back the
      old behaviour by manually setting <literal>
 <![CDATA[security.pam.services.<name?>.text]]>
@@ -578,25 +574,6 @@
        <literal>nodejs-6_x</literal>, <literal>nodejs-slim-6_x</literal> and
        <literal>nodePackages_6_x</literal> are removed.
      </para>
-   </listitem>
-   <listitem>
-    <para>
-      The directory where Prometheus will store its metric data is now
-      managed by systemd's StateDirectory mechanism. It still defaults
-      to <literal>/var/lib/prometheus</literal>.
-    </para>
-    <para>
-      Its location can be specified by the new
-      <option>services.prometheus.stateDir</option> option which
-      defaults to <literal>prometheus</literal>. Note that this should
-      be a directory relative to <literal>/var/lib/</literal>.
-    </para>
-    <para>
-      The option <option>services.prometheus.dataDir</option> has been
-      deprecated. You can still set it but it's now required to have
-      <literal>/var/lib/</literal> as a prefix and you can't set
-      <option>services.prometheus.stateDir</option> at the same time.
-    </para>
    </listitem>
   </itemizedlist>
  </section>
@@ -767,7 +744,7 @@
    </listitem>
    <listitem>
     <para>
-     The default value of
+     Note that the default value of
      <varname>services.kubernetes.apiserver.bindAddress</varname> has changed
      from 127.0.0.1 to 0.0.0.0, allowing the apiserver to be accessible from
      outside the master node itself. If the apiserver insecurePort is enabled,
@@ -785,7 +762,7 @@
    </listitem>
    <listitem>
     <para>
-     The kubernetes module no longer adds the kubernetes package to
+     The kubernetes module does no longer add the kubernetes package to
      <varname>environment.systemPackages</varname> implicitly.
     </para>
    </listitem>
@@ -796,17 +773,16 @@
      drivers</link>. The <literal>modesetting</literal> driver should take over
      automatically, it is better maintained upstream and has less problems with
      advanced X11 features. This can lead to a change in the output names used
-     by <command>xrandr</command>. Some performance regressions on some GPU
+     by <literal>xrandr</literal>. Some performance regressions on some GPU
      models might happen. Some OpenCL and VA-API applications might also break
      (Beignet seems to provide OpenCL support with
      <literal>modesetting</literal> driver, too). Kernel mode setting API does
-     not support backlight control, so <command>xbacklight</command> tool will
+     not support backlight control, so <literal>xbacklight</literal> tool will
      not work; backlight level can be controlled directly via
-     <filename>/sys/</filename> or with <command>brightnessctl</command> or
-     <command>light</command>. Users
+     <literal>/sys/</literal> or with <literal>brightnessctl</literal>. Users
      who need this functionality more than multi-output XRandR are advised to
-     add <literal>intel</literal> to <varname>videoDrivers</varname> and report
-     an issue (or provide additional details in an existing one).
+     add `intel` to `videoDrivers` and report an issue (or provide additional
+     details in an existing one)
     </para>
    </listitem>
    <listitem>
@@ -816,8 +792,6 @@
      those symbols. An upgrade guide can be found
      <link xlink:href="https://www.open-mpi.org/faq/?category=mpi-removed">here</link>.
     </para>
-   </listitem>
-   <listitem>
     <para>
      The nginx package now relies on OpenSSL 1.1 and supports TLS 1.3 by
      default. You can set the protocols used by the nginx service using
@@ -828,20 +802,6 @@
     <para>
      A new subcommand <command>nixos-rebuild edit</command> was added.
     </para>
-   </listitem>
-   <listitem>
-     <para>
-       <function>stdenv.mkDerivation</function> may now be passed
-       <varname>pname</varname> and <varname>version</varname> attributes
-       instead of <varname>name</varname>, and will now automatically
-       construct the package name by joining them with a dash.
-     </para>
-   </listitem>
-   <listitem>
-     <para>
-       The Sway tiling Wayland compositor has been updated to version 1.0, and the
-       corresponding NixOS module has been refined to fix some bugs.
-     </para>
    </listitem>
   </itemizedlist>
  </section>

@@ -17,7 +17,11 @@ let
     database ${cfg.database}
     suffix ${cfg.suffix}
     rootdn ${cfg.rootdn}
-    rootpw ${cfg.rootpw}
+    ${if (cfg.rootpw != null) then ''
+      rootpw ${cfg.rootpw}
+    '' else ''
+      include ${cfg.rootpwFile}
+    ''}
     directory ${cfg.dataDir}
     ${cfg.extraDatabaseConfig}
   '');
@@ -90,14 +94,6 @@ in {
       '';
     };
 
-    rootpw = mkOption {
-      type = types.str;
-      description = ''
-        Password for the root user.
-        This setting will be ignored if configDir is set.
-      '';
-    };
-
     configDir = mkOption {
       type = types.nullOr types.path;
       default = null;
@@ -108,6 +104,55 @@ in {
         defaultSchemas, extraConfig, extraDatabaseConfig.
       '';
       example = "/var/db/slapd.d";
+    };
+
+    rootpw = mkOption {
+      type = types.nullOr types.str;
+      default = null;
+      description = ''
+        Password for the root user.
+        This setting will be ignored if configDir is set.
+        Using this option will store the root password in plain text in the
+        world-readable nix store. To avoid this the <literal>rootpwFile</literal> can be used.
+      '';
+    };
+
+    rootpwFile = mkOption {
+      type = types.nullOr types.str;
+      default = null;
+      description = ''
+        Password file for the root user.
+        The file should contain the string <literal>rootpw</literal> followed by the password.
+        e.g.: <literal>rootpw mysecurepassword</literal>
+      '';
+    };
+
+    logLevel = mkOption {
+      type = types.str;
+      default = "0";
+      example = "acl trace";
+      description = "The log level selector of slapd.";
+    };
+
+    extraConfig = mkOption {
+      type = types.lines;
+      default = "";
+      description = ''
+        slapd.conf configuration before the database option.
+        This setting will be ignored if configDir is set.
+      '';
+      example = ''
+        # Subtypes of "name" (e.g. "cn" and "ou") with the
+        # option ";x-hidden" can be searched for/compared,
+        # but are not shown.  See slapd.access(5).
+        attributeoptions x-hidden lang-
+        access to attrs=name;x-hidden by * =cs
+
+        # Protect passwords.  See slapd.access(5).
+        access to attrs=userPassword  by * auth
+        # Read access to other attributes and entries.
+        access to * by * read
+      '';
     };
 
     declarativeContents = mkOption {
@@ -135,27 +180,6 @@ in {
         ou: users
 
         # ...
-      '';
-    };
-
-    extraConfig = mkOption {
-      type = types.lines;
-      default = "";
-      description = ''
-        slapd.conf configuration before the database option.
-        This setting will be ignored if configDir is set.
-      '';
-      example = ''
-        # Subtypes of "name" (e.g. "cn" and "ou") with the
-        # option ";x-hidden" can be searched for/compared,
-        # but are not shown.  See slapd.access(5).
-        attributeoptions x-hidden lang-
-        access to attrs=name;x-hidden by * =cs
-
-        # Protect passwords.  See slapd.access(5).
-        access to attrs=userPassword  by * auth
-        # Read access to other attributes and entries.
-        access to * by * read
       '';
     };
 
@@ -192,7 +216,17 @@ in {
     };
   };
 
-  config = mkIf config.services.openldap.enable {
+
+  ###### implementation
+
+  config = mkIf cfg.enable {
+    assertions = [
+      {
+        assertion = cfg.configDir != null || cfg.rootpwFile != null || cfg.rootpw != null;
+        message = "services.openldap: Unless configDir is set, either rootpw or rootpwFile must be set";
+      }
+    ];
+
     environment.systemPackages = [ openldap ];
 
     systemd.services.openldap = {
@@ -200,8 +234,8 @@ in {
       wantedBy = [ "multi-user.target" ];
       after = [ "network.target" ];
       preStart = ''
-        mkdir -p /var/run/slapd
-        chown -R "${cfg.user}:${cfg.group}" /var/run/slapd
+        mkdir -p /run/slapd
+        chown -R "${cfg.user}:${cfg.group}" /run/slapd
         ${optionalString (cfg.declarativeContents != null) ''
           rm -Rf "${cfg.dataDir}"
         ''}
@@ -212,7 +246,7 @@ in {
         chown -R "${cfg.user}:${cfg.group}" "${cfg.dataDir}"
       '';
       serviceConfig.ExecStart =
-        "${openldap.out}/libexec/slapd -d 0 " +
+        "${openldap.out}/libexec/slapd -d '${cfg.logLevel}' " +
           "-u '${cfg.user}' -g '${cfg.group}' " +
           "-h '${concatStringsSep " " cfg.urlList}' " +
           "${configOpts}";

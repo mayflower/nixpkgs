@@ -1,4 +1,4 @@
-{ config, lib, pkgs }:
+{ config, lib, pkgs, options }:
 
 with lib;
 
@@ -63,6 +63,7 @@ in
   serviceOpts = {
     serviceConfig = {
       SupplementaryGroups = optionalString cfg.systemd.enable "systemd-journal";
+      DynamicUser = false;
       ExecStart = ''
         ${pkgs.prometheus-postfix-exporter}/bin/postfix_exporter \
           --web.listen-address ${cfg.listenAddress}:${toString cfg.port} \

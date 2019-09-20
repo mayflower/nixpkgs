@@ -2,7 +2,7 @@
 , makeWrapper, enet, libXcursor, bullet, openal }:
 
 stdenv.mkDerivation rec {
-  name = "stunt-rally-${version}";
+  pname = "stunt-rally";
   version = "2.6.1";
 
   src = fetchurl {
@@ -27,7 +27,7 @@ stdenv.mkDerivation rec {
   '';
 
   nativeBuildInputs = [ pkgconfig ];
-  buildInputs = [ cmake boost ogre mygui ois SDL2 libvorbis 
+  buildInputs = [ cmake boost ogre mygui ois SDL2 libvorbis
     makeWrapper enet libXcursor bullet openal
   ];
 

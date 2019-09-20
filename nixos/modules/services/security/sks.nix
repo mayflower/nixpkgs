@@ -177,8 +177,11 @@ in {
       groups."sks".gid = config.ids.gids.sks;
     };
 
-    systemd.services = {
-      "sks-db" = {
+    systemd.services = let
+      hkpAddress = "'" + (builtins.concatStringsSep " " cfg.hkpAddress) + "'" ;
+      hkpPort = builtins.toString cfg.hkpPort;
+    in {
+      sks-db = {
         description = "SKS database server";
         after = [ "network.target" ];
         wantedBy = [ "multi-user.target" ];

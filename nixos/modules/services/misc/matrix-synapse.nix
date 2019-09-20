@@ -30,7 +30,7 @@ ${optionalString (cfg.bind_host != null) ''
 bind_host: "${cfg.bind_host}"
 ''}
 server_name: "${cfg.server_name}"
-pid_file: "/var/run/matrix-synapse.pid"
+pid_file: "/run/matrix-synapse.pid"
 web_client: ${boolToString cfg.web_client}
 ${optionalString (cfg.public_baseurl != null) ''
 public_baseurl: "${cfg.public_baseurl}"
@@ -374,7 +374,7 @@ in {
             user = cfg.database_user;
             database = cfg.database_name;
           };
-        }."${cfg.database_type}";
+        }.${cfg.database_type};
         description = ''
           Arguments to pass to the engine.
         '';
@@ -554,7 +554,10 @@ in {
       };
       trusted_third_party_id_servers = mkOption {
         type = types.listOf types.str;
-        default = ["matrix.org"];
+        default = [
+          "matrix.org"
+          "vector.im"
+        ];
         description = ''
           The list of identity servers trusted to verify third party identifiers by this server.
         '';
@@ -681,7 +684,7 @@ in {
         fi
       '';
       serviceConfig = {
-        Type = "simple";
+        Type = "notify";
         User = "matrix-synapse";
         Group = "matrix-synapse";
         WorkingDirectory = cfg.dataDir;

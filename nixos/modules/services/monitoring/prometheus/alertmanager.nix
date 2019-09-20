@@ -42,30 +42,6 @@ in {
         '';
       };
 
-      user = mkOption {
-        type = types.str;
-        default = "alertmanager";
-        description = ''
-          User name under which Alertmanager shall be run.
-        '';
-      };
-
-      group = mkOption {
-        type = types.str;
-        default = "alertmanager";
-        description = ''
-          Group under which Alertmanager shall be run.
-        '';
-      };
-
-      stateDir = mkOption {
-        type = types.str;
-        default = "/var/lib/alertmanager";
-        description = ''
-          Directory where alertmanager saves its state, i.e. silences.
-        '';
-      };
-
       configuration = mkOption {
         type = types.nullOr types.attrs;
         default = null;
@@ -116,7 +92,8 @@ in {
         type = types.str;
         default = "";
         description = ''
-          Address to listen on for the web interface and API.
+          Address to listen on for the web interface and API. Empty string will listen on all interfaces.
+          "localhost" will listen on 127.0.0.1 (but not ::1).
         '';
       };
 
@@ -175,17 +152,13 @@ in {
       systemd.services.alertmanager = {
         wantedBy = [ "multi-user.target" ];
         after    = [ "network.target" ];
-        script = ''
-          ${cfg.package}/bin/alertmanager \
-            ${concatStringsSep " \\\n  " cmdlineArgs}
-        '';
-
         serviceConfig = {
-          User = cfg.user;
-          Group = cfg.group;
           Restart  = "always";
-          PrivateTmp = true;
-          WorkingDirectory = cfg.stateDir;
+          DynamicUser = true;
+          WorkingDirectory = "/tmp";
+          ExecStart = "${cfg.package}/bin/alertmanager" +
+            optionalString (length cmdlineArgs != 0) (" \\\n  " +
+              concatStringsSep " \\\n  " cmdlineArgs);
           ExecReload = "${pkgs.coreutils}/bin/kill -HUP $MAINPID";
         };
       };

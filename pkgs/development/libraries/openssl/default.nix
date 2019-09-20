@@ -8,11 +8,12 @@
 with stdenv.lib;
 
 let
-  common = args@{ version, sha256, patches ? [], withDocs ? false }: stdenv.mkDerivation rec {
-    name = "openssl-${version}";
+  common = { version, sha256, patches ? [], withDocs ? false }: stdenv.mkDerivation rec {
+    pname = "openssl";
+    inherit version;
 
     src = fetchurl {
-      url = "https://www.openssl.org/source/${name}.tar.gz";
+      url = "https://www.openssl.org/source/${pname}-${version}.tar.gz";
       inherit sha256;
     };
 
@@ -44,10 +45,10 @@ let
     # TODO(@Ericson2314): Improve with mass rebuild
     configurePlatforms = [];
     configureScript = {
-        "x86_64-darwin"  = "./Configure darwin64-x86_64-cc";
-        "x86_64-solaris" = "./Configure solaris64-x86_64-gcc";
-        "armv6l-linux" = "./Configure linux-armv4 -march=armv6";
-        "armv7l-linux" = "./Configure linux-armv4 -march=armv7-a";
+        x86_64-darwin  = "./Configure darwin64-x86_64-cc";
+        x86_64-solaris = "./Configure solaris64-x86_64-gcc";
+        armv6l-linux = "./Configure linux-armv4 -march=armv6";
+        armv7l-linux = "./Configure linux-armv4 -march=armv7-a";
       }.${stdenv.hostPlatform.system} or (
         if stdenv.hostPlatform == stdenv.buildPlatform
           then "./config"
@@ -74,7 +75,14 @@ let
       ++ stdenv.lib.optional enableSSL3 "enable-ssl3"
       ++ stdenv.lib.optional (versionAtLeast version "1.1.0" && stdenv.hostPlatform.isAarch64) "no-afalgeng";
 
-    makeFlags = [ "MANDIR=$(man)/share/man" ];
+    makeFlags = [
+      "MANDIR=$(man)/share/man"
+      # This avoids conflicts between man pages of openssl subcommands (for
+      # example 'ts' and 'err') man pages and their equivalent top-level
+      # command in other packages (respectively man-pages and moreutils).
+      # This is done in ubuntu and archlinux, and possiibly many other distros.
+      "MANSUFFIX=ssl"
+    ];
 
     enableParallelBuilding = true;
 
@@ -115,15 +123,14 @@ let
       license = licenses.openssl;
       platforms = platforms.all;
       maintainers = [ maintainers.peti ];
-      priority = 10; # resolves collision with ‘man-pages’
     };
   };
 
 in {
 
   openssl_1_0_2 = common {
-    version = "1.0.2r";
-    sha256 = "1mnh27zf6r1bhm5d9fxqq9slv2gz0d9z2ij9i679b0wapa5x0ldf";
+    version = "1.0.2t";
+    sha256 = "1g67ra0ph7gpz6fgvv1i96d792jmd6ymci5kk53vbikszr74djql";
     patches = [
       ./1.0.2/nix-ssl-cert-file.patch
 
@@ -134,15 +141,10 @@ in {
   };
 
   openssl_1_1 = common {
-    version = "1.1.1b";
-    sha256 = "0jza8cmznnyiia43056dij1jdmz62dx17wsn0zxksh9h6817nmaw";
+    version = "1.1.1d";
+    sha256 = "1whinyw402z3b9xlb3qaxv4b9sk4w1bgh9k0y8df1z4x3yy92fhy";
     patches = [
       ./1.1/nix-ssl-cert-file.patch
-      (fetchurl {
-        name = "long-chacha-nonce.patch";
-        url = "https://git.openssl.org/gitweb/?p=openssl.git;a=commitdiff_plain;h=f426625b6ae9a7831010750490a5f0ad689c5ba3";
-        sha256= "02ghqg3vzmzx3s1dwwwbm1p1l4asaiampyg4k9vfrjwficvgpdgp";
-      })
 
       (if stdenv.hostPlatform.isDarwin
        then ./1.1/use-etc-ssl-certs-darwin.patch

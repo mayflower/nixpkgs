@@ -1,6 +1,6 @@
 { mkDerivation, fetchpatch }:
 
-mkDerivation rec {
+mkDerivation {
   version = "19.3.6.11";
   sha256 = "0b02iv8dly1vkc2xnqqi030sdj34h4gji2h4qgilllajr1f868vm";
 
@@ -14,7 +14,7 @@ mkDerivation rec {
   ];
 
   prePatch = ''
-    substituteInPlace configure.in --replace '`sw_vers -productVersion`' '10.10'
+    substituteInPlace configure.in --replace '`sw_vers -productVersion`' "''${MACOSX_DEPLOYMENT_TARGET:-10.12}"
   '';
 
   meta.broken = true; # broken with openssl 1.1

@@ -1,14 +1,15 @@
-{ stdenv, runCommand, writeScriptBin, buildEnv
-, perlPackages, runtimeShell
+{ lib, runCommand, writeScriptBin, buildEnv
+, python3Packages, perlPackages, runtimeShell
 }:
 
-with stdenv.lib;
+with lib;
 
 weechat:
 
 let
   wrapper = {
-    configure ? { availablePlugins, ... }: { plugins = builtins.attrValues availablePlugins; }
+    installManPages ? true
+  , configure ? { availablePlugins, ... }: { plugins = builtins.attrValues availablePlugins; }
   }:
 
   let
@@ -17,11 +18,15 @@ let
     availablePlugins = let
         simplePlugin = name: { pluginFile = "${weechat.${name}}/lib/weechat/plugins/${name}.so"; };
       in rec {
-        python = {
-          pluginFile = "${weechat.python}/lib/weechat/plugins/python.so";
+        python = (simplePlugin "python") // {
           extraEnv = ''
-            export PYTHONHOME="${weechat.pythonPkg.withPackages scriptsPyPackages}"
+            export PATH="${python3Packages.python}/bin:$PATH"
           '';
+          withPackages = pkgsFun: (python // {
+            extraEnv = ''
+              export PYTHONHOME="${python3Packages.python.withPackages pkgsFun}"
+            '';
+          });
         };
         perl = (simplePlugin "perl") // {
           extraEnv = ''
@@ -48,7 +53,7 @@ let
     init = let
       init = builtins.replaceStrings [ "\n" ] [ ";" ] (config.init or "");
 
-      mkScript = drv: flip map drv.scripts (script: "/script load ${drv}/share/${script}");
+      mkScript = drv: lib.forEach drv.scripts (script: "/script load ${drv}/share/${script}");
 
       scripts = builtins.concatStringsSep ";" (foldl (scripts: drv: scripts ++ mkScript drv)
         [ ] (config.scripts or []));
@@ -60,14 +65,22 @@ let
       ${concatMapStringsSep "\n" (p: p.extraEnv or "") plugins}
       exec ${weechat}/bin/${bin} "$@" --run-command ${escapeShellArg init}
     '') // {
-      inherit (weechat) name;
+      inherit (weechat) name man;
       unwrapped = weechat;
+      outputs = [ "out" "man" ];
     };
   in buildEnv {
     name = "weechat-bin-env-${weechat.version}";
+    extraOutputsToInstall = lib.optionals installManPages [ "man" ];
     paths = [
       (mkWeechat "weechat")
       (mkWeechat "weechat-headless")
+      (runCommand "weechat-out-except-bin" { } ''
+        mkdir $out
+        ln -sf ${weechat}/include $out/include
+        ln -sf ${weechat}/lib $out/lib
+        ln -sf ${weechat}/share $out/share
+      '')
     ];
     meta = builtins.removeAttrs weechat.meta [ "outputsToInstall" ];
   };

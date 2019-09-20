@@ -1,4 +1,4 @@
-{ stdenv, fetchFromGitLab, buildGoPackage, ruby, bundlerEnv, pkgconfig, libgit2_0_27 }:
+{ stdenv, fetchFromGitLab, buildGoPackage, ruby, bundlerEnv, pkgconfig, libgit2 }:
 
 let
   rubyEnv = bundlerEnv rec {
@@ -18,7 +18,7 @@ let
   };
 in buildGoPackage rec {
   version = "1.53.2";
-  name = "gitaly-${version}";
+  pname = "gitaly";
 
   src = fetchFromGitLab {
     owner = "gitlab-org";
@@ -34,7 +34,7 @@ in buildGoPackage rec {
   };
 
   nativeBuildInputs = [ pkgconfig ];
-  buildInputs = [ rubyEnv.wrappedRuby libgit2_0_27 ];
+  buildInputs = [ rubyEnv.wrappedRuby libgit2 ];
   goDeps = ./deps.nix;
   preBuild = "rm -r go/src/gitlab.com/gitlab-org/labkit/vendor";
 

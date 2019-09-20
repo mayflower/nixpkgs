@@ -9,7 +9,7 @@ assert enableFaac -> faac != null;
 with lib;
 
 stdenv.mkDerivation rec {
-  name = "darkice-${version}";
+  pname = "darkice";
   version = "1.3";
 
   src = fetchurl {

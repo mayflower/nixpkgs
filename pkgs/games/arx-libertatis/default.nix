@@ -9,8 +9,8 @@
 
 with stdenv.lib;
 
-stdenv.mkDerivation rec {
-  name = "arx-libertatis-${version}";
+stdenv.mkDerivation {
+  pname = "arx-libertatis";
   version = "2019-02-16";
 
   src = fetchFromGitHub {
@@ -44,7 +44,7 @@ stdenv.mkDerivation rec {
       ${dejavu_fonts}/share/fonts/truetype/DejaVuSansMono.ttf \
       $out/share/games/arx/misc/dejavusansmono.ttf
   '';
-  
+
   meta = {
     description = ''
       A cross-platform, open source port of Arx Fatalis, a 2002

@@ -40,6 +40,8 @@ callPackage ./common.nix { inherit stdenv; } {
     #      limit rebuilds by only disabling pie w/musl
       ++ stdenv.lib.optional stdenv.hostPlatform.isMusl "pie";
 
+    NIX_CFLAGS_COMPILE = if withGd then "-Wno-error=stringop-truncation" else null;
+
     # When building glibc from bootstrap-tools, we need libgcc_s at RPATH for
     # any program we run, because the gcc will have been placed at a new
     # store path than that determined when built (as a source for the
@@ -59,7 +61,7 @@ callPackage ./common.nix { inherit stdenv; } {
     postInstall = (if stdenv.hostPlatform == stdenv.buildPlatform then ''
       echo SUPPORTED-LOCALES=C.UTF-8/UTF-8 > ../glibc-2*/localedata/SUPPORTED
       make -j''${NIX_BUILD_CORES:-1} -l''${NIX_BUILD_CORES:-1} localedata/install-locales
-    '' else ''
+    '' else stdenv.lib.optionalString stdenv.buildPlatform.isLinux ''
       # This is based on http://www.linuxfromscratch.org/lfs/view/development/chapter06/glibc.html
       # Instead of using their patch to build a build-native localedef,
       # we simply use the one from buildPackages

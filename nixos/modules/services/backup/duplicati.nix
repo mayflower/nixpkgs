@@ -19,7 +19,7 @@ in
       };
 
       interface = mkOption {
-        default = "lo";
+        default = "127.0.0.1";
         type = types.str;
         description = ''
           Listening interface for the web UI
@@ -47,8 +47,8 @@ in
       wantedBy = [ "multi-user.target" ];
       serviceConfig = {
         User = cfg.user;
-        PermissionsStartOnly = true;
         Group = "duplicati";
+        StateDirectory = "duplicati";
         ExecStart = "${pkgs.duplicati}/bin/duplicati-server --webservice-interface=${cfg.interface} --webservice-port=${toString cfg.port} --server-datafolder=/var/lib/duplicati";
         Restart = "on-failure";
       };

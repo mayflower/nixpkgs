@@ -5,6 +5,7 @@
 # Not mentioned but seems needed
 , qtgraphicaleffects
 , qtdeclarative
+, qtmacextras
 }:
 
 let
@@ -17,7 +18,7 @@ let
     qtbase.bin qtdeclarative.bin qtquickcontrols2.bin qtgraphicaleffects qtmultimedia
   ];
 
-in stdenv.mkDerivation rec {
+in stdenv.mkDerivation {
   pname = "spectral";
   version = "2019-03-03";
 
@@ -37,7 +38,8 @@ in stdenv.mkDerivation rec {
 
   nativeBuildInputs = [ pkgconfig qmake makeWrapper ];
   buildInputs = [ qtbase qtquickcontrols2 qtmultimedia qtgraphicaleffects qtdeclarative ]
-    ++ stdenv.lib.optional stdenv.hostPlatform.isLinux libpulseaudio;
+    ++ stdenv.lib.optional stdenv.hostPlatform.isLinux libpulseaudio
+    ++ stdenv.lib.optional stdenv.hostPlatform.isDarwin qtmacextras;
 
   meta = with stdenv.lib; {
     description = "A glossy client for Matrix, written in QtQuick Controls 2 and C++";

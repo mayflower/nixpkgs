@@ -8,7 +8,9 @@ let
 
   nix = cfg.package.out;
 
-  isNix20 = versionAtLeast (getVersion nix) "2.0pre";
+  nixVersion = getVersion nix;
+
+  isNix20 = versionAtLeast nixVersion "2.0pre";
 
   makeNixBuildUser = nr:
     { name = "nixbld${toString nr}";
@@ -59,6 +61,10 @@ let
         allowed-users = ${toString cfg.allowedUsers}
         ${optionalString (isNix20 && !cfg.distributedBuilds) ''
           builders =
+        ''}
+        system-features = ${toString cfg.systemFeatures}
+        ${optionalString (versionAtLeast nixVersion "2.3pre") ''
+          sandbox-fallback = false
         ''}
         $extraOptions
         END
@@ -271,10 +277,12 @@ in
 
       binaryCaches = mkOption {
         type = types.listOf types.str;
-        default = [ https://cache.nixos.org/ https://hydra.mayflower.de/ ];
         description = ''
           List of binary cache URLs used to obtain pre-built binaries
           of Nix packages.
+
+          By default https://cache.nixos.org/ is added,
+          to override it use <literal>lib.mkForce []</literal>.
         '';
       };
 
@@ -361,6 +369,14 @@ in
         '';
       };
 
+      systemFeatures = mkOption {
+        type = types.listOf types.str;
+        example = [ "kvm" "big-parallel" "gccarch-skylake" ];
+        description = ''
+          The supported features of a machine
+        '';
+      };
+
       checkConfig = mkOption {
         type = types.bool;
         default = true;
@@ -380,6 +396,8 @@ in
       "hydra.mayflower.de:9knPU2SJ2xyI0KTJjtUKOGUVdR2/3cOB4VNDQThcfaY="
       "cache.nixos.org-1:6NCHdD59X431o0gWypbMrAURkbJ16ZPMQFGspcDShjY="
     ];
+
+    nix.binaryCaches = [ "https://cache.nixos.org/" ];
 
     environment.etc."nix/nix.conf".source = nixConf;
 
@@ -458,7 +476,7 @@ in
         fi
       '';
 
-    nix.nrBuildUsers = mkDefault (lib.max 32 cfg.maxJobs);
+    nix.nrBuildUsers = mkDefault (lib.max 32 (if cfg.maxJobs == "auto" then 0 else cfg.maxJobs));
 
     users.users = nixbldUsers;
 
@@ -480,6 +498,21 @@ in
           /nix/var/nix/profiles/per-user \
           /nix/var/nix/gcroots/tmp
       '';
+
+    nix.systemFeatures = mkDefault (
+      [ "nixos-test" "benchmark" "big-parallel" "kvm" ] ++
+      optionals (pkgs.stdenv.isx86_64 && pkgs.hostPlatform.platform ? gcc.arch) (
+        # a x86_64 builder can run code for `platform.gcc.arch` and minor architectures:
+        [ "gccarch-${pkgs.hostPlatform.platform.gcc.arch}" ] ++ {
+          sandybridge    = [ "gccarch-westmere" ];
+          ivybridge      = [ "gccarch-westmere" "gccarch-sandybridge" ];
+          haswell        = [ "gccarch-westmere" "gccarch-sandybridge" "gccarch-ivybridge" ];
+          broadwell      = [ "gccarch-westmere" "gccarch-sandybridge" "gccarch-ivybridge" "gccarch-haswell" ];
+          skylake        = [ "gccarch-westmere" "gccarch-sandybridge" "gccarch-ivybridge" "gccarch-haswell" "gccarch-broadwell" ];
+          skylake-avx512 = [ "gccarch-westmere" "gccarch-sandybridge" "gccarch-ivybridge" "gccarch-haswell" "gccarch-broadwell" "gccarch-skylake" ];
+        }.${pkgs.hostPlatform.platform.gcc.arch} or []
+      )
+    );
 
   };
 
