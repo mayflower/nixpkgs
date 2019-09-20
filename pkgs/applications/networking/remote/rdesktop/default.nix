@@ -1,4 +1,4 @@
-{stdenv, fetchFromGitHub, fetchpatch, openssl, libX11, libgssglue, pkgconfig, autoreconfHook
+{stdenv, fetchFromGitHub, openssl, libX11, libgssglue, pkgconfig, autoreconfHook
 , enableCredssp ? (!stdenv.isDarwin)
 } :
 
@@ -22,17 +22,6 @@ stdenv.mkDerivation (rec {
     "--with-openssl=${openssl.dev}"
     "--disable-smartcard"
   ] ++ stdenv.lib.optional (!enableCredssp) "--disable-credssp";
-
-  patches = [
-    (fetchpatch {
-      url = "https://github.com/rdesktop/rdesktop/commit/bd6aa6acddf0ba640a49834807872f4cc0d0a773.patch";
-      sha256 = "1siczw870nf2cxqp89y5wdry88b05wwwx2v2i8gsrw5jbc6ar0zs";
-    })
-    (fetchpatch {
-      url = "https://github.com/rdesktop/rdesktop/commit/c6e8e1074b8ac57de6c80c4e3ed38e105b4d94f1.patch";
-      sha256 = "1zac8ijmvamgzs0lhkifqvsbyhqzm3pq84blfq1xnz43vx1skwf8";
-    })
-  ];
 
   meta = {
     description = "Open source client for Windows Terminal Services";

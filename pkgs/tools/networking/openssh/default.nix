@@ -1,4 +1,4 @@
-{ stdenv, fetchurl, fetchpatch, zlib, openssl_1_0_2, libedit, pkgconfig, pam, autoreconfHook, patchutils
+{ stdenv, fetchurl, fetchpatch, zlib, openssl, libedit, pkgconfig, pam, autoreconfHook
 , etcDir ? null
 , hpnSupport ? false
 , withKerberos ? true
@@ -62,10 +62,10 @@ stdenv.mkDerivation rec {
       substituteInPlace Makefile.in --replace '$(INSTALL) -m 4711' '$(INSTALL) -m 0711'
     '';
 
-  nativeBuildInputs = [ pkgconfig autoreconfHook ];
-    # remove from above and uncomment below after removing openssl 1.1 patch
-    # ++ optional hpnSupport autoreconfHook;
-  buildInputs = optional withKerberos kerberos ++ [ zlib libedit pam openssl_1_0_2 ]
+  nativeBuildInputs = [ pkgconfig ];
+  buildInputs = [ zlib openssl libedit pam ]
+    ++ optional withKerberos kerberos
+    ++ optional hpnSupport autoreconfHook
     ;
 
   preConfigure = ''

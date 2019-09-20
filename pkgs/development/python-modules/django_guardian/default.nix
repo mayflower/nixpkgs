@@ -18,6 +18,5 @@ buildPythonPackage rec {
     description = "Per object permissions for Django";
     homepage = https://github.com/django-guardian/django-guardian;
     license = [ licenses.mit licenses.bsd2 ];
-    broken = !isPy3k; # https://github.com/django-guardian/django-guardian/pull/605
   };
 }

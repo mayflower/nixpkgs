@@ -1,4 +1,4 @@
-{ stdenv, fetchurl, pkgconfig, libxml2, bzip2, openssl_1_0_2, dbus-glib
+{ stdenv, fetchurl, pkgconfig, libxml2, bzip2, openssl, dbus-glib
 , glib, gamin, cdparanoia, intltool, GConf, gnome_mime_data, avahi, acl }:
 
 stdenv.mkDerivation rec {
@@ -14,7 +14,7 @@ stdenv.mkDerivation rec {
 
   nativeBuildInputs = [ intltool pkgconfig ];
   buildInputs =
-    [ libxml2 bzip2 openssl_1_0_2 dbus-glib gamin cdparanoia
+    [ libxml2 bzip2 openssl dbus-glib gamin cdparanoia
       gnome_mime_data avahi acl
     ];
 

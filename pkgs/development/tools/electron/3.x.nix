@@ -59,7 +59,7 @@ let
 
     src = fetchurl {
       url = "https://github.com/electron/electron/releases/download/v${version}/electron-v${version}-darwin-x64.zip";
-      sha256 = "1indim895a58ds09z91c8jfqmdp7ba85rx6bhq6dabgnvkykwmz0";
+      sha256 = "1vvjm4jifzjqvbs2kjlwg1h9p2czr2b5imjr9hld1j8nyfrzb0dx";
     };
 
     buildInputs = [ unzip ];

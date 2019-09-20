@@ -1,4 +1,4 @@
-{ lib, buildPythonPackage, fetchFromGitHub, click, pytest_3 }:
+{ lib, buildPythonPackage, fetchFromGitHub, click, pytest }:
 
 buildPythonPackage rec {
   pname = "click-default-group";
@@ -14,7 +14,7 @@ buildPythonPackage rec {
 
   propagatedBuildInputs = [ click ];
 
-  checkInputs = [ pytest_3 ];
+  checkInputs = [ pytest ];
 
   meta = with lib; {
     homepage = https://github.com/click-contrib/click-default-group;

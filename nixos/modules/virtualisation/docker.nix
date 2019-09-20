@@ -174,7 +174,6 @@ in
             ""
             "${pkgs.procps}/bin/kill -s HUP $MAINPID"
           ];
-          TaskMax = "infinity"; # we have systemd >= 226
         };
 
         path = [ pkgs.kmod ] ++ optional (cfg.storageDriver == "zfs") pkgs.zfs
@@ -184,7 +183,6 @@ in
       systemd.sockets.docker = {
         description = "Docker Socket for the API";
         wantedBy = [ "sockets.target" ];
-        partOf = [ "docker.service" ];
         socketConfig = {
           ListenStream = cfg.listenOptions;
           SocketMode = "0660";

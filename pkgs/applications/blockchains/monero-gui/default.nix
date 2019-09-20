@@ -74,11 +74,6 @@ mkDerivation rec {
       cp $src/images/appicons/$size.png \
          $out/share/icons/hicolor/$size/apps/monero.png
     done;
-
-    # wrap runtime dependencies
-    wrapProgram $out/bin/monero-wallet-gui \
-      --set QML2_IMPORT_PATH "${qml2ImportPath}" \
-      --set QT_PLUGIN_PATH "${qtbase.bin}/${qtbase.qtPluginPrefix}"
   '';
 
   meta = {

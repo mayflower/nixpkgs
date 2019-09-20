@@ -1,6 +1,6 @@
 { stdenv, buildPythonPackage, fetchPypi
 , setuptools_scm, pathpy, nbconvert
-, pytest_3 }:
+, pytest }:
 
 buildPythonPackage rec {
   pname = "zetup";
@@ -22,7 +22,7 @@ buildPythonPackage rec {
     py.test test -k "not TestObject" --deselect=test/test_zetup_config.py::test_classifiers
   '';
 
-  checkInputs = [ pytest_3 pathpy nbconvert ];
+  checkInputs = [ pytest pathpy nbconvert ];
   propagatedBuildInputs = [ setuptools_scm ];
 
   meta = with stdenv.lib; {

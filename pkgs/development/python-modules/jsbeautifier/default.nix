@@ -12,8 +12,6 @@ buildPythonApplication rec {
     sha256 = "1e389572ade865173605471e98df4002f4b6e5235121c13f1e4497a3eac69108";
   };
 
-  patchFlags = [ "-p2" ];
-
   meta = with lib; {
     homepage    = "http://jsbeautifier.org";
     description = "JavaScript unobfuscator and beautifier.";

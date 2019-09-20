@@ -61,6 +61,5 @@ mkDerivation {
     platforms = ["x86_64-linux" "x86_64-darwin"];
     license = pkgs.stdenv.lib.licenses.asl20;
     maintainers = with pkgs.stdenv.lib.maintainers; [ mdaiter ];
-    meta.broken = true; # broken with openssl 1.1
   };
 }

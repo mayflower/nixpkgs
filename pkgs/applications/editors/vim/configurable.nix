@@ -76,9 +76,7 @@ in stdenv.mkDerivation rec {
     default = common.src; # latest release
   };
 
-  patches = common.patches or []
-    ++ [ ./cflags-prune.diff ]
-    ++ stdenv.lib.optional ftNixSupport ./ft-nix-support.patch;
+  patches = [ ./cflags-prune.diff ] ++ stdenv.lib.optional ftNixSupport ./ft-nix-support.patch;
 
   configureFlags = [
     "--enable-gui=${guiSupport}"

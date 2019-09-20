@@ -1,4 +1,4 @@
-{ stdenv, fetchgit, perl, openssl_1_0_2, perlPackages, gettext, python3Packages
+{ stdenv, fetchgit, perl, openssl, perlPackages, gettext, python3Packages
 # TODO: Remove extra dependencies once it is clear that they are NOT needed somewhere.
 , extraDependencies1 ? false, extraDependencies2 ? false, extraDependencies3 ? false }:
 
@@ -12,7 +12,7 @@ perlPackages.buildPerlPackage {
     sha256 = "05bmhani2c7ays488xv3hx5xbxb612bnwq5rdjwmsj51xpaz454p";
   };
 
-  buildInputs = [ perl openssl_1_0_2 gettext python3Packages.sphinx ];
+  buildInputs = [ perl openssl gettext python3Packages.sphinx ];
   propagatedBuildInputs = with perlPackages;
     [ # dependencies from Makefile.PL
       libintl_perl ConfigVersioned LWP ClassAccessorChained IOSocketSSL ClassStd
@@ -52,9 +52,9 @@ perlPackages.buildPerlPackage {
 
   preConfigure = ''
     substituteInPlace core/server/Makefile.PL \
-      --replace "my \$openssl_inc_dir = ''';" "my \$openssl_inc_dir = '${openssl_1_0_2.dev}/include';" \
-      --replace "my \$openssl_lib_dir = ''';" "my \$openssl_lib_dir = '${openssl_1_0_2.out}/lib';" \
-      --replace "my \$openssl_binary  = ''';" "my \$openssl_binary  = '${openssl_1_0_2.bin}/bin/openssl';"
+      --replace "my \$openssl_inc_dir = ''';" "my \$openssl_inc_dir = '${openssl.dev}/include';" \
+      --replace "my \$openssl_lib_dir = ''';" "my \$openssl_lib_dir = '${openssl.out}/lib';" \
+      --replace "my \$openssl_binary  = ''';" "my \$openssl_binary  = '${openssl.bin}/bin/openssl';"
     substituteInPlace tools/vergen --replace "#!/usr/bin/perl" "#!${perl}/bin/perl"
     cp ${./vergen_revision_state} .vergen_revision_state
     cd core/server

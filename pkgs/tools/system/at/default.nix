@@ -23,7 +23,7 @@ stdenv.mkDerivation rec {
 
   nativeBuildInputs = [ bison flex perl /* for `prove` (tests) */ ];
 
-  buildInputs = [ flex pam ];
+  buildInputs = [ pam ];
 
   preConfigure =
     ''

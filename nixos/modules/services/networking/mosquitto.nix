@@ -69,7 +69,7 @@ in
 
         cafile = mkOption {
           type = types.nullOr types.path;
-          default = "/etc/ssl/certs/ca-certificates.crt";
+          default = null;
           description = "Path to PEM encoded CA certificates.";
         };
 
@@ -86,7 +86,7 @@ in
         };
 
         host = mkOption {
-          default = "::";
+          default = "0.0.0.0";
           example = "localhost";
           type = types.str;
           description = ''

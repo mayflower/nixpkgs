@@ -40,7 +40,7 @@ python3Packages.buildPythonApplication rec {
       pygobject3 ipaddress libvirt libxml2 requests
     ];
 
-  prePatch = ''
+  patchPhase = ''
     sed -i 's|/usr/share/libvirt/cpu_map.xml|${system-libvirt}/share/libvirt/cpu_map.xml|g' virtinst/capabilities.py
     sed -i "/'install_egg_info'/d" setup.py
   '';

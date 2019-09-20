@@ -80,15 +80,20 @@
          xmlns:xlink="http://www.w3.org/1999/xlink"
          xmlns:xi="http://www.w3.org/2001/XInclude"
          version="5.0"
-         xml:id="sec-release-19.03-new-modules">
-  <title>New Modules</title>
+         xml:id="sec-release-19.03-new-services">
+  <title>New Services</title>
+
   <para>
-   The following new modules were added since the last release:
+   The following new services were added since the last release:
   </para>
 
   <itemizedlist>
    <listitem>
-    <para><filename>security/google_oslogin.nix</filename></para>
+    <para>
+     <literal>./programs/nm-applet.nix</literal>
+    </para>
+   </listitem>
+   <listitem>
     <para>
      There is a new <varname>security.googleOsLogin</varname> module for using
      <link xlink:href="https://cloud.google.com/compute/docs/instances/managing-instance-access">OS
@@ -103,9 +108,7 @@
      <literal>./services/misc/beanstalkd.nix</literal>
     </para>
    </listitem>
-
    <listitem>
-    <para><filename>services/misc/beanstalkd.nix</filename></para>
     <para>
      There is a new <varname>services.cockroachdb</varname> module for running
      CockroachDB databases. NixOS now ships with CockroachDB 2.1.x as well,
@@ -113,11 +116,15 @@
      <literal>aarch64-linux</literal>.
     </para>
    </listitem>
+  </itemizedlist>
 
+  <itemizedlist>
    <listitem>
     <para>
      <literal>./security/duosec.nix</literal>
     </para>
+   </listitem>
+   <listitem>
     <para>
      The <link xlink:href="https://duo.com/docs/duounix">PAM module for Duo
      Security</link> has been enabled for use. One can configure it using the
@@ -126,53 +133,6 @@
      <option>security.pam.services.&lt;name?&gt;.duoSecurity.enable</option>.
     </para>
    </listitem>
-
-   <listitem>
-    <para>
-       Besides the existing <option>services.prometheus</option> module which
-       targets Prometheus-1 a new <option>services.prometheus2</option> module
-       has been added which targets Prometheus-2.
-    </para>
-    <para>
-       Both modules can be enabled at the same time. In fact
-       <link xlink:href="https://prometheus.io/docs/prometheus/latest/migration/#storage">
-       this is needed for upgrading existing Prometheus-1 data to Prometheus-2
-       </link>.
-    </para>
-   </listitem>
-   <listitem><para><filename>config/appstream.nix</filename></para></listitem>
-   <listitem><para><filename>config/xdg/sounds.nix</filename></para></listitem>
-   <listitem><para><filename>hardware/acpilight.nix</filename></para></listitem>
-   <listitem><para><filename>hardware/ledger.nix</filename></para></listitem>
-   <listitem><para><filename>programs/dmrconfig.nix</filename></para></listitem>
-   <listitem><para><filename>programs/iotop.nix</filename></para></listitem>
-   <listitem><para><filename>programs/mininet.nix</filename></para></listitem>
-   <listitem><para><filename>programs/nm-applet.nix</filename></para></listitem>
-   <listitem><para><filename>programs/wavemon.nix</filename></para></listitem>
-   <listitem><para><filename>security/google_oslogin.nix</filename></para></listitem>
-   <listitem><para><filename>security/misc.nix</filename></para></listitem>
-   <listitem><para><filename>services/desktops/gnome3/rygel.nix</filename></para></listitem>
-   <listitem><para><filename>services/desktops/gsignond.nix</filename></para></listitem>
-   <listitem><para><filename>services/hardware/bolt.nix</filename></para></listitem>
-   <listitem><para><filename>services/hardware/lirc.nix</filename></para></listitem>
-   <listitem><para><filename>services/hardware/ratbagd.nix</filename></para></listitem>
-   <listitem><para><filename>services/hardware/triggerhappy.nix</filename></para></listitem>
-   <listitem><para><filename>services/hardware/vdr.nix</filename></para></listitem>
-   <listitem><para><filename>services/mail/davmail.nix</filename></para></listitem>
-   <listitem><para><filename>services/mail/roundcube.nix</filename></para></listitem>
-   <listitem><para><filename>services/mail/rss2email.nix</filename></para></listitem>
-   <listitem><para><filename>services/misc/beanstalkd.nix</filename></para></listitem>
-   <listitem><para><filename>services/misc/bees.nix</filename></para></listitem>
-   <listitem><para><filename>services/misc/headphones.nix</filename></para></listitem>
-   <listitem><para><filename>services/misc/lidarr.nix</filename></para></listitem>
-   <listitem><para><filename>services/misc/sickbeard.nix</filename></para></listitem>
-   <listitem><para><filename>services/misc/weechat.nix</filename></para></listitem>
-   <listitem><para><filename>services/misc/zoneminder.nix</filename></para></listitem>
-   <listitem><para><filename>services/monitoring/alerta.nix</filename></para></listitem>
-   <listitem><para><filename>services/monitoring/kapacitor.nix</filename></para></listitem>
-   <listitem><para><filename>services/networking/iperf3.nix</filename></para></listitem>
-   <listitem><para><filename>services/networking/knot.nix</filename></para></listitem>
-
   </itemizedlist>
  </section>
 
@@ -329,7 +289,7 @@
    <listitem>
     <para>
      The versioned <varname>postgresql</varname> have been renamed to use
-     underscore number separators. For example, <varname>postgresql96</varname>
+     underscore number seperators. For example, <varname>postgresql96</varname>
      has been renamed to <varname>postgresql_9_6</varname>.
     </para>
    </listitem>

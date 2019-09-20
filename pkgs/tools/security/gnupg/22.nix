@@ -15,6 +15,7 @@ assert guiSupport -> pinentry != null;
 
 stdenv.mkDerivation rec {
   pname = "gnupg";
+
   version = "2.2.17";
 
   src = fetchurl {

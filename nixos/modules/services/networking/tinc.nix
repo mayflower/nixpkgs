@@ -161,7 +161,6 @@ in
           RestartSec = "3";
           ExecStart = "${data.package}/bin/tincd -D -U tinc.${network} -n ${network} ${optionalString (data.chroot) "-R"} --pidfile /run/tinc.${network}.pid -d ${toString data.debugLevel}";
         };
-
         preStart = ''
           mkdir -p /etc/tinc/${network}/hosts
           chown tinc.${network} /etc/tinc/${network}/hosts
@@ -181,18 +180,6 @@ in
             # Tinc 1.0 uses the tincd application
             [ -f "/etc/tinc/${network}/rsa_key.priv" ] || tincd -n ${network} -K 4096
           fi
-        '' + optionalString data.chroot ''
-          mkdir -p /etc/tinc/${network}/{etc,nix/store}
-          umount /etc/tinc/${network}/{etc/{hosts,resolv.conf},nix/store} || true
-          rm -f /etc/tinc/${network}/etc/{hosts,resolv.conf}
-          touch /etc/tinc/${network}/etc/{hosts,resolv.conf}
-          mount -o defaults,bind,ro /etc/hosts /etc/tinc/${network}/etc/hosts
-          mount -o defaults,bind,ro /etc/resolv.conf /etc/tinc/${network}/etc/resolv.conf
-          mount -o defaults,bind,ro /nix/store /etc/tinc/${network}/nix/store
-        '';
-        postStop = optionalString data.chroot ''
-          umount /etc/tinc/${network}/{etc/{hosts,resolv.conf},nix/store}
-          rm -r /etc/tinc/${network}/{etc,nix}
         '';
       })
     );

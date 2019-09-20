@@ -30,6 +30,5 @@ buildPythonPackage rec {
     description = "Backport of functools.lru_cache";
     homepage = https://github.com/jaraco/backports.functools_lru_cache;
     license = lib.licenses.mit;
-    priority = 10;
   };
 }

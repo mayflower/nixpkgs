@@ -31,6 +31,4 @@ in mkDerivation {
     makeOrderingPatch
     makeParallelInstallPatch
   ];
-
-  meta.broken = true; # broken with openssl 1.1
 }
