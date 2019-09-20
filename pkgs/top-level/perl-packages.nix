@@ -390,11 +390,6 @@ let
       description = "Test.pm wrapper with helpers for testing Apache";
       license = stdenv.lib.licenses.asl20;
     };
-    checkPhase = ''
-      make test \
-        NIX_REDIRECTS=/etc/protocols=${pkgs.iana-etc}/etc/protocols \
-        LD_PRELOAD=${pkgs.libredirect}/lib/libredirect.so
-    '';
   };
 
   AppCLI = buildPerlPackage {
@@ -6136,7 +6131,7 @@ let
       url = mirror://cpan/authors/id/X/XA/XAOC/ExtUtils-PkgConfig-1.16.tar.gz;
       sha256 = "bbeaced995d7d8d10cfc51a3a5a66da41ceb2bc04fedcab50e10e6300e801c6e";
     };
-    propagatedNativeBuildInputs = [ pkgs.buildPackages.pkgconfig ];
+    propagatedBuildInputs = [ pkgs.pkgconfig ];
     meta = {
       homepage = http://gtk2-perl.sourceforge.net;
       description = "Simplistic interface to pkg-config";
@@ -11244,8 +11239,6 @@ let
       url = mirror://cpan/authors/id/S/SR/SRI/Mojolicious-8.22.tar.gz;
       sha256 = "0m28yb1pbnbgdq0z7ykb44j93c1vwjzv7msm6vs7msysyx84mqw6";
     };
-    buildInputs = [ ExtUtilsMakeMaker ];
-    propagatedBuildInputs = [ IOSocketIP JSONPP PodSimple TimeLocal ];
     meta = {
       homepage = https://mojolicious.org;
       description = "Real-time web framework";

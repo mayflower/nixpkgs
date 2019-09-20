@@ -4,7 +4,7 @@ let
 
   inherit (builtins) toFile;
   inherit (lib) concatMapStringsSep concatStringsSep mapAttrsToList
-                mkIf mkEnableOption mkOption types concatStrings flip;
+                mkIf mkEnableOption mkOption types;
 
   cfg = config.services.strongswan;
 
@@ -40,16 +40,6 @@ let
         stroke {
           secrets_file = ${secretsFile}
         }
-        ${concatStrings (flip mapAttrsToList cfg.plugins (plugin: attrs: ''
-          ${plugin} {
-            ${concatStrings (flip mapAttrsToList attrs (k: v: ''
-              ${k} = ${v}
-            ''))}
-          }
-        ''))}
-        ${concatStrings (flip mapAttrsToList cfg.charonConfig (k: v: ''
-          ${k} = ${v}
-        ''))}
       }
     }
 
@@ -84,20 +74,6 @@ in
         <filename>ipsec.conf</filename> file. Defines general
         configuration parameters.
       '';
-    };
-
-    plugins = mkOption {
-      type = types.attrsOf (types.attrsOf types.str);
-      default = {};
-      example = { xauth-pam = { pam_service = "ipsec"; }; };
-      description = '' '';
-    };
-
-    charonConfig = mkOption {
-      type = types.attrsOf types.str;
-      default = {};
-      example = { install_routes = "0"; };
-      description = '' '';
     };
 
     connections = mkOption {

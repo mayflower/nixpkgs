@@ -116,14 +116,7 @@ stdenv.mkDerivation rec {
         ./qt-musl-iconv-no-bom.patch
         ./patch-qthread-stacksize.diff
         ./qsettings-recursive-global-mutex.patch
-      ]
-    ++ [
-      (fetchpatch {
-        name = "qt4-openssl1.1.patch";
-        url = "https://raw.githubusercontent.com/manjaro/packages-multilib/6e85f0dd0d778d18335313a011c3c0ca2b6fe2d8/lib32-qt4/qt4-openssl-1.1.patch";
-        sha256 = "0i8faaxy83cafpnqm9w2s16hvhfy8445qmhkbaccc7chkx149363";
-      })
-    ];
+      ];
 
   preConfigure = ''
     export LD_LIBRARY_PATH="`pwd`/lib:$LD_LIBRARY_PATH"

@@ -170,6 +170,3 @@ Index: akonadi-19.08.0/src/server/storage/dbconfigpostgresql.cpp
      settings.setValue(QStringLiteral("InitDbPath"), mInitDbPath);
      settings.setValue(QStringLiteral("StartServer"), mInternalServer);
      settings.endGroup();
--- 
-2.18.1
-

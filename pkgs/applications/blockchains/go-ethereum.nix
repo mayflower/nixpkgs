@@ -1,4 +1,4 @@
-{ stdenv, buildGoPackage, fetchFromGitHub, libobjc, IOKit, fetchpatch }:
+{ stdenv, buildGoPackage, fetchFromGitHub, libobjc, IOKit }:
 
 buildGoPackage rec {
   pname = "go-ethereum";
@@ -12,17 +12,6 @@ buildGoPackage rec {
 
   # Fixes Cgo related build failures (see https://github.com/NixOS/nixpkgs/issues/25959 )
   hardeningDisable = [ "fortify" ];
-
-  # Apply ethereum/go-ethereum#19183 to fix the aarch64 build failure.
-  #
-  # TODO Remove this patch when upstream (https://github.com/ethereum/go-ethereum)
-  # fix this problem in the future release.
-  patches = [
-    (fetchpatch {
-      url = "https://github.com/ethereum/go-ethereum/commit/39bd2609.patch";
-      sha256 = "1a362hzvcjk505hicv25kziy3c6s5an4j7rk4jibcxwgvygb3mz5";
-    })
- ];
 
   src = fetchFromGitHub {
     owner = "ethereum";

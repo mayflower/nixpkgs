@@ -52,10 +52,6 @@ in
         ExecStart = "${pkgs.duplicati}/bin/duplicati-server --webservice-interface=${cfg.interface} --webservice-port=${toString cfg.port} --server-datafolder=/var/lib/duplicati";
         Restart = "on-failure";
       };
-      preStart = ''
-        mkdir -p /var/lib/duplicati
-        chown -R ${cfg.user}:duplicati /var/lib/duplicati
-      '';
     };
 
     users.users.duplicati = lib.optionalAttrs (cfg.user == "duplicati") {

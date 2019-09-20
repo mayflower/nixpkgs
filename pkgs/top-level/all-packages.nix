@@ -455,8 +455,6 @@ in
 
   useOldCXXAbi = makeSetupHook { } ../build-support/setup-hooks/use-old-cxx-abi.sh;
 
-  generateDiffieHellman = callPackage ../build-support/dhparams.nix { };
-
   ical2org = callPackage ../tools/misc/ical2org {};
 
   iconConvTools = callPackage ../build-support/icon-conv-tools {};
@@ -638,8 +636,6 @@ in
   inherit (callPackages ../data/fonts/arphic {})
     arphic-ukai arphic-uming;
 
-  arpwatch = callPackage ../tools/networking/arpwatch { };
-
   artyFX = callPackage ../applications/audio/artyFX {};
 
   as31 = callPackage ../development/compilers/as31 {};
@@ -749,7 +745,6 @@ in
   };
 
   bitwarden_rs-vault = callPackage ../tools/security/bitwarden_rs/vault.nix { };
-  bitwarden_rs_ldap = callPackage ../tools/security/bitwarden_rs/ldap.nix { };
 
   bmap-tools = callPackage ../tools/misc/bmap-tools { };
 
@@ -957,7 +952,6 @@ in
 
   androidenv = callPackage ../development/mobile/androidenv {
     pkgs_i686 = pkgsi686Linux;
-    licenseAccepted = (config.android_sdk.accept_license or false);
   };
 
   androidndkPkgs = androidndkPkgs_18b;
@@ -1072,23 +1066,7 @@ in
 
   bchunk = callPackage ../tools/cd-dvd/bchunk { };
 
-  inherit (callPackages ../misc/logging/beats/5.x.nix {
-    # XXX: this is failing with Go 1.12. Error is related to cgo, an
-    # update to this package might fix it.
-    buildGoPackage = buildGo111Package;
-  })
-    filebeat5
-    heartbeat5
-    metricbeat5
-    packetbeat5;
-
-  journalbeat5 = callPackage ../tools/system/journalbeat { };
-
-  inherit (callPackages ../misc/logging/beats/6.x.nix {
-    # XXX: this is failing with Go 1.12. Error is related to cgo, an
-    # update to this package might fix it.
-    buildGoPackage = buildGo111Package;
-  })
+  inherit (callPackages ../misc/logging/beats/6.x.nix { })
     filebeat6
     heartbeat6
     metricbeat6
@@ -2472,8 +2450,6 @@ in
 
   cpio = callPackage ../tools/archivers/cpio { };
 
-  crackmapexec = callPackage ../tools/networking/crackmapexec { };
-
   crackxls = callPackage ../tools/security/crackxls { };
 
   create-cycle-app = nodePackages.create-cycle-app;
@@ -2674,8 +2650,6 @@ in
   dmg2img = callPackage ../tools/misc/dmg2img {
     openssl = openssl_1_0_2;
   };
-
-  dnsmap = callPackage ../tools/security/dnsmap { };
 
   docbook2odf = callPackage ../tools/typesetting/docbook2odf { };
 
@@ -4013,7 +3987,9 @@ in
 
   ipget = callPackage ../applications/networking/ipget { };
 
-  ipmitool = callPackage ../tools/system/ipmitool { };
+  ipmitool = callPackage ../tools/system/ipmitool {
+    openssl = openssl_1_0_2;
+  };
 
   ipmiutil = callPackage ../tools/system/ipmiutil {};
 
@@ -4996,11 +4972,7 @@ in
 
   nextcloud = callPackage ../servers/nextcloud { };
 
-  nextcloud-client-unwrapped = libsForQt5.callPackage ../applications/networking/nextcloud-client { };
-
-  nextcloud-client = callPackage ../applications/networking/nextcloud-client/wrapper.nix {
-    nextcloud-client = nextcloud-client-unwrapped;
-  };
+  nextcloud-client = libsForQt5.callPackage ../applications/networking/nextcloud-client { };
 
   nextcloud-news-updater = callPackage ../servers/nextcloud/news-updater.nix { };
 
@@ -5319,10 +5291,6 @@ in
   pandoc = haskell.lib.overrideCabal (haskell.lib.justStaticExecutables haskellPackages.pandoc) (drv: {
     configureFlags = drv.configureFlags or [] ++ ["-fembed_data_files"];
     buildDepends = drv.buildDepends or [] ++ [haskellPackages.file-embed];
-    postInstall = ''
-      mkdir -p $out/share/man/man1
-      cp man/pandoc.1 $out/share/man/man1/
-    '';
   });
 
   pamtester = callPackage ../tools/security/pamtester { };
@@ -5676,8 +5644,6 @@ in
 
   pywal = with python3Packages; toPythonApplication pywal;
 
-  pywerview = callPackage ../tools/networking/pywerview { };
-
   remarshal = callPackage ../development/tools/remarshal { };
 
   rig = callPackage ../tools/misc/rig {
@@ -5795,9 +5761,7 @@ in
 
   rt = callPackage ../servers/rt { };
 
-  rtmpdump = callPackage ../tools/video/rtmpdump {
-    openssl = openssl_1_0_2;
-  };
+  rtmpdump = callPackage ../tools/video/rtmpdump { };
   rtmpdump_gnutls = rtmpdump.override { gnutlsSupport = true; opensslSupport = false; };
 
   reaverwps = callPackage ../tools/networking/reaver-wps {};
@@ -6409,9 +6373,7 @@ in
 
   tcpdump = callPackage ../tools/networking/tcpdump { };
 
-  tcpflow = callPackage ../tools/networking/tcpflow {
-    openssl = openssl_1_0_2;
-  };
+  tcpflow = callPackage ../tools/networking/tcpflow { };
 
   tcpkali = callPackage ../applications/networking/tcpkali { };
 
@@ -7144,8 +7106,6 @@ in
   xpf = callPackage ../tools/text/xml/xpf {
     libxml2 = libxml2Python;
   };
-
-  xprobe2 = callPackage ../tools/security/xprobe2 { };
 
   xsecurelock = callPackage ../tools/X11/xsecurelock {
     xset = xorg.xset;
@@ -8329,15 +8289,6 @@ in
   rustPackages = rust.packages.stable;
   inherit (rustPackages) cargo rustc rustPlatform;
   inherit (rust) makeRustPlatform;
-
-  rust_1_35 = callPackage ../development/compilers/rust-1_35 ({
-    inherit (darwin.apple_sdk.frameworks) CoreFoundation Security;
-    llvm = llvm_7;
-  } // stdenv.lib.optionalAttrs (stdenv.cc.isGNU && stdenv.hostPlatform.isi686) {
-    stdenv = overrideCC stdenv gcc6; # with gcc-7: undefined reference to `__divmoddi4'
-  });
-  cargo_1_35 = rust_1_35.cargo;
-  rustc_1_35 = rust_1_35.rustc;
 
   buildRustCrate = callPackage ../build-support/rust/build-rust-crate { };
   buildRustCrateHelpers = callPackage ../build-support/rust/build-rust-crate/helpers.nix { };
@@ -12370,9 +12321,7 @@ in
 
   libspiro = callPackage ../development/libraries/libspiro {};
 
-  libssh = callPackage ../development/libraries/libssh {
-    openssl = openssl_1_0_2;
-  };
+  libssh = callPackage ../development/libraries/libssh { };
 
   libssh2 = callPackage ../development/libraries/libssh2 { };
 
@@ -13322,9 +13271,7 @@ in
       suffix = "qt5";
     };
 
-    qca-qt5 = callPackage ../development/libraries/qca-qt5 {
-      openssl = openssl_1_0_2;
-    };
+    qca-qt5 = callPackage ../development/libraries/qca-qt5 { };
 
     qmltermwidget = callPackage ../development/libraries/qmltermwidget {
       inherit (darwin.apple_sdk.libs) utmp;
@@ -14183,9 +14130,7 @@ in
 
   xmlsec = callPackage ../development/libraries/xmlsec { };
 
-  xml-security-c = callPackage ../development/libraries/xml-security-c {
-    openssl = openssl_1_0_2;
-  };
+  xml-security-c = callPackage ../development/libraries/xml-security-c { };
 
   xml-tooling-c = callPackage ../development/libraries/xml-tooling-c { };
 
@@ -14382,10 +14327,6 @@ in
   };
 
   buildGoModule = buildGo112Module;
-
-  buildGo111Module = callPackage ../development/go-modules/generic {
-    go = buildPackages.go_1_11;
-  };
 
   go2nix = callPackage ../development/tools/go2nix { };
 
@@ -14806,14 +14747,12 @@ in
     # We don't use `with` statement here on purpose!
     # See https://github.com/NixOS/nixpkgs/pull/10474/files#r42369334
     modules = [ nginxModules.rtmp nginxModules.dav nginxModules.moreheaders ];
-    openssl = openssl_1_1;
   };
 
   nginxMainline = callPackage ../servers/http/nginx/mainline.nix {
     # We don't use `with` statement here on purpose!
     # See https://github.com/NixOS/nixpkgs/pull/10474/files#r42369334
     modules = [ nginxModules.dav nginxModules.moreheaders ];
-    openssl = openssl_1_1;
   };
 
   nginxModules = callPackage ../servers/http/nginx/modules.nix { };
@@ -15819,7 +15758,6 @@ in
 
     bcc = callPackage ../os-specific/linux/bcc {
       python = python3;
-      llvmPackages = llvmPackages_7;
     };
 
     bpftrace = callPackage ../os-specific/linux/bpftrace { };
@@ -23604,7 +23542,7 @@ in
 
   ### SCIENCE/ROBOTICS
 
-  apmplanner2 = libsForQt59.callPackage ../applications/science/robotics/apmplanner2 { };
+  apmplanner2 = libsForQt5.callPackage ../applications/science/robotics/apmplanner2 { };
 
   betaflight-configurator = callPackage ../applications/science/robotics/betaflight-configurator { };
 
@@ -24725,8 +24663,6 @@ in
   tora = libsForQt5.callPackage ../development/tools/tora {};
 
   xulrunner = firefox-unwrapped;
-
-  wo-istes-jetzt = callPackage ../tools/misc/wo-istes-jetzt { };
 
   privacyidea = callPackage ../servers/privacyidea { };
   privacyidea-ldap-proxy = callPackage ../servers/privacyidea/ldap-proxy.nix { };

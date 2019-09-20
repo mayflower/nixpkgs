@@ -191,7 +191,6 @@ in
         PrivateTmp = true;
         ExecStart = "${pkg}/bin/start-confluence.sh -fg";
         ExecStop = "${pkg}/bin/stop-confluence.sh";
-        TimeoutStartSec = "infinity";
       };
     };
   };

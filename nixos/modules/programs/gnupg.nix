@@ -83,7 +83,7 @@ in
     systemd.user.sockets.dirmngr = mkIf cfg.dirmngr.enable {
       wantedBy = [ "sockets.target" ];
     };
-
+    
     environment.systemPackages = with pkgs; [ cfg.package ];
     systemd.packages = [ cfg.package ];
 

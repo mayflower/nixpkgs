@@ -56,19 +56,19 @@ let
       inherit sha256;
     };
 
-  desktopItem = makeDesktopItem {
-    name = "wire-desktop";
-    exec = "wire-desktop %U";
-    icon = "wire-desktop";
-    comment = "Secure messenger for everyone";
-    desktopName = "Wire Desktop";
-    genericName = "Secure messenger";
-    categories = "Network;InstantMessaging;Chat;VideoConference";
-  };
+    desktopItem = makeDesktopItem {
+      name = "wire-desktop";
+      exec = "wire-desktop %U";
+      icon = "wire-desktop";
+      comment = "Secure messenger for everyone";
+      desktopName = "Wire Desktop";
+      genericName = "Secure messenger";
+      categories = "Network;InstantMessaging;Chat;VideoConference";
+    };
 
-  dontBuild = true;
-  dontPatchELF = true;
-  dontConfigure = true;
+    dontBuild = true;
+    dontPatchELF = true;
+    dontConfigure = true;
 
     nativeBuildInputs = [ dpkg ];
     rpath = stdenv.lib.makeLibraryPath [
@@ -92,9 +92,9 @@ let
         --set-rpath "${rpath}:$out/opt/Wire" \
         "$out/opt/Wire/wire-desktop"
 
-    # Symlink to bin
-    mkdir -p "$out/bin"
-    ln -s "$out/opt/Wire/wire-desktop" "$out/bin/wire-desktop"
+      # Symlink to bin
+      mkdir -p "$out/bin"
+      ln -s "$out/opt/Wire/wire-desktop" "$out/bin/wire-desktop"
 
       # Desktop file
       mkdir -p "$out/share/applications"

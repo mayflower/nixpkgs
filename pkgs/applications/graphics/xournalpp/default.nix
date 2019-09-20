@@ -13,6 +13,7 @@
 , hicolor-icon-theme
 , libsndfile
 , libxml2
+, libzip
 , pcre
 , poppler
 , portaudio
@@ -40,12 +41,15 @@ stdenv.mkDerivation rec {
       hicolor-icon-theme
       libsndfile
       libxml2
+      libzip
       pcre
       poppler
       portaudio
       zlib
     ]
     ++ lib.optional withLua lua;
+
+  hardeningDisable = [ "format" ];
 
   enableParallelBuilding = true;
 

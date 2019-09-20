@@ -1228,15 +1228,6 @@ let
         sha512 = "7hew1RPJ1iIuje/Y01bGD/mXokXxegAgVS+e+E0wSi2ILHQkYAH1+JXARwTjZSM4Z4Z+c73aKspEcqj+zPPL/w==";
       };
     };
-    "xmlchars-1.3.1" = {
-      name = "xmlchars";
-      packageName = "xmlchars";
-      version = "1.3.1";
-      src = fetchurl {
-        url = "https://registry.npmjs.org/xmlchars/-/xmlchars-1.3.1.tgz";
-        sha512 = "tGkGJkN8XqCod7OT+EvGYK5Z4SfDQGD30zAa58OcnAa0RRWgzUEK72tkXhsX1FZd+rgnhRxFtmO+ihkp8LHSkw==";
-      };
-    };
     "zxcvbn-4.4.2" = {
       name = "zxcvbn";
       packageName = "zxcvbn";

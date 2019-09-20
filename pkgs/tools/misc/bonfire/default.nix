@@ -30,7 +30,7 @@ buildPythonApplication rec {
       --replace "data_files = *.rst, *.txt" ""
   '';
 
-  buildInputs = [ httpretty pytest_3 pytestcov ];
+  buildInputs = [ httpretty pytest pytestcov ];
 
   preCheck = ''
     # fix compatibility with pytest 4

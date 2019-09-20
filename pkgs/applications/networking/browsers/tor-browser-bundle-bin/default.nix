@@ -307,10 +307,6 @@ stdenv.mkDerivation rec {
     : "\''${XDG_RUNTIME_DIR:=/run/user/\$(id -u)}"
     : "\''${XDG_CONFIG_HOME:=\$REAL_HOME/.config}"
 
-    # XDG
-    : "\''${XDG_RUNTIME_DIR:=/run/user/\$(id -u)}"
-    : "\''${XDG_CONFIG_HOME:=\$REAL_HOME/.config}"
-
     ${optionalString pulseaudioSupport ''
       # Figure out some envvars for pulseaudio
       : "\''${PULSE_SERVER:=\$XDG_RUNTIME_DIR/pulse/native}"

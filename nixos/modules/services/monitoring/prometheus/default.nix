@@ -16,20 +16,10 @@ let
     promtool ${what} $out
   '';
 
-  # a wrapper that verifies that the configuration is valid for
-  # prometheus 2
-  prom2toolCheck = what: name: file:
-    pkgs.runCommand
-      "${name}-${replaceStrings [" "] [""] what}-checked"
-      { buildInputs = [ cfg2.package ]; } ''
-    ln -s ${file} $out
-    promtool ${what} $out
-  '';
-
   # Pretty-print JSON to a file
   writePrettyJSON = name: x:
     pkgs.runCommand name { preferLocalBuild = true; } ''
-      ${pkgs.jq}/bin/jq . ${pkgs.writeText "rules" (builtins.toJSON x)} > $out
+      echo '${builtins.toJSON x}' | ${pkgs.jq}/bin/jq . > $out
     '';
 
   generatedPrometheusYml = writePrettyJSON "prometheus.yml" promConfig;

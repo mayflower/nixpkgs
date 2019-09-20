@@ -23,15 +23,6 @@ stdenv.mkDerivation rec {
     libXdmcp libXfixes libbfd cmake
   ];
 
-  patches = [
-    # Fix obsolete spice header usage. Remove with the next release. See https://github.com/gnif/LookingGlass/pull/126
-    (fetchpatch {
-      url = "https://github.com/gnif/LookingGlass/commit/2567447b24b28458ba0f09c766a643ad8d753255.patch";
-      sha256 = "04j2h75rpxd71szry15f31r6s0kgk96i8q9khdv9q3i2fvkf242n";
-      stripLen = 1;
-    })
-  ];
-
   enableParallelBuilding = true;
 
   sourceRoot = "source/client";

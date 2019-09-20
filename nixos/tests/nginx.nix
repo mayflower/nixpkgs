@@ -7,7 +7,7 @@
 import ./make-test.nix ({ pkgs, ... }: {
   name = "nginx";
   meta = with pkgs.stdenv.lib.maintainers; {
-    maintainers = [ mbbx6spp fpletz ];
+    maintainers = [ mbbx6spp ];
   };
 
   nodes = {

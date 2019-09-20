@@ -230,7 +230,7 @@ in {
 
     systemd.services.libvirt-guests = {
       wantedBy = [ "multi-user.target" ];
-      path = with pkgs; [ coreutils libvirt gawk gettext ];
+      path = with pkgs; [ coreutils libvirt gawk ];
       restartIfChanged = false;
 
       environment.ON_BOOT = "${cfg.onBoot}";

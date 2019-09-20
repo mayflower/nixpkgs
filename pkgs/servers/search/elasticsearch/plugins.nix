@@ -23,10 +23,7 @@ let
         maintainers = (a.meta.maintainers or []) ++ (with stdenv.lib.maintainers; [ offline ]);
       };
     });
-in rec {
-
-  # The following alias is for backwards compatibility with 19.03.
-  elasticsearch_analysis_lemmagen = analysis-lemmagen;
+in {
 
   analysis-lemmagen = esPlugin rec {
     name = "elasticsearch-analysis-lemmagen-${version}";

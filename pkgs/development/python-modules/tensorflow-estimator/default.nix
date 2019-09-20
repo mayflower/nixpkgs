@@ -1,6 +1,6 @@
 { stdenv, fetchPypi, buildPythonPackage
 , numpy
-, absl-py
+, absl-py 
 , mock
 }:
 

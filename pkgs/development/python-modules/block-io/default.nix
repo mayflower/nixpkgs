@@ -9,13 +9,6 @@ buildPythonPackage rec {
     sha256 = "ba2e750085d9da4d1567932f3f719974fdc3f02649ee0d5c2f85fce592208723";
   };
 
-  patches = [
-    (fetchpatch {
-      url = "https://github.com/BlockIo/block_io-python/commit/8ec0a0cd1afcfcb439d6dc306d8497dd9e4a0993.patch";
-      sha256 = "1i6c153wvkr5ncm3cpn34faxvavz534x5kndwn4adlaxlzq30snn";
-    })
-  ];
-
   propagatedBuildInputs = [
     base58
     ecdsa

@@ -8,10 +8,6 @@ buildPythonPackage rec {
     mysql.connector-c
   ];
 
-  nativeBuildInputs = [
-    mysql.connector-c
-  ];
-
   buildInputs = [
     mysql.connector-c
   ];

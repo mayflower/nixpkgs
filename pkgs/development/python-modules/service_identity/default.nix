@@ -11,8 +11,6 @@
 , pytest
 }:
 
-# Note to maintainers: package duplicated in nixpkgs/pkgs/servers/matrix-synapse/default.nix
-
 buildPythonPackage rec {
   pname = "service_identity";
   version = "18.1.0";

@@ -1,7 +1,6 @@
 { lib
 , buildPythonPackage
 , fetchPypi
-, isPy37
 , docutils
 , nose
 , testtools
@@ -10,9 +9,6 @@
 buildPythonPackage rec {
   pname = "restructuredtext_lint";
   version = "1.3.0";
-
-  # https://github.com/twolfson/restructuredtext-lint/pull/47
-  disabled = isPy37;
 
   src = fetchPypi {
     inherit pname version;

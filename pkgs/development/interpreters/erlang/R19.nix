@@ -16,6 +16,4 @@ mkDerivation {
   prePatch = ''
     substituteInPlace configure.in --replace '`sw_vers -productVersion`' "''${MACOSX_DEPLOYMENT_TARGET:-10.12}"
   '';
-
-  meta.broken = true; # broken with openssl 1.1
 }

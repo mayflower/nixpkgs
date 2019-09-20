@@ -2,10 +2,8 @@
 
 let
   inherit (lib) mkEnableOption mkIf mkOption singleton types;
-  inherit (pkgs) coreutils;
+  inherit (pkgs) coreutils charybdis;
   cfg = config.services.charybdis;
-
-  pkg = cfg.package;
 
   configFile = pkgs.writeText "charybdis.conf" ''
     ${cfg.config}
@@ -21,14 +19,6 @@ in
     services.charybdis = {
 
       enable = mkEnableOption "Charybdis IRC daemon";
-
-      package = mkOption {
-        default = pkgs.charybdis;
-        type = types.package;
-        description = ''
-          Charybdis package to use.
-        '';
-      };
 
       config = mkOption {
         type = types.str;
@@ -104,7 +94,7 @@ in
           BANDB_DBPATH = "${cfg.statedir}/ban.db";
         };
         serviceConfig = {
-          ExecStart = "${pkg}/bin/charybdis-ircd -foreground -logfile /dev/stdout -configfile ${configFile}";
+          ExecStart   = "${charybdis}/bin/charybdis -foreground -logfile /dev/stdout -configfile ${configFile}";
           Group = cfg.group;
           User = cfg.user;
         };

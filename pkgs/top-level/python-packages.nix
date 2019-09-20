@@ -6073,10 +6073,6 @@ in {
 
   distro = callPackage ../development/python-modules/distro { };
 
-  impacket = callPackage ../development/python-modules/impacket.nix { };
-
-  pylnk = callPackage ../development/python-modules/pylnk.nix { };
-
   bz2file =  callPackage ../development/python-modules/bz2file { };
 
   smart_open =  callPackage ../development/python-modules/smart_open { };

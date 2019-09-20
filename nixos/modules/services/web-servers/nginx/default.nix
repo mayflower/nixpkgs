@@ -661,9 +661,8 @@ in
         ExecStart = "${cfg.package}/bin/nginx -c ${configPath} -p ${cfg.stateDir}";
         ExecReload = "${pkgs.coreutils}/bin/kill -HUP $MAINPID";
         Restart = "always";
-        RestartSec = "1s";
+        RestartSec = "10s";
         StartLimitInterval = "1min";
-        RuntimeDirectory = "nginx";
       };
     };
 

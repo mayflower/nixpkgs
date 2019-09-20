@@ -285,10 +285,6 @@ self: super:
     meta = attrs.meta // { platforms = stdenv.lib.platforms.linux; };
   });
 
-  oclock = super.oclock.overrideAttrs (attrs: {
-    buildInputs = attrs.buildInputs ++ [ self.libxkbfile ];
-  });
-
   setxkbmap = super.setxkbmap.overrideAttrs (attrs: {
     postInstall =
       ''
