@@ -21,7 +21,7 @@ let
     "--config.file ${alertmanagerYml}"
     "--web.listen-address ${cfg.listenAddress}:${toString cfg.port}"
     "--log.level ${cfg.logLevel}"
-    "--storage.path ${cfg.stateDir}"
+    "--storage.path /var/lib/alertmanager"
     (toString (map (peer: "--cluster.peer ${peer}:9094") cfg.clusterPeers))
     ] ++ (optional (cfg.webExternalUrl != null)
       "--web.external-url ${cfg.webExternalUrl}"
@@ -142,20 +142,13 @@ in {
     (mkIf cfg.enable {
       networking.firewall.allowedTCPPorts = optional cfg.openFirewall cfg.port;
 
-      users.extraUsers."${cfg.user}".group = cfg.group;
-      users.extraGroups."${cfg.group}" = { };
-
-      systemd.tmpfiles.rules = [
-        "d ${cfg.stateDir} 0770 ${cfg.user} ${cfg.group} -"
-      ];
-
       systemd.services.alertmanager = {
         wantedBy = [ "multi-user.target" ];
         after    = [ "network.target" ];
         serviceConfig = {
           Restart  = "always";
           DynamicUser = true;
-          WorkingDirectory = "/tmp";
+          StateDirectory = "alertmanager";
           ExecStart = "${cfg.package}/bin/alertmanager" +
             optionalString (length cmdlineArgs != 0) (" \\\n  " +
               concatStringsSep " \\\n  " cmdlineArgs);
