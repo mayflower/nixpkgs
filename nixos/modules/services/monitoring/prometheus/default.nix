@@ -48,8 +48,8 @@ let
     "--web.listen-address=${cfg.listenAddress}"
     "--alertmanager.notification-queue-capacity=${toString cfg.alertmanagerNotificationQueueCapacity}"
     "--alertmanager.timeout=${toString cfg.alertmanagerTimeout}s"
-  ] ++
-  optional (cfg.webExternalUrl != null) "--web.external-url=${cfg.webExternalUrl}";
+  ] ++ optional (cfg.webExternalUrl != null) "--web.external-url=${cfg.webExternalUrl}"
+    ++ optional (cfg.retentionTime != null)  "--storage.tsdb.retention.time=${cfg.retentionTime}";
 
   filterValidPrometheus = filterAttrsListRecursive (n: v: !(n == "_module" || v == null));
   filterAttrsListRecursive = pred: x:
@@ -594,6 +594,15 @@ in {
       description = ''
         The URL under which Prometheus is externally reachable (for example,
         if Prometheus is served via a reverse proxy).
+      '';
+    };
+
+    retentionTime = mkOption {
+      type = types.nullOr types.str;
+      default = null;
+      example = "15d";
+      description = ''
+        How long to retain samples in storage.
       '';
     };
   };
