@@ -14562,9 +14562,6 @@ in
   dkimproxy = callPackage ../servers/mail/dkimproxy { };
 
   dovecot = callPackage ../servers/mail/dovecot { };
-  dovecotWithPgSQL = callPackage ../servers/mail/dovecot {
-    withPgSQL = true;
-  };
   dovecot_pigeonhole = callPackage ../servers/mail/dovecot/plugins/pigeonhole { };
 
   dspam = callPackage ../servers/mail/dspam { };
@@ -14800,11 +14797,6 @@ in
   popa3d = callPackage ../servers/mail/popa3d { };
 
   postfix = callPackage ../servers/mail/postfix { };
-  postfixWithPgSQL = callPackage ../servers/mail/postfix {
-    withPgSQL = true;
-    openssl = openssl_1_0_2;
-    postgresql = postgresql.override { openssl = openssl_1_0_2; };
-  };
 
   postsrsd = callPackage ../servers/mail/postsrsd { };
 

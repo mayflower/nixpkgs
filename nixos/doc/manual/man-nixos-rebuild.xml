@@ -43,10 +43,6 @@
    </arg>
     
    <arg choice='plain'>
-    <option>edit</option>
-   </arg>
-
-   <arg choice='plain'>
     <option>build-vm</option>
    </arg>
     

@@ -1,20 +1,8 @@
-{ lib, stdenv, fetchFromGitHub, python3, openssl
+{ lib, stdenv, python3, openssl
 , enableSystemd ? stdenv.isLinux
 }:
 
-with python3.pkgs.override {
-  overrides = self: super: {
-    service-identity = super.service-identity.overrideAttrs (oldAttrs: rec {
-      version = "18.1.0";
-      src = fetchFromGitHub {
-        owner = "pyca";
-        repo = "service_identity";
-        rev = version;
-        sha256 = "1aw475ksmd4vpl8cwfdcsw2v063nbhnnxpy633sb75iqp9aazhlx";
-      };
-    });
-  };
-};
+with python3.pkgs;
 
 let
   matrix-synapse-ldap3 = buildPythonPackage rec {
