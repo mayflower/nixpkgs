@@ -195,6 +195,7 @@ in
         uwsgi = pkgs.uwsgi.override { plugins = [ "python2" ]; };
         penv = uwsgi.python2.buildEnv.override {
           extraLibs = [ pkgs.privacyidea ];
+          ignoreCollisions = true;
         };
         piuwsgi = pkgs.writeText "uwsgi.json" (builtins.toJSON {
           uwsgi = {
