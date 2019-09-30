@@ -713,7 +713,7 @@ in
 
   amuleDaemon = appendToName "daemon" (amule.override {
     monolithic = false;
-    daemon = true;
+    enableDaemon = true;
   });
 
   amuleGui = appendToName "gui" (amule.override {
@@ -2514,6 +2514,8 @@ in
   cvs_fast_export = callPackage ../applications/version-management/cvs-fast-export { };
 
   dadadodo = callPackage ../tools/text/dadadodo { };
+
+  daemon = callPackage ../tools/system/daemon { };
 
   daemonize = callPackage ../tools/system/daemonize { };
 
@@ -4560,7 +4562,10 @@ in
 
   librest = callPackage ../development/libraries/librest { };
 
-  libwebsockets = callPackage ../development/libraries/libwebsockets { };
+  inherit (callPackages ../development/libraries/libwebsockets { })
+    libwebsockets_3_1
+    libwebsockets_3_2
+    libwebsockets;
 
   lidarr = callPackage ../servers/lidarr { };
 
@@ -12668,8 +12673,6 @@ in
 
   mono-addins = callPackage ../development/libraries/mono-addins { };
 
-  mono-zeroconf = callPackage ../development/libraries/mono-zeroconf { };
-
   movit = callPackage ../development/libraries/movit { };
 
   mosquitto = callPackage ../servers/mqtt/mosquitto { };
@@ -18255,7 +18258,6 @@ in
       libpng = libpng_apng;
       python = python2;
       gnused = gnused_422;
-      icu = icu63;
       inherit (darwin.apple_sdk.frameworks) CoreMedia ExceptionHandling
                                             Kerberos AVFoundation MediaToolbox
                                             CoreLocation Foundation AddressBook;
@@ -20135,7 +20137,7 @@ in
 
   quasselDaemon = quassel.override {
     monolithic = false;
-    daemon = true;
+    enableDaemon = true;
     withKDE = false;
     tag = "-daemon-qt5";
   };
@@ -20637,7 +20639,7 @@ in
   syncthing-tray = callPackage ../applications/misc/syncthing-tray { };
 
   syncthingtray = libsForQt5.callPackage ../applications/misc/syncthingtray { };
-  syncthingtray-minumal = libsForQt5.callPackage ../applications/misc/syncthingtray {
+  syncthingtray-minimal = libsForQt5.callPackage ../applications/misc/syncthingtray {
     webviewSupport = false;
     jsSupport = false;
     kioPluginSupport = false;
@@ -22676,7 +22678,6 @@ in
   solarc-gtk-theme = callPackage ../misc/themes/solarc { };
 
   xfce = xfce4-12;
-  xfceUnstable = xfce4-14;
 
   xfce4-12 = recurseIntoAttrs (callPackage ../desktops/xfce { });
   xfce4-14 = recurseIntoAttrs (callPackage ../desktops/xfce4-14 { });
@@ -24126,7 +24127,9 @@ in
 
   pgmanage = callPackage ../applications/misc/pgmanage { };
 
-  pgadmin = callPackage ../applications/misc/pgadmin { };
+  pgadmin = callPackage ../applications/misc/pgadmin {
+    openssl = openssl_1_0_2;
+  };
 
   pgf = pgf2;
 
@@ -24726,7 +24729,7 @@ in
 
   diceware = callPackage ../tools/security/diceware { };
 
-  xml2rfc = callPackage ../tools/typesetting/xml2rfc { };
+  xml2rfc = with python3Packages; toPythonApplication xml2rfc;
 
   mmark = callPackage ../tools/typesetting/mmark { };
 
