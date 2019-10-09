@@ -46,7 +46,7 @@ in {
         import'';
 
       hostname = mkOption {
-        type = types.string;
+        type = types.str;
         default = "localhost";
         description = ''
           The publicly available FQDN under which this SKS is provided.
