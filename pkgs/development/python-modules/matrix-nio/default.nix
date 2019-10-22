@@ -1,20 +1,21 @@
 { lib, buildPythonPackage, fetchPypi, isPy3k, unpaddedbase64
-, pycryptodome, peewee, jsonschema, attrs, python-olm-dev
-, h2, h11, atomicwrites, Logbook
+, pycryptodome, peewee, jsonschema, attrs, olm, future
+, h2, h11, atomicwrites, Logbook, aiohttp, cachetools
 }:
 
 buildPythonPackage rec {
   pname = "matrix-nio";
-  version = "0.2";
+  version = "0.6";
 
   src = fetchPypi {
     inherit pname version;
-    sha256 = "1fklqswxwwkjnvi0lv8yhfs89zqlm8j04iiv06c8ln7v45nwnj0h";
+    sha256 = "0l7gw3hkmk79pfk5nifb4pg6miis8mmrlvjvbigh6d8lbsfsr915";
   };
 
   propagatedBuildInputs = [
     unpaddedbase64 pycryptodome peewee jsonschema attrs
-    python-olm-dev h2 h11 atomicwrites Logbook
+    olm h2 h11 atomicwrites Logbook aiohttp
+    cachetools future
   ];
 
   postPatch = lib.optionalString (!isPy3k) ''
