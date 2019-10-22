@@ -5625,7 +5625,7 @@ in
 
   pwnat = callPackage ../tools/networking/pwnat { };
 
-  pwndbg = python3Packages.callPackage ../development/tools/misc/pwndbg { };
+  pwndbg = callPackage ../development/tools/misc/pwndbg { };
 
   pycangjie = pythonPackages.pycangjie;
 
@@ -15281,6 +15281,7 @@ in
     server = server-pgsql;
   };
 
+  zabbix44 = zabbixFor "v44";
   zabbix42 = zabbixFor "v42";
   zabbix40 = zabbixFor "v40";
   zabbix30 = zabbixFor "v30";
@@ -21661,7 +21662,7 @@ in
   namecoin  = callPackage ../applications/blockchains/namecoin.nix  { withGui = true; };
   namecoind = callPackage ../applications/blockchains/namecoin.nix { withGui = false; };
 
-  pivx = libsForQt59.callPackage ../applications/blockchains/pivx.nix { withGui = true; };
+  pivx = libsForQt5.callPackage ../applications/blockchains/pivx.nix { withGui = true; };
   pivxd = callPackage ../applications/blockchains/pivx.nix { withGui = false; };
 
   ethabi = callPackage ../applications/blockchains/ethabi.nix { };
