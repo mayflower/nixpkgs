@@ -1,14 +1,18 @@
-{ stdenv, fetchFromGitHub, python }:
+{ stdenv, fetchFromGitHub, python3 }:
 
 let
-self = python.pkgs.buildPythonPackage rec {
-  name = "weechat-matrix-2019-04-25";
+  deps = ps: with ps; [
+    webcolors pyopenssl future atomicwrites
+    attrs Logbook pygments matrix-nio matrix-client
+  ];
+self = python3.pkgs.buildPythonPackage rec {
+  name = "weechat-matrix-2019-10-20";
 
   src = fetchFromGitHub {
     owner = "poljar";
     repo = "weechat-matrix";
-    rev = "c1cfc4a8e4a67989d526a2c9142575e447f88cd7";
-    sha256 = "0q16xr1lfc7qybm3ny7clb4gpmv4vknsppmaaafza6xvysvnm4r6";
+    rev = "4a3f5217bcf5aebb9a7636cbfd5dfca50a30152d";
+    sha256 = "139rw1hs0fm1azdjjhds19sdn9wgdkx3l7anzz6him60vi46fqil";
   };
 
   format = "other";
@@ -16,15 +20,17 @@ self = python.pkgs.buildPythonPackage rec {
 
   passthru = {
     scripts = [ "python/matrix.py" ];
-    withPyPackages = ps: with ps; [
-      webcolors pyopenssl typing future atomicwrites
-      attrs Logbook pygments matrix-nio matrix-client self
-    ];
+    withPyPackages = ps: (deps ps) ++ [ self ];
   };
 
   postInstall = ''
-    mkdir -p $out/${python.sitePackages}
-    ln -s $out/share/python/matrix $out/${python.sitePackages}/matrix
+    mkdir -p $out/${python3.sitePackages}
+    ln -s $out/share/python/matrix $out/${python3.sitePackages}/matrix
+  '';
+
+  checkInputs = with python3.pkgs; [ pytest hypothesis ] ++ deps python3.pkgs;
+  checkPhase = ''
+    python -m pytest
   '';
 
   meta = with stdenv.lib; {
