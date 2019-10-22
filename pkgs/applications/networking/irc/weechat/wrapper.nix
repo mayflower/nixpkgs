@@ -1,5 +1,5 @@
 { lib, runCommand, writeScriptBin, buildEnv
-, python3Packages, perlPackages, runtimeShell
+, perlPackages, runtimeShell
 }:
 
 with lib;
@@ -20,13 +20,9 @@ let
       in rec {
         python = (simplePlugin "python") // {
           extraEnv = ''
-            export PATH="${python3Packages.python}/bin:$PATH"
+            export PATH="${weechat.pythonPkg}/bin:$PATH"
+            export PYTHONHOME="${weechat.pythonPkg.withPackages scriptsPyPackages}"
           '';
-          withPackages = pkgsFun: (python // {
-            extraEnv = ''
-              export PYTHONHOME="${python3Packages.python.withPackages pkgsFun}"
-            '';
-          });
         };
         perl = (simplePlugin "perl") // {
           extraEnv = ''

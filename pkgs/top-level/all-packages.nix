@@ -21101,6 +21101,7 @@ in
     inherit (darwin) libobjc;
     inherit (darwin) libresolv;
     guile = guile_2_0;
+    python = python3;
   };
 
   weechat = wrapWeechat weechat-unwrapped { };

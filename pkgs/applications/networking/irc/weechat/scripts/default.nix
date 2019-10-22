@@ -1,4 +1,4 @@
-{ callPackage, python }:
+{ callPackage }:
 
 {
   weechat-matrix = callPackage ./weechat-matrix-bridge { };
