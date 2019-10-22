@@ -6265,7 +6265,7 @@ in {
 
   matrix-nio = callPackage ../development/python-modules/matrix-nio { };
 
-  python-olm-dev = callPackage ../development/python-modules/python-olm-dev { };
+  olm = callPackage ../development/python-modules/olm { };
 
   lzstring = callPackage ../development/python-modules/lzstring { };
 

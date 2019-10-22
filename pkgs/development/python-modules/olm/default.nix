@@ -1,21 +1,18 @@
-{ lib, buildPythonPackage, fetchPypi, cffi, olm, future, isPy3k
+{ lib, pkgs, buildPythonPackage, fetchPypi, cffi, future, isPy3k
 }:
 
-buildPythonPackage rec {
-  pname = "python-olm-dev";
-  version = "3.0";
+let
+  inherit (pkgs) olm;
+in buildPythonPackage rec {
+  pname = "olm";
+  version = olm.version;
 
-  src = fetchPypi {
-    inherit pname version;
-    sha256 = "1q8kxa3p7mcn265zzx57385p10z9qxcxcb24x0xi214wcbv7mrnf";
-  };
+  src = olm.src;
+  postUnpack = "export sourceRoot=$sourceRoot/python";
 
   buildInputs = [ olm ];
-  propagatedBuildInputs = [ cffi future ];
 
-  postPatch = lib.optionalString (!isPy3k) ''
-    sed -i /typing/d setup.py
-  '';
+  propagatedBuildInputs = [ cffi future ];
 
   meta = with lib; {
     description = "Python CFFI bindings for the olm cryptographic ratchet library";
