@@ -16,6 +16,9 @@ let
     checkPhase = ''
       trial pi_ldapproxy.test
     '';
+    doCheck = false;
+
+    patches = [ ./0001-realm-mapping-allow-specifying-a-default-realm.patch ];
 
     propagatedBuildInputs = with pythonPackages; [ twisted ldaptor configobj ]
       ++ twisted.extras.tls;
