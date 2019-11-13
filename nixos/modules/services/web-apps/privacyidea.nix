@@ -227,13 +227,14 @@ in
         path = with pkgs; [ openssl ];
         preStart = let
           pi-manage = "${pkgs.sudo}/bin/sudo -u privacyidea -H PRIVACYIDEA_CONFIGFILE=${piCfgFile} ${pkgs.privacyidea}/bin/pi-manage";
+          pgsu = config.services.postgresql.superUser;
         in ''
           mkdir -p ${cfg.stateDir} ${cfg.runDir}
           chown ${cfg.user}:${cfg.group} -R ${cfg.stateDir} ${cfg.runDir}
           ln -sf ${piCfgFile} ${cfg.stateDir}/privacyidea.cfg
           if ! test -e "${cfg.stateDir}/db-created"; then
-            ${pkgs.sudo}/bin/sudo -u postgres ${pkgs.postgresql}/bin/createuser --no-superuser --no-createdb --no-createrole ${cfg.user}
-            ${pkgs.sudo}/bin/sudo -u postgres ${pkgs.postgresql}/bin/createdb --owner ${cfg.user} privacyidea
+            ${pkgs.sudo}/bin/sudo -u ${pgsu} ${pkgs.postgresql}/bin/createuser --no-superuser --no-createdb --no-createrole ${cfg.user}
+            ${pkgs.sudo}/bin/sudo -u ${pgsu} ${pkgs.postgresql}/bin/createdb --owner ${cfg.user} privacyidea
             ${pi-manage} create_enckey
             ${pi-manage} create_audit_keys
             ${pi-manage} createdb
