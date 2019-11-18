@@ -1,26 +1,23 @@
-{ stdenv, buildPythonPackage, fetchFromGitHub, websocket_client, requests, six, pytest, codecov, coverage, mock, pytestcov, pytest-mock, responses, flake8 }:
+{ stdenv, buildPythonPackage, fetchPypi
+, aiohttp, black, pytestrunner
+}:
 
 buildPythonPackage rec {
-  pname = "python-slackclient";
-  version = "1.2.1";
+  pname = "slackclient";
+  version = "2.3.1";
 
-  src = fetchFromGitHub {
-    owner  = "slackapi";
-    repo   = pname;
-    rev    = version;
-    sha256 = "073fwf6fm2sqdp5ms3vm1v3ljh0pldi69k048404rp6iy3cfwkp0";
+  src = fetchPypi {
+    inherit pname version;
+    sha256 = "1y6hm6hhj1xrawmngkn16sddz2khpf9qcskkgs7rgvkdhv9b2g6n";
   };
 
-  propagatedBuildInputs = [ websocket_client requests six ];
+  propagatedBuildInputs = [ aiohttp black pytestrunner ];
 
-  checkInputs = [ pytest codecov coverage mock pytestcov pytest-mock responses flake8 ];
-  # test_server.py fails because it needs connection (I think);
-  checkPhase = ''
-    py.test --cov-report= --cov=slackclient tests --ignore=tests/test_server.py
-  '';
+  # tests not included on pypi
+  doCheck = false;
 
   meta = with stdenv.lib; {
-    description = "A client for Slack, which supports the Slack Web API and Real Time Messaging (RTM) API";
+    description = "Slack Python SDK";
     homepage = https://github.com/slackapi/python-slackclient;
     license = licenses.mit;
     maintainers = with maintainers; [ psyanticy ];

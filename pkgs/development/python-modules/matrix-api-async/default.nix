@@ -1,0 +1,22 @@
+{ lib, buildPythonPackage, fetchPypi, isPy3k
+, matrix-client
+}:
+
+buildPythonPackage rec {
+  pname = "matrix_api_async";
+  version = "0.1.0";
+
+  src = fetchPypi {
+    inherit pname version;
+    sha256 = "0xdx8fci0lar3x09dwqgka6ssz9d3g7gsfx4yyr13sdwza7zsqc3";
+  };
+
+  propagatedBuildInputs = [ matrix-client ];
+
+  meta = with lib; {
+    description = "An asyncio wrapper of matrix_client.api";
+    license = licenses.mit;
+    homepage = https://github.com/Cadair/matrix_api_async;
+    maintainers = with maintainers; [ globin ];
+  };
+}

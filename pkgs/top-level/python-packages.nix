@@ -649,6 +649,8 @@ in {
 
   helper = callPackage ../development/python-modules/helper { };
 
+  hiredis = callPackage ../development/python-modules/hiredis { };
+
   histbook = callPackage ../development/python-modules/histbook { };
 
   hdmedians = callPackage ../development/python-modules/hdmedians { };
@@ -785,6 +787,8 @@ in {
   oath = callPackage ../development/python-modules/oath { };
 
   oauthenticator = callPackage ../development/python-modules/oauthenticator { };
+
+  opsdroid_get_image_size = callPackage ../development/python-modules/opsdroid_get_image_size { };
 
   ordered-set = callPackage ../development/python-modules/ordered-set { };
 
@@ -1311,11 +1315,15 @@ in {
 
   aioprocessing = callPackage ../development/python-modules/aioprocessing { };
 
+  aioredis = callPackage ../development/python-modules/aioredis { };
+
   aioresponses = callPackage ../development/python-modules/aioresponses { };
 
   aiorpcx = callPackage ../development/python-modules/aiorpcx { };
 
   aiosmtpd = callPackage ../development/python-modules/aiosmtpd { };
+
+  aiosqlite = callPackage ../development/python-modules/aiosqlite { };
 
   aiounifi = callPackage ../development/python-modules/aiounifi { };
 
@@ -3758,6 +3766,8 @@ in {
 
   minio = callPackage ../development/python-modules/minio { };
 
+  motor = callPackage ../development/python-modules/motor { };
+
   moviepy = callPackage ../development/python-modules/moviepy { };
 
   mozterm = callPackage ../development/python-modules/mozterm { };
@@ -4300,6 +4310,8 @@ in {
 
   publicsuffix = callPackage ../development/python-modules/publicsuffix {};
 
+  puremagic = callPackage ../development/python-modules/puremagic {};
+
   py = callPackage ../development/python-modules/py { };
 
   pyacoustid = callPackage ../development/python-modules/pyacoustid { };
@@ -4349,6 +4361,8 @@ in {
   pycdio = callPackage ../development/python-modules/pycdio { };
 
   pycosat = callPackage ../development/python-modules/pycosat { };
+
+  pycron = callPackage ../development/python-modules/pycron { };
 
   pycryptopp = callPackage ../development/python-modules/pycryptopp { };
 
@@ -5446,6 +5460,8 @@ in {
 
   web = callPackage ../development/python-modules/web { };
 
+  webexteamssdk = callPackage ../development/python-modules/webexteamssdk { };
+
   webob = callPackage ../development/python-modules/webob { };
 
   websockify = callPackage ../development/python-modules/websockify { };
@@ -5998,6 +6014,8 @@ in {
 
   pypandoc = callPackage ../development/python-modules/pypandoc { };
 
+  yamale = callPackage ../development/python-modules/yamale { };
+
   yamllint = callPackage ../development/python-modules/yamllint { };
 
   yanc = callPackage ../development/python-modules/yanc { };
@@ -6262,6 +6280,8 @@ in {
     buildInputs = with self; [ nose ];
     propagatedBuildInputs = with self; [ sqlalchemy ];
   };
+
+  matrix-api-async = callPackage ../development/python-modules/matrix-api-async { };
 
   matrix-nio = callPackage ../development/python-modules/matrix-nio { };
 
