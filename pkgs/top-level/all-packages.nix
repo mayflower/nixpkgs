@@ -22098,6 +22098,10 @@ in
 
   openshift = callPackage ../applications/networking/cluster/openshift { };
 
+  opsdroid = callPackage ../applications/networking/opsdroid {
+    pythonPackages = python3Packages;
+  };
+
   oroborus = callPackage ../applications/window-managers/oroborus {};
 
   osm2pgsql = callPackage ../tools/misc/osm2pgsql { };

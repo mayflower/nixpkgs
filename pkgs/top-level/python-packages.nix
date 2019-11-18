@@ -2673,6 +2673,8 @@ in {
 
   hiredis = callPackage ../development/python-modules/hiredis { };
 
+  histbook = callPackage ../development/python-modules/histbook { };
+
   hiro = callPackage ../development/python-modules/hiro { };
 
   hiyapyco = callPackage ../development/python-modules/hiyapyco { };
@@ -3605,6 +3607,8 @@ in {
     inherit (pkgs) pkgconfig;
   };
 
+  matrix-api-async = callPackage ../development/python-modules/matrix-api-async { };
+
   matrix-client = callPackage ../development/python-modules/matrix-client { };
 
   matrix-nio = callPackage ../development/python-modules/matrix-nio { };
@@ -3754,6 +3758,8 @@ in {
   mortgage = callPackage ../development/python-modules/mortgage { };
 
   moto = callPackage ../development/python-modules/moto { };
+
+  motor = callPackage ../development/python-modules/motor { };
 
   moviepy = callPackage ../development/python-modules/moviepy { };
 
@@ -4175,6 +4181,8 @@ in {
   openwebifpy = callPackage ../development/python-modules/openwebifpy { };
 
   openwrt-luci-rpc = disabledIf (!isPy3k) (callPackage ../development/python-modules/openwrt-luci-rpc { });
+
+  opsdroid_get_image_size = callPackage ../development/python-modules/opsdroid_get_image_size { };
 
   opt-einsum = if isPy27 then
     callPackage ../development/python-modules/opt-einsum/2.nix { }
@@ -4676,6 +4684,8 @@ in {
 
   pure-eval = callPackage ../development/python-modules/pure-eval { };
 
+  puremagic = callPackage ../development/python-modules/puremagic {};
+
   pure-pcapy3 = callPackage ../development/python-modules/pure-pcapy3 { };
 
   purepng = callPackage ../development/python-modules/purepng { };
@@ -4821,6 +4831,8 @@ in {
   py-cpuinfo = callPackage ../development/python-modules/py-cpuinfo { };
 
   pycrc = callPackage ../development/python-modules/pycrc { };
+
+  pycron = callPackage ../development/python-modules/pycron { };
 
   pycrypto = callPackage ../development/python-modules/pycrypto { };
 
@@ -7432,6 +7444,8 @@ in {
 
   webencodings = callPackage ../development/python-modules/webencodings { };
 
+  webexteamssdk = callPackage ../development/python-modules/webexteamssdk { };
+
   webhelpers = callPackage ../development/python-modules/webhelpers { };
 
   webob = callPackage ../development/python-modules/webob { };
@@ -7596,6 +7610,8 @@ in {
   xxhash = callPackage ../development/python-modules/xxhash { };
 
   yahooweather = callPackage ../development/python-modules/yahooweather { };
+
+  yamale = callPackage ../development/python-modules/yamale { };
 
   yamllint = callPackage ../development/python-modules/yamllint { };
 
