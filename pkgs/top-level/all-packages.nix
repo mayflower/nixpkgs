@@ -693,7 +693,7 @@ in
 
   iamy = callPackage ../tools/admin/iamy { };
 
-  azure-cli = nodePackages_10_x.azure-cli;
+  azure-cli = callPackage ../tools/admin/azure-cli { python = python3; };
 
   azure-storage-azcopy = callPackage ../development/tools/azcopy { };
 
@@ -12804,7 +12804,16 @@ in
     inherit (darwin.apple_sdk.frameworks) CoreServices;
   };
 
+  # newer nspr version for newer firefox stable releases
+  nspr_4_23 = callPackage ../development/libraries/nspr/nspr_4_23.nix {
+    inherit (darwin.apple_sdk.frameworks) CoreServices;
+  };
+
   nss = lowPrio (callPackage ../development/libraries/nss { });
+
+  # newer NSS version for newer firefox stable releases
+  nss_3_47_1 = callPackage ../development/libraries/nss/3_47_1.nix { };
+
   nssTools = nss.tools;
 
   nss_wrapper = callPackage ../development/libraries/nss_wrapper { };
@@ -15734,7 +15743,7 @@ in
   };
 
   # Update this when adding the newest kernel major version!
-  linux_latest = callPackage ../os-specific/linux/kernel/linux-5.3.nix {
+  linux_latest = callPackage ../os-specific/linux/kernel/linux-5.4.nix {
     kernelPatches = [ kernelPatches.bridge_stp_helper ];
   };
 
@@ -18273,7 +18282,6 @@ in
       libpng = libpng_apng;
       python = python2;
       gnused = gnused_422;
-      sqlite = sqlite_3_30;
       inherit (darwin.apple_sdk.frameworks) CoreMedia ExceptionHandling
                                             Kerberos AVFoundation MediaToolbox
                                             CoreLocation Foundation AddressBook;
@@ -18305,8 +18313,8 @@ in
 
   firefox-bin = wrapFirefox firefox-bin-unwrapped {
     browserName = "firefox";
-    name = "firefox-bin-" +
-      (builtins.parseDrvName firefox-bin-unwrapped.name).version;
+    pname = "firefox-bin";
+    version = lib.getVersion firefox-bin-unwrapped;
     desktopName = "Firefox";
   };
 
@@ -18319,8 +18327,8 @@ in
 
   firefox-beta-bin = res.wrapFirefox firefox-beta-bin-unwrapped {
     browserName = "firefox";
-    name = "firefox-beta-bin-" +
-      (builtins.parseDrvName firefox-beta-bin-unwrapped.name).version;
+    pname = "firefox-beta-bin";
+    version = lib.getVersion firefox-beta-bin-unwrapped;
     desktopName = "Firefox Beta";
   };
 
@@ -18334,8 +18342,8 @@ in
   firefox-devedition-bin = res.wrapFirefox firefox-devedition-bin-unwrapped {
     browserName = "firefox";
     nameSuffix = "-devedition";
-    name = "firefox-devedition-bin-" +
-      (builtins.parseDrvName firefox-devedition-bin-unwrapped.name).version;
+    pname = "firefox-devedition-bin";
+    version = lib.getVersion firefox-devedition-bin-unwrapped;
     desktopName = "Firefox DevEdition";
   };
 
@@ -21830,7 +21838,7 @@ in
 
   chessdb = callPackage ../games/chessdb { };
 
-  chessx = libsForQt59.callPackage ../games/chessx { };
+  chessx = libsForQt5.callPackage ../games/chessx { };
 
   chocolateDoom = callPackage ../games/chocolate-doom { };
 
