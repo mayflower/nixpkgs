@@ -1766,6 +1766,8 @@ in
 
   klaus = with pythonPackages; toPythonApplication klaus;
 
+  kramdown-rfc2629 = callPackage ../tools/text/kramdown-rfc2629 { };
+
   lcdproc = callPackage ../servers/monitoring/lcdproc { };
 
   languagetool = callPackage ../tools/text/languagetool {  };
@@ -14689,7 +14691,9 @@ in
     buildGoPackage = buildGo113Package;
   };
 
-  grafana-loki = callPackage ../servers/monitoring/loki { };
+  grafana-loki = callPackage ../servers/monitoring/loki {
+    buildGoPackage = buildGo113Package;
+  };
 
   grafana_reporter = callPackage ../servers/monitoring/grafana-reporter { };
 
@@ -23903,7 +23907,7 @@ in
 
   mupen64plus = callPackage ../misc/emulators/mupen64plus { };
 
-  muse = callPackage ../applications/audio/muse { };
+  muse = libsForQt5.callPackage ../applications/audio/muse { };
 
   musly = callPackage ../applications/audio/musly { };
 
