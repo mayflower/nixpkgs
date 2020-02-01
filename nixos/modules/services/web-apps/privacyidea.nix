@@ -192,15 +192,14 @@ in
       services.postgresql.enable = mkDefault true;
 
       systemd.services.privacyidea = let
-        uwsgi = pkgs.uwsgi.override { plugins = [ "python2" ]; };
-        penv = uwsgi.python2.buildEnv.override {
+        uwsgi = pkgs.uwsgi.override { plugins = [ "python3" ]; };
+        penv = uwsgi.python3.buildEnv.override {
           extraLibs = [ pkgs.privacyidea ];
-          ignoreCollisions = true;
         };
         piuwsgi = pkgs.writeText "uwsgi.json" (builtins.toJSON {
           uwsgi = {
-            plugins = [ "python2" ];
-            pythonpath = "${penv}/${uwsgi.python2.sitePackages}";
+            plugins = [ "python3" ];
+            pythonpath = "${penv}/${uwsgi.python3.sitePackages}";
             socket = "${cfg.runDir}/socket";
             uid = cfg.user;
             gid = cfg.group;
@@ -239,9 +238,11 @@ in
             ${pi-manage} create_audit_keys
             ${pi-manage} createdb
             ${pi-manage} admin add admin -e ${cfg.adminEmail} -p ${cfg.adminPassword}
+            ${pi-manage} db stamp head -d ${pkgs.privacyidea}/lib/privacyidea/migrations
             touch "${cfg.stateDir}/db-created"
             chmod g+r "${cfg.stateDir}/enckey" "${cfg.stateDir}/private.pem"
           fi
+          ${pi-manage} db upgrade -d ${pkgs.privacyidea}/lib/privacyidea/migrations
         '';
         serviceConfig = {
           Type = "notify";

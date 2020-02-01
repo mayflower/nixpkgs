@@ -1,40 +1,36 @@
-{ stdenv, fetchgit, pythonPackages }:
+{ stdenv, python3Packages, openssl }:
 
-pythonPackages.buildPythonPackage rec {
-  name = "privacyidea-${version}";
-  version = "2.23.4";
+python3Packages.buildPythonPackage rec {
+  pname = "privacyIDEA";
+  version = "3.2.2";
 
-  src = fetchgit {
-    url = "https://github.com/privacyidea/privacyidea.git";
-    rev = "refs/tags/v${version}";
-    fetchSubmodules = true;
-    sha256 = "066cwpx61van8vizwkawhlvzcsvljn8fda1xwnzpw5fzm7bsw8yi";
+  src = python3Packages.fetchPypi {
+    inherit pname version;
+    sha256 = "1bg6dfsjfd9xjxxvada7a711sfbhk7ydb3fr7zxc9dykihfh9gic";
   };
 
-  patches = [ ./add-description.patch ./subscription.patch ];
-
   postPatch = ''
-    substituteInPlace privacyidea/api/lib/utils.py \
+    substituteInPlace privacyidea/lib/utils/__init__.py \
       --replace 'import pkg_resources' '# no pkg_resources' \
       --replace 'pkg_resources.get_distribution("privacyidea").version' \
                 '"${version}"'
-    substituteInPlace setup.py \
-      --replace "ldap3==2.1.1" "ldap3==2.5.1"
-    sed -i '/argparse/d' setup.py
   '';
+
+  patches = [ ./add-description.patch ./0001-remove-subscription-check.patch ];
 
   postInstall = ''
     substituteInPlace $out/etc/privacyidea/privacyideaapp.wsgi \
       --replace '"/etc/privacyidea/pi.cfg"' 'sys.argv[1]'
   '';
 
-  buildInputs = with pythonPackages; [ docutils ];
-  propagatedBuildInputs = with pythonPackages; [
-    pyusb pyasn1 pyyaml flask_sqlalchemy pillow flask_script python-gnupg
-    funcparserlib pyopenssl passlib beautifulsoup4 flask_migrate lxml
-    requests netaddr configobj ldap3 pygments pymysql sqlsoup pyjwt
-    bcrypt pyrad qrcode defusedxml flaskbabel pycrypto-original matplotlib psycopg2
-    pandas croniter
+  checkInputs = with python3Packages; [ mock pytest openssl ];
+
+  propagatedBuildInputs = with python3Packages; [
+    pillow oauth2client configobj beautifulsoup4 pyjwt requests
+    werkzeug lxml pyyaml python-gnupg flask-babel flask_migrate
+    passlib sqlsoup croniter netaddr flask_script ldap3 qrcode
+    pymysql pyrad defusedxml flask-versioned redis responses
+    psycopg2 setuptools
   ];
 
   doCheck = false;
