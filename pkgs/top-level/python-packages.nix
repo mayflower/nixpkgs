@@ -763,6 +763,8 @@ in {
 
   matchpy = callPackage ../development/python-modules/matchpy { };
 
+  mattermostdriver = callPackage ../development/python-modules/mattermostdriver { };
+
   maxminddb = callPackage ../development/python-modules/maxminddb { };
 
   mininet-python = (toPythonModule (pkgs.mininet.override{ inherit python; })).py;
