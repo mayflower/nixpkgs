@@ -571,6 +571,8 @@ in {
 
   parver = callPackage ../development/python-modules/parver { };
   arpeggio = callPackage ../development/python-modules/arpeggio { };
+  ibm-cloud-sdk-core = callPackage ../development/python-modules/ibm-cloud-sdk-core { };
+
   invoke = callPackage ../development/python-modules/invoke { };
 
   distorm3 = callPackage ../development/python-modules/distorm3 { };
