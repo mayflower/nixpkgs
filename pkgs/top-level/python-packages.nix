@@ -573,6 +573,8 @@ in {
   arpeggio = callPackage ../development/python-modules/arpeggio { };
   ibm-cloud-sdk-core = callPackage ../development/python-modules/ibm-cloud-sdk-core { };
 
+  ibm-watson = callPackage ../development/python-modules/ibm-watson { };
+
   invoke = callPackage ../development/python-modules/invoke { };
 
   distorm3 = callPackage ../development/python-modules/distorm3 { };
