@@ -6868,6 +6868,8 @@ in {
 
   tag-expressions = callPackage ../development/python-modules/tag-expressions { };
 
+  tailer = callPackage ../development/python-modules/tailer { };
+
   tarman = callPackage ../development/python-modules/tarman { };
 
   tasklib = callPackage ../development/python-modules/tasklib { };
