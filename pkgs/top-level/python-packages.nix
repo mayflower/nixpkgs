@@ -2798,6 +2798,8 @@ in {
 
   ibis-framework = callPackage ../development/python-modules/ibis-framework { };
 
+  ibm-watson = callPackage ../development/python-modules/ibm-watson { };
+
   icalendar = callPackage ../development/python-modules/icalendar { };
 
   icecream = callPackage ../development/python-modules/icecream { };
