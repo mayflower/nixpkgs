@@ -155,6 +155,8 @@ in {
 
   agate-sql = callPackage ../development/python-modules/agate-sql { };
 
+  ago = callPackage ../development/python-modules/ago { };
+
   aioimaplib = callPackage ../development/python-modules/aioimaplib { };
 
   aiolifx = callPackage ../development/python-modules/aiolifx { };
