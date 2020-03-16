@@ -1,4 +1,5 @@
-{ stdenv, fetchFromGitHub, pythonPackages, glibcLocales }:
+{ stdenv, fetchFromGitHub, pythonPackages, glibcLocales
+, extraPythonPackages ? _: [] }:
 
 pythonPackages.buildPythonApplication rec {
   pname = "opsdroid";
@@ -24,7 +25,10 @@ pythonPackages.buildPythonApplication rec {
     parse emoji puremagic yamale nbformat websockets pycron nbconvert
     aiohttp matrix-api-async aioredis aiosqlite arrow pyyaml motor
     mattermostdriver setuptools voluptuous ibm-watson tailer multidict
-  ];
+
+    # Undeclared dependencies
+    ago
+  ] ++ extraPythonPackages pythonPackages;
 
   postPatch = ''
     substituteInPlace requirements.txt \
