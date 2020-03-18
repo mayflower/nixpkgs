@@ -500,6 +500,8 @@ in {
 
   braintree = callPackage ../development/python-modules/braintree { };
 
+  ciso8601 = callPackage ../development/python-modules/ciso8601 { };
+
   deepdiff = callPackage ../development/python-modules/deepdiff { };
 
   django-sesame = callPackage ../development/python-modules/django-sesame { };
