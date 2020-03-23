@@ -24877,4 +24877,5 @@ in
 
   nix-store-gcs-proxy = callPackage ../tools/nix/nix-store-gcs-proxy {};
 
+  botamusique = callPackage ../applications/networking/botamusique {};
 }
