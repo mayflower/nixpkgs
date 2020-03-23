@@ -571,6 +571,10 @@ in {
 
   discordpy = callPackage ../development/python-modules/discordpy { };
 
+  opuslib = callPackage ../development/python-modules/opuslib {
+    libopus = pkgs.libopus;
+  };
+
   parver = callPackage ../development/python-modules/parver { };
   arpeggio = callPackage ../development/python-modules/arpeggio { };
   ibm-cloud-sdk-core = callPackage ../development/python-modules/ibm-cloud-sdk-core { };
