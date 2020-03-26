@@ -32,9 +32,9 @@ in
       '';
       preInstall = ''
         type gcc
-        mkdir -p "$out/lib/common-lisp/" 
+        mkdir -p "$out/lib/common-lisp/"
         cp -r . "$out/lib/common-lisp/cl-fuse/"
-        "gcc" "-x" "c" "$out/lib/common-lisp/cl-fuse/fuse-launcher.c-minus" "-fPIC" "--shared" "-lfuse" "-o" "$out/lib/common-lisp/cl-fuse/libfuse-launcher.so"        
+        "gcc" "-x" "c" "$out/lib/common-lisp/cl-fuse/fuse-launcher.c-minus" "-fPIC" "--shared" "-lfuse" "-o" "$out/lib/common-lisp/cl-fuse/libfuse-launcher.so"
       '';
     };
   };
@@ -43,21 +43,34 @@ in
     propagatedBuildInputs = (x.propagatedBuildInputs or [])
      ++ (with pkgs; [libfixposix gcc])
      ;
+    overrides = y: (x.overrides y) // {
+      prePatch = ''
+        sed 's|default \"libfixposix\"|default \"${pkgs.libfixposix}/lib/libfixposix\"|' -i src/syscalls/ffi-functions-unix.lisp
+      '';
+    };
+
   };
   cxml = skipBuildPhase;
   wookie = addNativeLibs (with pkgs; [libuv openssl]);
   lev = addNativeLibs [pkgs.libev];
-  cl_plus_ssl = addNativeLibs [pkgs.openssl];
+  cl_plus_ssl = x: rec {
+    propagatedBuildInputs = [pkgs.openssl];
+    overrides = y: (x.overrides y) // {
+      prePatch = ''
+        sed 's|libssl.so|${pkgs.openssl.out}/lib/libssl.so|' -i src/reload.lisp
+      '';
+    };
+  };
   cl-colors = skipBuildPhase;
   cl-libuv = addNativeLibs [pkgs.libuv];
   cl-async-ssl = addNativeLibs [pkgs.openssl (import ./openssl-lib-marked.nix)];
   cl-async-test = addNativeLibs [pkgs.openssl];
   clsql = x: {
-    propagatedBuildInputs = with pkgs; [mysql.connector-c postgresql sqlite zlib];
+    propagatedBuildInputs = with pkgs; [libmysqlclient postgresql sqlite zlib];
     overrides = y: (x.overrides y) // {
       preConfigure = ((x.overrides y).preConfigure or "") + ''
-        export NIX_CFLAGS_COMPILE="$NIX_CFLAGS_COMPILE -I${pkgs.lib.getDev pkgs.mysql.connector-c}/include/mysql"
-        export NIX_LDFLAGS="$NIX_LDFLAGS -L${pkgs.mysql.connector-c}/lib/mysql"
+        export NIX_CFLAGS_COMPILE="$NIX_CFLAGS_COMPILE -I${pkgs.libmysqlclient}/include/mysql"
+        export NIX_LDFLAGS="$NIX_LDFLAGS -L${pkgs.libmysqlclient}/lib/mysql"
       '';
     };
   };
@@ -78,10 +91,10 @@ $out/lib/common-lisp/query-fs"
   };
   cffi = addNativeLibs [pkgs.libffi];
   cl-mysql = x: {
-    propagatedBuildInputs = [pkgs.mysql.connector-c];
+    propagatedBuildInputs = [pkgs.libmysqlclient];
     overrides = y: (x.overrides y) // {
       prePatch = ((x.overrides y).prePatch or "") + ''
-        sed -i 's,libmysqlclient_r,${pkgs.mysql.connector-c}/lib/mysql/libmysqlclient_r,' system.lisp
+        sed -i 's,libmysqlclient_r,${pkgs.libmysqlclient}/lib/mysql/libmysqlclient_r,' system.lisp
       '';
     };
   };
@@ -92,7 +105,26 @@ $out/lib/common-lisp/query-fs"
       '';
     };
   };
-  sqlite = addNativeLibs [pkgs.sqlite];
+  serapeum = x: {
+    overrides = y: (x.overrides y) //{
+      # Override src until quicklisp catches up to 65837f8 (see serapeum
+      # issue #42)
+      src = pkgs.fetchFromGitHub {
+        owner = "ruricolist";
+        repo = "serapeum";
+        rev = "65837f8a0d65b36369ec8d000fff5c29a395b5fe";
+        sha256 = "0clwf81r2lvk1rbfvk91s9zmbkas9imf57ilqclw12mxaxlfsnbw";
+      };
+    };
+  };
+  sqlite = x: {
+    propagatedBuildInputs = [pkgs.sqlite];
+    overrides = y: (x.overrides y) // {
+      prePatch = ((x.overrides y).preConfigure or "") + ''
+        sed 's|libsqlite3|${pkgs.sqlite.out}/lib/libsqlite3|' -i sqlite-ffi.lisp
+      '';
+    };
+  };
   swank = x: {
     overrides = y: (x.overrides y) // {
       postPatch = ''
@@ -102,15 +134,15 @@ $out/lib/common-lisp/query-fs"
         @@ -155,7 +155,7 @@
                           ,(unique-dir-name)))
             (user-homedir-pathname)))
-         
+
         -(defvar *fasl-directory* (default-fasl-dir)
         +(defvar *fasl-directory* #P"$out/lib/common-lisp/swank/fasl/"
            "The directory where fasl files should be placed.")
-         
+
          (defun binary-pathname (src-pathname binary-dir)
         @@ -277,12 +277,7 @@
                           (contrib-dir src-dir))))
-         
+
          (defun delete-stale-contrib-fasl-files (swank-files contrib-files fasl-dir)
         -  (let ((newest (reduce #'max (mapcar #'file-write-date swank-files))))
         -    (dolist (src contrib-files)
@@ -119,7 +151,7 @@ $out/lib/common-lisp/query-fs"
         -                   (<= (file-write-date fasl) newest))
         -          (delete-file fasl))))))
         +  (declare (ignore swank-files contrib-files fasl-dir)))
-         
+
          (defun compile-contribs (&key (src-dir (contrib-dir *source-directory*))
                                     (fasl-dir (contrib-dir *fasl-directory*))
         EOD
@@ -176,6 +208,13 @@ $out/lib/common-lisp/query-fs"
     overrides = y: (x.overrides y) // {
       preConfigure = ''
         sed -i -e '/:components/i:serial t' split-sequence.asd
+      '';
+    };
+  };
+  cl-store = x: {
+    overrides = y: (x.overrides y) // {
+      postPatch = ''
+        sed -i -e 's/:initform "Unknown" /:initform #:|Unknown| /' backends.lisp
       '';
     };
   };

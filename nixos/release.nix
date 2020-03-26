@@ -12,7 +12,7 @@ let
 
   version = fileContents ../.version;
   versionSuffix =
-    (if stableBranch then "." else "beta") + "${toString (nixpkgs.revCount - 192668)}.${nixpkgs.shortRev}";
+    (if stableBranch then "." else "beta") + "${toString (nixpkgs.revCount - 212894)}.${nixpkgs.shortRev}";
 
   # Run the tests for each platform.  You can run a test by doing
   # e.g. ‘nix-build -A tests.login.x86_64-linux’, or equivalently,
@@ -149,9 +149,9 @@ in rec {
     inherit system;
   });
 
-  iso_graphical = forMatchingSystems [ "x86_64-linux" ] (system: makeIso {
-    module = ./modules/installer/cd-dvd/installation-cd-graphical-kde.nix;
-    type = "graphical";
+  iso_plasma5 = forMatchingSystems [ "x86_64-linux" ] (system: makeIso {
+    module = ./modules/installer/cd-dvd/installation-cd-graphical-plasma5.nix;
+    type = "plasma5";
     inherit system;
   });
 
@@ -204,7 +204,8 @@ in rec {
     hydraJob ((import lib/eval-config.nix {
       inherit system;
       modules =
-        [ versionModule
+        [ configuration
+          versionModule
           ./maintainers/scripts/ec2/amazon-image.nix
         ];
     }).config.system.build.amazonImage)

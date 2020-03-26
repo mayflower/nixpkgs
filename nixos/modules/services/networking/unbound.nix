@@ -58,6 +58,13 @@ in
 
       enable = mkEnableOption "Unbound domain name server";
 
+      package = mkOption {
+        type = types.package;
+        default = pkgs.unbound;
+        defaultText = "pkgs.unbound";
+        description = "The unbound package to use";
+      };
+
       allowedAccess = mkOption {
         default = [ "127.0.0.0/24" ];
         type = types.listOf types.str;
@@ -99,7 +106,7 @@ in
 
   config = mkIf cfg.enable {
 
-    environment.systemPackages = [ pkgs.unbound ];
+    environment.systemPackages = [ cfg.package ];
 
     users.users.unbound = {
       description = "unbound daemon user";
@@ -121,7 +128,7 @@ in
         cp ${confFile} ${stateDir}/unbound.conf
 
         ${optionalString cfg.enableRootTrustAnchor ''
-          ${pkgs.unbound}/bin/unbound-anchor -a ${rootTrustAnchorFile} || echo "Root anchor updated!"
+          ${cfg.package}/bin/unbound-anchor -a ${rootTrustAnchorFile} || echo "Root anchor updated!"
           chown unbound ${stateDir} ${rootTrustAnchorFile}
         ''}
 
@@ -142,7 +149,7 @@ in
       '';
 
       serviceConfig = {
-        ExecStart = "${pkgs.unbound}/bin/unbound -d -c ${stateDir}/unbound.conf";
+        ExecStart = "${cfg.package}/bin/unbound -d -c ${stateDir}/unbound.conf";
         ExecStopPost="${pkgs.utillinux}/bin/umount ${stateDir}/dev/random";
 
         ProtectSystem = true;

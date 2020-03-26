@@ -4,19 +4,19 @@
 , utillinux, qtbase ? null, qttools ? null
 , enableUpnp ? false
 , disableWallet ? false
-, disableDaemon ? false 
+, disableDaemon ? false
 , withGui ? false }:
 
 with stdenv.lib;
 stdenv.mkDerivation rec {
   name = "pivx-${version}";
-  version = "3.4.0";
+  version = "4.0.2";
 
   src = fetchFromGitHub {
     owner = "PIVX-Project";
     repo= "PIVX";
     rev = "v${version}";
-    sha256 = "1fqccdqhbwyvix0ihhbgg2w048i6bhfmazr36h2cn4j65n1fgmi2";
+    sha256 = "12lnp318k8dx1sar24zfmv2imnzs30srssnlpb31y7hcxhz0wpc5";
   };
 
   nativeBuildInputs = [ pkgconfig autoreconfHook ] ++ optionals withGui [ wrapQtAppsHook ];
@@ -31,7 +31,7 @@ stdenv.mkDerivation rec {
                                            "--with-unsupported-ssl" # TODO remove this ASAP
                                            "--with-qt-bindir=${qtbase.dev}/bin:${qttools.dev}/bin"
                                          ];
-  
+
   enableParallelBuilding = true;
   doChecks = true;
   postBuild = ''

@@ -8,7 +8,8 @@
 with stdenv.lib;
 
 let
-  common = { version, sha256, patches ? [], withDocs ? false }: stdenv.mkDerivation rec {
+  common = { version, sha256, patches ? [], withDocs ? false, extraMeta ? {} }:
+   stdenv.mkDerivation rec {
     pname = "openssl";
     inherit version;
 
@@ -37,7 +38,7 @@ let
 
     outputs = [ "bin" "dev" "out" "man" ] ++ optional withDocs "doc";
     setOutputFlags = false;
-    separateDebugInfo = stdenv.hostPlatform.isLinux;
+    separateDebugInfo = !(stdenv.hostPlatform.useLLVM or false) && stdenv.cc.isGNU;
 
     nativeBuildInputs = [ perl ];
     buildInputs = stdenv.lib.optional withCryptodev cryptodev;
@@ -45,10 +46,11 @@ let
     # TODO(@Ericson2314): Improve with mass rebuild
     configurePlatforms = [];
     configureScript = {
-        x86_64-darwin  = "./Configure darwin64-x86_64-cc";
-        x86_64-solaris = "./Configure solaris64-x86_64-gcc";
         armv6l-linux = "./Configure linux-armv4 -march=armv6";
         armv7l-linux = "./Configure linux-armv4 -march=armv7-a";
+        x86_64-darwin  = "./Configure darwin64-x86_64-cc";
+        x86_64-linux = "./Configure linux-x86_64";
+        x86_64-solaris = "./Configure solaris64-x86_64-gcc";
       }.${stdenv.hostPlatform.system} or (
         if stdenv.hostPlatform == stdenv.buildPlatform
           then "./config"
@@ -57,7 +59,9 @@ let
                                      (stdenv.hostPlatform.parsed.cpu.bits != 32)
                                      (toString stdenv.hostPlatform.parsed.cpu.bits)}"
         else if stdenv.hostPlatform.isLinux
-          then "./Configure linux-generic${toString stdenv.hostPlatform.parsed.cpu.bits}"
+          then (if stdenv.hostPlatform.isx86_64
+            then "./Configure linux-x86_64"
+            else "./Configure linux-generic${toString stdenv.hostPlatform.parsed.cpu.bits}")
         else if stdenv.hostPlatform.isiOS
           then "./Configure ios${toString stdenv.hostPlatform.parsed.cpu.bits}-cross"
         else
@@ -73,7 +77,11 @@ let
       "-DUSE_CRYPTODEV_DIGESTS"
     ] ++ stdenv.lib.optional enableSSL2 "enable-ssl2"
       ++ stdenv.lib.optional enableSSL3 "enable-ssl3"
-      ++ stdenv.lib.optional (versionAtLeast version "1.1.0" && stdenv.hostPlatform.isAarch64) "no-afalgeng";
+      ++ stdenv.lib.optional (versionAtLeast version "1.1.0" && stdenv.hostPlatform.isAarch64) "no-afalgeng"
+      # OpenSSL needs a specific `no-shared` configure flag.
+      # See https://wiki.openssl.org/index.php/Compilation_and_Installation#Configure_Options
+      # for a comprehensive list of configuration options.
+      ++ stdenv.lib.optional (versionAtLeast version "1.1.0" && static) "no-shared";
 
     makeFlags = [
       "MANDIR=$(man)/share/man"
@@ -127,7 +135,7 @@ let
       license = licenses.openssl;
       platforms = platforms.all;
       maintainers = [ maintainers.peti ];
-    };
+    } // extraMeta;
   };
 
 in {
@@ -142,6 +150,7 @@ in {
        then ./1.0.2/use-etc-ssl-certs-darwin.patch
        else ./1.0.2/use-etc-ssl-certs.patch)
     ];
+    extraMeta.knownVulnerabilities = [ "Support for OpenSSL 1.0.2 ended with 2019." ];
   };
 
   openssl_1_1 = common {

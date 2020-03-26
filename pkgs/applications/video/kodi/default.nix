@@ -1,4 +1,4 @@
-{ stdenv, lib, fetchurl, fetchFromGitHub, autoconf, automake, libtool, makeWrapper, linuxHeaders
+{ stdenv, lib, fetchpatch, fetchurl, fetchFromGitHub, autoconf, automake, libtool, makeWrapper, linuxHeaders
 , pkgconfig, cmake, gnumake, yasm, python2Packages
 , libgcrypt, libgpgerror, libunistring
 , boost, avahi, lame, autoreconfHook
@@ -8,17 +8,18 @@
 , libXt, libXmu, libXext
 , libXinerama, libXrandr
 , libXtst, libXfixes, systemd
-, alsaLib, libGLU_combined, glew, fontconfig, freetype, ftgl
-, libjpeg, jasper, libpng, libtiff
+, alsaLib, libGLU, libGL, glew, fontconfig, freetype, ftgl
+, libjpeg, libpng, libtiff
 , libmpeg2, libsamplerate, libmad
 , libogg, libvorbis, flac, libxslt
 , lzo, libcdio, libmodplug, libass, libbluray
-, sqlite, mysql, nasm, gnutls, libva, libdrm
+, sqlite, libmysqlclient, nasm, gnutls, libva, libdrm
 , curl, bzip2, zip, unzip, glxinfo, xdpyinfo
 , libcec, libcec_platform, dcadec, libuuid
 , libcrossguid, libmicrohttpd
 , bluez, doxygen, giflib, glib, harfbuzz, lcms2, libidn, libpthreadstubs, libtasn1, libXdmcp
 , libplist, p11-kit, zlib, flatbuffers, fmt, fstrcmp, rapidjson
+, lirc
 , dbusSupport ? true, dbus ? null
 , joystickSupport ? true, cwiid ? null
 , nfsSupport ? true, libnfs ? null
@@ -43,15 +44,15 @@ assert vdpauSupport -> libvdpau != null;
 assert useWayland -> wayland != null && wayland-protocols != null && waylandpp != null && libxkbcommon != null;
 
 let
-  kodiReleaseDate = "20190901";
-  kodiVersion = "18.4";
+  kodiReleaseDate = "20191116";
+  kodiVersion = "18.5";
   rel = "Leia";
 
   kodi_src = fetchFromGitHub {
     owner  = "xbmc";
     repo   = "xbmc";
     rev    = "${kodiVersion}-${rel}";
-    sha256 = "1m0295czxabdcqyqf5m94av9d88pzhnzjvyfs1q07xqq82h313p7";
+    sha256 = "0pcrraj1ddzrd296br10yjnaxgb3iym74xzixcakaqhhp00f5hf6";
   };
 
   cmakeProto = fetchurl {
@@ -156,18 +157,19 @@ in stdenv.mkDerivation {
       openssl gperf tinyxml2 taglib libssh swig jre
       libX11 xorgproto libXt libXmu libXext
       libXinerama libXrandr libXtst libXfixes
-      alsaLib libGLU_combined glew fontconfig freetype ftgl
-      libjpeg jasper libpng libtiff
+      alsaLib libGL libGLU glew fontconfig freetype ftgl
+      libjpeg libpng libtiff
       libmpeg2 libsamplerate libmad
       libogg libvorbis flac libxslt systemd
       lzo libcdio libmodplug libass libbluray
-      sqlite mysql.connector-c avahi lame
+      sqlite libmysqlclient avahi lame
       curl bzip2 zip unzip glxinfo xdpyinfo
       libcec libcec_platform dcadec libuuid
       libgcrypt libgpgerror libunistring
       libcrossguid cwiid libplist
       bluez giflib glib harfbuzz lcms2 libpthreadstubs libXdmcp
       ffmpeg flatbuffers fmt fstrcmp rapidjson
+      lirc
       # libdvdcss libdvdnav libdvdread
     ]
     ++ lib.optional  dbusSupport     dbus
@@ -179,7 +181,7 @@ in stdenv.mkDerivation {
     ++ lib.optional  udevSupport     udev
     ++ lib.optional  usbSupport      libusb
     ++ lib.optional  vdpauSupport    libvdpau
-    ++ lib.optional  useWayland [
+    ++ lib.optionals useWayland [
       wayland waylandpp
       # Not sure why ".dev" is needed here, but CMake doesn't find libxkbcommon otherwise
       libxkbcommon.dev
@@ -192,7 +194,16 @@ in stdenv.mkDerivation {
       which
       pkgconfig gnumake
       autoconf automake libtool # still needed for some components. Check if that is the case with 19.0
-    ] ++ lib.optional useWayland [ wayland-protocols ];
+    ] ++ lib.optionals useWayland [ wayland-protocols ];
+
+    patches = [
+      # Adds missing cassert includes, fixing builds. This will be unnecessary
+      # after 18.6 is released (which will contain this patch)
+      (fetchpatch {
+        url = "https://github.com/xbmc/xbmc/commit/d5947e6733fd564edb68df91fd6d389d9fb82319.patch";
+        sha256 = "1shlbsbfba3074wdyhl42vgin6jfzl7sy3zsvxaxkpx8g7my9jn2";
+      })
+    ];
 
     cmakeFlags = [
       "-Dlibdvdcss_URL=${libdvdcss.src}"
@@ -202,7 +213,6 @@ in stdenv.mkDerivation {
       "-DENABLE_EVENTCLIENTS=ON"
       "-DENABLE_INTERNAL_CROSSGUID=OFF"
       "-DENABLE_OPTICAL=ON"
-      "-DLIRC_DEVICE=/run/lirc/lircd"
     ] ++ lib.optional useWayland [
       "-DCORE_PLATFORM_NAME=wayland"
       "-DWAYLAND_RENDER_SYSTEM=gl"

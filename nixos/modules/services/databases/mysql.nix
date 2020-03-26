@@ -24,6 +24,10 @@ let
 in
 
 {
+  imports = [
+    (mkRemovedOptionModule [ "services" "mysql" "pidDir" ] "Don't wait for pidfiles, describe dependencies through systemd")
+    (mkRemovedOptionModule [ "services" "mysql" "rootPassword" ] "Use socket authentication or set the password outside of the nix store.")
+  ];
 
   ###### interface
 
@@ -275,8 +279,13 @@ in
       port = ${toString cfg.port}
       datadir = ${cfg.dataDir}
       ${optionalString (cfg.bind != null) "bind-address = ${cfg.bind}" }
-      ${optionalString (cfg.replication.role == "master" || cfg.replication.role == "slave") "log-bin=mysql-bin"}
-      ${optionalString (cfg.replication.role == "master" || cfg.replication.role == "slave") "server-id = ${toString cfg.replication.serverId}"}
+      ${optionalString (cfg.replication.role == "master" || cfg.replication.role == "slave")
+      ''
+        log-bin=mysql-bin-${toString cfg.replication.serverId}
+        log-bin-index=mysql-bin-${toString cfg.replication.serverId}.index
+        relay-log=mysql-relay-bin
+        server-id = ${toString cfg.replication.serverId}
+      ''}
       ${optionalString (cfg.ensureUsers != [] || cfg.enableSocketAuth)
       ''
         plugin-load-add = auth_socket.so
@@ -318,6 +327,8 @@ in
           Type = if hasNotify then "notify" else "simple";
           RuntimeDirectory = "mysqld";
           RuntimeDirectoryMode = "0755";
+          Restart = "on-abort";
+          RestartSec = "5s";
           # The last two environment variables are used for starting Galera clusters
           ExecStart = "${mysql}/bin/mysqld --defaults-file=/etc/my.cnf ${mysqldOptions} $_WSREP_NEW_CLUSTER $_WSREP_START_POSITION";
           ExecStartPost =
@@ -384,6 +395,7 @@ in
 
                         ( echo "stop slave;"
                           echo "change master to master_host='${cfg.replication.masterHost}', master_user='${cfg.replication.masterUser}', master_password='${cfg.replication.masterPassword}';"
+                          echo "set global slave_exec_mode='IDEMPOTENT';"
                           echo "start slave;"
                         ) | ${mysql}/bin/mysql -u root -N
                       ''}

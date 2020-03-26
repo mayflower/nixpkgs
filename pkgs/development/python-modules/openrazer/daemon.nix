@@ -1,4 +1,5 @@
 { buildPythonApplication
+, isPy3k
 , daemonize
 , dbus-python
 , fetchFromGitHub

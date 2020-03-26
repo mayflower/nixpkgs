@@ -12,8 +12,14 @@ buildPythonPackage {
   format = "other";
 
   nativeBuildInputs = [ lndir sip qtbase ];
-  buildInputs = [ qscintilla ];
-  propagatedBuildInputs = [ pyqt5 ];
+  buildInputs = [ qscintilla pyqt5 ];
+
+  postPatch = ''
+    substituteInPlace Python/configure.py \
+      --replace \
+      "target_config.py_module_dir" \
+      "'$out/${python.sitePackages}'"
+  '';
 
   postPatch = ''
     substituteInPlace Python/configure.py \

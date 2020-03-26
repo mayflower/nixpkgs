@@ -1,4 +1,8 @@
-{ lib, buildPythonPackage, fetchPypi
+{ stdenv
+, buildPythonPackage
+, fetchPypi
+, redis
+, python
 }:
 
 buildPythonPackage rec {
@@ -7,16 +11,19 @@ buildPythonPackage rec {
 
   src = fetchPypi {
     inherit pname version;
-    sha256 = "sha256:194pgbb4k0wffxqzfr9jzffkcpcx88a0221dzkj6swrzpdixsnda";
+    sha256 = "aa59dd63bb3f736de4fc2d080114429d5d369dfb3265f771778e8349d67a97a4";
   };
+  propagatedBuildInputs = [ redis ];
 
-  # no tests on pypi
-  doCheck = false;
+  checkPhase = ''
+    ${python.interpreter} test.py
+  '';
 
-  meta = with lib; {
-    description = "Python extension that wraps protocol parsing code in hiredis";
+  meta = with stdenv.lib; {
+    description = "Wraps protocol parsing code in hiredis, speeds up parsing of multi bulk replies";
+    homepage = "https://github.com/redis/hiredis-py";
     license = licenses.bsd3;
-    homepage = https://github.com/poljar/matrix-nio;
-    maintainers = with maintainers; [ globin ];
+    maintainers = with maintainers; [ mmai ];
   };
 }
+

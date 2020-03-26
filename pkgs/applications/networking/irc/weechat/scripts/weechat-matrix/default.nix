@@ -1,47 +1,58 @@
-{ stdenv, fetchFromGitHub, python3 }:
+{ buildPythonPackage, stdenv, python, fetchFromGitHub,
+  pyopenssl, webcolors, future, atomicwrites,
+  attrs, Logbook, pygments, cachetools, matrix-nio }:
 
 let
-  deps = ps: with ps; [
-    webcolors pyopenssl future atomicwrites
-    attrs Logbook pygments matrix-nio matrix-client
-  ];
-self = python3.pkgs.buildPythonPackage rec {
-  name = "weechat-matrix-2019-10-20";
+  matrixUploadPython = python.withPackages (ps: with ps; [
+    magic
+  ]);
+in buildPythonPackage {
+  pname = "weechat-matrix";
+  version = "unstable-2019-11-10";
 
   src = fetchFromGitHub {
     owner = "poljar";
     repo = "weechat-matrix";
-    rev = "4a3f5217bcf5aebb9a7636cbfd5dfca50a30152d";
-    sha256 = "139rw1hs0fm1azdjjhds19sdn9wgdkx3l7anzz6him60vi46fqil";
+    rev = "69ad2a9c03d516c212d3d0700dbb2bfe654f6365";
+    sha256 = "1mfbkag5np2lgv6f31nyfnvavyh67jrrx6gxhzb8m99dd43lgs8c";
   };
 
-  format = "other";
-  makeFlags = [ "PREFIX=${placeholder "out"}/share" ];
+  propagatedBuildInputs = [
+    pyopenssl
+    webcolors
+    future
+    atomicwrites
+    attrs
+    Logbook
+    pygments
+    cachetools
+    matrix-nio
+  ];
 
-  passthru = {
-    scripts = [ "python/matrix.py" ];
-    withPyPackages = ps: (deps ps) ++ [ self ];
-  };
+  passthru.scripts = [ "matrix.py" ];
 
-  postInstall = ''
-    mkdir -p $out/${python3.sitePackages}
-    ln -s $out/share/python/matrix $out/${python3.sitePackages}/matrix
+  dontBuild = true;
+  doCheck = false;
+
+  installPhase = ''
+    mkdir -p $out/share $out/bin
+    cp $src/main.py $out/share/matrix.py
+
+    cp $src/contrib/matrix_upload $out/bin/
+    substituteInPlace $out/bin/matrix_upload \
+      --replace '/usr/bin/env -S python3 -u' '${matrixUploadPython}/bin/python -u'
+
+    mkdir -p $out/${python.sitePackages}
+    cp -r $src/matrix $out/${python.sitePackages}/matrix
   '';
 
-  checkInputs = with python3.pkgs; [ pytest hypothesis ] ++ deps python3.pkgs;
-  checkPhase = ''
-    python -m pytest
-  '';
+  dontPatchShebangs = true;
 
   meta = with stdenv.lib; {
-    description = " Weechat Matrix protocol script written in python";
-    homepage = https://github.com/poljar/weechat-matrix;
-    maintainers = with maintainers; [ globin ma27 ];
-    license = licenses.mit;
-    platforms = platforms.unix;
-
-    # As of 2019-06-30, all of the dependencies are available on macOS but the
-    # package itself does not build.
-    broken = stdenv.isDarwin;
+    description = "A Python plugin for Weechat that lets Weechat communicate over the Matrix protocol";
+    homepage = "https://github.com/poljar/weechat-matrix";
+    license = licenses.isc;
+    platforms = platforms.linux;
+    maintainers = [ maintainers.tilpner ];
   };
-}; in self
+}

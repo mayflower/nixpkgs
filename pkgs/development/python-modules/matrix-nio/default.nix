@@ -1,31 +1,50 @@
-{ lib, buildPythonPackage, fetchPypi, isPy3k, unpaddedbase64
-, pycryptodome, peewee, jsonschema, attrs, olm, future
-, h2, h11, atomicwrites, Logbook, aiohttp, cachetools
-}:
+{ lib, buildPythonPackage, fetchFromGitHub, git,
+  attrs, future, peewee, h11, h2, atomicwrites, pycryptodome, sphinx, Logbook, jsonschema,
+  python-olm, unpaddedbase64, aiohttp, cachetools }:
 
 buildPythonPackage rec {
-  pname = "matrix-nio";
+  pname = "nio";
   version = "0.6";
 
-  src = fetchPypi {
-    inherit pname version;
-    sha256 = "0l7gw3hkmk79pfk5nifb4pg6miis8mmrlvjvbigh6d8lbsfsr915";
+  src = fetchFromGitHub {
+    owner = "poljar";
+    repo = "matrix-nio";
+    rev = version;
+    sha256 = "0pq5i6ks3pck2kq9m4p3pw9hbvkzs27xkyv68mjnfc6chp2g2mg9";
   };
 
-  propagatedBuildInputs = [
-    unpaddedbase64 pycryptodome peewee jsonschema attrs
-    olm h2 h11 atomicwrites Logbook aiohttp
-    cachetools future
-  ];
-
-  postPatch = lib.optionalString (!isPy3k) ''
-    sed -i /typing/d setup.py
+  postPatch = ''
+    substituteInPlace setup.py \
+      --replace 'python-olm>=3.1.0' ""
   '';
 
+  nativeBuildInputs = [
+    git
+  ];
+
+  propagatedBuildInputs = [
+    attrs
+    future
+    peewee
+    h11
+    h2
+    atomicwrites
+    pycryptodome
+    sphinx
+    Logbook
+    jsonschema
+    python-olm
+    unpaddedbase64
+    aiohttp
+    cachetools
+  ];
+
+  doCheck = false;
+
   meta = with lib; {
-    description = "A Python Matrix client library, designed according to sans I/O principles ";
+    description = "A Python Matrix client library, designed according to sans I/O principles";
+    homepage = "https://github.com/poljar/matrix-nio";
     license = licenses.isc;
-    homepage = https://github.com/poljar/matrix-nio;
-    maintainers = with maintainers; [ globin ];
+    maintainers = [ maintainers.tilpner ];
   };
 }

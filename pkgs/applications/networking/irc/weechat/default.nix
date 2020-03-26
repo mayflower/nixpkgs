@@ -1,5 +1,5 @@
 { stdenv, fetchurl, lib
-, ncurses, openssl, aspell, gnutls
+, ncurses, openssl, aspell, gnutls, gettext
 , zlib, curl, pkgconfig, libgcrypt
 , cmake, makeWrapper, libobjc, libresolv, libiconv
 , asciidoctor # manpages
@@ -48,7 +48,7 @@ let
         ;
 
       buildInputs = with stdenv.lib; [
-          ncurses openssl aspell gnutls zlib curl pkgconfig
+          ncurses openssl aspell gnutls gettext zlib curl pkgconfig
           libgcrypt makeWrapper cmake asciidoctor
           ]
         ++ optionals stdenv.isDarwin [ libobjc libresolv ]

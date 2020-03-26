@@ -110,6 +110,256 @@ services.xserver.displayManager.defaultSession = "xfce+icewm";
      It was created so Geary could function properly outside of GNOME.
     </para>
    </listitem>
+   <listitem>
+     <para>
+       <filename>./config/console.nix</filename>
+     </para>
+   </listitem>
+   <listitem>
+     <para>
+       <filename>./hardware/brillo.nix</filename>
+     </para>
+   </listitem>
+   <listitem>
+     <para>
+       <filename>./hardware/tuxedo-keyboard.nix</filename>
+     </para>
+   </listitem>
+   <listitem>
+     <para>
+       <filename>./programs/bandwhich.nix</filename>
+     </para>
+   </listitem>
+   <listitem>
+     <para>
+       <filename>./programs/bash-my-aws.nix</filename>
+     </para>
+   </listitem>
+   <listitem>
+     <para>
+       <filename>./programs/liboping.nix</filename>
+     </para>
+   </listitem>
+   <listitem>
+     <para>
+       <filename>./programs/traceroute.nix</filename>
+     </para>
+   </listitem>
+   <listitem>
+     <para>
+       <filename>./services/backup/sanoid.nix</filename>
+     </para>
+   </listitem>
+   <listitem>
+     <para>
+       <filename>./services/backup/syncoid.nix</filename>
+     </para>
+   </listitem>
+   <listitem>
+     <para>
+       <filename>./services/backup/zfs-replication.nix</filename>
+     </para>
+   </listitem>
+   <listitem>
+     <para>
+       <filename>./services/continuous-integration/buildkite-agents.nix</filename>
+     </para>
+   </listitem>
+   <listitem>
+     <para>
+       <filename>./services/databases/victoriametrics.nix</filename>
+     </para>
+   </listitem>
+   <listitem>
+     <para>
+       <filename>./services/desktops/gnome3/gnome-initial-setup.nix</filename>
+     </para>
+   </listitem>
+   <listitem>
+     <para>
+       <filename>./services/desktops/neard.nix</filename>
+     </para>
+   </listitem>
+   <listitem>
+     <para>
+       <filename>./services/games/openarena.nix</filename>
+     </para>
+   </listitem>
+   <listitem>
+     <para>
+       <filename>./services/hardware/fancontrol.nix</filename>
+     </para>
+   </listitem>
+   <listitem>
+     <para>
+       <filename>./services/mail/sympa.nix</filename>
+     </para>
+   </listitem>
+   <listitem>
+     <para>
+       <filename>./services/misc/freeswitch.nix</filename>
+     </para>
+   </listitem>
+   <listitem>
+     <para>
+       <filename>./services/misc/mame.nix</filename>
+     </para>
+   </listitem>
+   <listitem>
+     <para>
+       <filename>./services/monitoring/do-agent.nix</filename>
+     </para>
+   </listitem>
+   <listitem>
+     <para>
+       <filename>./services/monitoring/prometheus/xmpp-alerts.nix</filename>
+     </para>
+   </listitem>
+   <listitem>
+     <para>
+       <filename>./services/network-filesystems/orangefs/server.nix</filename>
+     </para>
+   </listitem>
+   <listitem>
+     <para>
+       <filename>./services/network-filesystems/orangefs/client.nix</filename>
+     </para>
+   </listitem>
+   <listitem>
+     <para>
+       <filename>./services/networking/3proxy.nix</filename>
+     </para>
+   </listitem>
+   <listitem>
+     <para>
+       <filename>./services/networking/corerad.nix</filename>
+     </para>
+   </listitem>
+   <listitem>
+     <para>
+       <filename>./services/networking/dnscrypt-proxy2.nix</filename>
+     </para>
+   </listitem>
+   <listitem>
+     <para>
+       <filename>./services/networking/go-shadowsocks2.nix</filename>
+     </para>
+   </listitem>
+   <listitem>
+     <para>
+       <filename>./services/networking/ntp/chrony.nix</filename>
+     </para>
+   </listitem>
+   <listitem>
+     <para>
+       <filename>./services/networking/ntp/ntpd.nix</filename>
+     </para>
+   </listitem>
+   <listitem>
+     <para>
+       <filename>./services/networking/ntp/openntpd.nix</filename>
+     </para>
+   </listitem>
+   <listitem>
+     <para>
+       <filename>./services/networking/shorewall.nix</filename>
+     </para>
+   </listitem>
+   <listitem>
+     <para>
+       <filename>./services/networking/shorewall6.nix</filename>
+     </para>
+   </listitem>
+   <listitem>
+     <para>
+       <filename>./services/networking/spacecookie.nix</filename>
+     </para>
+   </listitem>
+   <listitem>
+     <para>
+       <filename>./services/networking/trickster.nix</filename>
+     </para>
+   </listitem>
+   <listitem>
+     <para>
+       <filename>./services/networking/v2ray.nix</filename>
+     </para>
+   </listitem>
+   <listitem>
+     <para>
+       <filename>./services/networking/xandikos.nix</filename>
+     </para>
+   </listitem>
+   <listitem>
+     <para>
+       <filename>./services/networking/yggdrasil.nix</filename>
+     </para>
+   </listitem>
+   <listitem>
+     <para>
+       <filename>./services/web-apps/dokuwiki.nix</filename>
+     </para>
+   </listitem>
+   <listitem>
+     <para>
+       <filename>./services/web-apps/gotify-server.nix</filename>
+     </para>
+   </listitem>
+   <listitem>
+     <para>
+       <filename>./services/web-apps/grocy.nix</filename>
+     </para>
+   </listitem>
+   <listitem>
+     <para>
+       <filename>./services/web-apps/ihatemoney</filename>
+     </para>
+   </listitem>
+   <listitem>
+     <para>
+       <filename>./services/web-apps/moinmoin.nix</filename>
+     </para>
+   </listitem>
+   <listitem>
+     <para>
+       <filename>./services/web-apps/trac.nix</filename>
+     </para>
+   </listitem>
+   <listitem>
+     <para>
+       <filename>./services/web-apps/trilium.nix</filename>
+     </para>
+   </listitem>
+   <listitem>
+     <para>
+       <filename>./services/web-apps/shiori.nix</filename>
+     </para>
+   </listitem>
+   <listitem>
+     <para>
+       <filename>./services/web-servers/ttyd.nix</filename>
+     </para>
+   </listitem>
+   <listitem>
+     <para>
+       <filename>./services/x11/picom.nix</filename>
+     </para>
+   </listitem>
+   <listitem>
+     <para>
+       <filename>./services/x11/hardware/digimend.nix</filename>
+     </para>
+   </listitem>
+   <listitem>
+     <para>
+       <filename>./services/x11/imwheel.nix</filename>
+     </para>
+   </listitem>
+   <listitem>
+     <para>
+       <filename>./virtualisation/cri-o.nix</filename>
+     </para>
+   </listitem>
   </itemizedlist>
 
  </section>
@@ -196,10 +446,10 @@ services.xserver.displayManager.defaultSession = "xfce+icewm";
    </listitem>
    <listitem>
     <para>
-     There is now only one Xfce package-set and module. This means attributes, <literal>xfce4-14</literal>
-     <literal>xfce4-12</literal>, and <literal>xfceUnstable</literal> all now point to the latest Xfce 4.14
-     packages. And in future NixOS releases will be the latest released version of Xfce available at the
-     time during the releases development (if viable).
+     There is now only one Xfce package-set and module. This means that attributes <literal>xfce4-14</literal>
+     and <literal>xfceUnstable</literal> all now point to the latest Xfce 4.14
+     packages. And in the future NixOS releases will be the latest released version of Xfce available at the
+     time of the release's development (if viable).
     </para>
    </listitem>
    <listitem>
@@ -712,25 +962,63 @@ auth required pam_succeed_if.so uid >= 1000 quiet
      For further reference, please read <link xlink:href="https://github.com/NixOS/nixpkgs/pull/68953">#68953</link> or the corresponding <link xlink:href="https://discourse.nixos.org/t/predictable-network-interface-names-in-initrd/4055">discourse thread</link>.
     </para>
    </listitem>
-   <!-- TODO re-add changelog
    <listitem>
     <para>
      The <package>matrix-synapse</package>-package has been updated to
-     <link xlink:href="https://github.com/matrix-org/synapse/releases/tag/v1.10.1">v1.10.1</link>.
-     When using <citerefentry><refentrytitle>postgres</refentrytitle><manvolnum>1</manvolnum>
-     </citerefentry>, the values <literal>LC_CTYPE</literal> and <literal>LC_COLLATE</literal> need
-     to be set to the value <literal>C</literal>. Please read the
-     <link xlink:href="https://www.postgresql.org/docs/12/locale.html">upstream docs</link> about
-     what this value actually means.
+     <link xlink:href="https://github.com/matrix-org/synapse/releases/tag/v1.11.1">v1.11.1</link>.
+     Due to <link xlink:href="https://github.com/matrix-org/synapse/releases/tag/v1.10.0rc1">stricter requirements</link>
+     for database configuration when using <package>postgresql</package>, the automated database setup
+     of the module has been removed to avoid any further edge-cases.
     </para>
     <para>
-     For new databases, this is done automatically, existing databases will continue to work with
-     a warning, but it's recommended to recreate the database with the appropriate settings.
-     For further information, please read the correspondig <link xlink:href="https://github.com/matrix-org/synapse/blob/v1.10.1/docs/postgres.md#set-up-database">upstream docs</link>
-     and the <link xlink:href="https://github.com/matrix-org/synapse/blob/v1.10.1/CHANGES.md#synapse-1101-2020-02-17">changelog</link> carefully.
+     <package>matrix-synapse</package> expects <literal>postgresql</literal>-databases to have the options
+     <literal>LC_COLLATE</literal> and <literal>LC_CTYPE</literal> set to
+     <link xlink:href="https://www.postgresql.org/docs/12/locale.html"><literal>'C'</literal></link> which basically
+     instructs <literal>postgresql</literal> to ignore any locale-based preferences.
     </para>
-   </listitem>
-    -->
+    <para>
+     Depending on your setup, you need to incorporate one of the following changes in your setup to
+     upgrade to 20.03:
+     <itemizedlist>
+      <listitem><para>If you use <literal>sqlite3</literal> you don't need to do anything.</para></listitem>
+      <listitem><para>If you use <literal>postgresql</literal> on a different server, you don't need
+       to change anything as well since this module was never designed to configure remote databases.
+      </para></listitem>
+      <listitem><para>If you use <literal>postgresql</literal> and configured your synapse initially on
+       <literal>19.09</literal> or older, you simply need to enable <package>postgresql</package>-support
+        explicitly:
+<programlisting>{ ... }: {
+  services.matrix-synapse = {
+    <link linkend="opt-services.matrix-synapse.enable">enable</link> = true;
+    /* and all the other config you've defined here */
+  };
+  <link linkend="opt-services.postgresql.enable">services.postgresql.enable</link> = true;
+}</programlisting>
+      </para></listitem>
+      <listitem><para>If you deploy a fresh <package>matrix-synapse</package>, you need to configure
+       the database yourself (e.g. by using the
+       <link linkend="opt-services.postgresql.initialScript">services.postgresql.initialScript</link>
+       option). An example for this can be found in the
+       <link linkend="module-services-matrix">documentation of the Matrix module</link>.
+      </para></listitem>
+      <listitem><para>If you initially deployed your <package>matrix-synapse</package> on
+       <literal>nixos-unstable</literal> <emphasis>after</emphasis> the <literal>19.09</literal>-release,
+       your database is misconfigured due to a regression in NixOS. For now, <package>matrix-synapse</package> will
+       startup with a warning, but it's recommended to reconfigure the database to set the values
+       <literal>LC_COLLATE</literal> and <literal>LC_CTYPE</literal> to
+       <link xlink:href="https://www.postgresql.org/docs/12/locale.html"><literal>'C'</literal></link>.
+      </para></listitem>
+     </itemizedlist>
+    </para>
+  </listitem>
+  <listitem>
+   <para>
+    The <link linkend="opt-systemd.network.links">systemd.network.links</link> option is now respected
+    even when <link linkend="opt-systemd.network.enable">systemd-networkd</link> is disabled.
+    This mirrors the behaviour of systemd - It's udev that parses <literal>.link</literal> files,
+    not <command>systemd-networkd</command>.
+   </para>
+  </listitem>
   </itemizedlist>
  </section>
 </section>

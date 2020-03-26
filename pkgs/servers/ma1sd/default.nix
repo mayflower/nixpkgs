@@ -1,15 +1,15 @@
 { stdenv, fetchFromGitHub, jre, git, gradle_5, perl, makeWrapper }:
 
 let
-  name = "ma1sd-unstable-${version}";
-  version = "2020-02-19";
-  rev = "072e5f66cbd9e73d92a8586740e97056cb3248b0";
+  name = "ma1sd-${version}";
+  version = "2.1.1";
+  rev = "a112a5e57cb38ad282939d2dcb9c1476e038af39";
 
   src = fetchFromGitHub {
     inherit rev;
     owner = "ma1uta";
     repo = "ma1sd";
-    sha256 = "0xhk4gxm38vdb0vqk2mh7y0dlwvgvzilvr75mrp8ix6kr7h52jgw";
+    sha256 = "1qibn6m6mvxwnbiypxlgkaqg6in358vkf0q47410rv1dx1gjcnv5";
   };
 
 
@@ -35,7 +35,7 @@ let
 
     outputHashAlgo = "sha256";
     outputHashMode = "recursive";
-    outputHash = "0x2wmmhjgnb6p72d3kvnv2vg52l0c4151rs4jrazs9rvxjfc88dr";
+    outputHash = "1w9cxq0rlzyh7bzqr3v3vn2cjhpn7hhc5lk9qzwj7sdj4jn2qxq6";
   };
 
 in

@@ -10,10 +10,11 @@ mkDerivation rec {
   };
 
   nativeBuildInputs = [ pkgconfig cmake ];
-  buildInputs = [ qtbase qtwebkit qtkeychain sqlite ];
+  buildInputs = [ qtbase qtkeychain sqlite ];
 
   cmakeFlags = [
     "-UCMAKE_INSTALL_LIBDIR"
+    "-DNO_SHIBBOLETH=1"
   ];
 
   enableParallelBuilding = true;

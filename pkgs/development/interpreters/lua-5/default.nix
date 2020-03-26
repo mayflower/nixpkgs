@@ -26,7 +26,7 @@ in rec {
     hash = "0c2eed3f960446e1a3e4b9a1ca2f3ff893b6ce41942cf54d5dd59ab4b3b058ac";
     patches =
       lib.optionals stdenv.isDarwin [ ./5.2.darwin.patch ] ++ [
-        CVE_2019_6706
+        ./CVE-2019-6706.patch
       ];
     postConfigure = lib.optionalString (!stdenv.isDarwin) ''
       cat ${./lua-5.3-dso.make} >> src/Makefile
