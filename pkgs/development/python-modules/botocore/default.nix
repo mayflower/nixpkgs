@@ -19,8 +19,6 @@ buildPythonPackage rec {
     sha256 = "6478d9207db6dbcb5106fd4db2cdd5194d0b2dc0b73776019d56877ab802fe87";
   };
 
-  outputs = [ "out" "dev" ];
-
   propagatedBuildInputs = [
     dateutil
     jmespath

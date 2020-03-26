@@ -652,7 +652,7 @@ in
   }) arangodb_3_3 arangodb_3_4 arangodb_3_5;
   arangodb = arangodb_3_4;
 
-  arcanist = callPackage ../development/tools/misc/arcanist { php = php72; };
+  arcanist = callPackage ../development/tools/misc/arcanist {};
 
   arduino = arduino-core.override { withGui = true; };
 
@@ -4679,6 +4679,7 @@ in
   nodejs = hiPrio nodejs-10_x;
 
   nodejs-slim = nodejs-slim-10_x;
+
 
   nodejs-10_x = callPackage ../development/web/nodejs/v10.nix { };
   nodejs-slim-10_x = callPackage ../development/web/nodejs/v10.nix {
@@ -8758,15 +8759,6 @@ in
   inherit (rustPackages) cargo clippy rustc rustPlatform;
   inherit (rust) makeRustPlatform;
 
-  rust_1_41 = callPackage ../development/compilers/rust_1_41 {
-    inherit (darwin.apple_sdk.frameworks) CoreFoundation Security;
-  };
-
-  rustPackages_1_41 = rust_1_41.packages.stable;
-  rustPlatform_1_41 = rustPackages_1_41.rustPlatform;
-  rustc_1_41 = rustPackages_1_41.rustc;
-  cargo_1_41 = rustPackages_1_41.cargo;
-
   buildRustCrate = callPackage ../build-support/rust/build-rust-crate { };
   buildRustCrateHelpers = callPackage ../build-support/rust/build-rust-crate/helpers.nix { };
   buildRustCrateTests = recurseIntoAttrs (callPackage ../build-support/rust/build-rust-crate/test { });
@@ -8852,12 +8844,6 @@ in
   rust-cbindgen = callPackage ../development/tools/rust/cbindgen {
     inherit (darwin.apple_sdk.frameworks) Security;
   };
-
-  rust-cbindgen_0_1_13 = callPackage ../development/tools/rust/cbindgen/0_1_13.nix {
-    inherit (darwin.apple_sdk.frameworks) Security;
-    rustPlatform = rustPlatform_1_41;
-  };
-
   rustup = callPackage ../development/tools/rust/rustup {
     inherit (darwin.apple_sdk.frameworks) CoreServices Security;
   };
@@ -13475,16 +13461,7 @@ in
     inherit (darwin.apple_sdk.frameworks) CoreServices;
   };
 
-  # newer nspr version for newer firefox stable releases
-  nspr_4_24 = callPackage ../development/libraries/nspr/nspr_4_24.nix {
-    inherit (darwin.apple_sdk.frameworks) CoreServices;
-  };
-
   nss = lowPrio (callPackage ../development/libraries/nss { });
-
-  # newer NSS version for newer firefox stable releases
-  nss_3_49_2 = callPackage ../development/libraries/nss/3_49_2.nix { };
-
   nssTools = nss.tools;
 
   nss_wrapper = callPackage ../development/libraries/nss_wrapper { };
@@ -14317,7 +14294,6 @@ in
   stxxl = callPackage ../development/libraries/stxxl { parallel = true; };
 
   sqlite = lowPrio (callPackage ../development/libraries/sqlite { });
-  sqlite_3_30_1 = callPackage ../development/libraries/sqlite/3-30-1.nix { };
 
   sqlite-analyzer = lowPrio (callPackage ../development/libraries/sqlite/analyzer.nix { });
 
@@ -14346,14 +14322,6 @@ in
       echo "D 2019-03-09T15:45:46" > manifest
       echo -n "8250984a368079bb1838d48d99f8c1a6282e00bc" > manifest.uuid
     '';
-
-    patchFlags = "-p0";
-    patches = [
-      # Fixes CVE-2019-16168 for non-amalgamated 3.27.2 as the other patch used
-      # within the sqlite package itself does not apply here.
-      ../development/libraries/sqlite/CVE-2019-16168_3_27_backport.patch
-    ];
-
   });
 
   dqlite = callPackage ../development/libraries/dqlite { };
@@ -15298,13 +15266,9 @@ in
 
   gofish = callPackage ../servers/gopher/gofish { };
 
-  grafana = callPackage ../servers/monitoring/grafana {
-    buildGoPackage = buildGo113Package;
-  };
+  grafana = callPackage ../servers/monitoring/grafana { };
 
-  grafana-loki = callPackage ../servers/monitoring/loki {
-    buildGoPackage = buildGo113Package;
-  };
+  grafana-loki = callPackage ../servers/monitoring/loki { };
 
   grafana_reporter = callPackage ../servers/monitoring/grafana-reporter { };
 
@@ -16703,10 +16667,10 @@ in
   linux = linuxPackages.kernel;
 
   # Update this when adding the newest kernel major version!
+  linuxPackages_latest = linuxPackages_5_5;
   linux_latest = linuxPackages_latest.kernel;
 
   # Build the kernel modules for the some of the kernels.
-  linuxPackages_latest = linuxPackagesFor pkgs.linux_latest;
   linuxPackages_mptcp = linuxPackagesFor pkgs.linux_mptcp;
   linuxPackages_rpi1 = linuxPackagesFor pkgs.linux_rpi1;
   linuxPackages_rpi2 = linuxPackagesFor pkgs.linux_rpi2;
@@ -18903,9 +18867,6 @@ in
   errbot = callPackage ../applications/networking/errbot {
     python = python3;
   };
-  errbotPlugins = recurseIntoAttrs (
-    callPackage ../applications/networking/errbot/plugins.nix { }
-  );
 
   espeak-classic = callPackage ../applications/audio/espeak { };
 
@@ -22142,7 +22103,6 @@ in
     inherit (darwin) libobjc;
     inherit (darwin) libresolv;
     guile = guile_2_0;
-    python = python3;
   };
 
   weechat = wrapWeechat weechat-unwrapped { };
@@ -26002,4 +25962,5 @@ in
   unstick = callPackage ../os-specific/linux/unstick {};
 
   quartus-prime-lite = callPackage ../applications/editors/quartus-prime {};
+
 }

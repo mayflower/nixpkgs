@@ -672,7 +672,7 @@ in {
       }
     ];
 
-    users.users.matrix-synapse = {
+    users.users.matrix-synapse = { 
         group = "matrix-synapse";
         home = cfg.dataDir;
         createHome = true;

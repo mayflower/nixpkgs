@@ -1,5 +1,4 @@
 { stdenv, fetchFromGitHub, cmake
-, multipleHeaders ? false
 }:
 
 stdenv.mkDerivation rec {

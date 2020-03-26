@@ -31,7 +31,6 @@ buildPythonPackage rec {
     homepage = "https://github.com/danielfrg/word2vec";
     license     = licenses.asl20;
     maintainers = with maintainers; [ NikolaMandic ];
-    broken = true;
   };
 
 }

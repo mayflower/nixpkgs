@@ -21,13 +21,6 @@ buildPythonPackage {
       "'$out/${python.sitePackages}'"
   '';
 
-  postPatch = ''
-    substituteInPlace Python/configure.py \
-      --replace \
-      "target_config.py_module_dir" \
-      "'$out/${python.sitePackages}'"
-  '';
-
   preConfigure = ''
     mkdir -p $out
     lndir ${pyqt5} $out

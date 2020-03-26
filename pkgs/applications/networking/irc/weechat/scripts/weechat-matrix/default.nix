@@ -40,8 +40,8 @@ in buildPythonPackage {
 
     cp $src/contrib/matrix_upload $out/bin/
     substituteInPlace $out/bin/matrix_upload \
-      --replace '/usr/bin/env -S python3 -u' '${matrixUploadPython}/bin/python -u'
-
+      --replace '/usr/bin/env -S python3 -u' '${matrixUploadPython}/bin/python -u' 
+  
     mkdir -p $out/${python.sitePackages}
     cp -r $src/matrix $out/${python.sitePackages}/matrix
   '';

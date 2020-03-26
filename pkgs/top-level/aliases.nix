@@ -486,7 +486,6 @@ mapAliases ({
   virtmanager = virt-manager; # added 2019-10-29
   virtmanager-qt = virt-manager-qt; # added 2019-10-29
   vorbisTools = vorbis-tools; # added 2016-01-26
-  weechat-xmpp = weechatScripts.weechat-xmpp; # added 2018-09-06
   webkit = webkitgtk; # added 2019-03-05
   webkitgtk24x-gtk3 = throw "webkitgtk24x-gtk3 has been removed because it's insecure. Please use webkitgtk."; # added 2019-12-05
   webkitgtk24x-gtk2 = throw "webkitgtk24x-gtk2 has been removed because it's insecure. Please use webkitgtk."; # added 2019-12-05

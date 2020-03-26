@@ -6,13 +6,14 @@
 , guileSupport ? true, guile
 , luaSupport ? true, lua5
 , perlSupport ? true, perl
-, pythonSupport ? true, python
+, pythonSupport ? true, python3Packages
 , rubySupport ? true, ruby
 , tclSupport ? true, tcl
 , extraBuildInputs ? []
 }:
 
 let
+  inherit (python3Packages) python;
   plugins = [
     { name = "perl"; enabled = perlSupport; cmakeFlag = "ENABLE_PERL"; buildInputs = [ perl ]; }
     { name = "tcl"; enabled = tclSupport; cmakeFlag = "ENABLE_TCL"; buildInputs = [ tcl ]; }
@@ -67,8 +68,6 @@ let
           mv $from $to
         done
       '';
-
-      passthru.pythonPkg = python;
 
       meta = {
         homepage = http://www.weechat.org/;

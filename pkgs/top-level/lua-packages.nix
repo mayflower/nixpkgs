@@ -7,7 +7,7 @@
 
 { fetchurl, stdenv, lua, unzip, pkgconfig
 , pcre, oniguruma, gnulib, tre, glibc, sqlite, openssl, expat
-, autoreconfHook, gnum4, openldap
+, autoreconfHook, gnum4
 , mysql, postgresql, cyrus_sasl
 , fetchFromGitHub, which, writeText
 , pkgs
@@ -98,30 +98,6 @@ with self; {
   };
 
   luarocks-nix = callPackage ../development/tools/misc/luarocks/luarocks-nix.nix { };
-
-  lualdap = buildLuaPackage rec {
-    name = "ldap-${version}";
-    version = "1.2.3";
-
-    src = fetchFromGitHub {
-      owner = "lualdap";
-      repo = "lualdap";
-      rev = "v${version}";
-      sha256 = "0abzwszgahqkjhmrs251488dxlv70w844cf1siidrv6kxjqmv0qg";
-    };
-
-    buildInputs = [ openldap ];
-
-    patches = [ ../development/lua-modules/lualdap-ldaps.patch ];
-
-    meta = with stdenv.lib; {
-      description = "Lua bindings for the OpenLDAP client libraries";
-      homepage = "https://github.com/lualdap/lualdap";
-      license = licenses.mit;
-      maintainers = with maintainers; [ fpletz globin ];
-      platforms = platforms.unix;
-    };
-  };
 
   luxio = buildLuaPackage rec {
     name = "luxio-${version}";

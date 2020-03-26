@@ -1,4 +1,4 @@
-{ stdenv, lib, fetchurl, cmake, ninja, pkgconfig, libiconv, libintl
+{ stdenv, lib, fetchurl, fetchpatch, cmake, ninja, pkgconfig, libiconv, libintl
 , zlib, curl, cairo, freetype, fontconfig, lcms, libjpeg, openjpeg
 , withData ? true, poppler_data
 , qt5Support ? false, qtbase ? null

@@ -1,4 +1,4 @@
-config: pkgs: with pkgs.lib;
+pkgs: with pkgs.lib;
 
 rec {
 
@@ -15,11 +15,6 @@ rec {
   escapeSystemdPath = s:
    replaceChars ["/" "-" " "] ["-" "\\x2d" "\\x20"]
     (if hasPrefix "/" s then substring 1 (stringLength s) s else s);
-
-  # We must escape interfaces due to the systemd interpretation
-  subsystemDevice = interface:
-   optionalString (!config.boot.isContainer)
-    "sys-subsystem-net-devices-${escapeSystemdPath interface}.device";
 
   # Returns a system path for a given shell package
   toShellPath = shell:

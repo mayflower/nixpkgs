@@ -95,6 +95,15 @@ let
   buildPath = "out/${buildType}";
   libExecPath = "$out/libexec/${packageName}";
 
+  versionRange = min-version: upto-version:
+    let inherit (upstream-info) version;
+        result = versionAtLeast version min-version && versionOlder version upto-version;
+        stable-version = (import ./upstream-info.nix).stable.version;
+    in if versionAtLeast stable-version upto-version
+       then warn "chromium: stable version ${stable-version} is newer than a patchset bounded at ${upto-version}. You can safely delete it."
+            result
+       else result;
+
   base = rec {
     name = "${packageName}-unwrapped-${version}";
     inherit (upstream-info) channel version;

@@ -44,6 +44,5 @@ stdenv.mkDerivation rec {
     maintainers = with maintainers; [ puffnfresh ];
     license = licenses.bsd3;
     platforms = with platforms; linux;
-    broken = true;
   };
 }

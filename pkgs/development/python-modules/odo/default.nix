@@ -24,12 +24,15 @@ buildPythonPackage rec {
 
   checkInputs = [
     pytest
+    dask
   ];
 
   propagatedBuildInputs = [
-    dask
     datashape
     numpy
+    pandas
+    toolz
+    multipledispatch
     networkx
   ];
 
@@ -45,8 +48,6 @@ buildPythonPackage rec {
                and not test_different_encoding \
                and not test_numpy_asserts_type_after_dataframe"
   '';
-
-  doCheck = false; # Many failing tests
 
   meta = with lib; {
     homepage = https://github.com/ContinuumIO/odo;

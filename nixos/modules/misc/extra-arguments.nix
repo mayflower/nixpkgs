@@ -1,7 +1,7 @@
-{ config, pkgs, ... }:
+{ pkgs, ... }:
 
 {
   _module.args = {
-    utils = import ../../lib/utils.nix config pkgs;
+    utils = import ../../lib/utils.nix pkgs;
   };
 }

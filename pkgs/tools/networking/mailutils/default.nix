@@ -2,7 +2,6 @@
 , gdbm, pam, readline, ncurses, gnutls, guile, texinfo, gnum4, sasl, fribidi, nettools
 , python3, gss, libmysqlclient, system-sendmail }:
 
-let inherit (stdenv.lib) getDev; in
 stdenv.mkDerivation rec {
   name = "${project}-${version}";
   project = "mailutils";

@@ -1,4 +1,4 @@
-{ stdenv, fetchurl, fetchzip, perl
+{ stdenv, fetchurl, fetchpatch, fetchzip, perl
 , searchNixProfiles ? true
 }:
 

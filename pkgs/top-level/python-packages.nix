@@ -155,8 +155,6 @@ in {
 
   agate-sql = callPackage ../development/python-modules/agate-sql { };
 
-  ago = callPackage ../development/python-modules/ago { };
-
   aioimaplib = callPackage ../development/python-modules/aioimaplib { };
 
   aiolifx = callPackage ../development/python-modules/aiolifx { };
@@ -164,6 +162,8 @@ in {
   aiolifx-effects = callPackage ../development/python-modules/aiolifx-effects { };
 
   aioamqp = callPackage ../development/python-modules/aioamqp { };
+
+  aioredis = callPackage ../development/python-modules/aioredis { };
 
   aiorun = callPackage ../development/python-modules/aiorun { };
 
@@ -568,6 +568,8 @@ in {
 
   dendropy = callPackage ../development/python-modules/dendropy { };
 
+  denonavr = callPackage ../development/python-modules/denonavr { };
+
   dependency-injector = callPackage ../development/python-modules/dependency-injector { };
 
   btchip = callPackage ../development/python-modules/btchip { };
@@ -841,9 +843,9 @@ in {
 
   mailman = callPackage ../servers/mail/mailman { };
 
-  mailman-web = disabledIf (!isPy3k) (callPackage ../servers/mail/mailman/web.nix { });
+  mailman-web = callPackage ../servers/mail/mailman/web.nix { };
 
-  mailmanclient = disabledIf (!isPy3k) (callPackage ../development/python-modules/mailmanclient { });
+  mailmanclient = callPackage ../development/python-modules/mailmanclient { };
 
   mailman-hyperkitty = callPackage ../development/python-modules/mailman-hyperkitty { };
 
@@ -1057,8 +1059,6 @@ in {
   pycrc = callPackage ../development/python-modules/pycrc { };
 
   pycrypto = callPackage ../development/python-modules/pycrypto { };
-
-  pycrypto-original = callPackage ../development/python-modules/pycrypto-original { };
 
   pycryptodome = callPackage ../development/python-modules/pycryptodome { };
 
@@ -1562,15 +1562,13 @@ in {
 
   aioprocessing = callPackage ../development/python-modules/aioprocessing { };
 
-  aioredis = callPackage ../development/python-modules/aioredis { };
-
   aioresponses = callPackage ../development/python-modules/aioresponses { };
+
+  aiosqlite = callPackage ../development/python-modules/aiosqlite { };
 
   aiorpcx = callPackage ../development/python-modules/aiorpcx { };
 
   aiosmtpd = callPackage ../development/python-modules/aiosmtpd { };
-
-  aiosqlite = callPackage ../development/python-modules/aiosqlite { };
 
   aiounifi = callPackage ../development/python-modules/aiounifi { };
 
@@ -2519,8 +2517,6 @@ in {
   deform = callPackage ../development/python-modules/deform { };
 
   demjson = callPackage ../development/python-modules/demjson { };
-
-  denonavr = callPackage ../development/python-modules/denonavr { };
 
   deprecated = callPackage ../development/python-modules/deprecated { };
 
@@ -7012,8 +7008,6 @@ in {
   };
 
   matrix-api-async = callPackage ../development/python-modules/matrix-api-async { };
-
-  olm = callPackage ../development/python-modules/olm { };
 
   lzstring = callPackage ../development/python-modules/lzstring { };
 

@@ -11,10 +11,17 @@ stdenv.mkDerivation rec {
     sha256 = "0h425ln5vv76zv41dccapyfbl8qmmflbpwmrd26knqyj8k24zfpr";
   };
 
-  passthru = {
-    scripts = [ "wee_slack.py" ];
-    withPyPackages = ps: with ps; [ websocket_client six ];
-  };
+  patches = [
+    (substituteAll {
+      src = ./libpath.patch;
+      env = "${buildEnv {
+        name = "wee-slack-env";
+        paths = with python3Packages; [ websocket_client six ];
+      }}/${python3Packages.python.sitePackages}";
+    })
+  ];
+
+  passthru.scripts = [ "wee_slack.py" ];
 
   installPhase = ''
     mkdir -p $out/share

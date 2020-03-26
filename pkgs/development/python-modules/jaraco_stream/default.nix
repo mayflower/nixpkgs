@@ -1,4 +1,4 @@
-{ buildPythonPackage, fetchPypi, setuptools_scm, six, python }:
+{ buildPythonPackage, fetchPypi, setuptools_scm, six }:
 
 buildPythonPackage rec {
   pname = "jaraco.stream";
@@ -10,7 +10,4 @@ buildPythonPackage rec {
   doCheck = false;
   buildInputs = [ setuptools_scm ];
   propagatedBuildInputs = [ six ];
-  postInstall = ''
-    rm -f $out/${python.sitePackages}/jaraco/__pycache__/__init__.*.pyc
-  '';
 }

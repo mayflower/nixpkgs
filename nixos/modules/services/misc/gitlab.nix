@@ -631,7 +631,7 @@ in {
     '');
 
     # Use postfix to send out mails.
-    services.postfix.enable = mkDefault (cfg.smtp.address == "localhost");
+    services.postfix.enable = mkDefault true;
 
     users.users.${cfg.user} =
       { group = cfg.group;

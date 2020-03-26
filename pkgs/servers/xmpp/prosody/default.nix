@@ -31,8 +31,6 @@ stdenv.mkDerivation rec {
     sha256 = "0bzn92j48krb2zhp9gn5bbn5sg0qv15j5lpxfszwqdln3lpmrvzg";
   };
 
-  patches = [ ./muc-host-affiliation.patch ];
-
   buildInputs = [
     lua5 makeWrapper libidn openssl
   ]
@@ -43,6 +41,7 @@ stdenv.mkDerivation rec {
   ++ optional withLibevent luaevent
   ++ optional withDBI luadbi
   ++ withExtraLibs;
+
 
   configureFlags = [
     "--ostype=linux"

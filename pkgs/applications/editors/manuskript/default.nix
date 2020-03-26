@@ -6,8 +6,6 @@ python3Packages.buildPythonApplication rec {
 
   format = "other";
 
-  format = "other";
-
   src = fetchFromGitHub {
     repo = pname;
     owner = "olivierkes";

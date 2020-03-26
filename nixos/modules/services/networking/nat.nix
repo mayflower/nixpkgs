@@ -11,9 +11,6 @@ let
 
   dest = if cfg.externalIP == null then "-j MASQUERADE" else "-j SNAT --to-source ${cfg.externalIP}";
 
-  externalInterfaceFilter = param:
-    optionalString (cfg.externalInterface != null) "${param} ${cfg.externalInterface}";
-
   helpers = import ./helpers.nix { inherit config lib; };
 
   flushNat = ''

@@ -21,9 +21,7 @@ stdenv.mkDerivation rec {
     sha256 = "1nm83s9abknli46sknjs50cmdhhqzkznbsjspjbdg96likshdgsq";
   };
 
-  patches = [
-    #./fix-gnutls-detection.patch
-  ];
+  #patches = [ ./fix-gnutls-detection.patch ];
 
   nativeBuildInputs = [ pkgconfig autoreconfHook ];
   buildInputs = [

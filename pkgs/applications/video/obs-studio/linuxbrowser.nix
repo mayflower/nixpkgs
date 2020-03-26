@@ -45,6 +45,5 @@ stdenv.mkDerivation rec {
     maintainers = with maintainers; [ puffnfresh ];
     license = licenses.gpl2;
     platforms = with platforms; linux;
-    broken = true;
   };
 }

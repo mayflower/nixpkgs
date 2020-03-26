@@ -12,7 +12,6 @@
 , setproctitle
 , stdenv
 , wrapGAppsHook
-, isPy3k
 }:
 
 let

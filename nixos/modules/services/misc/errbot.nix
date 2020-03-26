@@ -4,7 +4,7 @@ with lib;
 
 let
   cfg = config.services.errbot;
-  pluginEnv = plugins: pkgs.symlinkJoin {
+  pluginEnv = plugins: pkgs.buildEnv {
     name = "errbot-plugins";
     paths = plugins;
   };
@@ -23,7 +23,6 @@ let
 
     ${instanceCfg.extraConfig}
   '';
-  errbotEnv = plugins: pkgs.python3.withPackages (ps: [ pkgs.errbot ] ++ (concatMap (p: p.withPackages ps) plugins));
 in {
   options = {
     services.errbot.instances = mkOption {
@@ -97,7 +96,7 @@ in {
       serviceConfig = {
         User = "errbot";
         Restart = "on-failure";
-        ExecStart = "${errbotEnv instanceCfg.plugins}/bin/errbot -c ${mkConfigDir instanceCfg dataDir}/config.py";
+        ExecStart = "${pkgs.errbot}/bin/errbot -c ${mkConfigDir instanceCfg dataDir}/config.py";
         PermissionsStartOnly = true;
       };
     })) cfg.instances;

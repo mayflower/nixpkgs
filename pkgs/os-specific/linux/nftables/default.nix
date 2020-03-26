@@ -20,7 +20,7 @@ stdenv.mkDerivation rec {
 
   nativeBuildInputs = [
     pkgconfig bison file flex
-    asciidoc docbook_xml_dtd_45 docbook_xsl findXMLCatalogs libxslt
+    asciidoc docbook_xml_dtd_45 docbook_xsl findXMLCatalogs libxslt 
   ];
 
   buildInputs = [

@@ -10,15 +10,6 @@
 , icu, libpng, jemalloc, glib
 , autoconf213, which, gnused, cargo, rustc, llvmPackages
 , rust-cbindgen, nodejs, nasm, fetchpatch
-
-# backports of newer libraries for stable firefox >= 70
-, nss_3_49_2
-, sqlite_3_30_1
-, nspr_4_24
-, rustc_1_41
-, cargo_1_41
-, rust-cbindgen_0_1_13
-
 , debugBuild ? false
 
 ### optionals
@@ -122,7 +113,7 @@ stdenv.mkDerivation ({
     xorg.libX11 xorg.libXrender xorg.libXft xorg.libXt file
     libnotify xorg.pixman yasm libGLU libGL
     xorg.libXScrnSaver xorg.xorgproto
-    xorg.libXext sqlite unzip
+    xorg.libXext sqlite unzip makeWrapper
     libevent libstartup_notification libvpx /* cairo */
     icu libpng jemalloc glib
     nasm
@@ -310,6 +301,7 @@ stdenv.mkDerivation ({
 # ./third_party/rust is be patched by our libtool fixup code in stdenv
 # unfortunately we can't just set this to `false` when we do not want it.
 # See https://github.com/NixOS/nixpkgs/issues/77289 for more details
+
 lib.optionalAttrs (lib.versionAtLeast ffversion "72") {
   # Ideally we would figure out how to tell the build system to not
   # care about changed hashes as we are already doing that when we

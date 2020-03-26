@@ -4,8 +4,6 @@ gem 'rails', '6.0.2'
 
 gem 'bootsnap', '~> 1.4'
 
-gem 'bootsnap', '~> 1.4'
-
 # Improves copy-on-write performance for MRI
 gem 'nakayoshi_fork', '~> 0.0.4'
 

@@ -19,6 +19,5 @@ stdenv.mkDerivation rec {
     maintainers = with maintainers; [ bcdarwin ];
     platforms = platforms.linux;
     license = licenses.asl20;
-    broken = true;
   };
 }

@@ -4,7 +4,7 @@
 , utillinux, qtbase ? null, qttools ? null
 , enableUpnp ? false
 , disableWallet ? false
-, disableDaemon ? false
+, disableDaemon ? false 
 , withGui ? false }:
 
 with stdenv.lib;
@@ -31,7 +31,7 @@ stdenv.mkDerivation rec {
                                            "--with-unsupported-ssl" # TODO remove this ASAP
                                            "--with-qt-bindir=${qtbase.dev}/bin:${qttools.dev}/bin"
                                          ];
-
+  
   enableParallelBuilding = true;
   doChecks = true;
   postBuild = ''

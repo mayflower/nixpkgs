@@ -74,6 +74,5 @@ stdenv.mkDerivation {
     maintainers = with lib.maintainers; [ raskin matejc ];
     platforms = lib.platforms.linux;
     license = lib.licenses.bsd3;
-    broken = true;  # does not support openssl 1.1
   };
 }

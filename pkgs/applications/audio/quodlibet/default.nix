@@ -75,6 +75,5 @@ python3.pkgs.buildPythonApplication rec {
 
     maintainers = with maintainers; [ coroa sauyon ];
     homepage = https://quodlibet.readthedocs.io/en/latest/;
-    broken = true;
   };
 }

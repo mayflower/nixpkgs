@@ -38,7 +38,6 @@ let
       inherit description;
       homepage = https://www.libretro.com/;
       inherit license;
-      inherit broken;
       maintainers = with maintainers; [ edwtjo hrdinka MP2E ];
       platforms = platforms.unix;
     };

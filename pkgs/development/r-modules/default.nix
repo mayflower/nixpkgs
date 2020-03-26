@@ -802,17 +802,8 @@ let
       LIBAPPARMOR_HOME = pkgs.libapparmor;
     });
 
-    RMariaDB = old.RMariaDB.overrideDerivation (attrs: {
-      preConfigure = ''
-        patchShebangs configure
-      '';
-    });
-
     RMySQL = old.RMySQL.overrideDerivation (attrs: {
-<<<<<<< HEAD
-=======
       MYSQL_DIR="${pkgs.libmysqlclient}";
->>>>>>> upstream/release-20.03
       preConfigure = ''
         patchShebangs configure
       '';
