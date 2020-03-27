@@ -5281,7 +5281,8 @@ in
 
   grocy = callPackage ../servers/grocy { };
 
-  nextcloud = callPackage ../servers/nextcloud { };
+  inherit (callPackage ../servers/nextcloud {})
+    nextcloud17 nextcloud18;
 
   nextcloud-client = libsForQt5.callPackage ../applications/networking/nextcloud-client { };
 
@@ -5465,6 +5466,7 @@ in
   onioncircuits = callPackage ../tools/security/onioncircuits { };
 
   openapi-generator-cli = callPackage ../tools/networking/openapi-generator-cli { };
+  openapi-generator-cli-unstable = callPackage ../tools/networking/openapi-generator-cli/unstable.nix { };
 
   opencc = callPackage ../tools/text/opencc { };
 
@@ -8902,7 +8904,6 @@ in
   swift = callPackage ../development/compilers/swift { };
 
   swiProlog = callPackage ../development/compilers/swi-prolog {
-    openssl = openssl_1_0_2;
     inherit (darwin.apple_sdk.frameworks) Security;
   };
   swiPrologWithGui = swiProlog.override { withGui = true; };
@@ -9707,6 +9708,15 @@ in
   bam = callPackage ../development/tools/build-managers/bam {};
 
   bazel = callPackage ../development/tools/build-managers/bazel/bazel-latest {
+    inherit (darwin) cctools;
+    inherit (darwin.apple_sdk.frameworks) CoreFoundation CoreServices Foundation;
+    buildJdk = jdk8;
+    buildJdkName = "jdk8";
+    runJdk = jdk11_headless;
+    stdenv = if stdenv.cc.isClang then llvmPackages_6.stdenv else stdenv;
+  };
+
+  bazel_0 = callPackage ../development/tools/build-managers/bazel/bazel_0 {
     inherit (darwin) cctools;
     inherit (darwin.apple_sdk.frameworks) CoreFoundation CoreServices Foundation;
     buildJdk = jdk8;
@@ -12666,9 +12676,7 @@ in
 
   libmysofa = callPackage ../development/libraries/audio/libmysofa { };
 
-  libmysqlconnectorcpp = callPackage ../development/libraries/libmysqlconnectorcpp {
-    mysql = mysql57;
-  };
+  libmysqlconnectorcpp = callPackage ../development/libraries/libmysqlconnectorcpp { };
 
   libnatpmp = callPackage ../development/libraries/libnatpmp { };
 
@@ -14944,6 +14952,8 @@ in
   buildGo114Package = callPackage ../development/go-packages/generic {
     go = buildPackages.go_1_14;
   };
+
+  buildGoPackage = buildGo114Package;
 
   buildGoPackage = buildGo114Package;
 
