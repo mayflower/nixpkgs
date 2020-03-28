@@ -104,7 +104,7 @@
     "channels" = ps: with ps; [ ]; # missing inputs: pychannels
     "cisco_ios" = ps: with ps; [ pexpect];
     "cisco_mobility_express" = ps: with ps; [ ]; # missing inputs: ciscomobilityexpress
-    "cisco_webex_teams" = ps: with ps; [ ]; # missing inputs: webexteamssdk
+    "cisco_webex_teams" = ps: with ps; [ webexteamssdk];
     "citybikes" = ps: with ps; [ ];
     "clementine" = ps: with ps; [ ]; # missing inputs: python-clementine-remote
     "clickatell" = ps: with ps; [ ];
@@ -456,7 +456,7 @@
     "melissa" = ps: with ps; [ ]; # missing inputs: py-melissa-climate
     "meraki" = ps: with ps; [ aiohttp-cors];
     "message_bird" = ps: with ps; [ ]; # missing inputs: messagebird
-    "met" = ps: with ps; [ pymetno];
+    "met" = ps: with ps; [ ]; # missing inputs: pyMetno
     "meteo_france" = ps: with ps; [ ]; # missing inputs: meteofrance vigilancemeteo
     "meteoalarm" = ps: with ps; [ ]; # missing inputs: meteoalertapi
     "metoffice" = ps: with ps; [ ]; # missing inputs: datapoint
@@ -521,7 +521,7 @@
     "nmbs" = ps: with ps; [ ]; # missing inputs: pyrail
     "no_ip" = ps: with ps; [ ];
     "noaa_tides" = ps: with ps; [ ]; # missing inputs: py_noaa
-    "norway_air" = ps: with ps; [ pymetno];
+    "norway_air" = ps: with ps; [ ]; # missing inputs: pyMetno
     "notify" = ps: with ps; [ ];
     "notion" = ps: with ps; [ ]; # missing inputs: aionotion
     "nsw_fuel_station" = ps: with ps; [ ]; # missing inputs: nsw-fuel-api-client
@@ -601,7 +601,7 @@
     "push" = ps: with ps; [ aiohttp-cors];
     "pushbullet" = ps: with ps; [ pushbullet];
     "pushetta" = ps: with ps; [ ]; # missing inputs: pushetta
-    "pushover" = ps: with ps; [ pushover-complete];
+    "pushover" = ps: with ps; [ ]; # missing inputs: pushover_complete
     "pushsafer" = ps: with ps; [ ];
     "pvoutput" = ps: with ps; [ ];
     "pyload" = ps: with ps; [ ];
@@ -632,7 +632,7 @@
     "remote" = ps: with ps; [ ];
     "remote_rpi_gpio" = ps: with ps; [ ]; # missing inputs: gpiozero
     "repetier" = ps: with ps; [ ]; # missing inputs: pyrepetier
-    "rest" = ps: with ps; [ jsonpath xmltodict];
+    "rest" = ps: with ps; [ xmltodict]; # missing inputs: jsonpath
     "rest_command" = ps: with ps; [ ];
     "rflink" = ps: with ps; [ ]; # missing inputs: rflink
     "rfxtrx" = ps: with ps; [ ]; # missing inputs: pyRFXtrx
@@ -845,7 +845,7 @@
     "velux" = ps: with ps; [ ]; # missing inputs: pyvlx
     "venstar" = ps: with ps; [ ]; # missing inputs: venstarcolortouch
     "vera" = ps: with ps; [ ]; # missing inputs: pyvera
-    "verisure" = ps: with ps; [ jsonpath]; # missing inputs: vsure
+    "verisure" = ps: with ps; [ ]; # missing inputs: jsonpath vsure
     "versasense" = ps: with ps; [ ]; # missing inputs: pyversasense
     "version" = ps: with ps; [ pyhaversion];
     "vesync" = ps: with ps; [ ]; # missing inputs: pyvesync
@@ -867,7 +867,7 @@
     "water_heater" = ps: with ps; [ ];
     "waterfurnace" = ps: with ps; [ ]; # missing inputs: waterfurnace
     "watson_iot" = ps: with ps; [ ]; # missing inputs: ibmiotf
-    "watson_tts" = ps: with ps; [ ]; # missing inputs: ibm-watson
+    "watson_tts" = ps: with ps; [ ibm-watson];
     "waze_travel_time" = ps: with ps; [ WazeRouteCalculator];
     "weather" = ps: with ps; [ ];
     "webhook" = ps: with ps; [ aiohttp-cors];
