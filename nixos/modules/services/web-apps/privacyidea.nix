@@ -287,15 +287,11 @@ in
         };
       };
 
-      users.extraUsers = optionalAttrs (cfg.ldap-proxy.user == "pi-ldap-proxy")
-        (singleton
-          { name = cfg.ldap-proxy.user;
-            group = cfg.ldap-proxy.group;
-          });
+      users.extraUsers.pi-ldap-proxy = mkIf (cfg.ldap-proxy.user == "pi-ldap-proxy") {
+        group = cfg.ldap-proxy.group;
+      };
 
-      users.extraGroups = optionalAttrs (cfg.ldap-proxy.group == "pi-ldap-proxy")
-        (singleton { name = cfg.ldap-proxy.group; });
-
+      users.extraGroups.pi-ldap-proxy = mkIf (cfg.ldap-proxy.group == "pi-ldap-proxy") {};
     })
   ];
 
