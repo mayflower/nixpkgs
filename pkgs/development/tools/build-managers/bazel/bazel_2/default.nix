@@ -25,11 +25,11 @@
 }:
 
 let
-  version = "1.2.1";
+  version = "2.0.0";
 
   src = fetchurl {
     url = "https://github.com/bazelbuild/bazel/releases/download/${version}/bazel-${version}-dist.zip";
-    sha256 = "1qfk14mgx1m454b4w4ldggljzqkqwpdwrlynq7rc8aq11yfs8p95";
+    sha256 = "1fvc7lakdczim1i99hrwhwx2w75afd3q9fgbhrx7i3pnav3a6kbj";
   };
 
   # Update with `eval $(nix-build -A bazel.updater)`,
@@ -49,8 +49,8 @@ let
       srcs.io_bazel_rules_sass
       srcs.platforms
       (if stdenv.hostPlatform.isDarwin
-       then srcs."java_tools_javac11_darwin-v6.1.zip"
-       else srcs."java_tools_javac11_linux-v6.1.zip")
+       then srcs."java_tools_javac11_darwin-v7.0.zip"
+       else srcs."java_tools_javac11_linux-v7.0.zip")
       srcs."coverage_output_generator-v2.0.zip"
       srcs.build_bazel_rules_nodejs
       srcs."android_tools_pkg-0.12.tar.gz"
@@ -110,7 +110,7 @@ let
   remote_java_tools = stdenv.mkDerivation {
     name = "remote_java_tools_${system}";
 
-    src = srcDepsSet."java_tools_javac11_${system}-v6.1.zip";
+    src = srcDepsSet."java_tools_javac11_${system}-v7.0.zip";
 
     nativeBuildInputs = [ autoPatchelfHook unzip ];
     buildInputs = [ gcc-unwrapped ];
@@ -160,7 +160,6 @@ stdenv.mkDerivation rec {
     # This is breaking the build of any C target. This patch removes the last
     # argument if it's found to be an empty string.
     ../trim-last-argument-to-gcc-if-empty.patch
-    ./glibc.patch
 
     # --experimental_strict_action_env (which may one day become the default
     # see bazelbuild/bazel#2574) hardcodes the default
@@ -327,14 +326,6 @@ stdenv.mkDerivation rec {
   postPatch = let
 
     darwinPatches = ''
-      bazelLinkFlags () {
-        eval set -- "$NIX_LDFLAGS"
-        local flag
-        for flag in "$@"; do
-          printf ' -Wl,%s' "$flag"
-        done
-      }
-
       # Disable Bazel's Xcode toolchain detection which would configure compilers
       # and linkers from Xcode instead of from PATH
       export BAZEL_USE_CPP_ONLY_TOOLCHAIN=1
@@ -344,14 +335,14 @@ stdenv.mkDerivation rec {
 
       # Framework search paths aren't added by bintools hook
       # https://github.com/NixOS/nixpkgs/pull/41914
-      export NIX_LDFLAGS+=" -F${CoreFoundation}/Library/Frameworks -F${CoreServices}/Library/Frameworks -F${Foundation}/Library/Frameworks"
+      export NIX_LDFLAGS="$NIX_LDFLAGS -F${CoreFoundation}/Library/Frameworks -F${CoreServices}/Library/Frameworks -F${Foundation}/Library/Frameworks"
 
       # libcxx includes aren't added by libcxx hook
       # https://github.com/NixOS/nixpkgs/pull/41589
       export NIX_CFLAGS_COMPILE="$NIX_CFLAGS_COMPILE -isystem ${libcxx}/include/c++/v1"
 
       # don't use system installed Xcode to run clang, use Nix clang instead
-      sed -i -E "s;/usr/bin/xcrun (--sdk macosx )?clang;${stdenv.cc}/bin/clang $NIX_CFLAGS_COMPILE $(bazelLinkFlags) -framework CoreFoundation;g" \
+      sed -i -E "s;/usr/bin/xcrun (--sdk macosx )?clang;${stdenv.cc}/bin/clang $NIX_CFLAGS_COMPILE $NIX_LDFLAGS -framework CoreFoundation;g" \
         scripts/bootstrap/compile.sh \
         src/tools/xcode/realpath/BUILD \
         src/tools/xcode/stdredirect/BUILD \
