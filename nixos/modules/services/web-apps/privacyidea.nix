@@ -255,14 +255,11 @@ in
         };
       };
 
-      users.extraUsers = optionalAttrs (cfg.user == "privacyidea")
-        (singleton
-          { name = cfg.user;
-            group = cfg.group;
-          });
+      users.extraUsers.privacyidea = mkIf (cfg.user == "privacyidea") {
+        group = cfg.group;
+      };
 
-      users.extraGroups = optionalAttrs (cfg.group == "privacyidea")
-        (singleton { name = cfg.group; });
+      users.extraGroups.privacyidea = mkIf (cfg.group == "privacyidea") {};
     })
 
     (mkIf cfg.ldap-proxy.enable {
