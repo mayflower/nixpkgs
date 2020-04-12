@@ -9,7 +9,7 @@ let
 
   # a wrapper that verifies that the configuration is valid
   promtoolCheck = what: name: file:
-    pkgs.runCommand
+    pkgs.runCommandNoCCLocal
       "${name}-${replaceStrings [" "] [""] what}-checked"
       { buildInputs = [ cfg.package ]; } ''
     ln -s ${file} $out
@@ -18,7 +18,7 @@ let
 
   # Pretty-print JSON to a file
   writePrettyJSON = name: x:
-    pkgs.runCommand name { preferLocalBuild = true; } ''
+    pkgs.runCommandNoCCLocal name {} ''
       echo '${builtins.toJSON x}' | ${pkgs.jq}/bin/jq . > $out
     '';
 
