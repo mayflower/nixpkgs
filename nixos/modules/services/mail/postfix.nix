@@ -892,9 +892,6 @@ in
     (mkIf haveLocalRecipients {
       services.postfix.mapFiles.local_recipients = localRecipientMapFile;
     })
-    (mkIf haveLocalRecipients {
-      services.postfix.mapFiles."local_recipients" = localRecipientMapFile;
-    })
     (mkIf cfg.enableHeaderChecks {
       services.postfix.mapFiles.header_checks = headerChecksFile;
     })
