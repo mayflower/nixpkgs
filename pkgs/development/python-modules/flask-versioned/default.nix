@@ -1,18 +1,17 @@
-{ stdenv, buildPythonPackage, fetchPypi, flask, pyjwt, werkzeug, pytest }:
+{ stdenv, buildPythonPackage, fetchFromGitHub, flask }:
 
 buildPythonPackage rec {
   pname = "Flask-Versioned";
   version = "0.9.4-20101221";
 
-  src = fetchPypi {
-    inherit pname version;
-    sha256 = "0d7xaw86iv9v58l0kq9ba9802g08hm5342xn5brc86qahvf98rji";
+  src = fetchFromGitHub {
+    owner = "pilt";
+    repo = "flask-versioned";
+    rev = "38046fb53a09060de437c90a5f7370a6b94ffc31"; # no tags
+    sha256 = "1wim9hvx7lxzfg35c0nc7p34j4vw9mzisgijlz4ibgykah4g1y37";
   };
 
   propagatedBuildInputs = [ flask ];
-
-  # tests not included on pypi
-  doCheck = false;
 
   meta = with stdenv.lib; {
     description = "Flask plugin to rewrite file paths to add version info";
@@ -21,3 +20,4 @@ buildPythonPackage rec {
     maintainers = with maintainers; [ globin ];
   };
 }
+
