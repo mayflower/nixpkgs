@@ -11975,7 +11975,12 @@ in
   hwloc = callPackage ../development/libraries/hwloc {};
 
   inherit (callPackage ../development/tools/misc/hydra { })
-    hydra-migration hydra-unstable hydra-flakes;
+    hydra-migration hydra-unstable;
+
+  hydra-flakes = throw ''
+    Flakes support has been merged into Hydra's master. Please use
+    `pkgs.hydra-unstable` now.
+  '';
 
   hydra-cli = callPackage ../development/tools/misc/hydra-cli { };
 
@@ -13176,6 +13181,7 @@ in
   libviper = callPackage ../development/libraries/libviper { };
 
   libvpx = callPackage ../development/libraries/libvpx { };
+  libvpx_1_8 = callPackage ../development/libraries/libvpx/1_8.nix { };
 
   libvterm = callPackage ../development/libraries/libvterm { };
   libvterm-neovim = callPackage ../development/libraries/libvterm-neovim { };
@@ -16451,11 +16457,6 @@ in
         kernelPatches.request_key_helper_updated
         kernelPatches.cpu-cgroup-v2."4.4"
         kernelPatches.modinst_arg_list_too_long
-        # https://github.com/NixOS/nixpkgs/issues/42755
-        # Remove these xen-netfront patches once they're included in
-        # upstream! Fixes https://github.com/NixOS/nixpkgs/issues/42755
-        kernelPatches.xen-netfront_fix_mismatched_rtnl_unlock
-        kernelPatches.xen-netfront_update_features_after_registering_netdev
       ];
   };
 
@@ -25413,6 +25414,8 @@ in
   brscan4 = callPackage ../applications/graphics/sane/backends/brscan4 { };
 
   dsseries = callPackage ../applications/graphics/sane/backends/dsseries { };
+
+  sane-airscan = callPackage ../applications/graphics/sane/backends/airscan { };
 
   mkSaneConfig = callPackage ../applications/graphics/sane/config.nix { };
 
