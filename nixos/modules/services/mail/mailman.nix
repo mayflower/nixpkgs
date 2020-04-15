@@ -64,7 +64,7 @@ let
     class: mailman_hyperkitty.Archiver
     enable: yes
     configuration: /var/lib/mailman/mailman-hyperkitty.cfg
-  '';
+  '' + cfg.extraConfig;
 
   mailmanHyperkittyCfg = pkgs.writeText "mailman-hyperkitty.cfg" ''
     [general]
@@ -158,6 +158,11 @@ in {
         description = "Packages to add to the python environment used by mailman and mailman-web";
         type = types.listOf types.package;
         default = [];
+      };
+
+      extraConfig = mkOption {
+        type = types.str;
+        default = "";
       };
 
       hyperkitty = {
