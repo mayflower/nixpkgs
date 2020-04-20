@@ -297,22 +297,17 @@ in
                   wantedBy = mkIf (!config.boot.isContainer) [ "multi-user.target" ];
                   serviceConfig = {
                     Type = "oneshot";
-                    # With RemainAfterExit the service is considered active even
-                    # after the main process having exited, which means when it
-                    # gets changed, the activation phase restarts it, meaning
-                    # the permissions of the StateDirectory get adjusted
-                    # according to the specified group
-                    RemainAfterExit = true;
                     User = data.user;
                     Group = data.group;
                     PrivateTmp = true;
-                    StateDirectory = "acme/.lego/${cert} ${lpath}";
+                    StateDirectory = "acme/.lego/${cert} acme/.lego/accounts ${lpath}";
                     StateDirectoryMode = if data.allowKeysForGroup then "750" else "700";
                     WorkingDirectory = spath;
                     # Only try loading the credentialsFile if the dns challenge is enabled
                     EnvironmentFile = if data.dnsProvider != null then data.credentialsFile else null;
                     ExecStart = pkgs.writeScript "acme-start" ''
                       #!${pkgs.runtimeShell} -e
+                      test -L ${spath}/accounts -o -d ${spath}/accounts || ln -s ../accounts ${spath}/accounts
                       ${pkgs.lego}/bin/lego ${renewOpts} || ${pkgs.lego}/bin/lego ${runOpts}
                     '';
                     ExecStartPost =
@@ -324,7 +319,9 @@ in
 
                           # Test that existing cert is older than new cert
                           KEY=${spath}/certificates/${keyName}.key
+                          KEY_CHANGED=no
                           if [ -e $KEY -a $KEY -nt key.pem ]; then
+                            KEY_CHANGED=yes
                             cp -p ${spath}/certificates/${keyName}.key key.pem
                             cp -p ${spath}/certificates/${keyName}.crt fullchain.pem
                             cp -p ${spath}/certificates/${keyName}.issuer.crt chain.pem
@@ -335,7 +332,10 @@ in
                           chmod ${fileMode} *.pem
                           chown '${data.user}:${data.group}' *.pem
 
-                          ${data.postRun}
+                          if [ "$KEY_CHANGED" = "yes" ]; then
+                            : # noop in case postRun is empty
+                            ${data.postRun}
+                          fi
                         '';
                       in
                         "+${script}";
