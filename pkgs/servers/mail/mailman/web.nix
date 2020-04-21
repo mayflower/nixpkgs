@@ -1,11 +1,7 @@
 { buildPythonPackage, lib, fetchgit, isPy3k
 , git, makeWrapper, sassc, hyperkitty, postorius, whoosh
-, django
 }:
 
-if lib.versionOlder "2.2" django.version
-then throw "mailman-web requires django < 2.2"
-else
 buildPythonPackage rec {
   pname = "mailman-web-unstable";
   version = "2019-09-29";
@@ -20,8 +16,13 @@ buildPythonPackage rec {
 
   # This is just so people installing from pip also get uwsgi
   # installed, AFAICT.
+
+  # Django is depended on transitively by hyperkitty and postorius,
+  # and mailman_web has overly restrictive version bounds on it, so
+  # let's remove it.
   postPatch = ''
     sed -i '/^  uwsgi$/d' setup.cfg
+    sed -i '/^  Django/d' setup.cfg
   '';
 
   nativeBuildInputs = [ git makeWrapper ];
