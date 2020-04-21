@@ -783,6 +783,7 @@
   ./services/security/oauth2_proxy.nix
   ./services/security/oauth2_proxy_nginx.nix
   ./services/security/physlock.nix
+  ./services/security/privacyidea.nix
   ./services/security/shibboleth-sp.nix
   ./services/security/sks.nix
   ./services/security/sshguard.nix
@@ -830,7 +831,6 @@
   ./services/web-apps/nextcloud.nix
   ./services/web-apps/nexus.nix
   ./services/web-apps/pgpkeyserver-lite.nix
-  ./services/web-apps/privacyidea.nix
   ./services/web-apps/matomo.nix
   ./services/web-apps/moinmoin.nix
   ./services/web-apps/restya-board.nix
