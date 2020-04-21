@@ -25842,9 +25842,6 @@ in
 
   xulrunner = firefox-unwrapped;
 
-  privacyidea = callPackage ../servers/privacyidea { };
-  privacyidea-ldap-proxy = callPackage ../servers/privacyidea/ldap-proxy.nix { };
-
   xrq = callPackage ../applications/misc/xrq { };
 
   nitrokey-app = libsForQt5.callPackage ../tools/security/nitrokey-app { };

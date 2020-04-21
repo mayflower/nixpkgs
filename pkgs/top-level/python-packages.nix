@@ -3046,6 +3046,9 @@ in {
 
   priority = callPackage ../development/python-modules/priority { };
 
+  privacyidea = callPackage ../servers/privacyidea { };
+  privacyidea-ldap-proxy = callPackage ../servers/privacyidea/ldap-proxy.nix { };
+
   prov = callPackage ../development/python-modules/prov { };
 
   pudb = callPackage ../development/python-modules/pudb { };

@@ -1,6 +1,6 @@
 # Miscellaneous small tests that don't warrant their own VM run.
 
-import ./make-test.nix ({ pkgs, ...} : rec {
+import ./make-test-python.nix ({ pkgs, ...} : rec {
   name = "privacyidea";
   meta = with pkgs.stdenv.lib.maintainers; {
     maintainers = [ fpletz ];
@@ -26,9 +26,11 @@ import ./make-test.nix ({ pkgs, ...} : rec {
   };
 
   testScript = ''
-    $machine->start;
-    $machine->waitForUnit("multi-user.target");
-    $machine->succeed("curl --fail http://localhost | grep privacyIDEA");
-    $machine->succeed("curl --fail http://localhost/auth -F username=admin -F password=testing | grep token");
+    machine.start()
+    machine.wait_for_unit("multi-user.target")
+    machine.succeed("curl --fail http://localhost | grep privacyIDEA")
+    machine.succeed(
+        "curl --fail http://localhost/auth -F username=admin -F password=testing | grep token"
+    )
   '';
 })

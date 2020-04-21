@@ -1,4 +1,4 @@
-{ buildPythonPackage, fetchPypi, lib, six, tox, mock, pytest }:
+{ buildPythonPackage, fetchPypi, lib, python, six, tox, mock, pytest }:
 
 buildPythonPackage rec {
   pname = "smpplib";
@@ -14,6 +14,10 @@ buildPythonPackage rec {
 
   checkPhase = ''
     pytest
+  '';
+
+  postInstall = ''
+    rm -rf $out/${python.sitePackages}/tests
   '';
 
   meta = with lib; {

@@ -5,6 +5,9 @@ with lib;
 let
   cfg = config.services.privacyidea;
 
+  uwsgi = pkgs.uwsgi.override { plugins = [ "python3" ]; };
+  python = uwsgi.python3;
+  penv = python.withPackages (ps: [ ps.privacyidea ]);
   logCfg = pkgs.writeText "privacyidea-log.cfg" ''
     [formatters]
     keys=detail
@@ -187,15 +190,11 @@ in
 
     (mkIf cfg.enable {
 
-      environment.systemPackages = [ pkgs.privacyidea ];
+      environment.systemPackages = [ python.pkgs.privacyidea ];
 
       services.postgresql.enable = mkDefault true;
 
       systemd.services.privacyidea = let
-        uwsgi = pkgs.uwsgi.override { plugins = [ "python3" ]; };
-        penv = uwsgi.python3.buildEnv.override {
-          extraLibs = [ pkgs.privacyidea ];
-        };
         piuwsgi = pkgs.writeText "uwsgi.json" (builtins.toJSON {
           uwsgi = {
             plugins = [ "python3" ];
@@ -206,7 +205,7 @@ in
             chmod-socket = 770;
             chown-socket = "${cfg.user}:nginx";
             chdir = cfg.stateDir;
-            wsgi-file = "${pkgs.privacyidea}/etc/privacyidea/privacyideaapp.wsgi";
+            wsgi-file = "${penv}/etc/privacyidea/privacyideaapp.wsgi";
             processes = 4;
             harakiri = 60;
             reload-mercy = 8;
@@ -217,32 +216,33 @@ in
             reload-on-rss = 256;
             no-orphans = true;
             vacuum = true;
-            pyargv = piCfgFile;
           };
         });
       in {
         wantedBy = [ "multi-user.target" ];
         after = [ "postgresql.service" ];
         path = with pkgs; [ openssl ];
+        environment.PRIVACYIDEA_CONFIGFILE = piCfgFile;
         preStart = let
-          pi-manage = "${pkgs.sudo}/bin/sudo -u privacyidea -H PRIVACYIDEA_CONFIGFILE=${piCfgFile} ${pkgs.privacyidea}/bin/pi-manage";
+          pi-manage = "${pkgs.sudo}/bin/sudo -u privacyidea -H PRIVACYIDEA_CONFIGFILE=${piCfgFile} ${penv}/bin/pi-manage";
           pgsu = config.services.postgresql.superUser;
+          psql = config.services.postgresql.package;
         in ''
           mkdir -p ${cfg.stateDir} ${cfg.runDir}
           chown ${cfg.user}:${cfg.group} -R ${cfg.stateDir} ${cfg.runDir}
           ln -sf ${piCfgFile} ${cfg.stateDir}/privacyidea.cfg
           if ! test -e "${cfg.stateDir}/db-created"; then
-            ${pkgs.sudo}/bin/sudo -u ${pgsu} ${pkgs.postgresql}/bin/createuser --no-superuser --no-createdb --no-createrole ${cfg.user}
-            ${pkgs.sudo}/bin/sudo -u ${pgsu} ${pkgs.postgresql}/bin/createdb --owner ${cfg.user} privacyidea
+            ${pkgs.sudo}/bin/sudo -u ${pgsu} ${psql}/bin/createuser --no-superuser --no-createdb --no-createrole ${cfg.user}
+            ${pkgs.sudo}/bin/sudo -u ${pgsu} ${psql}/bin/createdb --owner ${cfg.user} privacyidea
             ${pi-manage} create_enckey
             ${pi-manage} create_audit_keys
             ${pi-manage} createdb
             ${pi-manage} admin add admin -e ${cfg.adminEmail} -p ${cfg.adminPassword}
-            ${pi-manage} db stamp head -d ${pkgs.privacyidea}/lib/privacyidea/migrations
+            ${pi-manage} db stamp head -d ${penv}/lib/privacyidea/migrations
             touch "${cfg.stateDir}/db-created"
             chmod g+r "${cfg.stateDir}/enckey" "${cfg.stateDir}/private.pem"
           fi
-          ${pi-manage} db upgrade -d ${pkgs.privacyidea}/lib/privacyidea/migrations
+          ${pi-manage} db upgrade -d ${penv}/lib/privacyidea/migrations
         '';
         serviceConfig = {
           Type = "notify";
@@ -264,15 +264,16 @@ in
 
     (mkIf cfg.ldap-proxy.enable {
 
-      systemd.services.privacyidea-ldap-proxy = let pkg = pkgs.privacyidea-ldap-proxy; in {
+      systemd.services.privacyidea-ldap-proxy = let
+        ldap-proxy-env = pkgs.python2.withPackages (ps: [ ps.privacyidea-ldap-proxy ]);
+      in {
         description = "privacyIDEA LDAP proxy";
         wantedBy = [ "multi-user.target" ];
-        environment.PYTHONPATH = "${pkg}/${pkg.python.sitePackages}:${pkg.env}/${pkg.python.sitePackages}";
         serviceConfig = {
           User = cfg.ldap-proxy.user;
           Group = cfg.ldap-proxy.group;
           ExecStart = ''
-            ${pkg.env}/bin/twistd \
+            ${ldap-proxy-env}/bin/twistd \
               --nodaemon \
               --pidfile= \
               -u ${cfg.ldap-proxy.user} \
