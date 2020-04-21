@@ -7031,17 +7031,6 @@ in {
 
   casttube = callPackage ../development/python-modules/casttube { };
 
-  pyrad = buildPythonPackage rec {
-    name = "pyrad-2.1";
-    src = pkgs.fetchurl {
-      url = "mirror://pypi/p/pyrad/${name}.tar.gz";
-      sha256 = "1fkqk5095cwkq44jq8mpblbnw8gzxvm5yn17ypva78cflmachz3m";
-    };
-    buildInputs = with self; [ nose ];
-    propagatedBuildInputs = with self; [ six netaddr ];
-    doCheck = false; # needs extra data
-  };
-
   matrix-api-async = callPackage ../development/python-modules/matrix-api-async { };
 
   lzstring = callPackage ../development/python-modules/lzstring { };
