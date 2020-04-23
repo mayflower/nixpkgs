@@ -2411,6 +2411,7 @@ in
   circus = callPackage ../tools/networking/circus { };
 
   citrix_workspace_unwrapped = callPackage ../applications/networking/remote/citrix-workspace { };
+  citrix_workspace_unwrapped_20_04_0 = citrix_workspace_unwrapped.override { version = "20.04.0"; };
   citrix_workspace_unwrapped_19_12_0 = citrix_workspace_unwrapped.override { version = "19.12.0"; };
   citrix_workspace_unwrapped_19_10_0 = citrix_workspace_unwrapped.override { version = "19.10.0"; };
   citrix_workspace_unwrapped_19_8_0 = citrix_workspace_unwrapped.override { version = "19.8.0"; };
@@ -16500,7 +16501,7 @@ in
     ];
   };
 
-  linux_5_5 = callPackage ../os-specific/linux/kernel/linux-5.5.nix {
+  linux_5_6 = callPackage ../os-specific/linux/kernel/linux-5.6.nix {
     kernelPatches = [
       kernelPatches.bridge_stp_helper
       kernelPatches.request_key_helper
@@ -16715,7 +16716,7 @@ in
   linux = linuxPackages.kernel;
 
   # Update this when adding the newest kernel major version!
-  linuxPackages_latest = linuxPackages_5_5;
+  linuxPackages_latest = linuxPackages_5_6;
   linux_latest = linuxPackages_latest.kernel;
 
   # Build the kernel modules for the some of the kernels.
@@ -16729,7 +16730,7 @@ in
   linuxPackages_4_14 = recurseIntoAttrs (linuxPackagesFor pkgs.linux_4_14);
   linuxPackages_4_19 = recurseIntoAttrs (linuxPackagesFor pkgs.linux_4_19);
   linuxPackages_5_4 = recurseIntoAttrs (linuxPackagesFor pkgs.linux_5_4);
-  linuxPackages_5_5 = recurseIntoAttrs (linuxPackagesFor pkgs.linux_5_5);
+  linuxPackages_5_6 = recurseIntoAttrs (linuxPackagesFor pkgs.linux_5_6);
 
   # When adding to this list:
   # - Update linuxPackages_latest to the latest version
