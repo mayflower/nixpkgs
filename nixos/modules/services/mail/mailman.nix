@@ -420,4 +420,9 @@ in {
       }));
   };
 
+  meta = {
+    maintainers = with lib.maintainers; [ lheckemann alyssais ];
+    doc = ./mailman.xml;
+  };
+
 }
