@@ -58,6 +58,7 @@ let
 
     [mta]
     configuration: ${mtaConfig}
+    lmtp_host: ::1
   '' + optionalString cfg.hyperkitty.enable ''
 
     [archiver.hyperkitty]
