@@ -320,16 +320,16 @@ in
         # Wait for PostgreSQL to be ready to accept connections.
         postStart =
           ''
-            PSQL="${pkgs.sudo}/bin/sudo -u ${cfg.superUser} psql --port=${toString cfg.port}"
+            PSQL="${pkgs.sudo}/bin/sudo -u ${cfg.superUser} psql postgres --port=${toString cfg.port}"
 
-            while ! $PSQL -d postgres -c "" 2> /dev/null; do
+            while ! $PSQL -c "" 2> /dev/null; do
                 if ! kill -0 "$MAINPID"; then exit 1; fi
                 sleep 0.1
             done
 
             if test -e "${cfg.dataDir}/.first_startup"; then
               ${optionalString (cfg.initialScript != null) ''
-                $PSQL -f "${cfg.initialScript}" -d postgres
+                $PSQL -f "${cfg.initialScript}"
               ''}
               rm -f "${cfg.dataDir}/.first_startup"
             fi
