@@ -1,7 +1,6 @@
-{ stdenv, fetchFromGitHub, pythonPackages, glibcLocales
-, extraPythonPackages ? _: [] }:
+{ stdenv, fetchFromGitHub, fetchpatch, pythonPackages, glibcLocales }:
 
-pythonPackages.buildPythonApplication rec {
+pythonPackages.buildPythonPackage rec {
   pname = "opsdroid";
   version = "0.17.1";
 
@@ -14,21 +13,23 @@ pythonPackages.buildPythonApplication rec {
 
   disabled = !pythonPackages.isPy3k;
 
-  #LC_ALL = "en_US.utf8";
-
   # tests folder is not included in release
   doCheck = false;
 
-  #buildInputs = [ glibcLocales ];
   propagatedBuildInputs = with pythonPackages; [
     Babel opsdroid_get_image_size slackclient webexteamssdk bleach
     parse emoji puremagic yamale nbformat websockets pycron nbconvert
     aiohttp matrix-api-async aioredis aiosqlite arrow pyyaml motor
     mattermostdriver setuptools voluptuous ibm-watson tailer multidict
+  ];
 
-    # Undeclared dependencies
-    ago
-  ] ++ extraPythonPackages pythonPackages;
+  patches = [
+    # fixes shell connector, remove >0.17.1
+    (fetchpatch {
+      url = "https://github.com/opsdroid/opsdroid/commit/9c6eb3af14a2b5cd2ac875153d3707a490b48150.patch";
+      sha256 = "06gdlb6ysdg5w7m848k61bjqqnrrr3q82avkh9dv71nh4fqi6gv2";
+    })
+  ];
 
   postPatch = ''
     substituteInPlace requirements.txt \
@@ -42,6 +43,8 @@ pythonPackages.buildPythonApplication rec {
       --replace slackclient==2.5.0 slackclient>=2.5.0 \
       --replace nbconvert==5.6.1 nbconvert>=5.6.1 \
       --replace multidict==4.7.1 multidict>=4.7.1 \
+      --replace nbformat==4.4.0 nbformat>=4.4.0 \
+      --replace aiosqlite==0.10.0 aiosqlite>=0.10.0 \
       ;
     sed -i '/setuptools=/d' requirements.txt
     substituteInPlace opsdroid/loader.py \
