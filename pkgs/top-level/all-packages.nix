@@ -18798,6 +18798,8 @@ in
 
   ekho = callPackage ../applications/audio/ekho { };
 
+  elan-transcription = callPackage ../applications/misc/elan { };
+
   electron-cash = libsForQt5.callPackage ../applications/misc/electron-cash { };
 
   electrum = libsForQt5.callPackage ../applications/misc/electrum { };

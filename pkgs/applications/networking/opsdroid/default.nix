@@ -1,4 +1,4 @@
-{ stdenv, fetchFromGitHub, fetchpatch, pythonPackages, glibcLocales }:
+{ stdenv, fetchFromGitHub, fetchpatch, pythonPackages }:
 
 pythonPackages.buildPythonPackage rec {
   pname = "opsdroid";
@@ -51,8 +51,9 @@ pythonPackages.buildPythonPackage rec {
       --replace \
         'os.path.isfile(os.path.join(config["install_path"], "requirements.txt"))' \
         "False"
-
   '';
+
+  passthru.python = pythonPackages.python;
 
   meta = with stdenv.lib; {
     description = "An open source chat-ops bot framework";
