@@ -1,4 +1,4 @@
-{ config, stdenv, lib, callPackage, fetchurl }:
+{ config, stdenv, lib, callPackage, fetchurl, fetchpatch }:
 
 let
   common = opts: callPackage (import ./common.nix opts) {};
@@ -7,14 +7,19 @@ in
 rec {
   firefox = common rec {
     pname = "firefox";
-    ffversion = "75.0";
+    ffversion = "76.0.1";
     src = fetchurl {
       url = "mirror://mozilla/firefox/releases/${ffversion}/source/firefox-${ffversion}.source.tar.xz";
-      sha512 = "0m3ibm6dy9cpvsxkzkzwj7na5rm5qz7sm3bpx604ibay9pccvgv59jxapisvmswzmlz2nv02l6p2gxlz3b0lbcg7rd5zasia92y7j99";
+      sha512 = "0gnhfcgrz6022xf3vqia3s3639xa5pjp13h343d3c09mn8r919cmm6s38vzj1v3734fm25zb68acyarsp72xqq8z1420rh02b2pv38q";
     };
 
     patches = [
-      ./no-buildconfig-ffx65.patch
+      ./no-buildconfig-ffx76.patch
+      # Fix for NSS 3.52 (add missing CK_GCM_PARMS field)
+      (fetchpatch {
+        url = "https://hg.mozilla.org/mozilla-central/raw-rev/463069687b3d";
+        sha256 = "00yhz67flnkww3rbry0kqn6z6bm7vxfb2sgf7qikgbjcm3ysvpsm";
+      })
     ];
 
     meta = {
@@ -35,10 +40,10 @@ rec {
 
   firefox-esr-68 = common rec {
     pname = "firefox-esr";
-    ffversion = "68.7.0esr";
+    ffversion = "68.8.0esr";
     src = fetchurl {
       url = "mirror://mozilla/firefox/releases/${ffversion}/source/firefox-${ffversion}.source.tar.xz";
-      sha512 = "29qbcc78hz1rsnz735a5miwfj0c3r1c5qm2043vyd9qz879vsh4ab82k7wncm3xa04kqdff26zh1rpbbjmdr7gwn4q8nmjzzs7wzpd3";
+      sha512 = "2rl5irkamxi8caa8krj0wng93lb82kk9mf09mgci87mj9hy6fxzcrlmiiffp14s03rv0raagrn4w54pbx1336mylq6saxmfhpf676hk";
     };
 
     patches = [

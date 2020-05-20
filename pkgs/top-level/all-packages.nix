@@ -1185,7 +1185,9 @@ in
 
   blink = libsForQt5.callPackage ../applications/networking/instant-messengers/blink { };
 
-  blockbook = callPackage ../servers/blockbook { };
+  blockbook = callPackage ../servers/blockbook { 
+    buildGoPackage = buildGo113Package;
+  };
 
   blockhash = callPackage ../tools/graphics/blockhash { };
 
@@ -1328,7 +1330,7 @@ in
 
   cue2pops = callPackage ../tools/cd-dvd/cue2pops { };
 
-  cabal2nix = haskell.lib.overrideCabal (haskell.lib.generateOptparseApplicativeCompletion "cabal2nix" haskell.packages.ghc881.cabal2nix) (drv: {
+  cabal2nix = haskell.lib.overrideCabal (haskell.lib.generateOptparseApplicativeCompletion "cabal2nix" haskellPackages.cabal2nix) (drv: {
     isLibrary = false;
     enableSharedExecutables = false;
     executableToolDepends = (drv.executableToolDepends or []) ++ [ makeWrapper ];
@@ -2001,6 +2003,8 @@ in
   nfdump = callPackage ../tools/networking/nfdump { };
 
   nfstrace = callPackage ../tools/networking/nfstrace { };
+
+  nix-direnv = callPackage ../tools/misc/nix-direnv { };
 
   nixpkgs-pytools = with python3.pkgs; toPythonApplication nixpkgs-pytools;
 
@@ -6457,8 +6461,6 @@ in
 
   sleepyhead = callPackage ../applications/misc/sleepyhead {};
 
-  slimrat = callPackage ../tools/networking/slimrat { };
-
   slirp4netns = callPackage ../tools/networking/slirp4netns/default.nix { };
 
   slsnif = callPackage ../tools/misc/slsnif { };
@@ -6503,6 +6505,8 @@ in
   suricata = callPackage ../applications/networking/ids/suricata {
     python = python3;
   };
+
+  sof-firmware = callPackage ../os-specific/linux/firmware/sof-firmware { };
 
   softhsm = callPackage ../tools/security/softhsm {
     inherit (darwin) libobjc;
@@ -13501,7 +13505,7 @@ in
     inherit (darwin.apple_sdk.frameworks) CoreServices;
   };
 
-  nss_3_51 = lowPrio (callPackage ../development/libraries/nss/3_51.nix { });
+  nss_3_52 = lowPrio (callPackage ../development/libraries/nss/3_52.nix { });
   nss = lowPrio (callPackage ../development/libraries/nss { });
   nssTools = nss.tools;
 
@@ -16727,6 +16731,13 @@ in
   linuxPackages_4_19 = recurseIntoAttrs (linuxPackagesFor pkgs.linux_4_19);
   linuxPackages_5_4 = recurseIntoAttrs (linuxPackagesFor pkgs.linux_5_4);
   linuxPackages_5_6 = recurseIntoAttrs (linuxPackagesFor pkgs.linux_5_6);
+
+  # Kernels removed on release-20.03
+  linuxPackages_5_5 = throw ''
+    The 5.5 tree of Linux has been removed from 20.03. As per our stable
+    release policy, only LTS kernels and the latest one are available.
+  '';
+  linux_5_5 = linuxPackages_5_5;
 
   # When adding to this list:
   # - Update linuxPackages_latest to the latest version
@@ -19987,6 +19998,8 @@ in
 
   kubeval = callPackage ../applications/networking/cluster/kubeval { };
 
+  kubeval-schema = callPackage ../applications/networking/cluster/kubeval/schema.nix { };
+
   kubernetes = callPackage ../applications/networking/cluster/kubernetes {
     go = buildPackages.go_1_13;
   };
@@ -20351,6 +20364,7 @@ in
 
   monotone = callPackage ../applications/version-management/monotone {
     lua = lua5;
+    botan = botan.override (x: { openssl = null; });
   };
 
   monotoneViz = callPackage ../applications/version-management/monotone-viz {
@@ -23495,7 +23509,7 @@ in
     lua = lua5_1;
   };
 
-  tbe = callPackage ../games/the-butterfly-effect { };
+  tbe = libsForQt5.callPackage ../games/the-butterfly-effect { };
 
   teetertorture = callPackage ../games/teetertorture { };
 

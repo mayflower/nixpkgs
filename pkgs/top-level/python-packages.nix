@@ -4678,6 +4678,8 @@ in {
 
   patch = callPackage ../development/python-modules/patch { };
 
+  patch-ng = callPackage ../development/python-modules/patch-ng { };
+
   pathos = callPackage ../development/python-modules/pathos { };
 
   patsy = callPackage ../development/python-modules/patsy { };
