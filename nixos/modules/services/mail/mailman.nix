@@ -59,13 +59,16 @@ let
     [mta]
     configuration: ${mtaConfig}
     lmtp_host: ::1
-  '' + optionalString cfg.hyperkitty.enable ''
+  '' + cfg.extraConfig + optionalString cfg.hyperkitty.enable ''
 
     [archiver.hyperkitty]
     class: mailman_hyperkitty.Archiver
     enable: yes
     configuration: /var/lib/mailman/mailman-hyperkitty.cfg
-  '' + cfg.extraConfig;
+  '' + concatMapStringsSep "\n" (loggerName: ''
+    [logging.${loggerName}]
+    handler = syslog
+  '') ["root" "archiver" "bounce" "config" "database" "debug" "error" "fromusenet" "http" "locks" "mischief" "plugins" "runner" "smtp"];
 
   mailmanHyperkittyCfg = pkgs.writeText "mailman-hyperkitty.cfg" ''
     [general]

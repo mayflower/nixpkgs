@@ -1,4 +1,4 @@
-{ stdenv, buildPythonPackage, fetchPypi, isPy3k, alembic, aiosmtpd, dnspython
+{ stdenv, buildPythonPackage, fetchPypi, fetchpatch, isPy3k, alembic, aiosmtpd, dnspython
 , flufl_bounce, flufl_i18n, flufl_lock, lazr_config, lazr_delegates, passlib
 , requests, zope_configuration, click, falcon, importlib-resources
 , zope_component, lynx, postfix, authheaders, gunicorn
@@ -13,6 +13,11 @@ buildPythonPackage rec {
     inherit pname version;
     sha256 = "1qph9i93ndahfxi3bb2sd0kjm2c0pkh844ai6zacfmvihl1k3pvy";
   };
+
+  patches = [(fetchpatch {
+    url = https://gitlab.com/mailman/mailman/-/commit/28c42732fee37c9b4589e6a7e39bc8eb95cac571.patch;
+    sha256 = "18b4lg844p22gwmpzcs2r8swck04hwd0a9kynmx0yr9j7zqkwlzh";
+  })];
 
   propagatedBuildInputs = [
     alembic aiosmtpd click dnspython falcon flufl_bounce flufl_i18n flufl_lock
