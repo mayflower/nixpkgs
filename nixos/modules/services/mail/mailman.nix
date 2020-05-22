@@ -13,7 +13,7 @@ let
 
   # This deliberately doesn't use recursiveUpdate so users can
   # override the defaults.
-  settings = {
+  webSettings = {
     DEFAULT_FROM_EMAIL = cfg.siteOwner;
     SERVER_EMAIL = cfg.siteOwner;
     ALLOWED_HOSTS = [ "localhost" "127.0.0.1" ] ++ cfg.webHosts;
@@ -31,7 +31,7 @@ let
     };
   } // cfg.webSettings;
 
-  settingsJSON = pkgs.writeText "settings.json" (builtins.toJSON settings);
+  webSettingsJSON = pkgs.writeText "settings.json" (builtins.toJSON webSettings);
 
   # TODO: Should this be RFC42-ised so that users can set additional options without modifying the module?
   mtaConfig = pkgs.writeText "mailman-postfix.cfg" ''
@@ -40,35 +40,7 @@ let
     transport_file_type: hash
   '';
 
-  mailmanCfg = ''
-    [mailman]
-    site_owner: ${cfg.siteOwner}
-    layout: fhs
-
-    [paths.fhs]
-    bin_dir: ${pkgs.python3Packages.mailman}/bin
-    var_dir: /var/lib/mailman
-    queue_dir: $var_dir/queue
-    template_dir: $var_dir/templates
-    log_dir: /var/log/mailman
-    lock_dir: $var_dir/lock
-    etc_dir: /etc
-    ext_dir: $etc_dir/mailman.d
-    pid_file: /run/mailman/master.pid
-
-    [mta]
-    configuration: ${mtaConfig}
-    lmtp_host: ::1
-  '' + cfg.extraConfig + optionalString cfg.hyperkitty.enable ''
-
-    [archiver.hyperkitty]
-    class: mailman_hyperkitty.Archiver
-    enable: yes
-    configuration: /var/lib/mailman/mailman-hyperkitty.cfg
-  '' + concatMapStringsSep "\n" (loggerName: ''
-    [logging.${loggerName}]
-    handler = syslog
-  '') ["root" "archiver" "bounce" "config" "database" "debug" "error" "fromusenet" "http" "locks" "mischief" "plugins" "runner" "smtp"];
+  mailmanCfg = lib.generators.toINI {} cfg.settings;
 
   mailmanHyperkittyCfg = pkgs.writeText "mailman-hyperkitty.cfg" ''
     [general]
@@ -164,9 +136,10 @@ in {
         default = [];
       };
 
-      extraConfig = mkOption {
-        type = types.str;
-        default = "";
+      settings = mkOption {
+        description = "Settings for mailman.cfg";
+        type = types.attrsOf (types.attrsOf types.str);
+        default = {};
       };
 
       hyperkitty = {
@@ -188,6 +161,31 @@ in {
   ###### implementation
 
   config = mkIf cfg.enable {
+
+    services.mailman.settings = {
+      mailman.site_owner = lib.mkDefault cfg.siteOwner;
+      mailman.layout = "fhs";
+
+      "paths.fhs" = {
+        bin_dir = "${pkgs.python3Packages.mailman}/bin";
+        var_dir = "/var/lib/mailman";
+        queue_dir = "$var_dir/queue";
+        template_dir = "$var_dir/templates";
+        log_dir = "/var/log/mailman";
+        lock_dir = "$var_dir/lock";
+        etc_dir = "/etc";
+        ext_dir = "$etc_dir/mailman.d";
+        pid_file = "/run/mailman/master.pid";
+      };
+
+      mta.configuration = lib.mkDefault "${mtaConfig}";
+
+      "archiver.hyperkitty" = lib.mkIf cfg.hyperkitty.enable {
+        class = "mailman_hyperkitty.Archiver";
+        enable = "yes";
+        configuration = "/var/lib/mailman/mailman-hyperkitty.cfg";
+      };
+    };
 
     assertions = let
       inherit (config.services) postfix;
@@ -239,7 +237,7 @@ in {
 
       import json
 
-      with open('${settingsJSON}') as f:
+      with open('${webSettingsJSON}') as f:
           globals().update(json.load(f))
 
       with open('/var/lib/mailman-web/settings_local.json') as f:
@@ -252,7 +250,7 @@ in {
         serverAliases = cfg.webHosts;
         locations = {
           "/".extraConfig = "uwsgi_pass unix:/run/mailman-web.socket;";
-          "/static/".alias = settings.STATIC_ROOT + "/";
+          "/static/".alias = webSettings.STATIC_ROOT + "/";
         };
       };
     };
@@ -343,7 +341,7 @@ in {
         requiredBy = [ "mailman-uwsgi.service" ];
         restartTriggers = [ config.environment.etc."mailman3/settings.py".source ];
         script = ''
-          [[ -e "${settings.STATIC_ROOT}" ]] && find "${settings.STATIC_ROOT}/" -mindepth 1 -delete
+          [[ -e "${webSettings.STATIC_ROOT}" ]] && find "${webSettings.STATIC_ROOT}/" -mindepth 1 -delete
           ${pythonEnv}/bin/mailman-web migrate
           ${pythonEnv}/bin/mailman-web collectstatic
           ${pythonEnv}/bin/mailman-web compress
