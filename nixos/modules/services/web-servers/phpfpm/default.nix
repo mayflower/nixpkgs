@@ -131,12 +131,20 @@ let
             details on configuration directives.
           '';
         };
+
+        # Workaround from #89392, remove when merging 20.09
+        phpIni = mkOption {
+          description = "Generated php.ini file. Useful for running scripts with the same settings as the pool.";
+          readOnly = true;
+          type = types.path;
+        };
       };
 
       config = {
         socket = if poolOpts.listen == "" then "${runtimeDir}/${name}.sock" else poolOpts.listen;
         group = mkDefault poolOpts.user;
         phpOptions = mkBefore cfg.phpOptions;
+        phpIni = phpIni poolOpts;
 
         settings = mapAttrs (name: mkDefault){
           listen = poolOpts.socket;
@@ -263,7 +271,6 @@ in {
         partOf = [ "phpfpm.target" ];
         serviceConfig = let
           cfgFile = fpmCfgFile pool poolOpts;
-          iniFile = phpIni poolOpts;
         in {
           Slice = "phpfpm.slice";
           PrivateDevices = true;
@@ -273,7 +280,7 @@ in {
           # XXX: We need AF_NETLINK to make the sendmail SUID binary from postfix work
           RestrictAddressFamilies = "AF_UNIX AF_INET AF_INET6 AF_NETLINK";
           Type = "notify";
-          ExecStart = "${poolOpts.phpPackage}/bin/php-fpm -y ${cfgFile} -c ${iniFile}";
+          ExecStart = "${poolOpts.phpPackage}/bin/php-fpm -y ${cfgFile} -c ${poolOpts.phpIni}";
           ExecReload = "${pkgs.coreutils}/bin/kill -USR2 $MAINPID";
           RuntimeDirectory = "phpfpm";
           RuntimeDirectoryPreserve = true; # Relevant when multiple processes are running
