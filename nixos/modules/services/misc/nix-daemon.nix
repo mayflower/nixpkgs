@@ -281,8 +281,8 @@ in
 
       trustedBinaryCaches = mkOption {
         type = types.listOf types.str;
-        default = [ https://hydra.mayflower.de/ ];
-        example = [ http://hydra.nixos.org/ ];
+        default = [ "https://hydra.mayflower.de/" ];
+        example = [ "http://hydra.nixos.org/" ];
         description = ''
           List of binary cache URLs that non-root users can use (in
           addition to those specified using
@@ -514,7 +514,7 @@ in
     system.activationScripts.nix = stringAfter [ "etc" "users" ]
       ''
         # Create directories in /nix.
-        ${nix}/bin/nix ping-store --no-net
+        install -m 0755 -d /nix/var/nix/{gcroots,profiles}/per-user
 
         # Subscribe the root user to the NixOS channel by default.
         if [ ! -e "/root/.nix-channels" ]; then

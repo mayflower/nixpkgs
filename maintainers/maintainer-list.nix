@@ -3918,6 +3918,12 @@
     githubId = 10544;
     name = "Giuluo Eulisse";
   };
+  kthielen = {
+    email = "kthielen@gmail.com";
+    github = "kthielen";
+    githubId = 1409287;
+    name = "Kalani Thielen";
+  };
   ktor = {
     email = "kruszewsky@gmail.com";
     github = "ktor";
@@ -7467,6 +7473,12 @@
     email = "val@codejam.info";
     github = "valeriangalliat";
     name = "Valérian Galliat";
+  };
+  valodim = {
+    email = "look@my.amazin.horse";
+    github = "valodim";
+    githubId = 27813;
+    name = "Vincent Breitmoser";
   };
   vandenoever = {
     email = "jos@vandenoever.info";
