@@ -24,14 +24,22 @@
   # so when having an older version, `pkgs.hydra-migration` should be deployed first.
 
   hydra-unstable = callPackage ./common.nix {
-    version = "2020-06-06";
+    version = "2020-06-01";
     src = fetchFromGitHub {
       owner = "NixOS";
       repo = "hydra";
-      rev = "6168e7fa44cb1a648e18c7a94e2e08fa72d6e1c0";
-      sha256 = "1my6swa9kb69q85z0iwbw5biqdgs7pgrvh20pgwjk734ra25kkv4";
+      rev = "750e2e618ac6d3df02c57a2cf8758bc66a27c40a";
+      sha256 = "1szfzf9kw5cj6yn57gfxrffbdkdf8v3xy9914924blpn5qll31g4";
     };
     nix = nixFlakes;
+
+    patches = [
+      (fetchpatch {
+        url = "https://github.com/NixOS/hydra/commit/d4822a5f4b57dff26bdbf436723a87dd62bbcf30.patch";
+        sha256 = "1n6hyjz1hzvka4wi78d4wg0sg2wanrdmizqy23vmp7pmv8s3gz8w";
+      })
+    ];
+
     tests = {
       db-migration = nixosTests.hydra-db-migration.mig;
       basic = nixosTests.hydra.hydra-unstable;
