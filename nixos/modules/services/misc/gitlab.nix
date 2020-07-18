@@ -79,6 +79,11 @@ let
 
   redisConfig.production.url = cfg.redisUrl;
 
+  pagesArgs = [
+    "-pages-domain" gitlabConfig.production.pages.host
+    "-pages-root" "${gitlabConfig.production.shared.path}/pages"
+  ] ++ cfg.pagesExtraArgs;
+
   gitlabConfig = {
     # These are the default settings from config/gitlab.example.yml
     production = flip recursiveUpdate cfg.extraConfig {
@@ -242,6 +247,13 @@ in {
         default = pkgs.gitaly;
         defaultText = "pkgs.gitaly";
         description = "Reference to the gitaly package";
+      };
+
+      packages.pages = mkOption {
+        type = types.package;
+        default = pkgs.gitlab-pages;
+        defaultText = "pkgs.gitlab-pages";
+        description = "Reference to the gitlab-pages package";
       };
 
       statePath = mkOption {
@@ -463,6 +475,12 @@ in {
           default = "peer";
           description = "How OpenSSL checks the certificate, see http://api.rubyonrails.org/classes/ActionMailer/Base.html";
         };
+      };
+
+      pagesExtraArgs = mkOption {
+        type = types.listOf types.str;
+        default = [ "-listen-proxy" "127.0.0.1:8090" ];
+        description = "Arguments to pass to the gitlab-pages daemon";
       };
 
       secrets.secretFile = mkOption {
