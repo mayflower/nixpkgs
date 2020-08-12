@@ -39,6 +39,7 @@ let
     "surfboard"
     "tor"
     "unifi"
+    "unifi-poller"
     "varnish"
     "wireguard"
   ] (name:
