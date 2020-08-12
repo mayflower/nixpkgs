@@ -27796,4 +27796,7 @@ in
   gpio-utils = callPackage ../os-specific/linux/kernel/gpio-utils.nix { };
 
   navidrome = callPackage ../servers/misc/navidrome {};
+
+  unifi-poller = callPackage ../servers/monitoring/unifi-poller {};
+
 }
