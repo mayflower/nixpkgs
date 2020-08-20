@@ -1688,6 +1688,12 @@ in
 
   eksctl = callPackage ../tools/admin/eksctl { };
 
+  element-desktop = callPackage ../applications/networking/instant-messengers/element/element-desktop.nix { };
+
+  element-web = callPackage ../applications/networking/instant-messengers/element/element-web.nix {
+    conf = config.element-web.conf or {};
+  };
+
   elementary-xfce-icon-theme = callPackage ../data/icons/elementary-xfce-icon-theme { };
 
   ell = callPackage ../os-specific/linux/ell { };
@@ -2115,12 +2121,6 @@ in
   rav1e = callPackage ../tools/video/rav1e { };
 
   ring-daemon = callPackage ../applications/networking/instant-messengers/ring-daemon { };
-
-  riot-desktop = callPackage ../applications/networking/instant-messengers/riot/riot-desktop.nix { };
-
-  riot-web = callPackage ../applications/networking/instant-messengers/riot/riot-web.nix {
-    conf = config.riot-web.conf or {};
-  };
 
   ripasso-cursive = callPackage ../tools/security/ripasso/cursive.nix {
     inherit (darwin.apple_sdk.frameworks) AppKit Security;
@@ -3378,7 +3378,7 @@ in
   fontforge-gtk = fontforge.override {
     withSpiro = true;
     withGTK = true;
-    gtk2 = gtk2-x11;
+    gtk3 = gtk3-x11;
     inherit (darwin.apple_sdk.frameworks) Carbon Cocoa;
   };
 
@@ -8781,6 +8781,9 @@ in
     inherit (darwin) apple_sdk;
   };
 
+  rust_1_44 = callPackage ../development/compilers/rust/1_44.nix {
+    inherit (darwin.apple_sdk.frameworks) CoreFoundation Security;
+  };
   rust_1_41_0 = callPackage ../development/compilers/rust/1_41_0.nix {
     inherit (darwin.apple_sdk.frameworks) CoreFoundation Security;
   };
@@ -8789,6 +8792,7 @@ in
   };
   rust = rust_1_41_0;
 
+  rustPackages_1_44 = rust_1_44.packages.stable;
   rustPackages_1_41_0 = rust_1_41_0.packages.stable;
   rustPackages_1_38_0 = rust_1_38_0.packages.stable;
   rustPackages = rustPackages_1_41_0;
@@ -8882,7 +8886,7 @@ in
     inherit (darwin.apple_sdk.frameworks) Security;
   };
 
-  rust-cbindgen_0_14_1 = callPackage ../development/tools/rust/cbindgen/0_14_1.nix {
+  rust-cbindgen_latest = callPackage ../development/tools/rust/cbindgen/0_14_3.nix {
     inherit (darwin.apple_sdk.frameworks) Security;
   };
 
@@ -12052,6 +12056,11 @@ in
   } // (stdenv.lib.optionalAttrs (stdenv.hostPlatform.isi686 && stdenv.cc.isGNU) {
       stdenv = gcc6Stdenv; # with gcc-7: undefined reference to `__divmoddi4'
     }));
+  icu67 = callPackage ../development/libraries/icu/67.nix ({
+    nativeBuildRoot = buildPackages.icu67.override { buildRootOnly = true; };
+  } // (stdenv.lib.optionalAttrs (stdenv.hostPlatform.isi686 && stdenv.cc.isGNU) {
+      stdenv = gcc6Stdenv; # with gcc-7: undefined reference to `__divmoddi4'
+    }));
 
   icu = icu64;
 
@@ -13159,6 +13168,8 @@ in
 
   libunibreak = callPackage ../development/libraries/libunibreak { };
 
+  libuninameslist = callPackage ../development/libraries/libuninameslist { };
+
   libunique = callPackage ../development/libraries/libunique { };
   libunique3 = callPackage ../development/libraries/libunique/3.x.nix { };
 
@@ -13535,8 +13546,11 @@ in
   nspr = callPackage ../development/libraries/nspr {
     inherit (darwin.apple_sdk.frameworks) CoreServices;
   };
+  nspr_latest = lowPrio (callPackage ../development/libraries/nspr/latest.nix {
+    inherit (darwin.apple_sdk.frameworks) CoreServices;
+  });
 
-  nss_3_52 = lowPrio (callPackage ../development/libraries/nss/3_52.nix { });
+  nss_latest = lowPrio (callPackage ../development/libraries/nss/latest.nix { nspr = nspr_latest;});
   nss = lowPrio (callPackage ../development/libraries/nss { });
   nssTools = nss.tools;
 
@@ -14544,6 +14558,8 @@ in
 
   tk-8_6 = callPackage ../development/libraries/tk/8.6.nix { };
   tk-8_5 = callPackage ../development/libraries/tk/8.5.nix { tcl = tcl-8_5; };
+
+  tl-expected = callPackage ../development/libraries/tl-expected { };
 
   tnt = callPackage ../development/libraries/tnt { };
 
@@ -16540,6 +16556,14 @@ in
     ];
   };
 
+  linux_5_7 = callPackage ../os-specific/linux/kernel/linux-5.7.nix {
+    kernelPatches = [
+      kernelPatches.bridge_stp_helper
+      kernelPatches.request_key_helper
+      kernelPatches.export_kernel_fpu_functions."5.3"
+    ];
+  };
+
   linux_testing = callPackage ../os-specific/linux/kernel/linux-testing.nix {
     kernelPatches = [
       kernelPatches.bridge_stp_helper
@@ -16747,7 +16771,7 @@ in
   linux = linuxPackages.kernel;
 
   # Update this when adding the newest kernel major version!
-  linuxPackages_latest = linuxPackages_5_6;
+  linuxPackages_latest = linuxPackages_5_7;
   linux_latest = linuxPackages_latest.kernel;
 
   # Build the kernel modules for the some of the kernels.
@@ -16762,6 +16786,7 @@ in
   linuxPackages_4_19 = recurseIntoAttrs (linuxPackagesFor pkgs.linux_4_19);
   linuxPackages_5_4 = recurseIntoAttrs (linuxPackagesFor pkgs.linux_5_4);
   linuxPackages_5_6 = recurseIntoAttrs (linuxPackagesFor pkgs.linux_5_6);
+  linuxPackages_5_7 = recurseIntoAttrs (linuxPackagesFor pkgs.linux_5_7);
 
   # Kernels removed on release-20.03
   linuxPackages_5_5 = throw ''
@@ -19236,9 +19261,11 @@ in
 
   firefox-unwrapped = firefoxPackages.firefox;
   firefox-esr-68-unwrapped = firefoxPackages.firefox-esr-68;
+  firefox-esr-78-unwrapped = firefoxPackages.firefox-esr-78;
   firefox = wrapFirefox firefox-unwrapped { };
   firefox-wayland = wrapFirefox firefox-unwrapped { gdkWayland = true; };
   firefox-esr-68 = wrapFirefox firefox-esr-68-unwrapped { };
+  firefox-esr-78 = wrapFirefox firefox-esr-78-unwrapped { };
   firefox-esr = firefox-esr-68;
 
   firefox-bin-unwrapped = callPackage ../applications/networking/browsers/firefox-bin {
@@ -21796,16 +21823,28 @@ in
 
   thonny = callPackage ../applications/editors/thonny { };
 
-  thunderbird = callPackage ../applications/networking/mailreaders/thunderbird {
+  thunderbird-78 = callPackage ../applications/networking/mailreaders/thunderbird {
+    inherit (rustPackages_1_44) cargo rustc;
+    rust-cbindgen = rust-cbindgen_latest;
+    nodejs = nodejs-13_x;
+    nss = nss_latest;
+    libpng = libpng_apng;
+    icu = icu67;
+    libvpx = libvpx_1_8;
+    gtk3Support = true;
+  };
+
+  thunderbird = callPackage ../applications/networking/mailreaders/thunderbird/68.nix {
     inherit (gnome2) libIDL;
-    inherit (rustPackages_1_38_0) cargo rustc;
     libpng = libpng_apng;
     gtk3Support = true;
   };
 
   thunderbolt = callPackage ../os-specific/linux/thunderbolt {};
 
-  thunderbird-bin = callPackage ../applications/networking/mailreaders/thunderbird-bin {
+  thunderbird-bin-78 = callPackage ../applications/networking/mailreaders/thunderbird-bin { };
+
+  thunderbird-bin = callPackage ../applications/networking/mailreaders/thunderbird-bin/68.nix {
     gconf = pkgs.gnome2.GConf;
     inherit (pkgs.gnome2) libgnome libgnomeui;
   };
@@ -25220,7 +25259,7 @@ in
     inherit (darwin.apple_sdk.frameworks) Security;
   };
 
-  nix-linter = haskellPackages.callPackage ../development/tools/analysis/nix-linter { };
+  nix-linter = haskell.lib.justStaticExecutables (haskellPackages.callPackage ../development/tools/analysis/nix-linter { });
 
   nix-pin = callPackage ../tools/package-management/nix-pin { };
 

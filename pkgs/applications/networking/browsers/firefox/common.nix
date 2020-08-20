@@ -8,7 +8,7 @@
 , yasm, libGLU, libGL, sqlite, unzip, makeWrapper
 , hunspell, libXdamage, libevent, libstartup_notification
 , libvpx, libvpx_1_8
-, icu, libpng, jemalloc, glib
+, icu, icu67, libpng, jemalloc, glib
 , autoconf213, which, gnused, cargo, rustc, llvmPackages
 , rust-cbindgen, nodejs, nasm, fetchpatch
 , debugBuild ? false
@@ -16,8 +16,11 @@
 
 ### backorted packages
 
-, nss_3_52
+, nspr_latest
+, nss_latest
 , sqlite_3_31_1
+, rustPackages_1_44
+, rust-cbindgen_latest
 
 ### optionals
 
@@ -50,10 +53,6 @@
 # macOS dependencies
 , xcbuild, CoreMedia, ExceptionHandling, Kerberos, AVFoundation, MediaToolbox
 , CoreLocation, Foundation, AddressBook, libobjc, cups, rsync
-
-# dependencies requires for stable backports
-
-, rust-cbindgen_0_14_1
 
 ## other
 
@@ -98,9 +97,12 @@ let
 # backported dependencies where the versions on the stable release did not meet
 # Firefoxs requirements
 
-nss_pkg = if lib.versionAtLeast ffversion "74" then nss_3_52 else nss;
+nss_pkg = if lib.versionAtLeast ffversion "74" then nss_latest else nss;
+nspr_pkg = if lib.versionAtLeast ffversion "79" then nspr_latest else nspr;
 sqlite_pkg = if lib.versionAtLeast ffversion "74" then sqlite_3_31_1 else sqlite;
-rust-cbindgen_pkg = if lib.versionAtLeast ffversion "77" then rust-cbindgen_0_14_1 else rust-cbindgen;
+rust-cbindgen_pkg = if lib.versionAtLeast ffversion "77" then rust-cbindgen_latest else rust-cbindgen;
+rustc_pkg = if lib.versionAtLeast ffversion "79" then rustPackages_1_44.rustc else rustc;
+cargo_pkg = if lib.versionAtLeast ffversion "79" then rustPackages_1_44.cargo else cargo;
 
 in
 
@@ -129,16 +131,18 @@ stdenv.mkDerivation ({
     xorg.libXScrnSaver xorg.xorgproto
     xorg.libXext unzip makeWrapper
     libevent libstartup_notification /* cairo */
-    icu libpng jemalloc glib
+    libpng jemalloc glib
     nasm
     # >= 66 requires nasm for the AV1 lib dav1d
     # yasm can potentially be removed in future versions
     # https://bugzilla.mozilla.org/show_bug.cgi?id=1501796
     # https://groups.google.com/forum/#!msg/mozilla.dev.platform/o-8levmLU80/SM_zQvfzCQAJ
-    nspr nss_pkg
+    nspr_pkg nss_pkg
   ]
-  ++ lib.optionals  (lib.versionOlder ffversion "75") [ libvpx sqlite ]
+  ++ lib.optionals (lib.versionOlder ffversion "75") [ libvpx sqlite ]
   ++ lib.optional  (lib.versionAtLeast ffversion "75.0") libvpx_1_8
+  ++ lib.optional  (lib.versionOlder ffversion "78") icu
+  ++ lib.optional  (lib.versionAtLeast ffversion "78.0") icu67
   ++ lib.optional  alsaSupport alsaLib
   ++ lib.optional  pulseaudioSupport libpulseaudio # only headers are needed
   ++ lib.optional  gtk3Support gtk3
@@ -162,7 +166,7 @@ stdenv.mkDerivation ({
   nativeBuildInputs =
     [
       autoconf213
-      cargo
+      cargo_pkg
       gnused
       llvmPackages.llvm # llvm-objdump
       nodejs
@@ -171,7 +175,7 @@ stdenv.mkDerivation ({
       python2
       python3
       rust-cbindgen_pkg
-      rustc
+      rustc_pkg
       which
     ]
     ++ lib.optional gtk3Support wrapGAppsHook
@@ -218,7 +222,6 @@ stdenv.mkDerivation ({
     "--enable-application=browser"
     "--with-system-jpeg"
     "--with-system-zlib"
-    "--with-system-bz2"
     "--with-system-libevent"
     "--with-system-libvpx"
     "--with-system-png" # needs APNG support
@@ -226,18 +229,20 @@ stdenv.mkDerivation ({
     "--enable-system-ffi"
     "--enable-system-pixman"
     #"--enable-system-cairo"
-    "--enable-startup-notification"
-    #"--enable-content-sandbox" # TODO: probably enable after 54
     "--disable-tests"
     "--disable-necko-wifi" # maybe we want to enable this at some point
     "--disable-updater"
     "--enable-jemalloc"
-    "--disable-gconf"
     "--enable-default-toolkit=${default-toolkit}"
     "--with-libclang-path=${llvmPackages.libclang}/lib"
     "--with-clang-path=${llvmPackages.clang}/bin/clang"
     "--with-system-nspr"
     "--with-system-nss"
+  ]
+  ++ lib.optionals (lib.versionOlder ffversion "78") [
+    "--with-system-bz2"
+    "--enable-startup-notification"
+    "--disable-gconf"
   ]
   ++ lib.optional (lib.versionOlder ffversion "75") "--enable-system-sqlite"
   ++ lib.optional (stdenv.isDarwin) "--disable-xcode-checks"
@@ -304,7 +309,7 @@ stdenv.mkDerivation ({
     version = ffversion;
     isFirefox3Like = true;
     gtk = gtk2;
-    inherit nspr;
+    nspr = nspr_pkg;
     inherit ffmpegSupport;
     inherit gssSupport;
     inherit execdir;

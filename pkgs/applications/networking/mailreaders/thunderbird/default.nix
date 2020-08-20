@@ -18,7 +18,6 @@
 , lib
 , libGL
 , libGLU
-, libIDL
 , libevent
 , libjpeg
 , libnotify
@@ -43,6 +42,7 @@
 , rustc
 , sqlite
 , stdenv
+, systemd
 , unzip
 , which
 , writeScript
@@ -72,13 +72,13 @@ assert waylandSupport -> gtk3Support == true;
 
 stdenv.mkDerivation rec {
   pname = "thunderbird";
-  version = "68.9.0";
+  version = "78.1.1";
 
   src = fetchurl {
     url =
       "mirror://mozilla/thunderbird/releases/${version}/source/thunderbird-${version}.source.tar.xz";
     sha512 =
-      "3q0dikgkfr72hhz39pxi2f0cljn09lw4940qcn9kzfwfid2h290j7pihx6gs0z6h82fl78f9fl1598d064lwl1i2434dzx6bg4p4549";
+      "1lf15zl3p8y1vxv4s04y088flkspf0r0c6j8gfrlfzla5ckfcsbad3zbygh6y73m35j882g7fbacby5a4hiw891zq2kji5dn3nbahyi";
   };
 
   nativeBuildInputs = [
@@ -112,7 +112,6 @@ stdenv.mkDerivation rec {
     jemalloc
     libGL
     libGLU
-    libIDL
     libevent
     libjpeg
     libnotify
@@ -191,7 +190,7 @@ stdenv.mkDerivation rec {
           lib.getVersion stdenv.cc.cc
         } -isystem ${stdenv.cc.cc}/include/c++/${
           lib.getVersion stdenv.cc.cc
-        }/$(cc -dumpmachine)"
+        }/${stdenv.hostPlatform.config}"
       } \
       $NIX_CFLAGS_COMPILE"
 
@@ -207,14 +206,12 @@ stdenv.mkDerivation rec {
   in [
     "--enable-application=comm/mail"
 
-    "--with-system-bz2"
     "--with-system-icu"
     "--with-system-jpeg"
     "--with-system-libevent"
     "--with-system-nspr"
     "--with-system-nss"
     "--with-system-png" # needs APNG support
-    "--with-system-icu"
     "--with-system-zlib"
     "--with-system-webp"
     "--with-system-libvpx"
@@ -224,12 +221,9 @@ stdenv.mkDerivation rec {
     "--enable-default-toolkit=${toolkitValue}"
     "--enable-js-shell"
     "--enable-necko-wifi"
-    "--enable-startup-notification"
     "--enable-system-ffi"
     "--enable-system-pixman"
-    "--enable-system-sqlite"
 
-    "--disable-gconf"
     "--disable-tests"
     "--disable-updater"
     "--enable-jemalloc"
@@ -305,11 +299,11 @@ stdenv.mkDerivation rec {
     )
   '';
 
-  # FIXME: This can probably be removed as soon as we package a
-  # Thunderbird >=71.0 since XUL shouldn't be anymore (in use)?
+  # FIXME: The XUL portion of this can probably be removed as soon as we
+  # package a Thunderbird >=71.0 since XUL shouldn't be anymore (in use)?
   postFixup = ''
     local xul="$out/lib/thunderbird/libxul.so"
-    patchelf --set-rpath "${libnotify}/lib:$(patchelf --print-rpath $xul)" $xul
+    patchelf --set-rpath "${libnotify}/lib:${systemd.lib}/lib:$(patchelf --print-rpath $xul)" $xul
   '';
 
   doInstallCheck = true;
@@ -322,7 +316,7 @@ stdenv.mkDerivation rec {
   ];
 
   passthru.updateScript = import ./../../browsers/firefox/update.nix {
-    attrPath = "thunderbird";
+    attrPath = "thunderbird-78";
     baseUrl = "http://archive.mozilla.org/pub/thunderbird/releases/";
     inherit writeScript lib common-updater-scripts xidel coreutils gnused
       gnugrep curl runtimeShell;
@@ -337,5 +331,6 @@ stdenv.mkDerivation rec {
       pierron
     ];
     platforms = platforms.linux;
+    license = licenses.mpl20;
   };
 }
