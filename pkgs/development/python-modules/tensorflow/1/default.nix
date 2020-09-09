@@ -286,7 +286,6 @@ let
     bazelFlags = [
       # temporary fixes to make the build work with bazel 0.27
       "--incompatible_no_support_tools_in_action_inputs=false"
-      "--incompatible_use_native_patch=false"
     ];
     bazelBuildFlags = [
       "--config=opt" # optimize using the flags set in the configure phase
