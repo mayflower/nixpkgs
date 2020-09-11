@@ -26100,8 +26100,6 @@ in
 
   fluxboxlauncher = callPackage ../applications/misc/fluxboxlauncher {};
 
-  btcdeb = callPackage ../applications/blockchains/btcdeb {};
-
   jitsi-meet-electron = callPackage ../applications/networking/instant-messengers/jitsi-meet-electron { };
 
   zenstates = callPackage ../os-specific/linux/zenstates {};
