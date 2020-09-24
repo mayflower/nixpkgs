@@ -808,6 +808,7 @@ in
         ${cfg.extraConfig}
       '';
 
+    fonts.fontconfig.enable = true;
     fonts.enableDefaultFonts = mkDefault true;
 
   };
