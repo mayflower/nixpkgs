@@ -78,7 +78,6 @@ in {
       TTYReset=yes
       TTYVHangup=yes
       TTYVTDisallocate=yes
-
       X-RestartIfChanged=false
     '';
 
@@ -92,6 +91,8 @@ in {
       hwaccel
     '';
 
+    fonts.fontconfig.enable = true;
+    fonts.enableDefaultFonts = lib.mkDefault true;
     hardware.opengl.enable = mkIf cfg.hwRender true;
   };
 }
