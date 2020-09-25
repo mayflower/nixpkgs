@@ -17,7 +17,7 @@ stdenv.mkDerivation rec {
 
   meta = with stdenv.lib; {
     description = "PIM-SM/SSM multicast routing for UNIX";
-    inherit (src.meta) homepage;
+    homepage = "https://github.com/troglobit/pimd";
     license = licenses.bsd3;
     maintainer = with maintainers; [ globin ];
     platforms = platforms.unix;
