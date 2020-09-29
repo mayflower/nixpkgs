@@ -43,9 +43,13 @@ let
 
     [gitlab-shell]
     dir = "${cfg.packages.gitlab-shell}"
+
+    [gitlab]
     secret_file = "${cfg.statePath}/gitlab_shell_secret"
-    gitlab_url = "http+unix://${pathUrlQuote gitlabSocket}"
-    http_settings = { self_signed_cert = false }
+    url = "http+unix://${pathUrlQuote gitlabSocket}"
+
+    [gitlab.http-settings]
+    self_signed_cert = false
 
     ${concatStringsSep "\n" (attrValues (mapAttrs (k: v: ''
     [[storage]]
@@ -114,6 +118,7 @@ let
         receive_pack = true;
       };
       workhorse.secret_file = "${cfg.statePath}/.gitlab_workhorse_secret";
+      gitlab_kas.secret_file = "${cfg.statePath}/.gitlab_kas_secret";
       git.bin_path = "git";
       monitoring = {
         ip_whitelist = [ "127.0.0.0/8" "::1/128" ];
@@ -615,23 +620,35 @@ in {
     # The postgresql module doesn't currently support concepts like
     # objects owners and extensions; for now we tack on what's needed
     # here.
-    systemd.services.postgresql.postStart = mkAfter (optionalString databaseActuallyCreateLocally ''
-      set -eu
+    systemd.services.gitlab-postgresql = let pgsql = config.services.postgresql; in mkIf databaseActuallyCreateLocally {
+      after = [ "postgresql.service" ];
+      wantedBy = [ "multi-user.target" ];
+      path = [ pgsql.package ];
+      script = ''
+        set -eu
 
-      $PSQL -tAc "SELECT 1 FROM pg_database WHERE datname = '${cfg.databaseName}'" | grep -q 1 || $PSQL -tAc 'CREATE DATABASE "${cfg.databaseName}" OWNER "${cfg.databaseUsername}"'
-      current_owner=$($PSQL -tAc "SELECT pg_catalog.pg_get_userbyid(datdba) FROM pg_catalog.pg_database WHERE datname = '${cfg.databaseName}'")
-      if [[ "$current_owner" != "${cfg.databaseUsername}" ]]; then
-          $PSQL -tAc 'ALTER DATABASE "${cfg.databaseName}" OWNER TO "${cfg.databaseUsername}"'
-          if [[ -e "${config.services.postgresql.dataDir}/.reassigning_${cfg.databaseName}" ]]; then
-              echo "Reassigning ownership of database ${cfg.databaseName} to user ${cfg.databaseUsername} failed on last boot. Failing..."
-              exit 1
-          fi
-          touch "${config.services.postgresql.dataDir}/.reassigning_${cfg.databaseName}"
-          $PSQL "${cfg.databaseName}" -tAc "REASSIGN OWNED BY \"$current_owner\" TO \"${cfg.databaseUsername}\""
-          rm "${config.services.postgresql.dataDir}/.reassigning_${cfg.databaseName}"
-      fi
-      $PSQL '${cfg.databaseName}' -tAc "CREATE EXTENSION IF NOT EXISTS pg_trgm"
-    '');
+        PSQL="${pkgs.utillinux}/bin/runuser -u ${pgsql.superUser} -- psql --port=${toString pgsql.port}"
+
+        $PSQL -tAc "SELECT 1 FROM pg_database WHERE datname = '${cfg.databaseName}'" | grep -q 1 || $PSQL -tAc 'CREATE DATABASE "${cfg.databaseName}" OWNER "${cfg.databaseUsername}"'
+        current_owner=$($PSQL -tAc "SELECT pg_catalog.pg_get_userbyid(datdba) FROM pg_catalog.pg_database WHERE datname = '${cfg.databaseName}'")
+        if [[ "$current_owner" != "${cfg.databaseUsername}" ]]; then
+            $PSQL -tAc 'ALTER DATABASE "${cfg.databaseName}" OWNER TO "${cfg.databaseUsername}"'
+            if [[ -e "${config.services.postgresql.dataDir}/.reassigning_${cfg.databaseName}" ]]; then
+                echo "Reassigning ownership of database ${cfg.databaseName} to user ${cfg.databaseUsername} failed on last boot. Failing..."
+                exit 1
+            fi
+            touch "${config.services.postgresql.dataDir}/.reassigning_${cfg.databaseName}"
+            $PSQL "${cfg.databaseName}" -tAc "REASSIGN OWNED BY \"$current_owner\" TO \"${cfg.databaseUsername}\""
+            rm "${config.services.postgresql.dataDir}/.reassigning_${cfg.databaseName}"
+        fi
+        $PSQL '${cfg.databaseName}' -tAc "CREATE EXTENSION IF NOT EXISTS pg_trgm"
+        $PSQL '${cfg.databaseName}' -tAc "CREATE EXTENSION IF NOT EXISTS btree_gist;"
+      '';
+
+      serviceConfig = {
+        Type = "oneshot";
+      };
+    };
 
     # Use postfix to send out mails.
     services.postfix.enable = mkDefault true;
