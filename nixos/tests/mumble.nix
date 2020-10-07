@@ -72,7 +72,7 @@ in
 
     # Find clients in logs
     server.wait_until_succeeds(
-        "journalctl -eu murmur -o cat | grep -q 'client2.\+Authenticated'"
+        "journalctl -eu murmur -o cat | grep -q 'client1.\+Authenticated'"
     )
     server.wait_until_succeeds(
         "journalctl -eu murmur -o cat | grep -q 'client2.\+Authenticated'"
