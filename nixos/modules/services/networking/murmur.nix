@@ -298,8 +298,7 @@ in
         ExecStart = "${pkgs.murmur}/bin/murmurd -ini /run/murmur/murmurd.ini";
         Restart = "always";
         RuntimeDirectory = "murmur";
-        RuntimeDirectoryMode = "0750";
-        SupplementaryGroups = [ "keys" ];
+        RuntimeDirectoryMode = "0700";
         User = "murmur";
       };
     };
