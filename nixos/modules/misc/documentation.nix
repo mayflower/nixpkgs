@@ -20,7 +20,7 @@ let
   manual = import ../../doc/manual rec {
     inherit pkgs config;
     version = config.system.nixos.release;
-    revision = "release-${version}";
+    revision = config.system.nixos.revision;
     extraSources = cfg.nixos.extraModuleSources;
     options =
       let
