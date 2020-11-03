@@ -155,7 +155,7 @@ in
       after = [ "network.target" ];
       before = [ "nss-lookup.target" ];
       wants = [ "nss-lookup.target" ];
-      wantedBy = [ "multi-user.target" ];
+      wantedBy = [ "multi-user.target" "nss-lookup.target" ];
       path = [ pkgs.openssl ];
 
       preStart = lib.mkIf cfg.enableRootTrustAnchor ''
