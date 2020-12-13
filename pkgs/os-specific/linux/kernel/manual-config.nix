@@ -188,7 +188,8 @@ let
       postInstall = (optionalString installsFirmware ''
         mkdir -p $out/lib/firmware
       '') + (if (platform ? kernelDTB && platform.kernelDTB) then ''
-        make $makeFlags "''${makeFlagsArray[@]}" dtbs dtbs_install INSTALL_DTBS_PATH=$out/dtbs
+        make -j$NIX_BUILD_CORES $makeFlags "''${makeFlagsArray[@]}" dtbs INSTALL_DTBS_PATH=$out/dtbs
+        make -j$NIX_BUILD_CORES $makeFlags "''${makeFlagsArray[@]}" dtbs_install INSTALL_DTBS_PATH=$out/dtbs
       '' else "") + (if isModular then ''
         mkdir -p $dev
         cp vmlinux $dev/
