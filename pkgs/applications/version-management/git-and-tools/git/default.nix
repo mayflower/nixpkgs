@@ -22,7 +22,7 @@ assert sendEmailSupport -> perlSupport;
 assert svnSupport -> perlSupport;
 
 let
-  version = "2.29.3";
+  version = "2.30.0";
   svn = subversionClient.override { perlBindings = perlSupport; };
 
   gitwebPerlLibs = with perlPackages; [ CGI HTMLParser CGIFast FCGI FCGIProcManager HTMLTagCloud ];
@@ -34,7 +34,7 @@ stdenv.mkDerivation {
 
   src = fetchurl {
     url = "https://www.kernel.org/pub/software/scm/git/git-${version}.tar.xz";
-    sha256 = "05nxagilbfi0inkzs2486nzmhrin2wycwbym7df7w7ghi337ibsl";
+    sha256 = "06ad6dylgla34k9am7d5z8y3rryc8ln3ibq5z0d74rcm20hm0wsm";
   };
 
   outputs = [ "out" ] ++ stdenv.lib.optional withManual "doc";
@@ -297,6 +297,7 @@ stdenv.mkDerivation {
     disable_test t0001-init shared
     disable_test t1301-shared-repo
     disable_test t5324-split-commit-graph 'split commit-graph respects core.sharedrepository'
+    disable_test t4129-apply-samemode 'do not use core.sharedRepository for working tree files'
 
     # Our patched gettext never fallbacks
     disable_test t0201-gettext-fallbacks
