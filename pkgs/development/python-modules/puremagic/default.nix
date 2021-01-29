@@ -3,11 +3,11 @@
 
 buildPythonPackage rec {
   pname = "puremagic";
-  version = "1.6";
+  version = "1.10";
 
   src = fetchPypi {
     inherit pname version;
-    sha256 = "1ghn9rcggdikq12112rl0d0w5xvnil8ypwyj2dijh9n76jda59mr";
+    sha256 = "025ih5q1qa40x88j7ngsdr5sf0dp400kwlfzz60i7v6fh0ms1zkg";
   };
 
   postPatch = ''
