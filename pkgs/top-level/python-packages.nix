@@ -7436,6 +7436,8 @@ in {
 
   watchdog = callPackage ../development/python-modules/watchdog { };
 
+  watchgod = callPackage ../development/python-modules/watchgod { };
+
   WazeRouteCalculator = callPackage ../development/python-modules/WazeRouteCalculator { };
 
   wcwidth = callPackage ../development/python-modules/wcwidth { };
