@@ -491,7 +491,7 @@ in {
           the DB. If you change or lose this key you will be unable to
           access variables stored in database.
 
-          Make sure the secret is at least 30 characters and all random,
+          Make sure the secret is at least 32 characters and all random,
           no regular words or you'll be exposed to dictionary attacks.
 
           This should be a string, not a nix path, since nix paths are
@@ -507,7 +507,7 @@ in {
           the DB. If you change or lose this key you will be unable to
           access variables stored in database.
 
-          Make sure the secret is at least 30 characters and all random,
+          Make sure the secret is at least 32 characters and all random,
           no regular words or you'll be exposed to dictionary attacks.
 
           This should be a string, not a nix path, since nix paths are
@@ -523,7 +523,7 @@ in {
           tokens. If you change or lose this key, users which have 2FA
           enabled for login won't be able to login anymore.
 
-          Make sure the secret is at least 30 characters and all random,
+          Make sure the secret is at least 32 characters and all random,
           no regular words or you'll be exposed to dictionary attacks.
 
           This should be a string, not a nix path, since nix paths are
