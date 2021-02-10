@@ -116,10 +116,12 @@ in
       before = [ "nss-lookup.target" ];
       wants = [ "nss-lookup.target" ];
       wantedBy = [ "multi-user.target" ];
+      path = [ pkgs.openssl ];
 
       preStart = ''
         mkdir -m 0755 -p ${stateDir}/dev/
         cp ${confFile} ${stateDir}/unbound.conf
+	[ ! -f ${stateDir}/unbound_control.key ] && ${cfg.package}/bin/unbound-control-setup -d ${stateDir}
         ${optionalString cfg.enableRootTrustAnchor ''
           ${cfg.package}/bin/unbound-anchor -a ${rootTrustAnchorFile} || echo "Root anchor updated!"
           chown unbound ${stateDir} ${rootTrustAnchorFile}
