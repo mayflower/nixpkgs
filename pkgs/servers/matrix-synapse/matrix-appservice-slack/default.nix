@@ -1,8 +1,11 @@
-{ pkgs, nodejs, stdenv, lib, ... }:
-
+{ pkgs, nodejs, stdenv, fetchFromGitHub, lib, ... }:
 let
-
-  packageName = with lib; concatStrings (map (entry: (concatStrings (mapAttrsToList (key: value: "${key}-${value}") entry))) (importJSON ./package.json));
+  src = fetchFromGitHub {
+    owner = "matrix-org";
+    repo = "matrix-appservice-slack";
+    rev = "1.7.0";
+    sha256 = "sha256-0BcnG/DGvc3uh/eP0KIB5gPSpXNPlaAl78D4bVCnLHg=";
+  };
 
   nodePackages = import ./node-composition.nix {
     inherit pkgs nodejs;
