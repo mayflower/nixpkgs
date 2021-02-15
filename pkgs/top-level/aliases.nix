@@ -81,6 +81,7 @@ mapAliases ({
   clangAnalyzer = clang-analyzer;  # added 2015-02-20
   clawsMail = claws-mail; # added 2016-04-29
   clutter_gtk = clutter-gtk; # added 2018-02-25
+  codimd = hedgedoc; # added 2020-11-29
   compton = picom; # added 2019-12-02
   compton-git = compton; # added 2019-05-20
   conntrack_tools = conntrack-tools; # added 2018-05
@@ -137,6 +138,7 @@ mapAliases ({
 
   firestr = throw "firestr has been removed."; # added 2019-12-08
   flameGraph = flamegraph; # added 2018-04-25
+  flink_1_5 = throw "flink_1_5 was removed, use flink instead"; # added 2021-01-25
   foldingathome = fahclient; # added 2020-09-03
   font-awesome-ttf = font-awesome; # 2018-02-25
   # 2019-10-31
@@ -252,7 +254,7 @@ mapAliases ({
   libgnome_keyring = libgnome-keyring; # added 2018-02-25
   libgnome_keyring3 = libgnome-keyring3; # added 2018-02-25
   libgumbo = gumbo; # added 2018-01-21
-  libGL_driver = mesa.drivers;
+  libGL_driver = mesa.drivers; # added 2019-05-28
   libintlOrEmpty = stdenv.lib.optional (!stdenv.isLinux || stdenv.hostPlatform.libc != "glibc") gettext; # added 2018-03-14
   libjpeg_drop = libjpeg_original; # added 2020-06-05
   libjson_rpc_cpp = libjson-rpc-cpp; # added 2017-02-28
@@ -351,6 +353,7 @@ mapAliases ({
   oblogout = throw "oblogout has been removed from nixpkgs, as it's archived upstream."; # added 2019-12-10
   opencl-icd = ocl-icd; # added 2017-01-20
   openexr_ctl = ctl; # added 2018-04-25
+  openjpeg_1 = throw "openjpeg_1 has been removed, use openjpeg_2 instead"; # added 2021-01-24
   openjpeg_2_1 = openjpeg_2; # added 2018-10-25
   opensans-ttf = open-sans; # added 2018-12-04
   openssh_with_kerberos = openssh; # added 2018-01-28
@@ -478,7 +481,7 @@ mapAliases ({
   recordmydesktop = throw "recordmydesktop has been removed from nixpkgs, as it's unmaintained and uses deprecated libraries"; # added 2019-12-10
   gtk-recordmydesktop = throw "gtk-recordmydesktop has been removed from nixpkgs, as it's unmaintained and uses deprecated libraries"; # added 2019-12-10
   qt-recordmydesktop = throw "qt-recordmydesktop has been removed from nixpkgs, as it's abandoned and uses deprecated libraries"; # added 2019-12-10
-  rfkill = throw "rfkill has been removed, as it's included in util-linux"; # added 2020-08-23
+  rfkill = throw "rfkill has been removed, as it's included in utillinux"; # added 2020-08-23
   rkt = throw "rkt was archived by upstream"; # added 2020-05-16
   ruby_2_0_0 = throw "deprecated 2018-0213: use a newer version of ruby";
   ruby_2_1_0 = throw "deprecated 2018-0213: use a newer version of ruby";
@@ -616,6 +619,7 @@ mapAliases ({
   ubootBeagleboneBlack = ubootAmx335xEVM; # added 2020-01-21
   ucsFonts = ucs-fonts; # added 2016-07-15
   ultrastardx-beta = ultrastardx; # added 2017-08-12
+  untrunc = untrunc-anthwlock; # added 2021-02-01
   usb_modeswitch = usb-modeswitch; # added 2016-05-10
   usbguard-nox = usbguard; # added 2019-09-04
   uzbl = throw "uzbl has been removed from nixpkgs, as it's unmaintained and uses insecure libraries";
@@ -735,8 +739,6 @@ mapAliases ({
   /* Cleanup before 21.03 */
   riot-desktop = throw "riot-desktop is now element-desktop!";
   riot-web = throw "riot-web is now element-web";
-
-  ant-dracula-theme = throw "ant-dracula-theme is now dracula-theme, and theme name is Dracula instead of Ant-Dracula.";
 
   /* If these are in the scope of all-packages.nix, they cause collisions
   between mixed versions of qt. See:

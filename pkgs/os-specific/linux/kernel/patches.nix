@@ -33,15 +33,11 @@
 
   cpu-cgroup-v2 = import ./cpu-cgroup-v2-patches;
 
-  tag_hardened = {
-    name = "tag-hardened";
-    patch = ./hardened/tag-hardened.patch;
-  };
-
   hardened = let
     mkPatch = kernelVersion: src: {
       name = lib.removeSuffix ".patch" src.name;
-      patch = fetchurl src;
+      patch = fetchurl (lib.filterAttrs (k: v: k != "extra") src);
+      extra = src.extra;
     };
     patches = builtins.fromJSON (builtins.readFile ./hardened/patches.json);
   in lib.mapAttrs mkPatch patches;
@@ -73,17 +69,6 @@
       name = name + ".patch";
       url = "https://github.com/torvalds/linux/commit/45c8184c1bed1ca8a7f02918552063a00b909bf5.patch";
       sha256 = "1l8xq02rd7vakxg52xm9g4zng0ald866rpgm8kjlh88mwwyjkrwv";
-    };
-  };
-
-  export_kernel_fpu_functions = {
-    "4.14" = {
-      name = "export_kernel_fpu_functions";
-      patch = ./export_kernel_fpu_functions_4_14.patch;
-    };
-    "5.3" = {
-      name = "export_kernel_fpu_functions";
-      patch = ./export_kernel_fpu_functions_5_3.patch;
     };
   };
 

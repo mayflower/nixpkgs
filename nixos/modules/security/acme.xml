@@ -162,6 +162,9 @@ services.httpd = {
 <xref linkend="opt-security.acme.certs"/>."foo.example.com" = {
   <link linkend="opt-security.acme.certs._name_.webroot">webroot</link> = "/var/lib/acme/.challenges";
   <link linkend="opt-security.acme.certs._name_.email">email</link> = "foo@example.com";
+  # Ensure that the web server you use can read the generated certs
+  # Take a look at the <link linkend="opt-services.nginx.group">group</link> option for the web server you choose.
+  <link linkend="opt-security.acme.certs._name_.group">group</link> = "nginx";
   # Since we have a wildcard vhost to handle port 80,
   # we can generate certs for anything!
   # Just make sure your DNS resolves them.
@@ -257,10 +260,35 @@ chmod 400 /var/lib/secrets/certs.secret
   <para>
    Should you need to regenerate a particular certificate in a hurry, such
    as when a vulnerability is found in Let's Encrypt, there is now a convenient
-   mechanism for doing so. Running <literal>systemctl clean acme-example.com.service</literal>
-   will remove all certificate files for the given domain, allowing you to then
-   <literal>systemctl start acme-example.com.service</literal> to generate fresh
-   ones.
+   mechanism for doing so. Running
+   <literal>systemctl clean --what=state acme-example.com.service</literal>
+   will remove all certificate files and the account data for the given domain,
+   allowing you to then <literal>systemctl start acme-example.com.service</literal>
+   to generate fresh ones.
   </para>
+ </section>
+ <section xml:id="module-security-acme-fix-jws">
+  <title>Fixing JWS Verification error</title>
+
+  <para>
+   It is possible that your account credentials file may become corrupt and need
+   to be regenerated. In this scenario lego will produce the error <literal>JWS verification error</literal>.
+   The solution is to simply delete the associated accounts file and
+   re-run the affected service(s).
+  </para>
+
+<programlisting>
+# Find the accounts folder for the certificate
+systemctl cat acme-example.com.service | grep -Po 'accounts/[^:]*'
+export accountdir="$(!!)"
+# Move this folder to some place else
+mv /var/lib/acme/.lego/$accountdir{,.bak}
+# Recreate the folder using systemd-tmpfiles
+systemd-tmpfiles --create
+# Get a new account and reissue certificates
+# Note: Do this for all certs that share the same account email address
+systemctl start acme-example.com.service
+</programlisting>
+
  </section>
 </chapter>
