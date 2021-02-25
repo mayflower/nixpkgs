@@ -623,6 +623,11 @@ in {
 
     environment.systemPackages = [ pkgs.git gitlab-rake gitlab-rails cfg.packages.gitlab-shell ];
 
+    systemd.targets.gitlab = {
+      description = "Common target for all GitLab services.";
+      wantedBy = [ "multi-user.target" ];
+    };
+
     # Redis is required for the sidekiq queue runner.
     services.redis.enable = mkDefault true;
 
@@ -638,7 +643,8 @@ in {
     systemd.services.gitlab-postgresql = let pgsql = config.services.postgresql; in mkIf databaseActuallyCreateLocally {
       after = [ "postgresql.service" ];
       bindsTo = [ "postgresql.service" ];
-      wantedBy = [ "multi-user.target" ];
+      wantedBy = [ "gitlab.target" ];
+      partOf = [ "gitlab.target" ];
       path = [
         pgsql.package
         pkgs.util-linux
@@ -719,7 +725,8 @@ in {
 
 
     systemd.services.gitlab-config = {
-      wantedBy = [ "multi-user.target" ];
+      wantedBy = [ "gitlab.target" ];
+      partOf = [ "gitlab.target" ];
       path = with pkgs; [
         jq
         openssl
@@ -827,7 +834,8 @@ in {
         "gitlab-config.service"
       ] ++ optional (cfg.databaseHost == "") "postgresql.service"
         ++ optional databaseActuallyCreateLocally "gitlab-postgresql.service";
-      wantedBy = [ "multi-user.target" ];
+      wantedBy = [ "gitlab.target" ];
+      partOf = [ "gitlab.target" ];
       serviceConfig = {
         Type = "oneshot";
         User = cfg.user;
@@ -861,7 +869,8 @@ in {
         "gitlab-config.service"
         "gitlab-db-config.service"
       ] ++ optional (cfg.databaseHost == "") "postgresql.service";
-      wantedBy = [ "multi-user.target" ];
+      wantedBy = [ "gitlab.target" ];
+      partOf = [ "gitlab.target" ];
       environment = gitlabEnv;
       path = with pkgs; [
         postgresqlPackage
@@ -889,7 +898,8 @@ in {
     systemd.services.gitaly = {
       after = [ "network.target" "gitlab-config.service" ];
       bindsTo = [ "gitlab-config.service" ];
-      wantedBy = [ "multi-user.target" ];
+      wantedBy = [ "gitlab.target" ];
+      partOf = [ "gitlab.target" ];
       path = with pkgs; [
         openssh
         procps  # See https://gitlab.com/gitlab-org/gitaly/issues/1562
@@ -914,7 +924,8 @@ in {
       description = "GitLab static pages daemon";
       after = [ "network.target" "gitlab-config.service" ];
       bindsTo = [ "gitlab-config.service" ];
-      wantedBy = [ "multi-user.target" ];
+      wantedBy = [ "gitlab.target" ];
+      partOf = [ "gitlab.target" ];
 
       path = [ pkgs.unzip ];
 
@@ -933,7 +944,8 @@ in {
 
     systemd.services.gitlab-workhorse = {
       after = [ "network.target" ];
-      wantedBy = [ "multi-user.target" ];
+      wantedBy = [ "gitlab.target" ];
+      partOf = [ "gitlab.target" ];
       path = with pkgs; [
         exiftool
         gitAndTools.git
@@ -964,7 +976,8 @@ in {
       description = "GitLab incoming mail daemon";
       after = [ "network.target" "redis.service" "gitlab-config.service" ];
       bindsTo = [ "gitlab-config.service" ];
-      wantedBy = [ "multi-user.target" ];
+      wantedBy = [ "gitlab.target" ];
+      partOf = [ "gitlab.target" ];
       environment = gitlabEnv;
       serviceConfig = {
         Type = "simple";
@@ -991,7 +1004,8 @@ in {
         "gitlab-config.service"
         "gitlab-db-config.service"
       ] ++ optional (cfg.databaseHost == "") "postgresql.service";
-      wantedBy = [ "multi-user.target" ];
+      wantedBy = [ "gitlab.target" ];
+      partOf = [ "gitlab.target" ];
       environment = gitlabEnv;
       path = with pkgs; [
         postgresqlPackage
