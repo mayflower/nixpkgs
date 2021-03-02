@@ -2675,8 +2675,6 @@ in {
 
   hiredis = callPackage ../development/python-modules/hiredis { };
 
-  histbook = callPackage ../development/python-modules/histbook { };
-
   hiro = callPackage ../development/python-modules/hiro { };
 
   hiyapyco = callPackage ../development/python-modules/hiyapyco { };
