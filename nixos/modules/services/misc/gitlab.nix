@@ -191,6 +191,7 @@ let
         domain: "${cfg.smtp.domain}",
         ${optionalString (cfg.smtp.authentication != null) "authentication: :${cfg.smtp.authentication},"}
         enable_starttls_auto: ${boolToString cfg.smtp.enableStartTLSAuto},
+        tls: ${boolToString cfg.smtp.tls},
         ca_file: "/etc/ssl/certs/ca-certificates.crt",
         openssl_verify_mode: '${cfg.smtp.opensslVerifyMode}'
       }
@@ -449,6 +450,12 @@ in {
           type = types.bool;
           default = true;
           description = "Whether to try to use StartTLS.";
+        };
+
+        tls = mkOption {
+          type = types.bool;
+          default = false;
+          description = "Whether to use TLS wrapper-mode.";
         };
 
         opensslVerifyMode = mkOption {
