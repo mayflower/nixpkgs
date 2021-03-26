@@ -5998,20 +5998,19 @@ in
 
   opensm = callPackage ../tools/networking/opensm { };
 
-  openssh =
-    callPackage ../tools/networking/openssh {
-      hpnSupport = false;
-      etcDir = "/etc/ssh";
-      pam = if stdenv.isLinux then pam else null;
-    };
+  opensshPackages = dontRecurseIntoAttrs (callPackage ../tools/networking/openssh {});
 
-  openssh_hpn = pkgs.appendToName "with-hpn" (openssh.override {
-    hpnSupport = true;
-  });
+  openssh = opensshPackages.openssh.override {
+    etcDir = "/etc/ssh";
+  };
 
-  openssh_gssapi = pkgs.appendToName "with-gssapi" (openssh.override {
-    withGssapiPatches = true;
-  });
+  openssh_hpn = opensshPackages.openssh_hpn.override {
+    etcDir = "/etc/ssh";
+  };
+
+  openssh_gssapi = opensshPackages.openssh_gssapi.override {
+    etcDir = "/etc/ssh";
+  };
 
   opensp = callPackage ../tools/text/sgml/opensp { };
 
@@ -8372,42 +8371,6 @@ in
   ### DEVELOPMENT / COMPILERS
 
   abcl = callPackage ../development/compilers/abcl {};
-
-  adoptopenjdk-bin-15-packages-linux = import ../development/compilers/adoptopenjdk-bin/jdk15-linux.nix;
-  adoptopenjdk-bin-15-packages-darwin = import ../development/compilers/adoptopenjdk-bin/jdk15-darwin.nix;
-
-  adoptopenjdk-hotspot-bin-15 = if stdenv.isLinux
-    then callPackage adoptopenjdk-bin-15-packages-linux.jdk-hotspot {}
-    else callPackage adoptopenjdk-bin-15-packages-darwin.jdk-hotspot {};
-  adoptopenjdk-jre-hotspot-bin-15 = if stdenv.isLinux
-    then callPackage adoptopenjdk-bin-15-packages-linux.jre-hotspot {}
-    else callPackage adoptopenjdk-bin-15-packages-darwin.jre-hotspot {};
-
-  adoptopenjdk-openj9-bin-15 = if stdenv.isLinux
-    then callPackage adoptopenjdk-bin-15-packages-linux.jdk-openj9 {}
-    else callPackage adoptopenjdk-bin-15-packages-darwin.jdk-openj9 {};
-
-  adoptopenjdk-jre-openj9-bin-15 = if stdenv.isLinux
-    then callPackage adoptopenjdk-bin-15-packages-linux.jre-openj9 {}
-    else callPackage adoptopenjdk-bin-15-packages-darwin.jre-openj9 {};
-
-  adoptopenjdk-bin-14-packages-linux = import ../development/compilers/adoptopenjdk-bin/jdk14-linux.nix;
-  adoptopenjdk-bin-14-packages-darwin = import ../development/compilers/adoptopenjdk-bin/jdk14-darwin.nix;
-
-  adoptopenjdk-hotspot-bin-14 = if stdenv.isLinux
-    then callPackage adoptopenjdk-bin-14-packages-linux.jdk-hotspot {}
-    else callPackage adoptopenjdk-bin-14-packages-darwin.jdk-hotspot {};
-  adoptopenjdk-jre-hotspot-bin-14 = if stdenv.isLinux
-    then callPackage adoptopenjdk-bin-14-packages-linux.jre-hotspot {}
-    else callPackage adoptopenjdk-bin-14-packages-darwin.jre-hotspot {};
-
-  adoptopenjdk-openj9-bin-14 = if stdenv.isLinux
-    then callPackage adoptopenjdk-bin-14-packages-linux.jdk-openj9 {}
-    else callPackage adoptopenjdk-bin-14-packages-darwin.jdk-openj9 {};
-
-  adoptopenjdk-jre-openj9-bin-14 = if stdenv.isLinux
-    then callPackage adoptopenjdk-bin-14-packages-linux.jre-openj9 {}
-    else callPackage adoptopenjdk-bin-14-packages-darwin.jre-openj9 {};
 
   adoptopenjdk-bin-13-packages-linux = import ../development/compilers/adoptopenjdk-bin/jdk13-linux.nix;
   adoptopenjdk-bin-13-packages-darwin = import ../development/compilers/adoptopenjdk-bin/jdk13-darwin.nix;
