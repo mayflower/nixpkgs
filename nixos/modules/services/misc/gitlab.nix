@@ -869,7 +869,7 @@ in {
       partOf = [ "gitlab.target" ];
       path = [
         pgsql.package
-        pkgs.util-linux
+        pkgs.utillinux
       ];
       script = ''
         set -eu
