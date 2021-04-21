@@ -2,19 +2,18 @@
 
 buildPythonPackage rec {
   pname = "privacyidea-ldap-proxy";
-  version = "0.6.1";
+  version = "0.7.0-dev-py3k";
 
   src = fetchFromGitHub {
     owner = "privacyidea";
     repo = pname;
-    rev = "v${version}";
-    sha256 = "1kc1n9wr1a66xd5zvl6dq78xnkqkn5574jpzashc99pvm62dr24j";
+    rev = "fea1907a88352ffd0c0030172d7a5e598c57c251";
+    sha256 = "17mbicdz4cs1qsp3ap1vvglak0xfzncvaff2z07zmszjx7nn7a6z";
   };
 
   propagatedBuildInputs = [ twisted ldaptor configobj ];
 
-  # python 2 zope.interface test import path issues
-  doCheck = false;
+  doCheck = true;
 
   pythonImportsCheck = [ "pi_ldapproxy" ];
 
