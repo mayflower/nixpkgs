@@ -4,9 +4,6 @@ buildPythonPackage rec {
   pname = "privacyidea-ldap-proxy";
   version = "0.7.0-dev-py3k";
 
-  # https://github.com/privacyidea/privacyidea-ldap-proxy/issues/50
-  disabled = isPy3k;
-
   src = fetchFromGitHub {
     owner = "privacyidea";
     repo = pname;

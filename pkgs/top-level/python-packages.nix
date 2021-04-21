@@ -5275,6 +5275,8 @@ in {
 
   privacyidea = callPackage ../development/python-modules/privacyidea { };
 
+  privacyidea-ldap-proxy = callPackage ../development/python-modules/privacyidea/ldap-proxy.nix { };
+
   pyjwt1 = callPackage ../development/python-modules/pyjwt/1.nix { };
 
   proboscis = callPackage ../development/python-modules/proboscis { };
