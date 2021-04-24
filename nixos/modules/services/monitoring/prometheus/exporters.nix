@@ -47,6 +47,7 @@ let
     "snmp"
     "surfboard"
     "tor"
+    "unbound"
     "unifi"
     "unifi-poller"
     "varnish"
