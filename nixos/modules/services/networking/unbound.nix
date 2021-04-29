@@ -214,6 +214,8 @@ in
         RestrictNamespaces = true;
         LockPersonality = true;
         RestrictSUIDSGID = true;
+        Restart = "always";
+        RestartSec = "5s";
       };
     };
     # If networkmanager is enabled, ask it to interface with unbound.
