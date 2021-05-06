@@ -25,10 +25,10 @@ const result = []
 
 readFile
   .on('line', line => {
-    const arr = line.match(/^ {2}resolved "([^#]+)#([^"]+)"$/)
+    const arr = line.match(/^ {2}resolved "([^#]+)(#([^"]+))?"$/)
 
     if (arr !== null) {
-      const [_, url, shaOrRev] = arr
+      const [_, url, _2, shaOrRev] = arr
 
       const fileName = urlToName(url)
 
