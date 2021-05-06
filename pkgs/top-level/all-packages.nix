@@ -1245,6 +1245,8 @@ in
 
   calls = callPackage ../applications/networking/calls { };
 
+  calendso = callPackage ../servers/web-apps/calendso { };
+
   inherit (nodePackages) castnow;
 
   castty = callPackage ../tools/misc/castty { };
