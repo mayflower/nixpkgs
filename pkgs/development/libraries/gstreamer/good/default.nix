@@ -1,5 +1,6 @@
 { stdenv
 , fetchurl
+, fetchpatch
 , meson
 , ninja
 , pkgconfig
@@ -46,16 +47,30 @@ let
 in
 stdenv.mkDerivation rec {
   pname = "gst-plugins-good";
-  version = "1.16.2";
+  version = "1.16.3";
 
   outputs = [ "out" "dev" ];
 
   src = fetchurl {
     url = "${meta.homepage}/src/${pname}/${pname}-${version}.tar.xz";
-    sha256 = "068k3cbv1yf3gbllfdzqsg263kzwh21y8dpwr0wvgh15vapkpfs0";
+    sha256 = "0pzq565ijl5z3mphvix34878m7hck6a58rdpj7sp7rixwwzkm8nk";
   };
 
-  patches = [ ./fix_pkgconfig_includedir.patch ];
+  patches = [
+    ./fix_pkgconfig_includedir.patch
+    (fetchpatch {
+      # https://gstreamer.freedesktop.org/security/sa-2021-0002.html
+      name = "CVE-2021-3497.patch";
+      url = "https://gitlab.freedesktop.org/gstreamer/gst-plugins-good/-/commit/9181191511f9c0be6a89c98b311f49d66bd46dc3.patch";
+      sha256 = "10dvfxrw7l3gflk9fzn5x18vkj4080dfkjnzldc12r5mnl37qdz8";
+    })
+    (fetchpatch {
+      # https://gstreamer.freedesktop.org/security/sa-2021-0003.html
+      name = "CVE-2021-3498.patch";
+      url = "https://gitlab.freedesktop.org/gstreamer/gst-plugins-good/-/commit/02174790726dd20a5c73ce2002189bf240ad4fe0.patch";
+      sha256 = "1sygia6z0yv5grzii6z9bviwi6rm6br3xjr0cnffsji6z943d7vc";
+    })
+  ];
 
   nativeBuildInputs = [
     pkgconfig

@@ -10,16 +10,20 @@ let
 in
 buildPythonApplication rec {
   pname = "matrix-synapse";
-  version = "1.30.0";
+  version = "1.33.1";
 
   src = fetchPypi {
     inherit pname version;
-    sha256 = "1ca69v479537bbj2hjliwk9zzy9fqqsf7fm188k6xxj0a37q9y41";
+    sha256 = "sha256-kH5HhkfUL+WzcX/0pK0dV1bI34TpmgRpx3m/UchdAEE=";
   };
 
   patches = [
     # adds an entry point for the service
     ./homeserver-script.patch
+
+    # drop constraint on `cryptography'. The commit message
+    # at the top provides more context.
+    ./0001-Drop-strict-version-constraint-for-cryptography.patch
   ];
 
   propagatedBuildInputs = [
