@@ -8,6 +8,7 @@ with lib;
 
 let
   cfg = config.services.prometheus.exporters.unbound;
+  unboundCfg = config.services.unbound;
 in
 {
   imports = [
@@ -87,9 +88,9 @@ in
       DynamicUser = true;
     };
   }] ++ [
-    (mkIf config.services.unbound.enable {
+    (mkIf unboundCfg.enable {
       after = [ "unbound.service" ];
-      requires = [ "unbound.service" ];
+      serviceConfig.SupplementaryGroups = mkIf (lib.hasPrefix "unix:" cfg.unbound.host && unboundCfg.localControlSocketPath != null) [ "unbound" ];
     })
   ]);
 }
