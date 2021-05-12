@@ -110,7 +110,9 @@ in
     ++ [
       (mkIf config.services.unbound.enable {
         after = [ "unbound.service" ];
-        requires = [ "unbound.service" ];
+        serviceConfig.SupplementaryGroups = mkIf (
+          lib.hasPrefix "unix:" cfg.unbound.host && config.services.unbound.localControlSocketPath != null
+        ) [ "unbound" ];
       })
     ]
   );
