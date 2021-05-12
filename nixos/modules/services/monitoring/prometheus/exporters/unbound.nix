@@ -4,6 +4,7 @@ with lib;
 
 let
   cfg = config.services.prometheus.exporters.unbound;
+  unboundCfg = config.services.unbound;
 in
 {
   port = 9167;
@@ -51,9 +52,9 @@ in
       '';
     };
   }] ++ [
-    (mkIf config.services.unbound.enable {
+    (mkIf unboundCfg.enable {
       after = [ "unbound.service" ];
-      requires = [ "unbound.service" ];
+      serviceConfig.SupplementaryGroups = mkIf (cfg.fetchType == "uds" && unboundCfg.localControlSocketPath != null) [ "unbound" ];
     })
   ]);
 }
