@@ -1555,9 +1555,6 @@ let
           enable = true;
           localControlSocketPath = "/run/unbound/unbound.ctl";
         };
-        systemd.services.prometheus-unbound-exporter.serviceConfig = {
-          SupplementaryGroups = [ "unbound" ];
-        };
       };
       exporterTest = ''
         wait_for_unit("unbound.service")
