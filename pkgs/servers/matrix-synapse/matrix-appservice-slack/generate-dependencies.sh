@@ -1,13 +1,16 @@
-#!/usr/bin/env bash
+#!/usr/bin/env nix-shell
+#! nix-shell -i bash -p yarn2nix yarn
 
-# Download package.json and package-lock.json from the v1.7.0 release
-curl https://raw.githubusercontent.com/matrix-org/matrix-appservice-slack/1.7.0/package.json -o package.json
-curl https://raw.githubusercontent.com/matrix-org/matrix-appservice-slack/1.7.0/package-lock.json -o package-lock.json
+version="${1:?Usage: generate-dependencies.sh <version>}"
+set -exuo pipefail
+matrix_appservice_slack_dir=$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)
 
-$(nix-build $ROOT -A  nodePackages.node2nix --no-out-link)/bin/node2nix \
-  --nodejs-12 \
-  --node-env ../../../development/node-packages/node-env.nix \
-  --development \
-  --input package.json \
-  --output node-packages.nix \
-  --composition node-composition.nix
+cd "$(mktemp -dt matrix-appservice-slack-update.XXXXXXXX)"
+workdir=$(pwd)
+trap 'cd /; rm -rf "$workdir"' EXIT
+
+curl -f https://raw.githubusercontent.com/matrix-org/matrix-appservice-slack/"$version"/package.json -o package.json
+yarn --ignore-scripts
+yarn2nix > yarn.nix
+
+mv package.json yarn.lock yarn.nix "$matrix_appservice_slack_dir"
