@@ -1,23 +1,27 @@
-{ pkgs, nodejs, stdenv, fetchFromGitHub, lib, ... }:
-let
+{ mkYarnPackage, stdenv, fetchFromGitHub, lib, nodejs, makeWrapper }:
+
+mkYarnPackage rec {
+  pname = "matrix-appservice-slack";
+  version = "1.8.0";
+  nativeBuildInputs = [ makeWrapper ];
+
+  yarnLock = ./yarn.lock;
+  yarnNix = ./yarn.nix;
+
   src = fetchFromGitHub {
     owner = "matrix-org";
     repo = "matrix-appservice-slack";
-    rev = "1.7.0";
-    sha256 = "sha256-0BcnG/DGvc3uh/eP0KIB5gPSpXNPlaAl78D4bVCnLHg=";
+    rev = version;
+    sha256 = "sha256-FA6SMivMnloeZmnUhGx6N+ZLDTZFO3y17xJYclkp5w0=";
   };
 
-  nodePackages = import ./node-composition.nix {
-    inherit pkgs nodejs;
-    inherit (stdenv.hostPlatform) system;
-  };
-in
-nodePackages."${packageName}".override {
-  nativeBuildInputs = [ pkgs.makeWrapper ];
+  buildPhase = ''
+    yarn --offline build
+  '';
 
   postInstall = ''
     makeWrapper '${nodejs}/bin/node' "$out/bin/matrix-appservice-slack" \
-    --add-flags "$out/lib/node_modules/matrix-appservice-slack/lib/app.js"
+    --add-flags "$out/libexec/matrix-appservice-slack/deps/matrix-appservice-slack/lib/app.js"
   '';
 
   meta = with lib; {
