@@ -7,6 +7,7 @@ mkYarnPackage rec {
 
   yarnLock = ./yarn.lock;
   yarnNix = ./yarn.nix;
+  packageJSON = ./package.json;
 
   src = fetchFromGitHub {
     owner = "matrix-org";
