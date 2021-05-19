@@ -26,6 +26,8 @@ buildPythonApplication rec {
     ./0001-Drop-strict-version-constraint-for-cryptography.patch
   ];
 
+  buildInputs = [ openssl ];
+
   propagatedBuildInputs = [
     setuptools
     bcrypt
