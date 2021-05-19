@@ -19270,6 +19270,8 @@ in
 
   postfix = callPackage ../servers/mail/postfix { };
 
+  postfixadmin = callPackage ../servers/postfixadmin { };
+
   postsrsd = callPackage ../servers/mail/postsrsd { };
 
   rspamd = callPackage ../servers/mail/rspamd { };
