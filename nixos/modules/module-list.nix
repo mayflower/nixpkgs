@@ -409,6 +409,7 @@
   ./services/mail/opensmtpd.nix
   ./services/mail/pfix-srsd.nix
   ./services/mail/postfix.nix
+  ./services/mail/postfixadmin.nix
   ./services/mail/postsrsd.nix
   ./services/mail/postgrey.nix
   ./services/mail/spamassassin.nix
