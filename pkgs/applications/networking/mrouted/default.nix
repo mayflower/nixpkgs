@@ -1,4 +1,4 @@
-{ stdenv, fetchFromGitHub, bison }:
+{ stdenv, fetchFromGitHub, bison, lib }:
 
 stdenv.mkDerivation rec {
   pname = "mrouted";
@@ -17,7 +17,7 @@ stdenv.mkDerivation rec {
   dontAddPrefix = true;
   makeFlags = [ "prefix=${placeholder "out"}" "sysconfdir=${placeholder "out"}/etc" ];
 
-  meta = with stdenv.lib; {
+  meta = with lib; {
     description = "Simple Multicast Routing for UNIX";
     inherit (src.meta) homepage;
     license = licenses.free;

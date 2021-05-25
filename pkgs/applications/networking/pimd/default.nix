@@ -1,4 +1,4 @@
-{ stdenv, fetchgit }:
+{ stdenv, fetchgit, lib }:
 
 stdenv.mkDerivation rec {
   pname = "pimd";
@@ -15,7 +15,7 @@ stdenv.mkDerivation rec {
     substituteInPlace configure --replace '/bin/echo' 'echo'
   '';
 
-  meta = with stdenv.lib; {
+  meta = with lib; {
     description = "PIM-SM/SSM multicast routing for UNIX";
     homepage = "https://github.com/troglobit/pimd";
     license = licenses.bsd3;
