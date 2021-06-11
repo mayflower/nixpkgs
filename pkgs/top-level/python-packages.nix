@@ -8008,6 +8008,8 @@ in {
 
   subdownloader = callPackage ../development/python-modules/subdownloader { };
 
+  subliminal = callPackage ../development/python-modules/subliminal { };
+
   subunit = callPackage ../development/python-modules/subunit {
     inherit (pkgs) subunit cppunit check;
   };
