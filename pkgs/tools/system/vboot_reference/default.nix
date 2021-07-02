@@ -1,6 +1,13 @@
-{ lib, stdenv, fetchFromGitiles, pkg-config, libuuid, openssl, libyaml, xz }:
+{ lib, stdenv, fetchFromGitiles, fetchFromGitHub, pkg-config, libuuid, openssl, libyaml, xz }:
+let
+  shflags = fetchFromGitHub {
+    owner = "kward";
+    repo = "shflags";
+    rev = "7d0daf1b3b3163c34e0108cdb439e2cd2f148152";
+    sha256 = "1fjmj437hin4vh7pa36n4vrd9j428qmbq99mmsv4zdb7v8591vmp";
+  };
 
-stdenv.mkDerivation rec {
+in stdenv.mkDerivation rec {
   version = "20180311";
   checkout = "4c84e077858c809ee80a9a6f9b38185cf7dcded7";
 
@@ -25,6 +32,8 @@ stdenv.mkDerivation rec {
   postPatch = ''
     substituteInPlace Makefile \
       --replace "ar qc" '${stdenv.cc.bintools.targetPrefix}ar qc'
+    substituteInPlace scripts/image_signing/common_minimal.sh \
+      --replace "/usr/share/misc/shflags" "${shflags}/shflags"
   '';
 
   preBuild = ''
