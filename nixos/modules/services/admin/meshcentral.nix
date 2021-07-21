@@ -42,9 +42,10 @@ in with lib; {
       meshcentral --datapath $STATE_DIRECTORY --configfile ${configFile}
     '';
     serviceConfig = {
-    DynamicUser = true;
-    StateDirectory = "meshcentral";
-    CacheDirectory = "meshcentral";
+      DynamicUser = true;
+      StateDirectory = "meshcentral";
+      CacheDirectory = "meshcentral";
+    };
   };
-  meta.maintainer = [ maintainers.lheckemann ];
+  meta.maintainers = [ maintainers.lheckemann ];
 }
