@@ -1,4 +1,4 @@
-{ lib, fetchFromGitHub, yarn2nix-moretea, nodejs }:
+{ lib, fetchpatch, fetchFromGitHub, yarn2nix-moretea, nodejs }:
 yarn2nix-moretea.mkYarnPackage rec {
   version = "0.8.83";
 
@@ -8,6 +8,14 @@ yarn2nix-moretea.mkYarnPackage rec {
     rev = "56dae7fac5b44db521e812e41a9b5fef78d542fd";
     sha256 = "1a0y1zmzv2cwrav34hzsm8bwkjh4q4dkqff5in6l220mx23y1zdp";
   };
+
+  patches = [
+    # Don't interpret --configfile as relative to --datadir
+    (fetchpatch {
+      url = "https://github.com/Ylianst/MeshCentral/commit/dec1f3c4892c730e9f840c35bfc3504738ef2ada.patch";
+      sha256 = "02lzlihicrhrpkk2p7fzrvm47nfvwrabxb368ssqvxx9wh981r8f";
+    })
+  ];
 
   packageJSON = ./package.json;
   yarnLock = ./yarn.lock;
