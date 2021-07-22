@@ -37,7 +37,7 @@ in with lib; {
   };
   config.systemd.services.meshcentral = mkIf cfg.enable {
     wantedBy = ["multi-user.target"];
-    path = [ pkgs.meshcentral ];
+    path = [ cfg.package ];
     script = ''
       meshcentral --datapath $STATE_DIRECTORY --configfile ${configFile}
     '';
