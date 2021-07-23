@@ -54,6 +54,10 @@
   # /etc/nixos/configuration.nix.
   configFile ? null
 
+, # Whether to copy nixpkgs into the image and set the root channels
+  # profile to point to it
+  copyChannel ? true
+
 , # Shell code executed after the VM has finished.
   postVM ? ""
 
@@ -163,7 +167,7 @@ let format' = format; in let
   users   = map (x: x.user  or "''") contents;
   groups  = map (x: x.group or "''") contents;
 
-  closureInfo = pkgs.closureInfo { rootPaths = [ config.system.build.toplevel channelSources ]; };
+  closureInfo = pkgs.closureInfo { rootPaths = [ config.system.build.toplevel ] ++ lib.optional copyChannel channelSources; };
 
   blockSize = toString (4 * 1024); # ext4fs block size (not block device sector size)
 
@@ -251,7 +255,8 @@ let format' = format; in let
     chmod 755 "$TMPDIR"
     echo "running nixos-install..."
     nixos-install --root $root --no-bootloader --no-root-passwd \
-      --system ${config.system.build.toplevel} --channel ${channelSources} --substituters ""
+      --system ${config.system.build.toplevel} --substituters "" \
+      ${if copyChannel then "--channel ${channelSources}" else "--no-channel-copy"}
 
     diskImage=nixos.raw
 
