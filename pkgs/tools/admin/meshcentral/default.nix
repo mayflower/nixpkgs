@@ -1,25 +1,22 @@
-{ lib, fetchpatch, fetchFromGitHub, yarn2nix-moretea, nodejs }:
+{ lib, fetchpatch, fetchzip, yarn2nix-moretea, nodejs, jq, dos2unix }:
 yarn2nix-moretea.mkYarnPackage rec {
-  version = "0.8.83";
+  version = "0.8.87";
 
-  src = fetchFromGitHub {
-    owner = "Ylianst";
-    repo = "MeshCentral";
-    rev = "56dae7fac5b44db521e812e41a9b5fef78d542fd";
-    sha256 = "1a0y1zmzv2cwrav34hzsm8bwkjh4q4dkqff5in6l220mx23y1zdp";
+  src = fetchzip {
+    url = "https://registry.npmjs.org/meshcentral/-/meshcentral-0.8.87.tgz";
+    sha256 = "1jb65pvbld83mdjdb4f4z2brqsdh3b1mvnjdhbllcsn35m705cp5";
   };
-
-  patches = [
-    # Don't interpret --configfile as relative to --datadir
-    (fetchpatch {
-      url = "https://github.com/Ylianst/MeshCentral/commit/dec1f3c4892c730e9f840c35bfc3504738ef2ada.patch";
-      sha256 = "02lzlihicrhrpkk2p7fzrvm47nfvwrabxb368ssqvxx9wh981r8f";
-    })
-  ];
 
   packageJSON = ./package.json;
   yarnLock = ./yarn.lock;
   yarnNix = ./yarn.nix;
+
+  # Tarball has CRLF line endings. This makes patching difficult, so let's convert them.
+  nativeBuildInputs = [ dos2unix ];
+  prePatch = ''
+    find . -name '*.js' -exec dos2unix {} +
+    ln -snf meshcentral.js bin/meshcentral
+  '';
 
   preFixup = ''
     mkdir -p $out/bin
@@ -29,10 +26,6 @@ yarn2nix-moretea.mkYarnPackage rec {
   '';
 
   publishBinsFor = [ ];
-
-  postInstall = ''
-    ln -snf $out/libexec/meshcentral/node_modules $out/libexec/meshcentral/deps/meshcentral/node_modules
-  '';
 
   meta = with lib; {
     description = "Computer management web app";
