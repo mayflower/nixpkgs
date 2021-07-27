@@ -219,6 +219,7 @@ in
             reload-on-rss = 256;
             no-orphans = true;
             vacuum = true;
+            buffer-size = 32768;
           };
         });
       in {
