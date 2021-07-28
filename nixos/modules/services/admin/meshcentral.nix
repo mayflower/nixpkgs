@@ -35,16 +35,16 @@ in with lib; {
       };
     };
   };
-  config.systemd.services.meshcentral = mkIf cfg.enable {
-    wantedBy = ["multi-user.target"];
-    path = [ cfg.package ];
-    script = ''
-      meshcentral --datapath $STATE_DIRECTORY --configfile ${configFile}
-    '';
-    serviceConfig = {
-      DynamicUser = true;
-      StateDirectory = "meshcentral";
-      CacheDirectory = "meshcentral";
+  config = mkIf cfg.enable {
+    services.meshcentral.settings.settings.autoBackup.backupPath = lib.mkDefault "/var/lib/meshcentral/backups";
+    systemd.services.meshcentral = {
+      wantedBy = ["multi-user.target"];
+      serviceConfig = {
+        ExecStart = "${cfg.package}/bin/meshcentral --datapath /var/lib/meshcentral --configfile ${configFile}";
+        DynamicUser = true;
+        StateDirectory = "meshcentral";
+        CacheDirectory = "meshcentral";
+      };
     };
   };
   meta.maintainers = [ maintainers.lheckemann ];
