@@ -16,10 +16,12 @@ in with lib; {
       description = ''
         Settings for MeshCentral. Refer to upstream documentation for details:
 
-        - [https://github.com/Ylianst/MeshCentral/blob/master/meshcentral-config-schema.json](JSON Schema definition)
-        - [https://github.com/Ylianst/MeshCentral/blob/master/sample-config.json](simple sample configuration)
-        - [https://github.com/Ylianst/MeshCentral/blob/master/sample-config-advanced.json](complex sample configuration)
-        - [https://www.meshcommander.com/meshcentral2](Old homepage) with documentation links
+        <itemizedlist>
+          <listitem><para><link xlink:href="https://github.com/Ylianst/MeshCentral/blob/master/meshcentral-config-schema.json">JSON Schema definition</link></para></listitem>
+          <listitem><para><link xlink:href="https://github.com/Ylianst/MeshCentral/blob/master/sample-config.json">simple sample configuration</link></para></listitem>
+          <listitem><para><link xlink:href="https://github.com/Ylianst/MeshCentral/blob/master/sample-config-advanced.json">complex sample configuration</link></para></listitem>
+          <listitem><para><link xlink:href="https://www.meshcommander.com/meshcentral2">Old homepage) with documentation link</link></para></listitem>
+        </itemizedlist>
       '';
       type = types.submodule {
         freeformType = configFormat.type;
