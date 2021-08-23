@@ -7130,6 +7130,8 @@ in
     nvidiaGpuSupport = config.cudaSupport or false;
   };
 
+  nomad-autoscaler = callPackage ../applications/networking/cluster/nomad-autoscaler { };
+
   nomad-driver-podman = callPackage ../applications/networking/cluster/nomad-driver-podman { };
 
   notable = callPackage ../applications/misc/notable { };
@@ -13564,7 +13566,9 @@ in
 
   nix-build-uncached = callPackage ../development/tools/misc/nix-build-uncached { };
 
-  nexus = callPackage ../development/tools/repository-managers/nexus { };
+  nexus = callPackage ../development/tools/repository-managers/nexus {
+    jre_headless = jre8_headless;
+  };
 
   nwjs = callPackage ../development/tools/nwjs {
     gconf = pkgs.gnome2.GConf;
@@ -16097,6 +16101,8 @@ in
 
   libffi = callPackage ../development/libraries/libffi { };
 
+  libfreeaptx = callPackage ../development/libraries/libfreeaptx { };
+
   libfreefare = callPackage ../development/libraries/libfreefare {
     inherit (darwin) libobjc;
   };
@@ -17161,6 +17167,10 @@ in
     inherit (darwin.apple_sdk.frameworks) CoreServices;
   };
 
+  nspr_latest = callPackage ../development/libraries/nspr/latest.nix {
+    inherit (darwin.apple_sdk.frameworks) CoreServices;
+  };
+
   nss = lowPrio (callPackage ../development/libraries/nss { });
   nssTools = nss.tools;
 
@@ -17438,7 +17448,10 @@ in
     suffix = "min";
   };
 
-  poppler_utils = poppler.override { suffix = "utils"; utils = true; };
+  poppler_utils = poppler.override {
+    suffix = "utils";
+    utils = true;
+  };
 
   popt = callPackage ../development/libraries/popt { };
 
@@ -19704,7 +19717,6 @@ in
 
   samba4 = callPackage ../servers/samba/4.x.nix {
     rpcgen = netbsd.rpcgen;
-    python = python3;
   };
 
   samba = samba4;
@@ -20426,13 +20438,6 @@ in
     ];
   };
 
-  linux_5_12 = callPackage ../os-specific/linux/kernel/linux-5.12.nix {
-    kernelPatches = [
-      kernelPatches.bridge_stp_helper
-      kernelPatches.request_key_helper
-    ];
-  };
-
   linux_5_13 = callPackage ../os-specific/linux/kernel/linux-5.13.nix {
     kernelPatches = [
       kernelPatches.bridge_stp_helper
@@ -20746,7 +20751,6 @@ in
   linuxPackages_4_19 = recurseIntoAttrs (linuxPackagesFor pkgs.linux_4_19);
   linuxPackages_5_4 = recurseIntoAttrs (linuxPackagesFor pkgs.linux_5_4);
   linuxPackages_5_10 = recurseIntoAttrs (linuxPackagesFor pkgs.linux_5_10);
-  linuxPackages_5_12 = recurseIntoAttrs (linuxPackagesFor pkgs.linux_5_12);
   linuxPackages_5_13 = recurseIntoAttrs (linuxPackagesFor pkgs.linux_5_13);
 
   # When adding to the list above:
@@ -20780,7 +20784,7 @@ in
   # Hardened Linux
   hardenedLinuxPackagesFor = kernel': overrides:
     let # Note: We use this hack since the hardened patches can lag behind and we don't want to delay updates:
-      linux_latest_for_hardened = pkgs.linux_5_12;
+      linux_latest_for_hardened = pkgs.linux_5_10;
       kernel = (if kernel' == pkgs.linux_latest then linux_latest_for_hardened else kernel').override overrides;
     in linuxPackagesFor (kernel.override {
       structuredExtraConfig = import ../os-specific/linux/kernel/hardened/config.nix {
@@ -22847,6 +22851,7 @@ in
 
   claws-mail = callPackage ../applications/networking/mailreaders/claws-mail {
     inherit (xorg) libSM;
+    useGtk3 = false;
   };
   claws-mail-gtk3 = callPackage ../applications/networking/mailreaders/claws-mail {
     inherit (xorg) libSM;
@@ -23097,8 +23102,8 @@ in
 
   drawio = callPackage ../applications/graphics/drawio {};
 
-  drawpile = libsForQt514.callPackage ../applications/graphics/drawpile { };
-  drawpile-server-headless = libsForQt514.callPackage ../applications/graphics/drawpile {
+  drawpile = libsForQt5.callPackage ../applications/graphics/drawpile { };
+  drawpile-server-headless = libsForQt5.callPackage ../applications/graphics/drawpile {
     buildClient = false;
     buildServerGui = false;
   };
@@ -23129,7 +23134,11 @@ in
 
   dwl = callPackage ../applications/window-managers/dwl { };
 
-  dwm = callPackage ../applications/window-managers/dwm { };
+  dwm = callPackage ../applications/window-managers/dwm {
+    # dwm is configured entirely through source modification. Allow users to
+    # specify patches through nixpkgs.config.dwm.patches
+    patches = config.dwm.patches or [];
+  };
 
   dwmblocks = callPackage ../applications/misc/dwmblocks { };
 
@@ -23632,9 +23641,12 @@ in
 
   firefox-unwrapped = firefoxPackages.firefox;
   firefox-esr-78-unwrapped = firefoxPackages.firefox-esr-78;
+  firefox-esr-91-unwrapped = firefoxPackages.firefox-esr-91;
   firefox = wrapFirefox firefox-unwrapped { };
   firefox-wayland = wrapFirefox firefox-unwrapped { forceWayland = true; };
+  firefox-esr-wayland = wrapFirefox firefox-esr-91-unwrapped { forceWayland = true; };
   firefox-esr-78 = wrapFirefox firefox-esr-78-unwrapped { };
+  firefox-esr-91 = wrapFirefox firefox-esr-91-unwrapped { };
   firefox-esr = firefox-esr-78;
 
   firefox-bin-unwrapped = callPackage ../applications/networking/browsers/firefox-bin {
@@ -26747,6 +26759,19 @@ in
     gtk3Support = true;
   };
 
+  thunderbird-91-unwrapped = callPackage ../applications/networking/mailreaders/thunderbird/91 {
+    callPackage = pkgs.newScope {
+      inherit (rustPackages) cargo rustc;
+      libpng = libpng_apng;
+      gnused = gnused_422;
+      inherit (darwin.apple_sdk.frameworks) CoreMedia ExceptionHandling
+                                            Kerberos AVFoundation MediaToolbox
+                                            CoreLocation Foundation AddressBook;
+      inherit (darwin) libobjc;
+    };
+  };
+  thunderbird-91 = wrapThunderbird thunderbird-91-unwrapped { };
+
   thunderbolt = callPackage ../os-specific/linux/thunderbolt {};
 
   thunderbird-bin = thunderbird-bin-78;
@@ -27335,6 +27360,9 @@ in
   wpsoffice = libsForQt514.callPackage ../applications/office/wpsoffice {};
 
   wrapFirefox = callPackage ../applications/networking/browsers/firefox/wrapper.nix { };
+
+  # Only used for new Thunderbird 91.x
+  wrapThunderbird = callPackage ../applications/networking/mailreaders/thunderbird/91/wrapper.nix { };
 
   wp-cli = callPackage ../development/tools/wp-cli { };
 
@@ -28393,6 +28421,8 @@ in
 
   liberal-crime-squad = callPackage ../games/liberal-crime-squad { };
 
+  liberation-circuit = callPackage ../games/liberation-circuit { };
+
   lincity = callPackage ../games/lincity {};
 
   lincity_ng = callPackage ../games/lincity/ng.nix {
@@ -28574,6 +28604,8 @@ in
 
   pokerth-server = libsForQt5.callPackage ../games/pokerth { target = "server"; };
 
+  powermanga = callPackage ../games/powermanga { };
+
   prboom = callPackage ../games/prboom { };
 
   pysolfc = python3Packages.callPackage ../games/pysolfc { };
@@ -28636,6 +28668,12 @@ in
   robotfindskitten = callPackage ../games/robotfindskitten { };
 
   rocksndiamonds = callPackage ../games/rocksndiamonds { };
+
+  rott = callPackage ../games/rott { };
+
+  rott-shareware = rott.override {
+    buildShareware = true;
+  };
 
   rrootage = callPackage ../games/rrootage { };
 
@@ -28787,6 +28825,8 @@ in
   };
 
   tbe = libsForQt5.callPackage ../games/the-butterfly-effect { };
+
+  tecnoballz = callPackage ../games/tecnoballz { };
 
   teetertorture = callPackage ../games/teetertorture { };
 

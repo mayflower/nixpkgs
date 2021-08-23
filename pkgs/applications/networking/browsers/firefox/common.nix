@@ -1,4 +1,4 @@
-{ pname, ffversion, meta, updateScript ? null
+{ pname, ffversion, meta, updateScript ? null, binaryName ? "firefox", application ? "browser"
 , src, unpackPhase ? null, patches ? []
 , extraNativeBuildInputs ? [], extraConfigureFlags ? [], extraMakeFlags ? [], tests ? [] }:
 
@@ -8,7 +8,7 @@
 , yasm, libGLU, libGL, sqlite, unzip, makeWrapper
 , hunspell, libevent, libstartup_notification
 , libvpx_1_8
-, icu67, libpng, jemalloc, glib, pciutils
+, icu69, libpng, jemalloc, glib, pciutils
 , autoconf213, which, gnused, rustPackages, rustPackages_1_45
 , rust-cbindgen, nodejs, nasm, fetchpatch
 , gnum4
@@ -19,6 +19,7 @@
 
 ## backported libraries
 
+, nspr_latest
 , nss_latest
 , rust-cbindgen_latest
 
@@ -86,7 +87,6 @@ let
   default-toolkit = if stdenv.isDarwin then "cairo-cocoa"
                     else "cairo-gtk3${lib.optionalString waylandSupport "-wayland"}";
 
-  binaryName = "firefox";
   binaryNameCapitalized = lib.toUpper (lib.substring 0 1 binaryName) + lib.substring 1 (-1) binaryName;
 
   browserName = if stdenv.isDarwin then binaryNameCapitalized else binaryName;
@@ -95,6 +95,7 @@ let
             then "/Applications/${binaryNameCapitalized}.app/Contents/MacOS"
             else "/bin";
 
+  nspr_pkg = if lib.versionAtLeast ffversion "91" then nspr_latest else nspr;
   rust-cbindgen_pkg = if lib.versionAtLeast ffversion "89" then rust-cbindgen_latest else rust-cbindgen;
 
   # 78 ESR won't build with rustc 1.47
@@ -180,12 +181,12 @@ buildStdenv.mkDerivation ({
     xorg.libXext makeWrapper
     libevent libstartup_notification /* cairo */
     libpng jemalloc glib
-    nasm icu67 libvpx_1_8
+    nasm icu69 libvpx_1_8
     # >= 66 requires nasm for the AV1 lib dav1d
     # yasm can potentially be removed in future versions
     # https://bugzilla.mozilla.org/show_bug.cgi?id=1501796
     # https://groups.google.com/forum/#!msg/mozilla.dev.platform/o-8levmLU80/SM_zQvfzCQAJ
-    nspr nss_pkg
+    nspr_pkg nss_pkg
   ]
   ++ lib.optional  alsaSupport alsaLib
   ++ lib.optional  pulseaudioSupport libpulseaudio # only headers are needed
@@ -279,10 +280,13 @@ buildStdenv.mkDerivation ({
   '') + ''
     # AS=as in the environment causes build failure https://bugzilla.mozilla.org/show_bug.cgi?id=1497286
     unset AS
-  '';
+  '' + (lib.optionalString enableOfficialBranding ''
+    export MOZILLA_OFFICIAL=1
+    export BUILD_OFFICIAL=1
+  '');
 
   configureFlags = [
-    "--enable-application=browser"
+    "--enable-application=${application}"
     "--with-system-jpeg"
     "--with-system-zlib"
     "--with-system-libevent"
@@ -331,11 +335,7 @@ buildStdenv.mkDerivation ({
     cd obj-*
   '';
 
-  makeFlags = lib.optionals enableOfficialBranding [
-    "MOZILLA_OFFICIAL=1"
-    "BUILD_OFFICIAL=1"
-  ]
-  ++ lib.optionals ltoSupport [
+  makeFlags = lib.optionals ltoSupport [
     "AR=${buildStdenv.cc.bintools.bintools}/bin/llvm-ar"
     "LLVM_OBJDUMP=${buildStdenv.cc.bintools.bintools}/bin/llvm-objdump"
     "NM=${buildStdenv.cc.bintools.bintools}/bin/llvm-nm"
@@ -371,7 +371,7 @@ buildStdenv.mkDerivation ({
     version = ffversion;
     inherit alsaSupport;
     inherit pipewireSupport;
-    inherit nspr;
+    inherit nspr_pkg;
     inherit ffmpegSupport;
     inherit gssSupport;
     inherit execdir;

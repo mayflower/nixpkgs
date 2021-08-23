@@ -216709,8 +216709,6 @@ self: {
        librarySystemDepends = [ ncurses readline ];
        description = "An interface to the GNU readline library";
        license = "GPL";
-       hydraPlatforms = lib.platforms.none;
-       broken = true;
      }) {inherit (pkgs) ncurses; inherit (pkgs) readline;};
 
   "readline-statevar" = callPackage
