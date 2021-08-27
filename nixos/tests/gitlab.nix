@@ -41,6 +41,10 @@ import ./make-test-python.nix ({ pkgs, lib, ...} : with lib; {
         databasePasswordFile = pkgs.writeText "dbPassword" "xo0daiF4";
         initialRootPasswordFile = pkgs.writeText "rootPassword" initialRootPassword;
         smtp.enable = true;
+        pages = {
+          enable = true;
+          settings.pages-domain = "localhost";
+        };
         extraConfig = {
           incoming_email = {
             enabled = true;
@@ -51,11 +55,6 @@ import ./make-test-python.nix ({ pkgs, lib, ...} : with lib; {
             host = "localhost";
             port = 143;
           };
-          # https://github.com/NixOS/nixpkgs/issues/132295
-          # pages = {
-          #   enabled = true;
-          #   host = "localhost";
-          # };
         };
         secrets = {
           secretFile = pkgs.writeText "secret" "Aig5zaic";
@@ -91,10 +90,9 @@ import ./make-test-python.nix ({ pkgs, lib, ...} : with lib; {
       waitForServices = ''
         gitlab.wait_for_unit("gitaly.service")
         gitlab.wait_for_unit("gitlab-workhorse.service")
-        # https://github.com/NixOS/nixpkgs/issues/132295
-        # gitlab.wait_for_unit("gitlab-pages.service")
         gitlab.wait_for_unit("gitlab-mailroom.service")
         gitlab.wait_for_unit("gitlab.service")
+        gitlab.wait_for_unit("gitlab-pages.service")
         gitlab.wait_for_unit("gitlab-sidekiq.service")
         gitlab.wait_for_file("${nodes.gitlab.config.services.gitlab.statePath}/tmp/sockets/gitlab.socket")
         gitlab.wait_until_succeeds("curl -sSf http://gitlab/users/sign_in")
