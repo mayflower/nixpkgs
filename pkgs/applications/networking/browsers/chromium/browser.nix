@@ -1,4 +1,7 @@
-{ lib, mkChromiumDerivation, channel, enableWideVine, ungoogled }:
+{ lib, mkChromiumDerivation
+, channel, chromiumVersionAtLeast
+, enableWideVine, ungoogled
+}:
 
 with lib;
 
@@ -16,6 +19,8 @@ mkChromiumDerivation (base: rec {
     cp -v "$buildPath/"*.so "$buildPath/"*.pak "$buildPath/"*.bin "$libExecPath/"
     cp -v "$buildPath/icudtl.dat" "$libExecPath/"
     cp -vLR "$buildPath/locales" "$buildPath/resources" "$libExecPath/"
+    ${lib.optionalString (!chromiumVersionAtLeast "94") ''cp -v "$buildPath/crashpad_handler" "$libExecPath/"''}
+    ${lib.optionalString (chromiumVersionAtLeast "94") ''cp -v "$buildPath/chrome_crashpad_handler" "$libExecPath/"''}
     cp -v "$buildPath/chrome" "$libExecPath/$packageName"
 
     # Swiftshader
@@ -62,9 +67,7 @@ mkChromiumDerivation (base: rec {
       -e '/\[Desktop Entry\]/a\' \
       -e 'StartupWMClass=chromium-browser' \
       $out/share/applications/chromium-browser.desktop
-  '' + ''
-    cp -v "$buildPath/crashpad_handler" "$libExecPath/"
-  ''; # TODO: Merge
+  '';
 
   passthru = { inherit sandboxExecutableName; };
 

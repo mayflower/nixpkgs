@@ -118220,8 +118220,6 @@ self: {
        doHaddock = false;
        description = "Cabal package script generator for Travis-CI";
        license = lib.licenses.gpl3Plus;
-       hydraPlatforms = lib.platforms.none;
-       broken = true;
      }) {};
 
   "haskell-cnc" = callPackage
