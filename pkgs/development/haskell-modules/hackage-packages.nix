@@ -116710,6 +116710,22 @@ self: {
        hydraPlatforms = lib.platforms.none;
      }) {};
 
+  "happy_1_19_12" = callPackage
+    ({ mkDerivation, array, base, containers, mtl, process }:
+     mkDerivation {
+       pname = "happy";
+       version = "1.19.12";
+       sha256 = "03xlmq6qmdx4zvzw8bp33kd9g7yvcq5cz4wg50xilw812kj276pv";
+       isLibrary = false;
+       isExecutable = true;
+       enableSeparateDataOutput = true;
+       executableHaskellDepends = [ array base containers mtl ];
+       testHaskellDepends = [ base process ];
+       description = "Happy is a parser generator for Haskell";
+       license = lib.licenses.bsd2;
+       hydraPlatforms = lib.platforms.none;
+     }) {};
+
   "happy" = callPackage
     ({ mkDerivation, array, base, containers, mtl, process }:
      mkDerivation {
