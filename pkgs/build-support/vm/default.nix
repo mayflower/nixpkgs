@@ -1134,6 +1134,7 @@ rec {
     "patch"
     "locales"
     "coreutils"
+    "systemd"
     # Needed by checkinstall:
     "util-linux"
     "file"
