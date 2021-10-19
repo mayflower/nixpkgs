@@ -6064,6 +6064,8 @@ in {
 
   pypdf2 = callPackage ../development/python-modules/pypdf2 { };
 
+  pypdf3 = callPackage ../development/python-modules/pypdf3 { };
+
   pypeg2 = callPackage ../development/python-modules/pypeg2 { };
 
   pyperclip = callPackage ../development/python-modules/pyperclip { };
@@ -9025,6 +9027,13 @@ in {
   youtube-dl = callPackage ../tools/misc/youtube-dl { };
 
   youtube-dl-light = callPackage ../tools/misc/youtube-dl {
+    ffmpegSupport = false;
+    phantomjsSupport = false;
+  };
+
+  yt-dlp = callPackage ../tools/misc/yt-dlp { };
+
+  yt-dlp-light = callPackage ../tools/misc/yt-dlp {
     ffmpegSupport = false;
     phantomjsSupport = false;
   };
