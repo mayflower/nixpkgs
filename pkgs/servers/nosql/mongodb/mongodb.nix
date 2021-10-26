@@ -70,6 +70,8 @@ in stdenv.mkDerivation rec {
     # fix environment variable reading
     substituteInPlace SConstruct \
         --replace "env = Environment(" "env = Environment(ENV = os.environ,"
+
+    sed -i '/Wredundant-move/d' SConstruct
   '' + lib.optionalString stdenv.isDarwin ''
     substituteInPlace src/third_party/mozjs-${variants.mozjsVersion}/extract/js/src/jsmath.cpp --replace '${variants.mozjsReplace}' 0
     substituteInPlace src/third_party/s2/s1angle.cc --replace drem remainder
