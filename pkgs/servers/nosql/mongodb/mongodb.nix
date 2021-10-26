@@ -87,6 +87,8 @@ in stdenv.mkDerivation rec {
   NIX_CFLAGS_COMPILE = lib.optionalString stdenv.cc.isClang
     "-Wno-unused-command-line-argument";
 
+  NIX_CXXFLAGS_COMPILE = "-Wno-redundant-move";
+
   sconsFlags = [
     "--release"
     "--ssl"
