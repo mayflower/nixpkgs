@@ -11029,6 +11029,13 @@ in
     buildPackages = buildPackages // { stdenv = buildPackages.gcc8Stdenv; };
   });
 
+  go_1_17 = callPackage ../development/compilers/go/1.17.nix ({
+    inherit (darwin.apple_sdk.frameworks) Security Foundation;
+  } // lib.optionalAttrs (stdenv.cc.isGNU && stdenv.isAarch64) {
+    stdenv = gcc8Stdenv;
+    buildPackages = buildPackages // { stdenv = buildPackages.gcc8Stdenv; };
+  });
+
   go_2-dev = callPackage ../development/compilers/go/2-dev.nix ({
     inherit (darwin.apple_sdk.frameworks) Security Foundation;
   } // lib.optionalAttrs (stdenv.cc.isGNU && stdenv.isAarch64) {
@@ -12376,6 +12383,7 @@ in
   pipenv = callPackage ../development/tools/pipenv {};
 
   pipewire = callPackage ../development/libraries/pipewire {};
+  pipewire-media-session = callPackage ../development/libraries/pipewire/media-session.nix {};
   pipewire_0_2 = callPackage ../development/libraries/pipewire/0.2.nix {};
 
   pyradio = callPackage ../applications/radio/pyradio {};
@@ -18717,6 +18725,15 @@ in
   buildGo116Package = callPackage ../development/go-packages/generic {
     go = buildPackages.go_1_16;
   };
+  # go_1_17 has go module changes which may not be portable
+  # across different go versions and/or platforms,
+  # it also requires >=10.13 stdenv on darwin which
+  # is not currently available for x86_64-darwin
+  #
+  # do not uncomment this without approval from the go CODEOWNERS
+  #buildGo117Package = callPackage ../development/go-packages/generic {
+  #  go = buildPackages.go_1_17;
+  #};
 
   buildGoPackage = buildGo116Package;
 
@@ -18729,6 +18746,15 @@ in
   buildGo116Module = callPackage ../development/go-modules/generic {
     go = buildPackages.go_1_16;
   };
+  # go_1_17 has go module changes which may not be portable
+  # across different go versions and/or platforms,
+  # it also requires >=10.13 stdenv on darwin which
+  # is not currently available for x86_64-darwin
+  #
+  # do not uncomment this without approval from the go CODEOWNERS
+  #buildGo117Module = callPackage ../development/go-modules/generic {
+  #  go = buildPackages.go_1_17;
+  #};
 
   buildGoModule = buildGo116Module;
 
@@ -20807,18 +20833,27 @@ in
 
   # Hardened Linux
   hardenedLinuxPackagesFor = kernel': overrides:
-    let # Note: We use this hack since the hardened patches can lag behind and we don't want to delay updates:
-      linux_latest_for_hardened = pkgs.linux_5_10;
-      kernel = (if kernel' == pkgs.linux_latest then linux_latest_for_hardened else kernel').override overrides;
+    let
+      kernel = kernel'.override overrides;
+      version = kernelPatches.hardened.${kernel.meta.branch}.version;
+      major = lib.versions.major version;
+      sha256 = kernelPatches.hardened.${kernel.meta.branch}.sha256;
+      modDirVersion' = builtins.replaceStrings [ kernel.version ] [ version ] kernel.modDirVersion;
     in linuxPackagesFor (kernel.override {
       structuredExtraConfig = import ../os-specific/linux/kernel/hardened/config.nix {
-        inherit lib;
-        inherit (kernel) version;
+        inherit lib version;
+      };
+      argsOverride = {
+        inherit version;
+        src = fetchurl {
+          url = "mirror://kernel/linux/kernel/v${major}.x/linux-${version}.tar.xz";
+          inherit sha256;
+        };
       };
       kernelPatches = kernel.kernelPatches ++ [
         kernelPatches.hardened.${kernel.meta.branch}
       ];
-      modDirVersionArg = kernel.modDirVersion + (kernelPatches.hardened.${kernel.meta.branch}).extra;
+      modDirVersionArg = modDirVersion' + (kernelPatches.hardened.${kernel.meta.branch}).extra;
       isHardened = true;
   });
 
