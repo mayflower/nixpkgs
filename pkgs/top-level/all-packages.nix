@@ -11652,6 +11652,10 @@ in
     inherit (darwin.apple_sdk.frameworks) CoreFoundation Security;
     llvm_12 = llvmPackages_12.libllvm;
   };
+  rust_1_55 = callPackage ../development/compilers/rust/1_55.nix {
+    inherit (darwin.apple_sdk.frameworks) CoreFoundation Security;
+    llvm_12 = llvmPackages_12.libllvm;
+  };
   rust = rust_1_52;
 
   mrustc = callPackage ../development/compilers/mrustc { };
@@ -11660,6 +11664,7 @@ in
 
   rustPackages_1_45 = rust_1_45.packages.stable;
   rustPackages_1_52 = rust_1_52.packages.stable;
+  rustPackages_1_55 = rust_1_55.packages.stable;
   rustPackages = rustPackages_1_52;
 
   inherit (rustPackages) cargo clippy rustc rustPlatform;
@@ -20495,6 +20500,13 @@ in
     ];
   };
 
+  linux_5_15 = callPackage ../os-specific/linux/kernel/linux-5.15.nix {
+    kernelPatches = [
+      kernelPatches.bridge_stp_helper
+      kernelPatches.request_key_helper
+    ];
+  };
+
   linux-rt_5_10 = callPackage ../os-specific/linux/kernel/linux-rt-5.10.nix {
     kernelPatches = [
       kernelPatches.bridge_stp_helper
@@ -20777,7 +20789,7 @@ in
 
   # Update this when adding the newest kernel major version!
   # And update linux_latest_for_hardened below if the patches are already available
-  linuxPackages_latest = linuxPackages_5_14;
+  linuxPackages_latest = linuxPackages_5_15;
   linux_latest = linuxPackages_latest.kernel;
 
   # Realtime kernel packages.
@@ -20802,6 +20814,7 @@ in
   linuxPackages_5_4 = recurseIntoAttrs (linuxPackagesFor pkgs.linux_5_4);
   linuxPackages_5_10 = recurseIntoAttrs (linuxPackagesFor pkgs.linux_5_10);
   linuxPackages_5_14 = recurseIntoAttrs (linuxPackagesFor pkgs.linux_5_14);
+  linuxPackages_5_15 = recurseIntoAttrs (linuxPackagesFor pkgs.linux_5_15);
 
   # When adding to the list above:
   # - Update linuxPackages_latest to the latest version
@@ -20860,7 +20873,7 @@ in
   linuxPackages_hardened = recurseIntoAttrs (hardenedLinuxPackagesFor pkgs.linux { });
   linux_hardened = linuxPackages_hardened.kernel;
 
-  linuxPackages_latest_hardened = recurseIntoAttrs (hardenedLinuxPackagesFor pkgs.linux_latest { });
+  linuxPackages_latest_hardened = recurseIntoAttrs (hardenedLinuxPackagesFor pkgs.linux_5_14 { });
   linux_latest_hardened = linuxPackages_latest_hardened.kernel;
 
   # Hardkernel (Odroid) kernels.
@@ -23706,7 +23719,7 @@ in
   firefox-esr-wayland = wrapFirefox firefox-esr-91-unwrapped { forceWayland = true; };
   firefox-esr-78 = wrapFirefox firefox-esr-78-unwrapped { };
   firefox-esr-91 = wrapFirefox firefox-esr-91-unwrapped { };
-  firefox-esr = firefox-esr-78;
+  firefox-esr = firefox-esr-91;
 
   firefox-bin-unwrapped = callPackage ../applications/networking/browsers/firefox-bin {
     channel = "release";
@@ -26808,7 +26821,7 @@ in
 
   thonny = callPackage ../applications/editors/thonny { };
 
-  thunderbird = thunderbird-78;
+  thunderbird = thunderbird-91;
 
   thunderbird-78 = callPackage ../applications/networking/mailreaders/thunderbird {
     # Using older Rust for workaround:
@@ -30569,6 +30582,7 @@ in
       })
     nix
     nixStable
+    nix_2_3
     nixUnstable;
 
   nixStatic = pkgsStatic.nix;

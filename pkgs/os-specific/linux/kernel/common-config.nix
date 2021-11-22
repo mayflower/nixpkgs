@@ -124,6 +124,7 @@ let
       XDP_SOCKETS        = whenAtLeast "4.19" yes;
       XDP_SOCKETS_DIAG   = whenAtLeast "5.1" yes;
       WAN                = yes;
+      TCP_CONG_ADVANCED  = yes;
       TCP_CONG_CUBIC     = yes; # This is the default congestion control algorithm since 2.6.19
       # Required by systemd per-cgroup firewalling
       CGROUP_BPF                  = option yes;
@@ -405,7 +406,7 @@ let
       CIFS_POSIX        = option yes;
       CIFS_FSCACHE      = yes;
       CIFS_STATS        = whenOlder "4.19" yes;
-      CIFS_WEAK_PW_HASH = yes;
+      CIFS_WEAK_PW_HASH = whenOlder "5.15" yes;
       CIFS_UPCALL       = yes;
       CIFS_ACL          = whenOlder "5.3" yes;
       CIFS_DFS_UPCALL   = yes;
