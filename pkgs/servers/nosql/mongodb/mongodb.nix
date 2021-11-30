@@ -69,6 +69,8 @@ in stdenv.mkDerivation rec {
     # fix environment variable reading
     substituteInPlace SConstruct \
         --replace "env = Environment(" "env = Environment(ENV = os.environ,"
+
+    sed -i '/Wredundant-move/d' SConstruct
   '' + lib.optionalString stdenv.isDarwin ''
     substituteInPlace src/third_party/mozjs-${variants.mozjsVersion}/extract/js/src/jsmath.cpp --replace '${variants.mozjsReplace}' 0
 
@@ -86,8 +88,6 @@ in stdenv.mkDerivation rec {
 
   NIX_CFLAGS_COMPILE = lib.optionalString stdenv.cc.isClang
     "-Wno-unused-command-line-argument";
-
-  NIX_CXXFLAGS_COMPILE = "-Wno-redundant-move";
 
   sconsFlags = [
     "--release"
