@@ -4,6 +4,9 @@
   pkgs,
   ...
 }:
+
+with lib;
+
 let
 
   cfg = config.services.freeradius;
@@ -19,9 +22,9 @@ let
 
     serviceConfig = {
       ExecStart =
-        "${cfg.package}/bin/radiusd -f -d ${cfg.configDir} -l stdout" + lib.optionalString cfg.debug " -xx";
+        "${pkgs.freeradius}/bin/radiusd -f -d ${cfg.configDir} -l stdout" + optionalString cfg.debug " -xx";
       ExecReload = [
-        "${cfg.package}/bin/radiusd -C -d ${cfg.configDir} -l stdout"
+        "${pkgs.freeradius}/bin/radiusd -C -d ${cfg.configDir} -l stdout"
         "${pkgs.coreutils}/bin/kill -HUP $MAINPID"
       ];
       User = "radius";
