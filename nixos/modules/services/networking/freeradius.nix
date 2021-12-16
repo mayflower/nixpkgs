@@ -74,7 +74,9 @@ in
         /*uid = config.ids.uids.radius;*/
         description = "Radius daemon user";
         isSystemUser = true;
+        group = "radius";
       };
+      groups.radius = {};
     };
 
     systemd.services.freeradius = freeradiusService cfg;
