@@ -242,6 +242,8 @@ let
       FRAMEBUFFER_CONSOLE_DEFERRED_TAKEOVER = whenAtLeast "4.19" yes;
       FRAMEBUFFER_CONSOLE_ROTATION = yes;
       FB_GEODE            = mkIf (stdenv.hostPlatform.system == "i686-linux") yes;
+      # On 5.14 this conflicts with FB_SIMPLE.
+      DRM_SIMPLEDRM = whenAtLeast "5.14" no;
     };
 
     video = {
@@ -796,6 +798,9 @@ let
       NET_FC             = yes; # Fibre Channel driver support
       # GPIO on Intel Bay Trail, for some Chromebook internal eMMC disks
       PINCTRL_BAYTRAIL   = yes;
+      # GPIO for Braswell and Cherryview devices
+      # Needs to be built-in to for integrated keyboards to function properly
+      PINCTRL_CHERRYVIEW = yes;
       # 8 is default. Modern gpt tables on eMMC may go far beyond 8.
       MMC_BLOCK_MINORS   = freeform "32";
 

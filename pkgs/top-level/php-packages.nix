@@ -235,7 +235,11 @@ lib.makeScope pkgs.newScope (self: with self; {
           (dep: "mkdir -p ext; ln -s ${dep.dev}/include ext/${dep.extensionName}")
           internalDeps}
       '';
-      checkPhase = "runHook preCheck; NO_INTERACTON=yes make test; runHook postCheck";
+      checkPhase = ''
+        runHook preCheck
+        NO_INTERACTON=yes SKIP_PERF_SENSITIVE=yes make test
+        runHook postCheck
+      '';
       outputs = [ "out" "dev" ];
       installPhase = ''
         mkdir -p $out/lib/php/extensions
@@ -535,6 +539,7 @@ lib.makeScope pkgs.newScope (self: with self; {
         buildInputs = [ libxml2 ];
         internalDeps = [ php.extensions.dom ];
         NIX_CFLAGS_COMPILE = [ "-I../.." "-DHAVE_DOM" ];
+        doCheck = false;
         configureFlags = [ "--enable-xmlreader" ]
           # Required to build on darwin.
           ++ lib.optionals (lib.versionOlder php.version "7.4") [ "--with-libxml-dir=${libxml2.dev}" ]; }

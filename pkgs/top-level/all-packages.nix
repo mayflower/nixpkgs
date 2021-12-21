@@ -2231,6 +2231,8 @@ in
 
   wl-clipboard = callPackage ../tools/wayland/wl-clipboard { };
 
+  wl-mirror = callPackage ../tools/wayland/wl-mirror { };
+
   wlogout = callPackage ../tools/wayland/wlogout { };
 
   wlr-randr = callPackage ../tools/wayland/wlr-randr { };
@@ -10449,6 +10451,8 @@ in
     crystal_0_35
     crystal_0_36
     crystal_1_0
+    crystal_1_1
+    crystal_1_2
     crystal;
 
   crystal2nix = callPackage ../development/compilers/crystal2nix { };
@@ -16410,6 +16414,8 @@ in
 
   libkml = callPackage ../development/libraries/libkml { };
 
+  libks = callPackage ../development/libraries/libks { };
+
   libksba = callPackage ../development/libraries/libksba { };
 
   libksi = callPackage ../development/libraries/libksi { };
@@ -18442,6 +18448,8 @@ in
   wildmidi = callPackage ../development/libraries/wildmidi { };
 
   wiredtiger = callPackage ../development/libraries/wiredtiger { };
+
+  wlr-protocols = callPackage ../development/libraries/wlroots/protocols.nix { };
 
   wt = wt4;
   inherit (callPackages ../development/libraries/wt {})
@@ -20493,13 +20501,6 @@ in
     ];
   };
 
-  linux_5_14 = callPackage ../os-specific/linux/kernel/linux-5.14.nix {
-    kernelPatches = [
-      kernelPatches.bridge_stp_helper
-      kernelPatches.request_key_helper
-    ];
-  };
-
   linux_5_15 = callPackage ../os-specific/linux/kernel/linux-5.15.nix {
     kernelPatches = [
       kernelPatches.bridge_stp_helper
@@ -20813,7 +20814,6 @@ in
   linuxPackages_4_19 = recurseIntoAttrs (linuxPackagesFor pkgs.linux_4_19);
   linuxPackages_5_4 = recurseIntoAttrs (linuxPackagesFor pkgs.linux_5_4);
   linuxPackages_5_10 = recurseIntoAttrs (linuxPackagesFor pkgs.linux_5_10);
-  linuxPackages_5_14 = recurseIntoAttrs (linuxPackagesFor pkgs.linux_5_14);
   linuxPackages_5_15 = recurseIntoAttrs (linuxPackagesFor pkgs.linux_5_15);
 
   # When adding to the list above:
@@ -20873,7 +20873,7 @@ in
   linuxPackages_hardened = recurseIntoAttrs (hardenedLinuxPackagesFor pkgs.linux { });
   linux_hardened = linuxPackages_hardened.kernel;
 
-  linuxPackages_latest_hardened = recurseIntoAttrs (hardenedLinuxPackagesFor pkgs.linux_5_14 { });
+  linuxPackages_latest_hardened = recurseIntoAttrs (hardenedLinuxPackagesFor pkgs.linux_5_15 { });
   linux_latest_hardened = linuxPackages_latest_hardened.kernel;
 
   # Hardkernel (Odroid) kernels.
@@ -22982,7 +22982,9 @@ in
     inherit (gnome2) libgnomeui GConf;
   };
 
-  corrscope = libsForQt5.callPackage ../applications/video/corrscope { };
+  corrscope = libsForQt5.callPackage ../applications/video/corrscope {
+    ffmpeg = ffmpeg-full;
+  };
 
   csa = callPackage ../applications/audio/csa { };
 

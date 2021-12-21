@@ -147,7 +147,8 @@ buildStdenv.mkDerivation ({
   lib.optional (lib.versionOlder ffversion "86") ./env_var_for_system_dir-ff85.patch ++
   lib.optional (lib.versionAtLeast ffversion "86") ./env_var_for_system_dir-ff86.patch ++
   lib.optional (lib.versionOlder ffversion "83") ./no-buildconfig-ffx76.patch ++
-  lib.optional (lib.versionAtLeast ffversion "90") ./no-buildconfig-ffx90.patch ++
+  lib.optional (lib.versionAtLeast ffversion "90" && lib.versionOlder ffversion "95") ./no-buildconfig-ffx90.patch ++
+  lib.optional (lib.versionAtLeast ffversion "95") ./no-buildconfig-ffx95.patch ++
   lib.optional (ltoSupport && lib.versionOlder ffversion "84") ./lto-dependentlibs-generation-ffx83.patch ++
   lib.optional (ltoSupport && lib.versionAtLeast ffversion "84" && lib.versionOlder ffversion "86")
     (fetchpatch {
@@ -164,7 +165,6 @@ buildStdenv.mkDerivation ({
     })
 
   ++ patches;
-
 
   # Ignore trivial whitespace changes in patches, this fixes compatibility of
   # ./env_var_for_system_dir.patch with Firefox >=65 without having to track
@@ -330,6 +330,7 @@ buildStdenv.mkDerivation ({
                            "--enable-optimize"
                            "--enable-strip" ] ++ releaseFlags))
   ++ lib.optional enableOfficialBranding "--enable-official-branding"
+  ++ lib.optional (lib.versionAtLeast ffversion "95") "--without-wasm-sandboxed-libraries"
   ++ extraConfigureFlags;
 
   postConfigure = ''
