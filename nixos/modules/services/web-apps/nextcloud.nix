@@ -153,7 +153,7 @@ in {
     package = mkOption {
       type = types.package;
       description = "Which package to use for the Nextcloud instance.";
-      relatedPackages = [ "nextcloud21" "nextcloud22" ];
+      relatedPackages = [ "nextcloud21" "nextcloud22" "nextcloud23" ];
     };
     phpPackage = mkOption {
       type = types.package;
@@ -526,8 +526,8 @@ in {
         # FIXME(@Ma27) remove as soon as nextcloud properly supports
         # mariadb >=10.6.
         isUnsupportedMariadb =
-          # All currently supported Nextcloud versions are affected.
-          (versionOlder cfg.package.version "23")
+          # All currently supported Nextcloud versions are affected (https://github.com/nextcloud/server/issues/25436).
+          (versionOlder cfg.package.version "24")
           # This module uses mysql
           && (cfg.config.dbtype == "mysql")
           # MySQL is managed via NixOS

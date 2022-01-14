@@ -380,6 +380,7 @@ mapAliases ({
   jbuilder = dune_1; # added 2018-09-09
   jikes = throw "jikes was deprecated on 2019-10-07: abandoned by upstream";
   joseki = apache-jena-fuseki; # added 2016-02-28
+  journalbeat7 = throw "journalbeat has been removed upstream. Use filebeat with the journald input instead.";
   jvmci8 = throw "graalvm8 and its tools were deprecated in favor of graalvm8-ce"; # added 2021-10-15
   json_glib = json-glib; # added 2018-02-25
   kafkacat = kcat; # added 2021-10-07
@@ -477,7 +478,6 @@ mapAliases ({
   linuxPackages_4_19 = linuxKernel.packages.linux_4_19;
   linuxPackages_5_4 = linuxKernel.packages.linux_5_4;
   linuxPackages_5_10 = linuxKernel.packages.linux_5_10;
-  linuxPackages_5_14 = linuxKernel.packages.linux_5_14;
   linuxPackages_5_15 = linuxKernel.packages.linux_5_15;
 
   linux_mptcp_95 = linuxKernel.kernels.linux_mptcp_95;
@@ -493,7 +493,6 @@ mapAliases ({
   linux-rt_5_4 = linuxKernel.kernels.linux_rt_5_4;
   linux_5_10 = linuxKernel.kernels.linux_5_10;
   linux-rt_5_10 = linuxKernel.kernels.linux_rt_5_10;
-  linux_5_14 = linuxKernel.kernels.linux_5_14;
   linux_5_15 = linuxKernel.kernels.linux_5_15;
 
   # added 2020-04-04
@@ -1225,11 +1224,13 @@ mapAliases ({
   ;
 
   # LLVM packages for (integration) testing that should not be used inside Nixpkgs:
-  llvmPackages_git = recurseIntoAttrs (callPackage ../development/compilers/llvm/git {
+  llvmPackages_git = recurseIntoAttrs (callPackage ../development/compilers/llvm/git ({
     inherit (stdenvAdapters) overrideCC;
     buildLlvmTools = buildPackages.llvmPackages_git.tools;
     targetLlvmLibraries = targetPackages.llvmPackages_git.libraries;
-  });
+  } // lib.optionalAttrs stdenv.hostPlatform.isDarwin {
+    inherit (llvmPackages_11) stdenv;
+  }));
 
   inherit (stdenv.hostPlatform) system; # added 2021-10-22
 
