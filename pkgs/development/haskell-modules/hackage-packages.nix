@@ -107877,8 +107877,6 @@ self: {
        testToolDepends = [ hspec-discover ];
        description = "Access to the GitHub API, v3";
        license = lib.licenses.bsd3;
-       hydraPlatforms = lib.platforms.none;
-       broken = true;
      }) {};
 
   "github-backup" = callPackage
@@ -192734,8 +192732,6 @@ self: {
        ];
        description = "Lightweight dependency management with Nix";
        license = lib.licenses.bsd3;
-       hydraPlatforms = lib.platforms.none;
-       broken = true;
      }) {};
 
   "nix-tools" = callPackage

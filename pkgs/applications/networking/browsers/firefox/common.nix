@@ -8,8 +8,8 @@
 , freetype, fontconfig, file, nspr, nss
 , yasm, libGLU, libGL, sqlite, unzip, makeWrapper
 , hunspell, libevent, libstartup_notification
-, libvpx_1_8
-, icu69, libpng, glib, pciutils
+, libvpx
+, icu70, libpng, glib, pciutils
 , autoconf213, which, gnused, rustPackages
 , rust-cbindgen, nodejs, nasm, fetchpatch
 , gnum4
@@ -27,9 +27,8 @@
 , ltoSupport ? (stdenv.isLinux && stdenv.is64bit), overrideCC, buildPackages
 , gssSupport ? true, libkrb5
 , pipewireSupport ? waylandSupport && webrtcSupport, pipewire
-# Workaround: disabled since currently jemalloc causes crashes with LLVM 13.
-# https://bugzilla.mozilla.org/show_bug.cgi?id=1741454
-, jemallocSupport ? false, jemalloc
+# Jemalloc could reduce memory consumption.
+, jemallocSupport ? true, jemalloc
 
 ## privacy-related options
 
@@ -133,7 +132,7 @@ buildStdenv.mkDerivation ({
   ] ++
   lib.optional (lib.versionAtLeast version "86") ./env_var_for_system_dir-ff86.patch ++
   lib.optional (lib.versionAtLeast version "90" && lib.versionOlder version "95") ./no-buildconfig-ffx90.patch ++
-  lib.optional (lib.versionAtLeast version "95") ./no-buildconfig-ffx95.patch ++
+  lib.optional (lib.versionAtLeast version "96") ./no-buildconfig-ffx96.patch ++
   patches;
 
   # Ignore trivial whitespace changes in patches, this fixes compatibility of
@@ -149,9 +148,10 @@ buildStdenv.mkDerivation ({
     xorg.xorgproto
     xorg.libXdamage
     xorg.libXext
+    xorg.libXtst
     libevent libstartup_notification /* cairo */
     libpng glib
-    nasm icu69 libvpx_1_8
+    nasm icu70 libvpx
     # >= 66 requires nasm for the AV1 lib dav1d
     # yasm can potentially be removed in future versions
     # https://bugzilla.mozilla.org/show_bug.cgi?id=1501796

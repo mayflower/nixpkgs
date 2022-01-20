@@ -87,7 +87,7 @@ let
   fteLibPath = makeLibraryPath [ stdenv.cc.cc gmp ];
 
   # Upstream source
-  version = "11.0.2";
+  version = "11.0.4";
 
   lang = "en-US";
 
@@ -97,7 +97,7 @@ let
         "https://dist.torproject.org/torbrowser/${version}/tor-browser-linux64-${version}_${lang}.tar.xz"
         "https://tor.eff.org/dist/torbrowser/${version}/tor-browser-linux64-${version}_${lang}.tar.xz"
       ];
-      sha256 = "1bqlb8dlh92dpl9gmfh3yclq5ii09vv333yisa0i5gpwwzajnh5s";
+      sha256 = "0pz1v5ig031wgnq3191ja08a4brdrbzziqnkpcrlra1wcdnzv985";
     };
 
     i686-linux = fetchurl {
@@ -105,7 +105,7 @@ let
         "https://dist.torproject.org/torbrowser/${version}/tor-browser-linux32-${version}_${lang}.tar.xz"
         "https://tor.eff.org/dist/torbrowser/${version}/tor-browser-linux32-${version}_${lang}.tar.xz"
       ];
-      sha256 = "1blp4z9rmnnsvl3bk0ajdccvpzfshnpyijjfiqb9ma02qw2z0gff";
+      sha256 = "0ykdgbm8f5lcv7p54f3ffxsaw2cdzbhk6sv7d2hm7d81fcnhmjq4";
     };
   };
 in

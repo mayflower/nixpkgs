@@ -2605,6 +2605,12 @@
     email = "christoph.senjak@googlemail.com";
     name = "Christoph-Simon Senjak";
   };
+  datafoo = {
+    email = "34766150+datafoo@users.noreply.github.com";
+    github = "datafoo";
+    githubId = 34766150;
+    name = "datafoo";
+  };
   davhau = {
     email = "d.hauer.it@gmail.com";
     name = "David Hauer";
@@ -3348,6 +3354,12 @@
     github = "electrified";
     githubId = 103082;
     name = "Ed Brindley";
+  };
+  elliot = {
+    email = "hack00mind@gmail.com";
+    github = "Eliot00";
+    githubId = 18375468;
+    name = "Elliot Xu";
   };
   elliottvillars = {
     email = "elliottvillars@gmail.com";
@@ -4672,6 +4684,12 @@
     email = "yuya.kusakabe@gmail.com";
     github = "higebu";
     githubId = 733288;
+  };
+  hiljusti = {
+    name = "J.R. Hill";
+    email = "hiljusti@so.dang.cool";
+    github = "hiljusti";
+    githubId = 17605298;
   };
   hinton = {
     email = "t@larkery.com";
@@ -7027,6 +7045,12 @@
     github = "madjar";
     githubId = 109141;
     name = "Georges Dubus";
+  };
+  Madouura = {
+    email = "madouura@gmail.com";
+    github = "Madouura";
+    githubId = 93990818;
+    name = "Madoura";
   };
   mafo = {
     email = "Marc.Fontaine@gmx.de";
@@ -11387,6 +11411,12 @@
     github = "tckmn";
     githubId = 2389333;
     name = "Andy Tockman";
+  };
+  techknowlogick = {
+    email = "techknowlogick@gitea.io";
+    github = "techknowlogick";
+    githubId = 164197;
+    name = "techknowlogick";
   };
   Technical27 = {
     email = "38222826+Technical27@users.noreply.github.com";
