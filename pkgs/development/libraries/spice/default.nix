@@ -1,5 +1,5 @@
 { lib, stdenv
-, fetchurl
+, fetchgit
 , meson
 , ninja
 , pkg-config
@@ -28,13 +28,16 @@ stdenv.mkDerivation rec {
   pname = "spice";
   version = "0.15.0";
 
-  src = fetchurl {
-    url = "https://www.spice-space.org/download/releases/spice-server/${pname}-${version}.tar.bz2";
-    sha256 = "1xd0xffw0g5vvwbq4ksmm3jjfq45f9dw20xpmi82g1fj9f7wy85k";
+  src = fetchgit {
+    url = "https://gitlab.freedesktop.org/spice/spice.git";
+    rev = "v${version}";
+    sha256 = "1ablv8xizd2yn15i5d246yhgqprx3cya8f8qzy0h0a3jz9388kbm";
   };
 
   postPatch = ''
     patchShebangs build-aux
+    substituteInPlace meson.build \
+      --replace 'meson.project_version()' "'${version}'"
   '';
 
 
@@ -79,6 +82,8 @@ stdenv.mkDerivation rec {
 
   postInstall = ''
     ln -s spice-server $out/include/spice
+    substituteInPlace $out/lib/pkgconfig/spice-server.pc \
+      --replace UNKNOWN ${version}
   '';
 
   meta = with lib; {
