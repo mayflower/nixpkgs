@@ -7,6 +7,9 @@
 # For documentation on this file, see https://help.github.com/articles/about-codeowners/
 # Mentioned users will get code review requests.
 
+# Release managers, release branch only
+* @jonringer
+
 # This file
 /.github/CODEOWNERS @edolstra
 
@@ -32,7 +35,7 @@
 /pkgs/top-level/stage.nix                        @nbp @Ericson2314 @matthewbauer
 /pkgs/top-level/splice.nix                       @Ericson2314 @matthewbauer
 /pkgs/top-level/release-cross.nix                @Ericson2314 @matthewbauer
-/pkgs/stdenv/generic                             @Ericson2314 @matthewbauer
+/pkgs/stdenv/generic                             @Ericson2314 @matthewbauer @cab404
 /pkgs/stdenv/cross                               @Ericson2314 @matthewbauer
 /pkgs/build-support/cc-wrapper                   @Ericson2314 @orivej
 /pkgs/build-support/bintools-wrapper             @Ericson2314 @orivej
