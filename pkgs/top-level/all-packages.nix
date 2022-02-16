@@ -16962,8 +16962,7 @@ with pkgs;
 
   hwloc = callPackage ../development/libraries/hwloc {};
 
-  inherit (callPackage ../development/tools/misc/hydra { })
-    hydra-unstable;
+  hydra_unstable = callPackage ../development/tools/misc/hydra/unstable.nix { nix = nix_2_4; };
 
   hydra-cli = callPackage ../development/tools/misc/hydra-cli { };
 
