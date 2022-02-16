@@ -10,6 +10,7 @@
 , docbook_xsl
 , docbook_xml_dtd_412
 , glib
+, graphviz
 , gupnp-igd
 , gst_all_1
 , gnutls
@@ -47,6 +48,7 @@ stdenv.mkDerivation rec {
     gtk-doc
     docbook_xsl
     docbook_xml_dtd_412
+    graphviz
   ];
 
   buildInputs = [
