@@ -5,7 +5,16 @@
 
 with python3.pkgs;
 
-buildPythonPackage rec {
+let
+  psycopg2_dj2 = psycopg2.overrideAttrs (a: (rec {
+    version = "2.8.6";
+    src = fetchPypi {
+      inherit version;
+      inherit (a) pname;
+      sha256 = "fb23f6c71107c37fd667cb4ea363ddeb936b348bbd6449278eb92c189699f543";
+    };
+  }));
+in buildPythonPackage rec {
   pname = "HyperKitty";
   # Note: Mailman core must be on the latest version before upgrading HyperKitty.
   # See: https://gitlab.com/mailman/postorius/-/issues/516#note_544571309
@@ -46,7 +55,7 @@ buildPythonPackage rec {
     flufl_lock
     mistune_2_0
     networkx
-    psycopg2
+    psycopg2_dj2
     python-dateutil
     robot-detection
   ];
