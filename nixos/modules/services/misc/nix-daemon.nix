@@ -192,15 +192,28 @@ in
         example = "batch";
         description = ''
           Nix daemon process CPU scheduling policy. This policy propagates to
-          build processes. other is the default scheduling policy for regular
-          tasks. The batch policy is similar to other, but optimised for
-          non-interactive tasks. idle is for extremely low-priority tasks
-          that should only be run when no other task requires CPU time.
+          build processes. <literal>other</literal> is the default scheduling
+          policy for regular tasks. The <literal>batch</literal> policy is
+          similar to <literal>other</literal>, but optimised for
+          non-interactive tasks. <literal>idle</literal> is for extremely
+          low-priority tasks that should only be run when no other task
+          requires CPU time.
 
-          Please note that while using the idle policy may greatly improve
-          responsiveness of a system performing expensive builds, it may also
-          slow down and potentially starve crucial configuration updates
-          during load.
+          Please note that while using the <literal>idle</literal> policy may
+          greatly improve responsiveness of a system performing expensive
+          builds, it may also slow down and potentially starve crucial
+          configuration updates during load.
+
+          <literal>idle</literal> may therefore be a sensible policy for
+          systems that experience only intermittent phases of high CPU load,
+          such as desktop or portable computers used interactively. Other
+          systems should use the <literal>other</literal> or
+          <literal>batch</literal> policy instead.
+
+          For more fine-grained resource control, please refer to
+          <citerefentry><refentrytitle>systemd.resource-control
+          </refentrytitle><manvolnum>5</manvolnum></citerefentry> and adjust
+          <option>systemd.services.nix-daemon</option> directly.
       '';
       };
 
@@ -210,13 +223,20 @@ in
         example = "idle";
         description = ''
           Nix daemon process I/O scheduling class. This class propagates to
-          build processes. best-effort is the default class for regular tasks.
-          The idle class is for extremely low-priority tasks that should only
-          perform I/O when no other task does.
+          build processes. <literal>best-effort</literal> is the default
+          class for regular tasks. The <literal>idle</literal> class is for
+          extremely low-priority tasks that should only perform I/O when no
+          other task does.
 
-          Please note that while using the idle scheduling class can improve
-          responsiveness of a system performing expensive builds, it might also
-          slow down or starve crucial configuration updates during load.
+          Please note that while using the <literal>idle</literal> scheduling
+          class can improve responsiveness of a system performing expensive
+          builds, it might also slow down or starve crucial configuration
+          updates during load.
+
+          <literal>idle</literal> may therefore be a sensible class for
+          systems that experience only intermittent phases of high I/O load,
+          such as desktop or portable computers used interactively. Other
+          systems should use the <literal>best-effort</literal> class.
       '';
       };
 
@@ -613,6 +633,40 @@ in
           };
 
         restartTriggers = [ nixConf ];
+
+        # `stopIfChanged = false` changes to switch behavior
+        # from   stop -> update units -> start
+        #   to   update units -> restart
+        #
+        # The `stopIfChanged` setting therefore controls a trade-off between a
+        # more predictable lifecycle, which runs the correct "version" of
+        # the `ExecStop` line, and on the other hand the availability of
+        # sockets during the switch, as the effectiveness of the stop operation
+        # depends on the socket being stopped as well.
+        #
+        # As `nix-daemon.service` does not make use of `ExecStop`, we prefer
+        # to keep the socket up and available. This is important for machines
+        # that run Nix-based services, such as automated build, test, and deploy
+        # services, that expect the daemon socket to be available at all times.
+        #
+        # Notably, the Nix client does not retry on failure to connect to the
+        # daemon socket, and the in-process RemoteStore instance will disable
+        # itself. This makes retries infeasible even for services that are
+        # aware of the issue. Failure to connect can affect not only new client
+        # processes, but also new RemoteStore instances in existing processes,
+        # as well as existing RemoteStore instances that have not saturated
+        # their connection pool.
+        #
+        # Also note that `stopIfChanged = true` does not kill existing
+        # connection handling daemons, as one might wish to happen before a
+        # breaking Nix upgrade (which is rare). The daemon forks that handle
+        # the individual connections split off into their own sessions, causing
+        # them not to be stopped by systemd.
+        # If a Nix upgrade does require all existing daemon processes to stop,
+        # nix-daemon must do so on its own accord, and only when the new version
+        # starts and detects that Nix's persistent state needs an upgrade.
+        stopIfChanged = false;
+
       };
 
     # Set up the environment variables for running Nix.

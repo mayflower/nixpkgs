@@ -7,18 +7,12 @@
 
 stdenv.mkDerivation rec {
   pname = "expat";
-  version = "2.4.3";
+  version = "2.4.7";
 
   src = fetchurl {
     url = "https://github.com/libexpat/libexpat/releases/download/R_${lib.replaceStrings ["."] ["_"] version}/${pname}-${version}.tar.xz";
-    sha256 = "sha256-sfnxsaXrsKyqiMn/eb+k4UWCO3iqUYXlxdhfBggkd4o=";
+    sha256 = "0zbss0dssn17mjmvk17qfi5cmvm0lcyzs62cwvqr219hhl864xcq";
   };
-
-  patches = [
-    ./CVE-2022-23852-fix.patch
-    ./CVE-2022-23852-test.patch
-  ];
-  patchFlags = "-p2";
 
   outputs = [ "out" "dev" ]; # TODO: fix referrers
   outputBin = "dev";
