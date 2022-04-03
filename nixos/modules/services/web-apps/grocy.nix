@@ -88,16 +88,94 @@ in {
           '';
         };
       };
+
+      authClass = mkOption {
+        default = "Grocy\\Middleware\\DefaultAuthMiddleware";
+        example = "Grocy\\Middleware\\LdapAuthMiddleware";
+        type = types.str;
+        description = ''
+          PHP class to use to process logins.
+        '';
+      };
+
+
+      ldap = {
+        address = mkOption {
+          default = "";
+          example = "ldap://example.com";
+          type = types.str;
+          description = ''
+            URL of the LDAP server.
+          '';
+        };
+        baseDN = mkOption {
+          default = "";
+          example = "ou=users,dc=example,dc=com";
+          type = types.str;
+          description = ''
+            Base DN of the LDAP users.
+          '';
+        };
+        bindDN = mkOption {
+          default = "";
+          example = "uid=grocy,ou=services,dc=example,dc=com";
+          type = types.str;
+          description = ''
+            DN of the LDAP bind user.
+          '';
+        };
+        bindPasswordFile = mkOption {
+          default = "";
+          type = types.str;
+          description = ''
+            Path to file with password of the LDAP bind user.
+          '';
+        };
+        userFilter = mkOption {
+          default = "";
+          type = types.str;
+          description = ''
+            Filter applied to LDAP users for login.
+          '';
+        };
+        uidAttr = mkOption {
+          default = "uid";
+          type = types.str;
+          description = ''
+            LDAP attribute to be used for user lookup.
+          '';
+        };
+      };
     };
   };
 
   config = mkIf cfg.enable {
     environment.etc."grocy/config.php".text = ''
       <?php
+      function nix_read_secret($file) {
+        if (!file_exists($file)) {
+          throw new \RuntimeException(sprintf(
+            "Cannot start grocy, secret file %s set by NixOS doesn't seem to "
+            . "exist! Please make sure that the file exists and has appropriate "
+            . "permissions for user 'grocy'!",
+            $file
+          ));
+        }
+
+        return trim(file_get_contents($file));
+      }
+
       Setting('CULTURE', '${cfg.settings.culture}');
       Setting('CURRENCY', '${cfg.settings.currency}');
       Setting('CALENDAR_FIRST_DAY_OF_WEEK', '${toString cfg.settings.calendar.firstDayOfWeek}');
       Setting('CALENDAR_SHOW_WEEK_OF_YEAR', ${boolToString cfg.settings.calendar.showWeekNumber});
+      Setting('AUTH_CLASS', '${cfg.settings.authClass}');
+      Setting('LDAP_ADDRESS', '${cfg.settings.ldap.address}');
+      Setting('LDAP_BASE_DN', '${cfg.settings.ldap.baseDN}');
+      Setting('LDAP_BIND_DN', '${cfg.settings.ldap.bindDN}');
+      Setting('LDAP_BIND_PW', nix_read_secret('${cfg.settings.ldap.bindPasswordFile}'));
+      Setting('LDAP_USER_FILTER', '${cfg.settings.ldap.userFilter}');
+      Setting('LDAP_UID_ATTR', '${cfg.settings.ldap.uidAttr}');
     '';
 
     users.users.grocy = {
