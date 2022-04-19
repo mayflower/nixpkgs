@@ -3566,7 +3566,8 @@ let
       EOF
     '';
 
-    doCheck = !stdenv.isDarwin;
+    # Temporarily disabled?  https://github.com/pmqs/Compress-Raw-Zlib/issues/7
+    doCheck = false && !stdenv.isDarwin;
 
     meta = {
       license = with lib.licenses; [ artistic1 gpl1Plus ];
@@ -16685,7 +16686,8 @@ let
       url = "mirror://cpan/authors/id/C/CH/CHRISN/Net-SSLeay-1.88.tar.gz";
       sha256 = "1pfgh4h3szcpvqlcimc60pjbk9zwls99x5863sva0wc47i4dl010";
     };
-    buildInputs = [ pkgs.openssl ];
+    patches = [ ../development/perl-modules/net-ssleay-1.88-macos-monterey.patch ];
+    buildInputs = [ pkgs.openssl pkgs.zlib ];
     doCheck = false; # Test performs network access.
     preConfigure = ''
       mkdir openssl

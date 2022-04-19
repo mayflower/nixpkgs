@@ -3445,6 +3445,8 @@ with pkgs;
 
   odafileconverter = libsForQt5.callPackage ../applications/graphics/odafileconverter {};
 
+  oil-buku = callPackage ../applications/misc/oil-buku { };
+
   ossutil = callPackage ../tools/admin/ossutil {};
 
   pastel = callPackage ../applications/misc/pastel {
@@ -8658,11 +8660,7 @@ with pkgs;
 
   pm2 = nodePackages.pm2;
 
-  pngcheck = callPackage ../tools/graphics/pngcheck {
-    zlib = zlib.override {
-      static = true;
-    };
-  };
+  pngcheck = callPackage ../tools/graphics/pngcheck { };
 
   pngcrush = callPackage ../tools/graphics/pngcrush { };
 
@@ -10743,6 +10741,8 @@ with pkgs;
   xkeysnail = callPackage ../tools/X11/xkeysnail { };
 
   xfstests = callPackage ../tools/misc/xfstests { };
+
+  xprintidle = callPackage ../tools/X11/xprintidle {};
 
   xprintidle-ng = callPackage ../tools/X11/xprintidle-ng {};
 
@@ -13923,6 +13923,7 @@ with pkgs;
   })
     alloy4
     alloy5
+    alloy6
     alloy;
 
   altair = callPackage ../development/tools/altair-graphql-client { };
@@ -32507,7 +32508,6 @@ with pkgs;
     nixStable
     nix_2_3
     nix_2_4
-    nix_2_6
     nix_2_7
     nixUnstable;
 

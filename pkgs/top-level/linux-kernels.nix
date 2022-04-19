@@ -92,14 +92,7 @@ in {
       rpiVersion = 4;
     };
 
-    linux_4_4 = callPackage ../os-specific/linux/kernel/linux-4.4.nix {
-      kernelPatches =
-        [ kernelPatches.bridge_stp_helper
-          kernelPatches.request_key_helper_updated
-          kernelPatches.cpu-cgroup-v2."4.4"
-          kernelPatches.modinst_arg_list_too_long
-        ];
-    };
+    linux_4_4 = throw "linux 4.4 was removed because it reached its end of life upstream";
 
     linux_4_9 = callPackage ../os-specific/linux/kernel/linux-4.9.nix {
       kernelPatches =
@@ -173,6 +166,13 @@ in {
       ];
     };
 
+    linux_5_17 = callPackage ../os-specific/linux/kernel/linux-5.17.nix {
+      kernelPatches = [
+        kernelPatches.bridge_stp_helper
+        kernelPatches.request_key_helper
+      ];
+    };
+
     linux_testing = let
       testing = callPackage ../os-specific/linux/kernel/linux-testing.nix {
         kernelPatches = [
@@ -186,7 +186,7 @@ in {
        else testing;
 
     linux_testing_bcachefs = callPackage ../os-specific/linux/kernel/linux-testing-bcachefs.nix rec {
-      kernel = linux_5_15;
+      kernel = linux_5_16;
       kernelPatches = kernel.kernelPatches;
    };
 
@@ -465,7 +465,7 @@ in {
 
   vanillaPackages = {
     # recurse to build modules for the kernels
-    linux_4_4 = recurseIntoAttrs (packagesFor kernels.linux_4_4);
+    linux_4_4 = throw "linux 4.4 was removed because it reached its end of life upstream"; # Added 2022-02-11
     linux_4_9 = recurseIntoAttrs (packagesFor kernels.linux_4_9);
     linux_4_14 = recurseIntoAttrs (packagesFor kernels.linux_4_14);
     linux_4_19 = recurseIntoAttrs (packagesFor kernels.linux_4_19);
@@ -473,6 +473,7 @@ in {
     linux_5_10 = recurseIntoAttrs (packagesFor kernels.linux_5_10);
     linux_5_15 = recurseIntoAttrs (packagesFor kernels.linux_5_15);
     linux_5_16 = recurseIntoAttrs (packagesFor kernels.linux_5_16);
+    linux_5_17 = recurseIntoAttrs (packagesFor kernels.linux_5_17);
   };
 
   rtPackages = {
@@ -517,7 +518,7 @@ in {
   packageAliases = {
     linux_default = packages.linux_5_10;
     # Update this when adding the newest kernel major version!
-    linux_latest = packages.linux_5_16;
+    linux_latest = packages.linux_5_17;
     linux_mptcp = packages.linux_mptcp_95;
     linux_rt_default = packages.linux_rt_5_4;
     linux_rt_latest = packages.linux_rt_5_10;
