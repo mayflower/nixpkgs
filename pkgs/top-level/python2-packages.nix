@@ -405,8 +405,6 @@ with self; with super; {
 
   pluggy = callPackage ../development/python-modules/pluggy/0.nix { };
 
-  postorius = disabled super.postorius;
-
   praw = callPackage ../development/python-modules/praw/6.3.nix { };
 
   prettytable = callPackage ../development/python-modules/prettytable/1.nix { };
