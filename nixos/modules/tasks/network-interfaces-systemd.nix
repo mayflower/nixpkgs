@@ -69,18 +69,7 @@ in
       in mkMerge [ {
         enable = true;
       }
-      (mkMerge (forEach interfaces (i: {
-        netdevs = mkIf i.virtual ({
-          "40-${i.name}" = {
-            netdevConfig = {
-              Name = i.name;
-              Kind = i.virtualType;
-            };
-            "${i.virtualType}Config" = optionalAttrs (i.virtualOwner != null) {
-              User = i.virtualOwner;
-            };
-          };
-        });
+      (mkIf cfg.useDHCP {
         networks."99-ethernet-default-dhcp" = lib.mkIf cfg.useDHCP {
           # We want to match physical ethernet interfaces as commonly
           # found on laptops, desktops and servers, to provide an
@@ -115,6 +104,19 @@ in
           dhcpV4Config.RouteMetric = 1025;
           ipv6AcceptRAConfig.RouteMetric = 1025;
         };
+      })
+      (mkMerge (forEach interfaces (i: {
+        netdevs = mkIf i.virtual ({
+          "40-${i.name}" = {
+            netdevConfig = {
+              Name = i.name;
+              Kind = i.virtualType;
+            };
+            "${i.virtualType}Config" = optionalAttrs (i.virtualOwner != null) {
+              User = i.virtualOwner;
+            };
+          };
+        });
         networks."40-${i.name}" = mkMerge [ (genericNetwork mkDefault) {
           name = mkDefault i.name;
           DHCP = mkForce (dhcpStr
