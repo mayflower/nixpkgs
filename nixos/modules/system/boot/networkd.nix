@@ -745,6 +745,7 @@ let
           "RouteDenyList"
           "RouteAllowList"
           "DHCPv6Client"
+          "RouteMetric"
         ])
         (assertValueOneOf "UseDNS" boolValues)
         (assertValueOneOf "UseDomains" (boolValues ++ ["route"]))
