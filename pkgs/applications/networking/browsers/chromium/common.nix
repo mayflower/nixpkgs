@@ -39,14 +39,12 @@
 , glibc # gconv + locale
 
 # Package customization:
-, gnomeSupport ? false, gnome2 ? null
-, gnomeKeyringSupport ? false, libgnome-keyring3 ? null
 , cupsSupport ? true, cups ? null
 , proprietaryCodecs ? true
 , pulseSupport ? false, libpulseaudio ? null
 , ungoogled ? false, ungoogled-chromium
 # Optional dependencies:
-, libgcrypt ? null # gnomeSupport || cupsSupport
+, libgcrypt ? null # cupsSupport
 , systemdSupport ? stdenv.isLinux
 , systemd
 }:
@@ -154,8 +152,6 @@ let
       curl
       libepoxy
     ] ++ optional systemdSupport systemd
-      ++ optionals gnomeSupport [ gnome2.GConf libgcrypt ]
-      ++ optional gnomeKeyringSupport libgnome-keyring3
       ++ optionals cupsSupport [ libgcrypt cups ]
       ++ optional pulseSupport libpulseaudio;
 
@@ -271,7 +267,7 @@ let
 
       # Optional features:
       use_gio = true;
-      use_gnome_keyring = gnomeKeyringSupport;
+      use_gnome_keyring = false; # Superseded by libsecret
       use_cups = cupsSupport;
 
       # Feature overrides:
@@ -283,6 +279,8 @@ let
       enable_widevine = true;
       # Provides the enable-webrtc-pipewire-capturer flag to support Wayland screen capture:
       rtc_use_pipewire = true;
+      # Disable PGO because the profile data requires a newer compiler version (LLVM 14 isn't sufficient):
+      chrome_pgo_phase = 0;
     } // optionalAttrs proprietaryCodecs {
       # enable support for the H.264 codec
       proprietary_codecs = true;

@@ -11,6 +11,21 @@ res: pkgs: super:
 with pkgs;
 
 {
+  # A module system style type tag
+  #
+  # Allows the nixpkgs fixpoint, usually known as `pkgs`
+  # to be distinguished nominally.
+  #
+  #     pkgs._type == "pkgs"
+  #     pkgs.pkgsStatic._type == "pkgs"
+  #
+  # Design note:
+  # While earlier stages of nixpkgs fixpoint construction
+  # are supertypes of this stage, they're generally not
+  # usable in places where a `pkgs` is expected.
+  # (earlier stages being the various `super` variables
+  #  that precede all-packages.nix)
+  _type = "pkgs";
 
   # A stdenv capable of building 32-bit binaries.  On x86_64-linux,
   # it uses GCC compiled with multilib support; on i686-linux, it's
@@ -2841,6 +2856,10 @@ with pkgs;
 
   earlyoom = callPackage ../os-specific/linux/earlyoom { };
 
+  easycrypt = callPackage ../applications/science/logic/easycrypt { };
+
+  easycrypt-runtest = callPackage ../applications/science/logic/easycrypt/runtest.nix { };
+
   EBTKS = callPackage ../development/libraries/science/biology/EBTKS { };
 
   ecasound = callPackage ../applications/audio/ecasound { };
@@ -3032,7 +3051,9 @@ with pkgs;
     inherit (darwin.apple_sdk.frameworks) Security;
   };
 
-  geekbench = callPackage ../tools/misc/geekbench { };
+  geekbench4 = callPackage ../tools/misc/geekbench/4.nix { };
+  geekbench5 = callPackage ../tools/misc/geekbench { };
+  geekbench = geekbench5;
 
   gencfsm = callPackage ../tools/security/gencfsm { };
 
@@ -6580,6 +6601,8 @@ with pkgs;
 
   jadx = callPackage ../tools/security/jadx { };
 
+  jasmin-compiler = callPackage ../development/compilers/jasmin-compiler { };
+
   jazzy = callPackage ../development/tools/jazzy { };
 
   jc = with python3Packages; toPythonApplication jc;
@@ -7926,7 +7949,7 @@ with pkgs;
   # Upstream partially documents used Go versions here
   # https://github.com/hashicorp/nomad/blob/master/contributing/golang.md
   nomad_1_0 = callPackage ../applications/networking/cluster/nomad/1.0.nix {
-    buildGoPackage = buildGo115Package;
+    buildGoPackage = buildGo116Package;
     inherit (linuxPackages) nvidia_x11;
     nvidiaGpuSupport = config.cudaSupport or false;
   };
@@ -18857,6 +18880,7 @@ with pkgs;
   };
 
   nss = lowPrio (callPackage ../development/libraries/nss { });
+  nss_latest = callPackage ../development/libraries/nss/latest.nix { };
   nssTools = nss.tools;
 
   nss_wrapper = callPackage ../development/libraries/nss_wrapper { };
@@ -20981,7 +21005,9 @@ with pkgs;
 
   micronaut = callPackage ../development/tools/micronaut {};
 
-  minio = callPackage ../servers/minio { };
+  minio = callPackage ../servers/minio {
+    buildGoModule = buildGo117Module;
+  };
 
   mkchromecast = libsForQt5.callPackage ../applications/networking/mkchromecast { };
 
@@ -32391,6 +32417,10 @@ with pkgs;
   utsushi = callPackage ../misc/drivers/utsushi { };
 
   idsk = callPackage ../tools/filesystems/idsk { };
+
+  colima = callPackage ../applications/virtualization/colima {
+    buildGoModule = buildGo117Module;
+  };
 
   lima = callPackage ../applications/virtualization/lima {};
 

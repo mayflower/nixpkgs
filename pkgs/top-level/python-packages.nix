@@ -218,6 +218,8 @@ in {
 
   advantage-air = callPackage ../development/python-modules/advantage-air { };
 
+  advocate = callPackage ../development/python-modules/advocate { };
+
   aemet-opendata = callPackage ../development/python-modules/aemet-opendata { };
 
   aenum = callPackage ../development/python-modules/aenum { };
@@ -3494,6 +3496,8 @@ in {
   hass-nabucasa = callPackage ../development/python-modules/hass-nabucasa { };
 
   hatasmota = callPackage ../development/python-modules/hatasmota { };
+
+  hatchling = callPackage ../development/python-modules/hatchling { };
 
   haversine = callPackage ../development/python-modules/haversine { };
 
