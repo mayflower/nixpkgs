@@ -1,4 +1,4 @@
-{ lib, stdenv, fetchurl
+{ lib, stdenv, fetchurl, fetchpatch
 , buildPackages, pkgsHostHost
 , pkg-config, which, makeWrapper
 , zlib, bzip2, libpng, gnumake, glib
@@ -28,6 +28,21 @@ stdenv.mkDerivation rec {
 
   patches = [
     ./enable-table-validation.patch
+    (fetchpatch {
+      name = "CVE-2022-27404.patch";
+      url = "https://gitlab.freedesktop.org/freetype/freetype/-/commit/53dfdcd8198d2b3201a23c4bad9190519ba918db.patch";
+      sha256 = "sha256-0R8bighSEipFKowD2PgGMg7WxZ4rPI+o+zyiEVOSvqA=";
+    })
+    (fetchpatch {
+      name = "CVE-2022-27405.patch";
+      url = "https://gitlab.freedesktop.org/freetype/freetype/-/commit/22a0cccb4d9d002f33c1ba7a4b36812c7d4f46b5.patch";
+      sha256 = "sha256-liMquIRao2d+OOBt5Xqx1CRR0o1pKAB7RPmOXMqEs9M=";
+    })
+    (fetchpatch {
+      name = "CVE-2022-27406.patch";
+      url = "https://gitlab.freedesktop.org/freetype/freetype/-/commit/0c2bdb01a2e1d24a3e592377a6d0822856e10df2.patch";
+      sha256 = "sha256-Ows8FQFAIsYH+4qfwTt6SW0wAhWtBGqfj0ry7GsHgaI=";
+    })
   ] ++ lib.optional useEncumberedCode ./enable-subpixel-rendering.patch;
 
   outputs = [ "out" "dev" ];
