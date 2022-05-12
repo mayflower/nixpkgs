@@ -21,6 +21,5 @@ buildGoModule rec {
     license = licenses.mit;
     maintainers = with maintainers; [ willibutz ];
     platforms = platforms.unix;
-    knownVulnerabilities = ["CVE-2022-21698"];
   };
 }
