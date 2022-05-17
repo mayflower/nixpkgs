@@ -42,7 +42,9 @@ rec {
     sourceVersion = { major = "5"; minor = "2"; patch = "4"; };
     hash = "0jwznq0l8qg9wh5grwg07b5cy3lzngvl5m2nl1ikp6vqssmf9qmr";
     makeWrapper = makeBinaryWrapper;
-    patches = lib.optional stdenv.isDarwin ./5.2.darwin.patch;
+    patches = [
+      ./lua-52-CVE-2022-28805.patch
+    ] ++ lib.optional stdenv.isDarwin ./5.2.darwin.patch;
   };
 
   lua5_2_compat = lua5_2.override({
