@@ -20053,9 +20053,7 @@ with pkgs;
     stdenv = gcc6Stdenv;
   });
 
-  v8 = callPackage ../development/libraries/v8 {
-    inherit (python2Packages) python;
-  };
+  v8 = callPackage ../development/libraries/v8 { };
 
   vaapiIntel = callPackage ../development/libraries/vaapi-intel { };
 
