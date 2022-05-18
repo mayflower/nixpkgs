@@ -43,7 +43,7 @@ rec {
     hash = "0jwznq0l8qg9wh5grwg07b5cy3lzngvl5m2nl1ikp6vqssmf9qmr";
     makeWrapper = makeBinaryWrapper;
     patches = [
-      ./CVE-2022-28805-lua52.patch
+      ./CVE-2022-28805.patch
     ] ++ lib.optional stdenv.isDarwin ./5.2.darwin.patch;
   };
 
