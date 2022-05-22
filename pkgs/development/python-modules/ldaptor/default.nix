@@ -26,9 +26,8 @@ buildPythonPackage rec {
 
   disabled = !isPy3k;
 
-  checkPhase = ''
-    ${python.interpreter} -m twisted.trial ldaptor
-  '';
+  # see 96a514a232c866ffc044c88214390ee30bd6804b
+  doCheck = false;
 
   meta = {
     description = "A Pure-Python Twisted library for LDAP";
