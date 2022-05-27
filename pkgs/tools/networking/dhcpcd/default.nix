@@ -1,6 +1,5 @@
 { lib
 , stdenv
-, fetchpatch
 , fetchurl
 , pkg-config
 , udev
@@ -28,13 +27,6 @@ stdenv.mkDerivation rec {
   prePatch = ''
     substituteInPlace hooks/dhcpcd-run-hooks.in --replace /bin/sh ${runtimeShell}
   '';
-
-  patches = [
-    (fetchpatch {
-      url = "https://github.com/NetworkConfiguration/dhcpcd/commit/064767e3610b7f8df974592f340dbbf45f8e44ca.patch";
-      sha256 = "sha256-XtKOJaJaeR6hL2Y2qJ4beEBiTc/YAe2Cm64slVFPDhc=";
-    })
-  ];
 
   preConfigure = "patchShebangs ./configure";
 
