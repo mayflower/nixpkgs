@@ -7173,10 +7173,13 @@ with pkgs;
   nodejs-slim-17_x = callPackage ../development/web/nodejs/v17.nix {
     enableNpm = false;
   };
+  nodejs-18_x = callPackage ../development/web/nodejs/v18.nix { };
+  nodejs-slim-18_x = callPackage ../development/web/nodejs/v18.nix {
+    enableNpm = false;
+  };
   # Update this when adding the newest nodejs major version!
-  # Do not set to nodejs-17_x because it requires 10.13 SDK on Darwin
-  nodejs_latest = nodejs-16_x;
-  nodejs-slim_latest = nodejs-slim-16_x;
+  nodejs_latest = nodejs-18_x;
+  nodejs-slim_latest = nodejs-slim-18_x;
 
   nodePackages_latest = dontRecurseIntoAttrs nodejs_latest.pkgs;
 
@@ -13543,6 +13546,13 @@ with pkgs;
   php = php80;
   phpExtensions = php.extensions;
   phpPackages = php.packages;
+
+  # Import PHP81 interpreter, extensions and packages
+  php81 = callPackage ../development/interpreters/php/8.1.nix {
+    stdenv = if stdenv.cc.isClang then llvmPackages.stdenv else stdenv;
+  };
+  php81Extensions = recurseIntoAttrs php81.extensions;
+  php81Packages = recurseIntoAttrs php81.packages;
 
   # Import PHP80 interpreter, extensions and packages
   php80 = callPackage ../development/interpreters/php/8.0.nix {
@@ -22296,6 +22306,8 @@ with pkgs;
   linux_5_10_hardened = linuxKernel.kernels.linux_5_10_hardened;
   linuxPackages_5_15_hardened = linuxKernel.packages.linux_5_15_hardened;
   linux_5_15_hardened = linuxKernel.kernels.linux_5_15_hardened;
+  linuxPackages_5_17_hardened = linuxKernel.packages.linux_5_17_hardened;
+  linux_5_17_hardened = linuxKernel.kernels.linux_5_17_hardened;
 
   # Hardkernel (Odroid) kernels.
   linuxPackages_hardkernel_latest = linuxKernel.packageAliases.linux_hardkernel_latest;
