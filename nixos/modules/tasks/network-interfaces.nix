@@ -74,6 +74,7 @@ let
         };
 
         flags = mkOption {
+          type = types.listOf types.str;
           default = [];
           example = [ "nodad" "noprefixroute" ];
           description = ''
