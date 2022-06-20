@@ -209,6 +209,8 @@ in {
 
   aenum = callPackage ../development/python-modules/aenum { };
 
+  aeppl = callPackage ../development/python-modules/aeppl { };
+
   aesara = callPackage ../development/python-modules/aesara { };
 
   aesedb = callPackage ../development/python-modules/aesedb { };
@@ -1584,6 +1586,8 @@ in {
   cfn-flip = callPackage ../development/python-modules/cfn-flip { };
 
   cfn-lint = callPackage ../development/python-modules/cfn-lint { };
+
+  cfscrape = callPackage ../development/python-modules/cfscrape { };
 
   cftime = callPackage ../development/python-modules/cftime { };
 
@@ -4729,6 +4733,7 @@ in {
 
   ledger = (toPythonModule (pkgs.ledger.override {
     usePython = true;
+    boost = pkgs.boost179; # Current default boost (1.77) doesn’t work with Python 3.10.
     python3 = python;
   })).py;
 
@@ -5849,6 +5854,8 @@ in {
 
   numcodecs = callPackage ../development/python-modules/numcodecs { };
 
+  numdifftools = callPackage ../development/python-modules/numdifftools { };
+
   numericalunits = callPackage ../development/python-modules/numericalunits { };
 
   numexpr = callPackage ../development/python-modules/numexpr { };
@@ -5858,6 +5865,8 @@ in {
   numpy = callPackage ../development/python-modules/numpy { };
 
   numpy-stl = callPackage ../development/python-modules/numpy-stl { };
+
+  numpyro = callPackage ../development/python-modules/numpyro { };
 
   nunavut = callPackage ../development/python-modules/nunavut { };
 
@@ -7014,6 +7023,8 @@ in {
 
   pychef = callPackage ../development/python-modules/pychef { };
 
+  pychm = callPackage ../development/python-modules/pychm { };
+
   PyChromecast = callPackage ../development/python-modules/pychromecast { };
 
   pyclimacell = callPackage ../development/python-modules/pyclimacell { };
@@ -7976,6 +7987,8 @@ in {
 
   pysmartapp = callPackage ../development/python-modules/pysmartapp { };
 
+  pySmartDL = callPackage ../development/python-modules/pySmartDL { };
+
   pysmartthings = callPackage ../development/python-modules/pysmartthings { };
 
   pysmb = callPackage ../development/python-modules/pysmb { };
@@ -8029,8 +8042,6 @@ in {
   pyspinel = callPackage ../development/python-modules/pyspinel { };
 
   pyspnego = callPackage ../development/python-modules/pyspnego { };
-
-  pyspotify = callPackage ../development/python-modules/pyspotify { };
 
   pysptk = callPackage ../development/python-modules/pysptk { };
 
@@ -8620,6 +8631,8 @@ in {
 
   pytorch = callPackage ../development/python-modules/pytorch {
     cudaSupport = pkgs.config.cudaSupport or false;
+    inherit (pkgs.darwin.apple_sdk.frameworks) CoreServices;
+    inherit (pkgs.darwin) libobjc;
   };
 
   pytorch-bin = callPackage ../development/python-modules/pytorch/bin.nix { };
@@ -11147,6 +11160,8 @@ in {
   };
 
   xarray = callPackage ../development/python-modules/xarray { };
+
+  xarray-einstats = callPackage ../development/python-modules/xarray-einstats { };
 
   xattr = callPackage ../development/python-modules/xattr { };
 
