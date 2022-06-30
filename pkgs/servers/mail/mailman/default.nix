@@ -20,10 +20,12 @@ let
                , mailman ? self.mailman
                , mailman-hyperkitty ? self.mailman-hyperkitty
                , withHyperkitty ? false
+               , withLDAP ? false
                }:
       self.python3.withPackages
         (ps:
-          [ web mailman ps.psycopg2 ]
+        [ web mailman ps.psycopg2 ]
+          ++ lib.optionals withLDAP [ ps.ldap ps.django-auth-ldap ]
           ++ lib.optional withHyperkitty mailman-hyperkitty);
       });
 
