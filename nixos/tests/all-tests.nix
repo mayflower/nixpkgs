@@ -159,6 +159,7 @@ in
   firefox = handleTest ./firefox.nix { firefoxPackage = pkgs.firefox; };
   firefox-esr    = handleTest ./firefox.nix { firefoxPackage = pkgs.firefox-esr; }; # used in `tested` job
   firefox-esr-91 = handleTest ./firefox.nix { firefoxPackage = pkgs.firefox-esr-91; };
+  firefox-esr-102 = handleTest ./firefox.nix { firefoxPackage = pkgs.firefox-esr-102; };
   firejail = handleTest ./firejail.nix {};
   firewall = handleTest ./firewall.nix {};
   fish = handleTest ./fish.nix {};
@@ -613,6 +614,7 @@ in
   yabar = handleTest ./yabar.nix {};
   yggdrasil = handleTest ./yggdrasil.nix {};
   zammad = handleTest ./zammad.nix {};
+  zeronet-conservancy = handleTest ./zeronet-conservancy.nix {};
   zfs = handleTest ./zfs.nix {};
   zigbee2mqtt = handleTest ./zigbee2mqtt.nix {};
   zoneminder = handleTest ./zoneminder.nix {};
