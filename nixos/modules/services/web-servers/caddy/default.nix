@@ -332,6 +332,7 @@ in
       inherit (cfg) group user;
       cert = config.security.acme.certs.${name};
       groups = config.users.groups;
+      service = config.systemd.services.caddy;
     }) acmeHosts;
 
     services.caddy.globalConfig = ''
