@@ -1188,6 +1188,7 @@ in
       inherit (cfg) group user;
       cert = config.security.acme.certs.${name};
       groups = config.users.groups;
+      service = config.systemd.services.nginx;
     }) dependentCertNames;
 
     services.nginx.additionalModules = optional cfg.recommendedBrotliSettings pkgs.nginxModules.brotli
