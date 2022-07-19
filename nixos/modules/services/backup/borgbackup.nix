@@ -48,13 +48,17 @@ let
     (
       set -o pipefail
       ${optionalString (cfg.dumpCommand != null) ''${escapeShellArg cfg.dumpCommand} | \''}
+      returnCode=0
       borg create $extraArgs \
         --compression ${cfg.compression} \
         --exclude-from ${mkExcludeFile cfg} \
         --patterns-from ${mkPatternsFile cfg} \
         $extraCreateArgs \
         "::$archiveName$archiveSuffix" \
-        ${if cfg.paths == null then "-" else escapeShellArgs cfg.paths}
+        ${if cfg.paths == null then "-" else escapeShellArgs cfg.paths} \
+        || returnCode=$?
+      [ $returnCode == 1 ] && exit 0
+      exit $returnCode
     )
   '' + optionalString cfg.appendFailedSuffix ''
     borg rename $extraArgs \
