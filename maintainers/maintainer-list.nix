@@ -856,6 +856,13 @@
     githubId = 661909;
     name = "Antonio Nuno Monteiro";
   };
+  anoa = {
+    matrix = "@andrewm:amorgan.xyz";
+    email = "andrew@amorgan.xyz";
+    github = "anoadragon453";
+    githubId = 1342360;
+    name = "Andrew Morgan";
+  };
   anpryl = {
     email = "anpryl@gmail.com";
     github = "anpryl";
@@ -3102,6 +3109,12 @@
     github = "devins2518";
     githubId = 17111639;
     name = "Devin Singh";
+  };
+  devusb = {
+    email = "mhelton@devusb.us";
+    github = "devusb";
+    githubId = 4951663;
+    name = "Morgan Helton";
   };
   dezgeg = {
     email = "tuomas.tynkkynen@iki.fi";
@@ -5400,6 +5413,13 @@
     github = "ilkecan";
     githubId = 40234257;
     name = "ilkecan bozdogan";
+  };
+  ihatethefrench =  {
+    email = "michal@tar.black";
+    matrix = "@michal:tar.black";
+    github = "ihatethefrench";
+    githubId = 30374463;
+    name = "Michal S.";
   };
   illegalprime = {
     email = "themichaeleden@gmail.com";
@@ -8955,6 +8975,16 @@
     github = "nathyong";
     githubId = 818502;
     name = "Nathan Yong";
+  };
+  natsukium = {
+    email = "nixpkgs@natsukium.com";
+    github = "natsukium";
+    githubId = 25083790;
+    name = "Tomoya Otabi";
+    keys = [{
+      longkeyid = "ed25519/0x9EA45A31DB994C53";
+      fingerprint = "3D14 6004 004C F882 D519  6CD4 9EA4 5A31 DB99 4C53";
+    }];
   };
   natto1784 = {
     email = "natto@weirdnatto.in";
