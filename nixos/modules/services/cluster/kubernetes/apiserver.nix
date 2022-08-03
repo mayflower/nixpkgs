@@ -122,7 +122,7 @@ in
     etcd = {
       servers = mkOption {
         description = lib.mdDoc "List of etcd servers.";
-        default = ["http://127.0.0.1:2379"];
+        default = map (ma: "https://${ma}:2379") top.masterAddresses;
         type = types.listOf types.str;
       };
 
@@ -401,10 +401,10 @@ in
           peerClientCertAuth = mkDefault true;
           listenClientUrls = mkDefault ["https://0.0.0.0:2379"];
           listenPeerUrls = mkDefault ["https://0.0.0.0:2380"];
-          advertiseClientUrls = mkDefault ["https://${top.masterAddress}:2379"];
-          initialCluster = mkDefault ["${top.masterAddress}=https://${top.masterAddress}:2380"];
-          name = mkDefault top.masterAddress;
-          initialAdvertisePeerUrls = mkDefault ["https://${top.masterAddress}:2380"];
+          advertiseClientUrls = mkDefault ["https://${cfg.advertiseAddress}:2379"];
+          initialCluster = mkDefault (map (ma: "${ma}=https://${ma}:2380") top.masterAddresses);
+          name = mkDefault cfg.advertiseAddress;
+          initialAdvertisePeerUrls = mkDefault ["https://${cfg.advertiseAddress}:2380"];
         };
 
         services.kubernetes.addonManager.bootstrapAddons = mkIf isRBACEnabled {
@@ -436,7 +436,7 @@ in
                     "kubernetes.default.svc"
                     "kubernetes.default.svc.${top.addons.dns.clusterDomain}"
                     cfg.advertiseAddress
-                    top.masterAddress
+                    #top.masterAddress
                     apiserverServiceIP
                     "127.0.0.1"
                   ] ++ cfg.extraSANs;
@@ -467,11 +467,11 @@ in
         };
         etcd = mkCert {
           name = "etcd";
-          CN = top.masterAddress;
+          #CN = top.masterAddress;
+          CN = cfg.advertiseAddress;
           hosts = [
                     "etcd.local"
                     "etcd.${top.addons.dns.clusterDomain}"
-                    top.masterAddress
                     cfg.advertiseAddress
                   ];
           privateKeyOwner = "etcd";

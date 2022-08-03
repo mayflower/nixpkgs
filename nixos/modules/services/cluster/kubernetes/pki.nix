@@ -19,8 +19,8 @@ let
         algo = "rsa";
         size = 2048;
     };
-    CN = top.masterAddress;
-    hosts = [top.masterAddress] ++ cfg.cfsslAPIExtraSANs;
+    CN = top.apiserver.advertiseAddress;
+    hosts = [top.apiserver.advertiseAddress] ++ cfg.cfsslAPIExtraSANs;
   });
 
   cfsslAPITokenBaseName = "apitoken.secret";
@@ -35,7 +35,7 @@ let
         keyFile = key;
     };
 
-  remote = with config.services; "https://${kubernetes.masterAddress}:${toString cfssl.port}";
+  remote = with config.services; "https://${kubernetes.apiserver.advertiseAddress}:${toString cfssl.port}";
 in
 {
   ###### interface
@@ -329,11 +329,11 @@ in
       # isolate etcd on loopback at the master node
       # easyCerts doesn't support multimaster clusters anyway atm.
       services.etcd = with cfg.certs.etcd; {
-        listenClientUrls = ["https://127.0.0.1:2379"];
-        listenPeerUrls = ["https://127.0.0.1:2380"];
-        advertiseClientUrls = ["https://etcd.local:2379"];
-        initialCluster = ["${top.masterAddress}=https://etcd.local:2380"];
-        initialAdvertisePeerUrls = ["https://etcd.local:2380"];
+        # listenClientUrls = ["https://127.0.0.1:2379"];
+        # listenPeerUrls = ["https://127.0.0.1:2380"];
+        # advertiseClientUrls = ["https://etcd.local:2379"];
+        # initialCluster = ["${top.masterAddress}=https://etcd.local:2380"];
+        # initialAdvertisePeerUrls = ["https://etcd.local:2380"];
         certFile = mkDefault cert;
         keyFile = mkDefault key;
         trustedCaFile = mkDefault caCert;

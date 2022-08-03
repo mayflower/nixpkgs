@@ -58,7 +58,7 @@ let
 
   caCert = secret "ca";
 
-  etcdEndpoints = ["https://${cfg.masterAddress}:2379"];
+  etcdEndpoints = map (ma: "https://${ma}:2379") cfg.masterAddresses;
 
   mkCert = { name, CN, hosts ? [], fields ? {}, action ? "",
              privateKeyOwner ? "kubernetes" }: rec {
@@ -164,10 +164,10 @@ in {
       type = types.listOf types.str;
     };
 
-    masterAddress = mkOption {
+    masterAddresses = mkOption {
       description = lib.mdDoc "Clusterwide available network address or hostname for the kubernetes master server.";
-      example = "master.example.com";
-      type = types.str;
+      example = [ "master0.example.com" "master1.example.com" "master2.example.com" ];
+      type = types.listOf types.str;
     };
 
     path = mkOption {
@@ -306,7 +306,7 @@ in {
       services.kubernetes.addons.dns.enable = mkDefault true;
 
       services.kubernetes.apiserverAddress = mkDefault ("https://${if cfg.apiserver.advertiseAddress != null
-                          then cfg.apiserver.advertiseAddress
+                          then "${cfg.apiserver.advertiseAddress}:${toString cfg.apiserver.securePort}"
                           else "${cfg.masterAddress}:${toString cfg.apiserver.securePort}"}");
     })
   ];
