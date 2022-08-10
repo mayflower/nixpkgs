@@ -35,7 +35,7 @@ let
         keyFile = key;
     };
 
-  remote = with config.services; "https://${kubernetes.apiserver.advertiseAddress}:${toString cfssl.port}";
+  remote = with config.services; "https://${head top.masterAddresses}:${toString cfssl.port}";
 in
 {
   ###### interface
@@ -130,10 +130,11 @@ in
     cfsslCertPathPrefix = "${config.services.cfssl.dataDir}/cfssl";
     cfsslCert = "${cfsslCertPathPrefix}.pem";
     cfsslKey = "${cfsslCertPathPrefix}-key.pem";
+    isFirstApiserver = top.apiserver.advertiseAddress == head top.masterAddresses;
   in
   {
 
-    services.cfssl = mkIf (top.apiserver.enable) {
+    services.cfssl = mkIf isFirstApiserver {
       enable = true;
       address = "0.0.0.0";
       tlsCert = cfsslCert;
@@ -157,7 +158,7 @@ in
       }));
     };
 
-    systemd.services.cfssl.preStart = with pkgs; with config.services.cfssl; mkIf (top.apiserver.enable)
+    systemd.services.cfssl.preStart = with pkgs; with config.services.cfssl; mkIf isFirstApiserver
     (concatStringsSep "\n" [
       "set -e"
       (optionalString cfg.genCfsslCACert ''
@@ -354,7 +355,7 @@ in
 
         apiserver = mkIf top.apiserver.enable (with cfg.certs.apiServer; {
           etcd = with cfg.certs.apiserverEtcdClient; {
-            servers = ["https://etcd.local:2379"];
+            # servers = ["https://etcd.local:2379"];
             certFile = mkDefault cert;
             keyFile = mkDefault key;
             caFile = mkDefault caCert;
