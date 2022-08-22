@@ -100,8 +100,8 @@ stdenv.mkDerivation rec {
     })
     (fetchpatch {
       name = "CVE-2022-2867.CVE-2022-2868.CVE-2022-2869.patch";
-      url = "https://gitlab.com/libtiff/libtiff/-/commit/bcf28bb7f630f24fa47701a9907013f3548092cd.patch";
-      sha256 = "sha256-FXvZ5DYYahF96JcvUg70fo8urOhOq150UZsnVrjylLA=";
+      url = "https://gitlab.com/libtiff/libtiff/-/commit/d46af879bc4e789f95a7828fa566f61700954393.patch";
+      sha256 = "sha256-LUzcYU6Tfn+5cJBh0IMaVVCzcuEIF+HJ3ic9Ng7FrK4=";
     })
   ];
 
