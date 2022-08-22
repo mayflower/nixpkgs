@@ -186,8 +186,8 @@ in {
 
 
   openssl_1_1 = common rec {
-    version = "1.1.1p";
-    sha256 = "sha256-v2G2Kqpmx8djmUKpTeTJroKAwI8X1OrC5EZE2fyKzm8=";
+    version = "1.1.1q";
+    sha256 = "sha256-15Oc5hQCnN/wtsIPDi5XAxWKSJpyslB7i9Ub+Mj9EMo=";
     patches = [
       ./1.1/nix-ssl-cert-file.patch
 
@@ -200,9 +200,9 @@ in {
     withDocs = true;
   };
 
-  openssl_3_0 = common {
-    version = "3.0.4";
-    sha256 = "sha256-KDGEPppmigq0eOcCCtY9LWXlH3KXdHLcc+/O+6/AwA8=";
+  openssl_3 = common {
+    version = "3.0.5";
+    sha256 = "sha256-qn2Nm+9xrWUlxVuhHl9Dl4ic5Jwsk0nc6m0+TwsCSno=";
     patches = [
       ./3.0/nix-ssl-cert-file.patch
 

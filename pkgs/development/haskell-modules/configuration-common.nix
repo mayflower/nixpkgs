@@ -2561,6 +2561,17 @@ self: super: {
   # 2022-03-16: strict upper bounds https://github.com/monadfix/shower/issues/18
   shower = doJailbreak (dontCheck super.shower);
 
+  cachix = overrideCabal (drv: {
+    version = "0.8.1";
+    src = pkgs.fetchFromGitHub {
+      owner = "cachix";
+      repo = "cachix";
+      rev = "v0.8.1";
+      sha256 = "sha256-s9JoWsDUVGWhPWLNsvrYK7OlcPZhLO63fo4gN/r4uwU=";
+    };
+    postUnpack = "sourceRoot=$sourceRoot/cachix";
+  }) super.cachix;
+
   # The shipped Setup.hs file is broken.
   csv = overrideCabal (drv: { preCompileBuildDriver = "rm Setup.hs"; }) super.csv;
 

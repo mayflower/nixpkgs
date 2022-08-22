@@ -171,6 +171,13 @@ in {
       ];
     };
 
+    linux_5_19 = callPackage ../os-specific/linux/kernel/linux-5.19.nix {
+      kernelPatches = [
+        kernelPatches.bridge_stp_helper
+        kernelPatches.request_key_helper
+      ];
+    };
+
     linux_testing = let
       testing = callPackage ../os-specific/linux/kernel/linux-testing.nix {
         kernelPatches = [
@@ -196,36 +203,35 @@ in {
       ];
     };
 
-    linux_zen = callPackage ../os-specific/linux/kernel/linux-zen.nix {
+    # Using zenKernels like this due lqx&zen came from one source, but may have different base kernel version
+    # https://github.com/NixOS/nixpkgs/pull/161773#discussion_r820134708
+    zenKernels = callPackage ../os-specific/linux/kernel/zen-kernels.nix;
+
+    linux_zen = (zenKernels {
+      kernelPatches = [
+        kernelPatches.bridge_stp_helper
+        kernelPatches.request_key_helper
+      ];
+    }).zen;
+
+    linux_lqx = (zenKernels {
+      kernelPatches = [
+        kernelPatches.bridge_stp_helper
+        kernelPatches.request_key_helper
+      ];
+    }).lqx;
+
+    # This contains the variants of the XanMod kernel
+    xanmodKernels = callPackage ../os-specific/linux/kernel/xanmod-kernels.nix {
       kernelPatches = [
         kernelPatches.bridge_stp_helper
         kernelPatches.request_key_helper
       ];
     };
 
-    linux_lqx = callPackage ../os-specific/linux/kernel/linux-lqx.nix {
-      kernelPatches = [
-        kernelPatches.bridge_stp_helper
-        kernelPatches.request_key_helper
-      ];
-    };
-
-    # This contains both the STABLE and EDGE variants of the XanMod kernel
-    xanmodKernels = callPackage ../os-specific/linux/kernel/xanmod-kernels.nix;
-
-    linux_xanmod = (xanmodKernels {
-      kernelPatches = [
-        kernelPatches.bridge_stp_helper
-        kernelPatches.request_key_helper
-      ];
-    }).stable;
-
-    linux_xanmod_latest = (xanmodKernels {
-      kernelPatches = [
-        kernelPatches.bridge_stp_helper
-        kernelPatches.request_key_helper
-      ];
-    }).edge;
+    linux_xanmod = xanmodKernels.lts;
+    linux_xanmod_latest = xanmodKernels.edge;
+    linux_xanmod_tt = xanmodKernels.tt;
 
     linux_libre = deblobKernel packageAliases.linux_default.kernel;
 
@@ -505,6 +511,7 @@ in {
     linux_5_16 = throw "linux 5.16 was removed because it reached its end of life upstream"; # Added 2022-04-23
     linux_5_17 = throw "linux 5.17 was removed because it reached its end of life upstream"; # Added 2022-06-23
     linux_5_18 = recurseIntoAttrs (packagesFor kernels.linux_5_18);
+    linux_5_19 = recurseIntoAttrs (packagesFor kernels.linux_5_19);
   };
 
   rtPackages = {
@@ -549,6 +556,7 @@ in {
     linux_lqx = recurseIntoAttrs (packagesFor kernels.linux_lqx);
     linux_xanmod = recurseIntoAttrs (packagesFor kernels.linux_xanmod);
     linux_xanmod_latest = recurseIntoAttrs (packagesFor kernels.linux_xanmod_latest);
+    linux_xanmod_tt = recurseIntoAttrs (packagesFor kernels.linux_xanmod_tt);
 
     hardkernel_4_14 = recurseIntoAttrs (packagesFor kernels.linux_hardkernel_4_14);
 
@@ -560,7 +568,7 @@ in {
   packageAliases = {
     linux_default = if stdenv.hostPlatform.isi686 then packages.linux_5_10 else packages.linux_5_15;
     # Update this when adding the newest kernel major version!
-    linux_latest = packages.linux_5_18;
+    linux_latest = packages.linux_5_19;
     linux_mptcp = packages.linux_mptcp_95;
     linux_rt_default = packages.linux_rt_5_4;
     linux_rt_latest = packages.linux_rt_5_10;

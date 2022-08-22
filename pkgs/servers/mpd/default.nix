@@ -116,13 +116,13 @@ let
 
     in stdenv.mkDerivation rec {
       pname = "mpd";
-      version = "0.23.6";
+      version = "0.23.8";
 
       src = fetchFromGitHub {
         owner  = "MusicPlayerDaemon";
         repo   = "MPD";
         rev    = "v${version}";
-        sha256 = "sha256-pVIbaCg3qDw7bjhLQHz6Rr3m498LeKNQVhRk4m5tpVQ=";
+        sha256 = "sha256-yIzSEk4fgtNANKIxna0dP9HKIcGBVBkpqiyLCjvPDHE=";
       };
 
       buildInputs = [
@@ -144,6 +144,12 @@ let
         pkg-config
       ]
         ++ concatAttrVals features_ nativeFeatureDependencies;
+
+      postPatch = lib.optionalString (stdenv.isDarwin && lib.versionOlder stdenv.targetPlatform.darwinSdkVersion "12.0") ''
+        substituteInPlace src/output/plugins/OSXOutputPlugin.cxx \
+          --replace kAudioObjectPropertyElement{Main,Master} \
+          --replace kAudioHardwareServiceDeviceProperty_Virtual{Main,Master}Volume
+      '';
 
       # Otherwise, the meson log says:
       #

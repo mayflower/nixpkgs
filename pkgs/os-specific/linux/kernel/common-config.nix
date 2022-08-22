@@ -42,6 +42,10 @@ let
       ];
       DEBUG_INFO_DWARF_TOOLCHAIN_DEFAULT = whenAtLeast "5.18" yes;
       DEBUG_INFO_BTF            = whenAtLeast "5.2" (option yes);
+      # Allow loading modules with mismatched BTFs
+      # FIXME: figure out how to actually make BTFs reproducible instead
+      # See https://github.com/NixOS/nixpkgs/pull/181456 for details.
+      MODULE_ALLOW_BTF_MISMATCH = whenAtLeast "5.18" (option yes);
       BPF_LSM                   = whenAtLeast "5.7" (option yes);
       DEBUG_KERNEL              = yes;
       DEBUG_DEVRES              = no;
@@ -917,6 +921,9 @@ let
       TASK_DELAY_ACCT = yes;
       TASK_XACCT = yes;
       TASK_IO_ACCOUNTING = yes;
+
+      # Fresh toolchains frequently break -Werror build for minor issues.
+      WERROR = whenAtLeast "5.15" no;
     } // optionalAttrs (stdenv.hostPlatform.system == "x86_64-linux" || stdenv.hostPlatform.system == "aarch64-linux") {
       # Enable CPU/memory hotplug support
       # Allows you to dynamically add & remove CPUs/memory to a VM client running NixOS without requiring a reboot

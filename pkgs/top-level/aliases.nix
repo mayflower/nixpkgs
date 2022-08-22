@@ -734,6 +734,7 @@ mapAliases ({
   linuxPackages_5_16 = linuxKernel.packages.linux_5_16;
   linuxPackages_5_17 = linuxKernel.packages.linux_5_17;
   linuxPackages_5_18 = linuxKernel.packages.linux_5_18;
+  linuxPackages_5_19 = linuxKernel.packages.linux_5_19;
   linuxPackages_5_4 = linuxKernel.packages.linux_5_4;
   linuxPackages_hardkernel_4_14 = linuxKernel.packages.hardkernel_4_14;
   linuxPackages_rpi0 = linuxKernel.packages.linux_rpi1;
@@ -753,6 +754,7 @@ mapAliases ({
   linux_5_16 = linuxKernel.kernels.linux_5_16;
   linux_5_17 = linuxKernel.kernels.linux_5_17;
   linux_5_18 = linuxKernel.kernels.linux_5_18;
+  linux_5_19 = linuxKernel.kernels.linux_5_19;
   linux_5_4 = linuxKernel.kernels.linux_5_4;
   linux_mptcp_95 = linuxKernel.kernels.linux_mptcp_95;
   linux_rpi0 = linuxKernel.kernels.linux_rpi1;
@@ -950,6 +952,7 @@ mapAliases ({
   openmpt123 = libopenmpt; # Added 2021-09-05
   opensans-ttf = throw "'opensans-ttf' has been renamed to/replaced by 'open-sans'"; # Converted to throw 2022-02-22
   openssh_with_kerberos = throw "'openssh_with_kerberos' has been renamed to/replaced by 'openssh'"; # Converted to throw 2022-02-22
+  openssl_3_0 = openssl_3; # Added 2022-06-27
   orchis = orchis-theme; # Added 2021-06-09
   osxfuse = macfuse-stubs; # Added 2021-03-20
   otter-browser = throw "otter-browser has been removed from nixpkgs, as it was unmaintained"; # Added 2020-02-02
@@ -1157,7 +1160,6 @@ mapAliases ({
   redkite = throw "redkite was archived by upstream"; # Added 2021-04-12
   redshift-wlr = throw "redshift-wlr has been replaced by gammastep"; # Added 2021-12-25
   reicast = throw "reicast has been removed from nixpkgs as it is unmaintained, please use flycast instead"; # Added 2022-03-07
-  renpy = throw "renpy has been removed from nixpkgs, it was unmaintained and the latest packaged version required python2"; # Added 2022-01-12
 
   # 3 resholve aliases below added 2022-04-08; drop after 2022-11-30?
   resholvePackage = throw "resholvePackage has been renamed to resholve.mkDerivation";
@@ -1549,6 +1551,7 @@ mapAliases ({
   tor-browser-unwrapped = throw "tor-browser-unwrapped was removed because it was out of date and inadequately maintained. Please use tor-browser-bundle-bin instead"; # Added 2020-01-10
   ttyrec = ovh-ttyrec; # Added 2021-01-02
   zplugin = zinit; # Added 2021-01-30
+  zyn-fusion = zynaddsubfx; # Added 2022-08-05
 
   inherit (stdenv.hostPlatform) system; # Added 2021-10-22
 
