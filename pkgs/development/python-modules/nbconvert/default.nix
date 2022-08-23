@@ -3,7 +3,6 @@
 , buildPythonPackage
 , defusedxml
 , fetchPypi
-, fetchpatch
 , ipywidgets
 , jinja2
 , jupyterlab-pygments
@@ -31,22 +30,10 @@ buildPythonPackage rec {
   # various exporter templates
   patches = [
     ./templates.patch
-
-    # Use mistune 2.x
-    (fetchpatch {
-      name = "support-mistune-2.x.patch";
-      url = "https://github.com/jupyter/nbconvert/commit/e870d9a4a61432a65bee5466c5fa80c9ee28966e.patch";
-      hash = "sha256-kdOmE7BnkRy2lsNQ2OVrEXXZntJUPJ//b139kSsfKmI=";
-      excludes = [ "pyproject.toml" ];
-    })
   ];
 
   postPatch = ''
     substituteAllInPlace ./nbconvert/exporters/templateexporter.py
-
-    # Use mistune 2.x
-    substituteInPlace setup.py \
-        --replace "mistune>=0.8.1,<2" "mistune>=2.0.3,<3"
   '';
 
   propagatedBuildInputs = [
