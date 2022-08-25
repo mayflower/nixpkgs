@@ -1122,6 +1122,8 @@ with pkgs;
     libgamemode32 = pkgsi686Linux.gamemode.lib;
   };
 
+  gamescope = callPackage ../applications/window-managers/gamescope { };
+
   gay = callPackage ../tools/misc/gay {  };
 
   elkhound = callPackage ../development/tools/elkhound { };
@@ -8243,6 +8245,7 @@ with pkgs;
   mangohud = callPackage ../tools/graphics/mangohud {
     libXNVCtrl = linuxPackages.nvidia_x11.settings.libXNVCtrl;
     mangohud32 = pkgsi686Linux.mangohud;
+    inherit (python3Packages) Mako;
   };
 
   manix = callPackage ../tools/nix/manix {
@@ -23372,6 +23375,8 @@ with pkgs;
   linux_xanmod = linuxKernel.kernels.linux_xanmod;
   linuxPackages_xanmod_latest = linuxKernel.packages.linux_xanmod_latest;
   linux_xanmod_latest = linuxKernel.kernels.linux_xanmod_latest;
+  linuxPackages_xanmod_tt = linuxKernel.packages.linux_xanmod_tt;
+  linux_xanmod_tt = linuxKernel.kernels.linux_xanmod_tt;
 
   cryptodev = linuxKernel.packages.linux_4_9.cryptodev;
 
@@ -27452,7 +27457,7 @@ with pkgs;
     ghostscript = null;
   });
 
-  imagemagickBig = lowPrio (callPackage ../applications/graphics/ImageMagick/7.0.nix {
+  imagemagickBig = lowPrio (callPackage ../applications/graphics/ImageMagick {
     inherit (darwin.apple_sdk.frameworks) ApplicationServices Foundation;
   });
 
@@ -29748,6 +29753,10 @@ with pkgs;
 
   robustirc-bridge = callPackage ../servers/irc/robustirc-bridge { };
 
+  routedns = callPackage ../tools/networking/routedns {
+    buildGoModule = buildGo118Module;
+  };
+
   skrooge = libsForQt5.callPackage ../applications/office/skrooge {};
 
   smartgithg = callPackage ../applications/version-management/smartgithg {
@@ -30070,8 +30079,26 @@ with pkgs;
   thunderbird = wrapThunderbird thunderbird-unwrapped { };
   thunderbird-wayland = wrapThunderbird thunderbird-unwrapped { forceWayland = true; };
 
+  thunderbird-91-unwrapped = thunderbirdPackages.thunderbird-91;
+  thunderbird-91 = wrapThunderbird thunderbird-91-unwrapped { };
+  thunderbird-91-wayland = wrapThunderbird thunderbird-91-unwrapped { forceWayland = true; };
+
+  thunderbird-102-unwrapped = thunderbirdPackages.thunderbird-102;
+  thunderbird-102 = wrapThunderbird thunderbird-102-unwrapped { };
+  thunderbird-102-wayland = wrapThunderbird thunderbird-102-unwrapped { forceWayland = true; };
+
   thunderbird-bin = thunderbird-bin-91;
   thunderbird-bin-unwrapped = thunderbird-bin-91-unwrapped;
+
+  thunderbird-bin-102 = wrapThunderbird thunderbird-bin-unwrapped {
+    applicationName = "thunderbird";
+    pname = "thunderbird-bin";
+    desktopName = "Thunderbird";
+  };
+  thunderbird-bin-102-unwrapped = callPackage ../applications/networking/mailreaders/thunderbird-bin {
+    inherit (gnome) adwaita-icon-theme;
+    generated = import ../applications/networking/mailreaders/thunderbird-bin/release_sources.nix;
+  };
 
   thunderbird-bin-91 = wrapThunderbird thunderbird-bin-91-unwrapped {
     applicationName = "thunderbird";
@@ -30080,6 +30107,7 @@ with pkgs;
   };
   thunderbird-bin-91-unwrapped = callPackage ../applications/networking/mailreaders/thunderbird-bin {
     inherit (gnome) adwaita-icon-theme;
+    generated = import ../applications/networking/mailreaders/thunderbird-bin/91_sources.nix;
   };
 
   thunderbolt = callPackage ../os-specific/linux/thunderbolt {};
@@ -31108,18 +31136,17 @@ with pkgs;
 
   inherit (nodePackages) zx;
 
-  zynaddsubfx = zyn-fusion;
+  zynaddsubfx = callPackage ../applications/audio/zynaddsubfx {
+    guiModule = "zest";
+    fftw = fftwSinglePrec;
+  };
 
-  zynaddsubfx-fltk = callPackage ../applications/audio/zynaddsubfx {
+  zynaddsubfx-fltk = zynaddsubfx.override {
     guiModule = "fltk";
   };
 
-  zynaddsubfx-ntk = callPackage ../applications/audio/zynaddsubfx {
+  zynaddsubfx-ntk = zynaddsubfx.override {
     guiModule = "ntk";
-  };
-
-  zyn-fusion = callPackage ../applications/audio/zynaddsubfx {
-    guiModule = "zest";
   };
 
   ### BLOCKCHAINS / CRYPTOCURRENCIES / WALLETS
@@ -33815,6 +33842,8 @@ with pkgs;
   geant4 = libsForQt5.callPackage ../development/libraries/physics/geant4 { };
 
   cernlib = callPackage ../development/libraries/physics/cernlib { };
+
+  clhep = callPackage ../development/libraries/physics/clhep { };
 
   hepmc2 = callPackage ../development/libraries/physics/hepmc2 { };
 
