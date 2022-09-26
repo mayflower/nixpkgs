@@ -35,24 +35,22 @@
 , icu
 , fetchYarnDeps
 , yarn
-, fixup-yarn-lock
+, fixup_yarn_lock
 , nodePackages
 , nodejs_18
-, jq
-, moreutils
 , terser
 
 , plugins ? []
 }@args:
 
 let
-  version = "3.2.5";
+  version = "3.3.0.beta2";
 
   src = fetchFromGitHub {
     owner = "discourse";
     repo = "discourse";
     rev = "v${version}";
-    sha256 = "sha256-+at4IiJ0yRPq9XyvAwa2Kuc0wYQOB5hw7E1jmQAAkc4=";
+    sha256 = "sha256-XRhd7VUD/6D0unq9C7WTHTLOQSc2mkEJWt1WKCajNIg=";
   };
 
   ruby = ruby_3_2;
@@ -201,14 +199,9 @@ let
     pname = "discourse-assets";
     inherit version src;
 
-    yarnDevOfflineCache = fetchYarnDeps {
-      yarnLock = src + "/yarn.lock";
-      hash = "sha256-0s8c2V8Wl3f5kL1OIn2ps6hL7CUQD5+LJm+9LYHc+W0=";
-    };
-
     yarnOfflineCache = fetchYarnDeps {
-      yarnLock = src + "/app/assets/javascripts/yarn-ember5.lock";
-      hash = "sha256-ZBXvNdHHV92kSAswe6KA+OqaY5smf7ZKTTOiY8g78D0=";
+      yarnLock = src + "/yarn.lock";
+      sha256 = "14fxn99pq02w3qn2zz1gpfk4czjmi6sykvsvqji1m425fcq88gpf";
     };
 
     nativeBuildInputs = runtimeDeps ++ [
@@ -217,9 +210,6 @@ let
       nodePackages.uglify-js
       terser
       yarn
-      jq
-      moreutils
-      fixup-yarn-lock
     ];
 
     outputs = [ "out" "javascripts" ];
@@ -244,7 +234,7 @@ let
       ./prebuild-theme-transpiler.patch
     ];
 
-    env.RAILS_ENV = "production";
+    RAILS_ENV = "production";
 
     # We have to set up an environment that is close enough to
     # production ready or the assets:precompile task refuses to
@@ -254,29 +244,21 @@ let
       # Yarn wants a real home directory to write cache, config, etc to
       export HOME=$NIX_BUILD_TOP/fake_home
 
-      yarn_install() {
-        local offlineCache=$1 yarnLock=$2
+      # Make yarn install packages from our offline cache, not the registry
+      yarn config --offline set yarn-offline-mirror $yarnOfflineCache
 
-        # Make yarn install packages from our offline cache, not the registry
-        yarn config --offline set yarn-offline-mirror $offlineCache
+      # Fixup "resolved"-entries in yarn.lock to match our offline cache
+      ${fixup_yarn_lock}/bin/fixup_yarn_lock yarn.lock
 
-        # Fixup "resolved"-entries in yarn.lock to match our offline cache
-        fixup-yarn-lock $yarnLock
-
-        # Install while ignoring hook scripts
-        yarn --offline --ignore-scripts --cwd $(dirname $yarnLock) install
-      }
-
-      # Install devDependencies for generating the theme-transpiler executed as
-      # dependent task assets:precompile:theme_transpiler before db:migrate
-      yarn_install $yarnDevOfflineCache yarn.lock
-
-      # Install the runtime dependencies
-      yarn_install $yarnOfflineCache app/assets/javascripts/yarn-ember5.lock
-      # Patch before running postinstall hook script
-      patchShebangs --build app/assets/javascripts
-      yarn --offline --cwd app/assets/javascripts run postinstall
       export SSL_CERT_FILE=${cacert}/etc/ssl/certs/ca-bundle.crt
+
+      # Install without runnning postinstall scripts
+      yarn install --offline --ignore-scripts
+
+      # Patch scripts for running postinstall
+      patchShebangs --build node_modules app/assets/javascripts
+
+      yarn run --offline postinstall
 
       redis-server >/dev/null &
 
@@ -294,16 +276,25 @@ let
       psql 'discourse' -tAc "CREATE EXTENSION IF NOT EXISTS pg_trgm"
       psql 'discourse' -tAc "CREATE EXTENSION IF NOT EXISTS hstore"
 
-      ${lib.concatMapStringsSep "\n" (p: "ln -sf ${p} plugins/${p.pluginName or ""}") plugins}
+      ${lib.concatMapStringsSep "\n" (
+        p: "ln -sf ${p} plugins/${p.pluginName or ""}"
+      ) plugins}
 
-      bundle exec rake db:migrate >/dev/null
+      bundle exec rake --trace db:migrate >/dev/null
       chmod -R +w tmp
     '';
 
     buildPhase = ''
       runHook preBuild
 
-      bundle exec rake assets:precompile
+      bundle exec rake --trace assets:precompile
+
+      # lib/pretty_text.rb ctx.load tries to load devDependencies from the
+      # workspace root node_modules when the rake task themes:update is executed.
+      # Add the missing runtime dependencies with --production and remove all other
+      # devDependencies at the same time.
+      yarn add --production --offline --ignore-workspace-root-check --ignore-scripts \
+        loader.js xss
 
       runHook postBuild
     '';
@@ -317,7 +308,26 @@ let
       mv app/assets/javascripts $javascripts
       ln -sf /run/discourse/assets/javascripts/plugins $javascripts/plugins
 
+      # Since discourse is using workspaces, it needs the workspace root node_modules
+      # somewhere up the tree to resolve runtime dependencies.
+      mv node_modules $javascripts/
+
       runHook postInstall
+    '';
+
+    preFixup = ''
+      # Fix symlink workspace packages into workspace root node_modules, which
+      # surprisingly seems unnecessary, but is rather reassuring for a human observer.
+      while read -r path link ; do
+        ln -sf ''${link/app\/assets\/javascripts\//} $path
+      done < <(
+        find $javascripts/node_modules/ -maxdepth 1 -type l -printf '%p %l\n'
+        find $javascripts/node_modules/.bin/ -type l -printf '%p %l\n'
+      )
+    '';
+
+    postFixup = ''
+      patchShebangs $javascripts/node_modules
     '';
   };
 
@@ -394,6 +404,7 @@ let
       ln -sf ${assets} $out/share/discourse/public.dist/assets
       rm -r $out/share/discourse/app/assets/javascripts
       ln -sf ${assets.javascripts} $out/share/discourse/app/assets/javascripts
+      ln -sf app/assets/javascripts/node_modules $out/share/discourse/node_modules
       ${lib.concatMapStringsSep "\n" (p: "ln -sf ${p} $out/share/discourse/plugins/${p.pluginName or ""}") plugins}
 
       runHook postInstall

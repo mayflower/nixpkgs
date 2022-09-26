@@ -1,5 +1,6 @@
 #!/usr/bin/env nix-shell
-#! nix-shell -i python3 -p "python3.withPackages (ps: with ps; [ requests click click-log packaging ])" bundix bundler nix-update nurl prefetch-yarn-deps
+#! nix-shell -i python3 -p "python3.withPackages (ps: with ps; [ requests click click-log packaging ])" bundix bundler nix-update nurl prefetch-yarn-deps yarn2nix
+#! nix-shell -i python3 -p python3 python3Packages.requests python3Packages.click python3Packages.click-log bundix bundler nix-update nix-universal-prefetch prefetch-yarn-deps yarn2nix
 from __future__ import annotations
 
 import click
@@ -59,16 +60,20 @@ class DiscourseVersion:
 
 
 class DiscourseRepo:
+    gh_token = None
     version_regex = re.compile(r'^v\d+\.\d+\.\d+(\.beta\d+)?$')
     _latest_commit_sha = None
 
     def __init__(self, owner: str = 'discourse', repo: str = 'discourse'):
         self.owner = owner
         self.repo = repo
+        self.headers = None
+        if self.gh_token is not None:
+            self.headers = {'Authorization': 'token %s' % self.gh_token}
 
     @property
     def versions(self) -> Iterable[str]:
-        r = requests.get(f'https://api.github.com/repos/{self.owner}/{self.repo}/git/refs/tags').json()
+        r = requests.get(f'https://api.github.com/repos/{self.owner}/{self.repo}/git/refs/tags', headers=self.headers).json()
         tags = [x['ref'].replace('refs/tags/', '') for x in r]
 
         # filter out versions not matching version_regex
@@ -80,7 +85,7 @@ class DiscourseRepo:
     @property
     def latest_commit_sha(self) -> str:
         if self._latest_commit_sha is None:
-            r = requests.get(f'https://api.github.com/repos/{self.owner}/{self.repo}/commits?per_page=1')
+            r = requests.get(f'https://api.github.com/repos/{self.owner}/{self.repo}/commits?per_page=1', headers=self.headers)
             r.raise_for_status()
             self._latest_commit_sha = r.json()[0]['sha']
 
@@ -100,7 +105,7 @@ class DiscourseRepo:
         :param str rev: the rev to fetch at :return:
 
         """
-        r = requests.get(f'https://raw.githubusercontent.com/{self.owner}/{self.repo}/{rev}/{filepath}')
+        r = requests.get(f'https://raw.githubusercontent.com/{self.owner}/{self.repo}/{rev}/{filepath}', headers=self.headers)
         r.raise_for_status()
         return r.text
 
@@ -234,21 +239,22 @@ def update(rev):
     _call_nix_update('discourse', version.version)
 
     old_yarn_hash = _nix_eval('discourse.assets.yarnOfflineCache.outputHash')
-    new_yarn_hash = repo.get_yarn_lock_hash(version.tag, "app/assets/javascripts/yarn-ember5.lock")
-    click.echo(f"Updating yarn lock hash: {old_yarn_hash} -> {new_yarn_hash}")
-
-    old_yarn_dev_hash = _nix_eval('discourse.assets.yarnDevOfflineCache.outputHash')
-    new_yarn_dev_hash = repo.get_yarn_lock_hash(version.tag, "yarn.lock")
-    click.echo(f"Updating yarn dev lock hash: {old_yarn_dev_hash} -> {new_yarn_dev_hash}")
-
+    new_yarn_hash = repo.get_yarn_lock_hash(version.tag, "yarn.lock")
+    click.echo(f"Updating yarn lock hash, {old_yarn_hash} -> {new_yarn_hash}")
     with open(Path(__file__).parent / "default.nix", 'r+') as f:
         content = f.read()
         content = content.replace(old_yarn_hash, new_yarn_hash)
-        content = content.replace(old_yarn_dev_hash, new_yarn_dev_hash)
         f.seek(0)
         f.write(content)
         f.truncate()
 
+    for fn in ['package.json', 'yarn.lock']:
+        with open(Path(__file__).parent / fn, 'w') as f:
+            f.write(repo.get_file(fn, version.tag))
+
+    yarnNix = subprocess.check_output(['yarn2nix'], text=True, cwd=Path(__file__).parent)
+    with open(Path(__file__).parent / 'yarn.nix', 'w') as f:
+        f.write(yarnNix)
 
 @cli.command()
 @click.argument('rev', default='latest')
@@ -273,25 +279,40 @@ def update_mail_receiver(rev):
 def update_plugins():
     """Update plugins to their latest revision."""
     plugins = [
+        {'name': 'discourse-adplugin'},
+        {'name': 'discourse-akismet'},
         {'name': 'discourse-assign'},
+        {'name': 'discourse-automation'},
         {'name': 'discourse-bbcode-color'},
+        {'name': 'discourse-cakeday'},
         {'name': 'discourse-calendar'},
         {'name': 'discourse-canned-replies'},
         {'name': 'discourse-chat-integration'},
         {'name': 'discourse-checklist'},
         {'name': 'discourse-data-explorer'},
         {'name': 'discourse-docs'},
+        {'name': 'discourse-follow'},
+        {'name': 'discourse-footnote'},
+        {'name': 'discourse-gamification'},
         {'name': 'discourse-github'},
+        {'name': 'discourse-graphviz'},
         {'name': 'discourse-ldap-auth', 'owner': 'jonmbake'},
+        {'name': 'discourse-linkedin-auth'},
         {'name': 'discourse-math'},
         {'name': 'discourse-migratepassword', 'owner': 'discoursehosting'},
         {'name': 'discourse-openid-connect'},
+        {'name': 'discourse-policy'},
         {'name': 'discourse-prometheus'},
         {'name': 'discourse-reactions'},
+        {'name': 'discourse-saml', 'keep_gemfile': False},
+        {'name': 'discourse-saved-searches'},
         {'name': 'discourse-saved-searches'},
         {'name': 'discourse-solved'},
         {'name': 'discourse-spoiler-alert'},
+        {'name': 'discourse-subscriptions'},
+        {'name': 'discourse-tooltips'},
         {'name': 'discourse-voting'},
+        {'name': 'discourse-whos-online'},
         {'name': 'discourse-yearly-review'},
     ]
 
@@ -300,6 +321,7 @@ def update_plugins():
         owner = plugin.get('owner') or "discourse"
         name = plugin.get('name')
         repo_name = plugin.get('repo_name') or name
+        keep_gemfile = plugin.get('keep_gemfile') or False
 
         if fetcher == "fetchFromGitHub":
             url = f"https://github.com/{owner}/{repo_name}"
@@ -419,14 +441,17 @@ def update_plugins():
                         f.write(content)
 
         if len(gemfile_text) > 0:
-            if os.path.isfile(gemfile):
+            if os.path.isfile(gemfile) and keep_gemfile is False:
                 os.remove(gemfile)
 
-            subprocess.check_output(['bundle', 'init'], cwd=rubyenv_dir)
+            if keep_gemfile is False:
+                subprocess.check_output(['bundle', 'init'], cwd=rubyenv_dir)
+
             os.chmod(gemfile, stat.S_IREAD | stat.S_IWRITE | stat.S_IRGRP | stat.S_IROTH)
 
             with open(gemfile, 'a') as f:
-                f.write(gemfile_text)
+                if keep_gemfile is False:
+                    f.write(gemfile_text)
 
             subprocess.check_output(['bundle', 'lock', '--add-platform', 'ruby'], cwd=rubyenv_dir)
             subprocess.check_output(['bundle', 'lock', '--update'], cwd=rubyenv_dir)

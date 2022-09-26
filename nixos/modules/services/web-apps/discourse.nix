@@ -539,13 +539,12 @@ in
     # upstream.
     services.discourse.backendSettings = lib.mapAttrs (_: lib.mkDefault) {
       db_pool = cfg.database.pool;
-      db_timeout = 5000;
       db_connect_timeout = 5;
       db_socket = null;
       db_host = cfg.database.host;
       db_backup_host = null;
       db_port = null;
-      db_backup_port = 5432;
+      db_backup_port = null;
       db_name = cfg.database.name;
       db_username = if databaseActuallyCreateLocally then "discourse" else cfg.database.username;
       db_password = cfg.database.passwordFile;
@@ -566,6 +565,10 @@ in
       smtp_enable_start_tls = cfg.mail.outgoing.enableStartTLSAuto;
       smtp_openssl_verify_mode = cfg.mail.outgoing.opensslVerifyMode;
       smtp_force_tls = cfg.mail.outgoing.forceTLS;
+      smtp_open_timeout = 5;
+      smtp_read_timeout = 30;
+      group_smtp_open_timeout = 30;
+      group_smtp_read_timeout = 60;
 
       load_mini_profiler = true;
       mini_profiler_snapshots_period = 0;
@@ -615,6 +618,7 @@ in
       s3_endpoint = null;
       s3_http_continue_timeout = null;
       s3_install_cors_rule = null;
+      enable_s3_transfer_acceleration = null;
       s3_asset_cdn_url = null;
 
       max_user_api_reqs_per_minute = 20;
@@ -635,7 +639,9 @@ in
       max_logster_logs = 1000;
       refresh_maxmind_db_during_precompile_days = 2;
       maxmind_backup_path = null;
+      maxmind_account_id = null;
       maxmind_license_key = null;
+      maxmind_mirror_url = null;
       enable_performance_http_headers = false;
       enable_js_error_reporting = true;
       mini_scheduler_workers = 5;
@@ -648,12 +654,15 @@ in
       multisite_config_path = "config/multisite.yml";
       enable_long_polling = null;
       long_polling_interval = null;
-      preload_link_header = false;
+      early_hint_header_mode = null;
+      early_hint_header_name = "Link";
       redirect_avatar_requests = false;
       pg_force_readonly_mode = false;
       dns_query_timeout_secs = null;
       regex_timeout_seconds = 2;
       allow_impersonation = true;
+      log_line_max_chars = 160000;
+      asset_url_salt = null;
     };
 
     services.redis.servers.discourse =
