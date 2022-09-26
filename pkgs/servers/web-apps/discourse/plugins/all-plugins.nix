@@ -39,6 +39,7 @@ in
   discourse-subscriptions = callPackage ./discourse-subscriptions {};
   discourse-tooltips = callPackage ./discourse-tooltips {};
   discourse-voting = callPackage ./discourse-voting {};
+  discourse-whos-online = callPackage ./discourse-whos-online {};
   discourse-yearly-review = callPackage ./discourse-yearly-review {};
   discourse-zendesk-plugin = callPackage ./discourse-zendesk-plugin {};
 }
