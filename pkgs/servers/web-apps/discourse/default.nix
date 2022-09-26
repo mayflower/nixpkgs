@@ -35,6 +35,7 @@
 , rsync
 , icu
 , fetchYarnDeps
+, mkYarnModules
 , yarn
 , fixup_yarn_lock
 , nodePackages
@@ -47,14 +48,29 @@
 }@args:
 
 let
-  version = "3.2.0.beta1";
+  version = "3.2.0.beta3";
 
   src = fetchFromGitHub {
     owner = "discourse";
     repo = "discourse";
     rev = "v${version}";
-    sha256 = "sha256-HVjt5rsLSuyOaQxkbiTrsYsSXj3oSWjke98QVp+tEqk=";
+    sha256 = "sha256-gW5U1DSYTqViiyVHfVpc/IAicccuRCf3xow9xpIY5sA=";
   };
+
+  # [ERROR] Cannot start service: Host version "0.19.2" does not match binary version "0.19.7" (Discourse::Utils::CommandError)
+  esbuild_19_2 = let version = "0.19.2"; in (esbuild.override {
+    buildGoModule = args: pkgs.buildGoModule.override {} (args // {
+      inherit version;
+      src = fetchFromGitHub {
+        owner = "evanw";
+        repo = "esbuild";
+        rev = "v${version}";
+        hash = "sha256-U/CAuLl+I3wNPXYcXr9r6DdT9fywvOTt25Vyu3OKG84=";
+      };
+      vendorHash = "sha256-+BfxCyg0KkDQpHt/wycy/8CTG6YBA/VJvJFhhzUnSiQ=";
+    });
+  });
+
 
   ruby = ruby_3_2;
 
@@ -66,7 +82,8 @@ let
     gnutar
     git
     brotli
-    esbuild
+    nodejs_18
+    esbuild_19_2
 
     # Misc required system utils
     which
@@ -198,13 +215,25 @@ let
     ];
   };
 
-  assets = stdenv.mkDerivation {
+  assets = let
+    yarnBuildDeps = mkYarnModules {
+      pname = "discourse-assets-yarn-build-deps";
+      inherit version;
+      packageJSON = ./package.json;
+      yarnLock = ./yarn.lock;
+      yarnNix = ./yarn.nix;
+      offlineCache = fetchYarnDeps {
+        yarnLock = ./yarn.lock;
+        hash = "sha256-kWuX2AkPiRy6m1g6UaJOLbwPfjFVuHPkov90A+MqzBQ=";
+      };
+    };
+  in stdenv.mkDerivation {
     pname = "discourse-assets";
     inherit version src;
 
     yarnOfflineCache = fetchYarnDeps {
       yarnLock = src + "/app/assets/javascripts/yarn.lock";
-      sha256 = "070h66zp8kmsigbrkh5d3jzbzvllzhbx0fa2yzx5lbpgnjhih3p2";
+      sha256 = "0ls0nc25np3pk2qc73ic81i195pqa3wb09z0l2i6ysp7f21q01wk";
     };
 
     nativeBuildInputs = runtimeDeps ++ [
@@ -217,7 +246,7 @@ let
       nodejs_18
       jq
       moreutils
-      esbuild
+      esbuild_19_2
     ];
 
     outputs = [ "out" "javascripts" ];
@@ -241,13 +270,9 @@ let
       # hasn't been `patchShebangs`-ed yet. So instead we just use
       # `patch-package` from `nativeBuildInputs`.
       ./asserts_patch-package_from_path.patch
-
-      # `lib/discourse_js_processor.rb`
-      # tries to call `../node_modules/.bin/esbuild`, which
-      # hasn't been `patchShebangs`-ed yet. So instead we just use
-      # `esbuild` from `nativeBuildInputs`.
-      ./assets_esbuild_from_path.patch
     ];
+
+    ESBUILD_BINARY_PATH = "${esbuild_19_2}/bin/esbuild";
 
     # We have to set up an environment that is close enough to
     # production ready or the assets:precompile task refuses to
@@ -270,6 +295,8 @@ let
       yarn install --offline --cwd app/assets/javascripts/discourse
 
       patchShebangs app/assets/javascripts/node_modules/
+
+      ln -sf ${yarnBuildDeps}/node_modules/esbuild app/assets/javascripts/node_modules/esbuild
 
       # Run `patch-package` AFTER the corresponding shebang inside `.bin/patch-package`
       # got patched. Otherwise this will fail with
@@ -360,12 +387,6 @@ let
 
       # Make sure the notification email setting applies
       ./notification_email.patch
-
-      # `lib/discourse_js_processor.rb`
-      # tries to call `../node_modules/.bin/esbuild`, which
-      # hasn't been `patchShebangs`-ed yet. So instead we just use
-      # `esbuild` from `nativeBuildInputs`.
-      ./assets_esbuild_from_path.patch
     ];
 
     postPatch = ''

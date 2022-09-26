@@ -1,5 +1,5 @@
 #!/usr/bin/env nix-shell
-#! nix-shell -i python3 -p bundix bundler nix-update nix-universal-prefetch python3 python3Packages.requests python3Packages.click python3Packages.click-log prefetch-yarn-deps
+#! nix-shell -i python3 -p bundix bundler nix-update nix-universal-prefetch python3 python3Packages.requests python3Packages.click python3Packages.click-log prefetch-yarn-deps yarn2nix
 from __future__ import annotations
 
 import click
@@ -258,6 +258,13 @@ def update(rev):
         f.write(content)
         f.truncate()
 
+    for fn in ['package.json', 'yarn.lock']:
+        with open(Path(__file__).parent / fn, 'w') as f:
+            f.write(repo.get_file(fn, version.tag))
+
+    yarnNix = subprocess.check_output(['yarn2nix'], text=True, cwd=Path(__file__).parent)
+    with open(Path(__file__).parent / 'yarn.nix', 'w') as f:
+        f.write(yarnNix)
 
 @cli.command()
 @click.argument('rev', default='latest')
@@ -282,25 +289,40 @@ def update_mail_receiver(rev):
 def update_plugins():
     """Update plugins to their latest revision."""
     plugins = [
+        {'name': 'discourse-adplugin'},
+        {'name': 'discourse-akismet'},
         {'name': 'discourse-assign'},
+        {'name': 'discourse-automation'},
         {'name': 'discourse-bbcode-color'},
+        {'name': 'discourse-cakeday'},
         {'name': 'discourse-calendar'},
         {'name': 'discourse-canned-replies'},
         {'name': 'discourse-chat-integration'},
         {'name': 'discourse-checklist'},
         {'name': 'discourse-data-explorer'},
         {'name': 'discourse-docs'},
+        {'name': 'discourse-follow'},
+        {'name': 'discourse-footnote'},
+        {'name': 'discourse-gamification'},
         {'name': 'discourse-github'},
+        {'name': 'discourse-graphviz'},
         {'name': 'discourse-ldap-auth', 'owner': 'jonmbake'},
+        {'name': 'discourse-linkedin-auth'},
         {'name': 'discourse-math'},
         {'name': 'discourse-migratepassword', 'owner': 'discoursehosting'},
         {'name': 'discourse-openid-connect'},
+        {'name': 'discourse-policy'},
         {'name': 'discourse-prometheus'},
         {'name': 'discourse-reactions'},
+        {'name': 'discourse-saml'},
+        {'name': 'discourse-saved-searches'},
         {'name': 'discourse-saved-searches'},
         {'name': 'discourse-solved'},
         {'name': 'discourse-spoiler-alert'},
+        {'name': 'discourse-subscriptions'},
+        {'name': 'discourse-tooltips'},
         {'name': 'discourse-voting'},
+        {'name': 'discourse-whos-online'},
         {'name': 'discourse-yearly-review'},
     ]
 
