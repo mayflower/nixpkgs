@@ -309,6 +309,7 @@ def update_plugins():
         {'name': 'discourse-patreon'},
         {'name': 'discourse-policy'},
         {'name': 'discourse-prometheus'},
+        {'name': 'discourse-push-notifications'},
         {'name': 'discourse-reactions'},
         {'name': 'discourse-saml'},
         {'name': 'discourse-saved-searches'},
