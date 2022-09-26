@@ -9,6 +9,7 @@ GEM
     concurrent-ruby (1.1.10)
     i18n (1.12.0)
       concurrent-ruby (~> 1.0)
+    iso8601 (0.13.0)
     minitest (5.16.3)
     rrule (0.4.4)
       activesupport (>= 2.3)
@@ -19,6 +20,7 @@ PLATFORMS
   ruby
 
 DEPENDENCIES
+  iso8601 (= 0.13.0)
   rrule (= 0.4.4)
 
 BUNDLED WITH

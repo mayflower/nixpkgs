@@ -282,24 +282,42 @@ def update_mail_receiver(rev):
 def update_plugins():
     """Update plugins to their latest revision."""
     plugins = [
+        {'name': 'discourse-adplugin'},
+        {'name': 'discourse-akismet'},
+        {'name': 'discourse-apple-auth'},
         {'name': 'discourse-assign'},
+        {'name': 'discourse-automation'},
+        {'name': 'discourse-cakeday'},
         {'name': 'discourse-calendar'},
         {'name': 'discourse-canned-replies'},
         {'name': 'discourse-chat-integration'},
         {'name': 'discourse-checklist'},
         {'name': 'discourse-data-explorer'},
         {'name': 'discourse-docs'},
+        {'name': 'discourse-footnote'},
+        {'name': 'discourse-gamification'},
         {'name': 'discourse-github'},
+        {'name': 'discourse-graphviz'},
         {'name': 'discourse-ldap-auth', 'owner': 'jonmbake'},
+        {'name': 'discourse-linkedin-auth'},
+        {'name': 'discourse-lti'},
         {'name': 'discourse-math'},
         {'name': 'discourse-migratepassword', 'owner': 'discoursehosting'},
-        {'name': 'discourse-prometheus'},
         {'name': 'discourse-openid-connect'},
+        {'name': 'discourse-patreon'},
+        {'name': 'discourse-policy'},
+        {'name': 'discourse-prometheus'},
+        {'name': 'discourse-reactions'},
+        {'name': 'discourse-saml'},
+        {'name': 'discourse-saved-searches'},
         {'name': 'discourse-saved-searches'},
         {'name': 'discourse-solved'},
         {'name': 'discourse-spoiler-alert'},
+        {'name': 'discourse-subscriptions'},
+        {'name': 'discourse-tooltips'},
         {'name': 'discourse-voting'},
         {'name': 'discourse-yearly-review'},
+        {'name': 'discourse-zendesk-plugin'}
     ]
 
     for plugin in plugins:

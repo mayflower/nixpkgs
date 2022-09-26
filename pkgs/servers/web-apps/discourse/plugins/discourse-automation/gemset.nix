@@ -31,6 +31,16 @@
     };
     version = "1.12.0";
   };
+  iso8601 = {
+    groups = ["default"];
+    platforms = [];
+    source = {
+      remotes = ["https://rubygems.org"];
+      sha256 = "18js898rhh6byp0znvchiv6mcxi5l8v3v0bj2ddajpxynwajp319";
+      type = "gem";
+    };
+    version = "0.13.0";
+  };
   minitest = {
     groups = ["default"];
     platforms = [];

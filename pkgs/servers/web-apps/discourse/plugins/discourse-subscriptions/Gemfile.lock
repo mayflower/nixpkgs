@@ -1,0 +1,13 @@
+GEM
+  remote: https://rubygems.org/
+  specs:
+    stripe (5.29.0)
+
+PLATFORMS
+  ruby
+
+DEPENDENCIES
+  stripe (= 5.29.0)
+
+BUNDLED WITH
+   2.3.9
