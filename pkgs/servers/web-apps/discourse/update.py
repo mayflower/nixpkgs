@@ -294,6 +294,7 @@ def update_plugins():
         {'name': 'discourse-checklist'},
         {'name': 'discourse-data-explorer'},
         {'name': 'discourse-docs'},
+        {'name': 'discourse-events', 'owner': 'paviliondev'},
         {'name': 'discourse-footnote'},
         {'name': 'discourse-gamification'},
         {'name': 'discourse-github'},
