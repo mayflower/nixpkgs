@@ -29,6 +29,7 @@ buildGoModule rec {
   patches = [
     (fetchpatch {
       url = "https://github.com/minio/minio/commit/bc72e4226e669d98c8e0f3eccc9297be9251c692.patch";
+      name = "CVE-2022-35919.patch";
       sha256 = "sha256-420jff2B1eZArUs8NncWX6dQMMTGAfF1nNjzbwo6AUI=";
     })
   ];

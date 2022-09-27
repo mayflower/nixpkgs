@@ -3,10 +3,10 @@
 rec {
   firefox = buildMozillaMach rec {
     pname = "firefox";
-    version = "103.0.2";
+    version = "105.0";
     src = fetchurl {
       url = "mirror://mozilla/firefox/releases/${version}/source/firefox-${version}.source.tar.xz";
-      sha512 = "f13984bb551039c80ef731931f08a284f070142ecb479b31a4caad026a6b535e3fc7ae506b629e933ba5f5a1676f14b6b36d031d22584170492676f8727c822a";
+      sha512 = "a48f323f874b538402630a9094daa83189b3ca319feddc80fd66d087eca13f21c8b2d85be9c29e948c18cb7c524adac44e135adcde4d4592738e104ae9c1a734";
     };
 
     meta = {
@@ -28,11 +28,11 @@ rec {
 
   firefox-esr-102 = buildMozillaMach rec {
     pname = "firefox-esr";
-    version = "102.1.0esr";
+    version = "102.3.0esr";
     applicationName = "Mozilla Firefox ESR";
     src = fetchurl {
       url = "mirror://mozilla/firefox/releases/${version}/source/firefox-${version}.source.tar.xz";
-      sha512 = "2505b87ce4115445568eb6b7d8af41678bd787fd07f3f79e9f0a22d90cdf752ae5d4371856cf9c56e2d9da7d5b7c3939dc2aab5753fcc017398e7d65260f6f03";
+      sha512 = "35357791f4de8b474780083a22fb52b7846b8012cbf01403f2b9526151d11c196ce0f9fba8e0f16d8235d7259af6fba1bc3acbb5b7e79129a28f390467aa7556";
     };
 
     meta = {
@@ -54,11 +54,11 @@ rec {
 
   firefox-esr-91 = buildMozillaMach rec {
     pname = "firefox-esr";
-    version = "91.12.0esr";
+    version = "91.13.0esr";
     applicationName = "Mozilla Firefox ESR";
     src = fetchurl {
       url = "mirror://mozilla/firefox/releases/${version}/source/firefox-${version}.source.tar.xz";
-      sha512 = "323fb752488b45872b40f0b0ee1d8c1dffa16874dbff2afde19a54286c824ef48177233e029faeafa5946184e71c31c6bc5ba7ec17a571e21af64fc5f7334042";
+      sha512 = "38b4cc52de21e76d6061e6ba175e1cbfd888a16070aa951f5a44283f2db9d7e94f2504621f0da78feac6e71491a6d0e7038f63dd0ae112dcad700eb02e9aa516";
     };
 
     meta = {
@@ -70,6 +70,9 @@ rec {
       broken = stdenv.buildPlatform.is32bit; # since Firefox 60, build on 32-bit platforms fails with "out of memory".
                                              # not in `badPlatforms` because cross-compilation on 64-bit machine might work.
       license = lib.licenses.mpl20;
+      knownVulnerabilities = [
+        "Firefox 91.13.0esr was the last release in the 91esr series, which has reached the end of its life. Migrate to the 102esr series instead."
+      ];
     };
     tests = [ nixosTests.firefox-esr-91 ];
     updateScript = callPackage ./update.nix {

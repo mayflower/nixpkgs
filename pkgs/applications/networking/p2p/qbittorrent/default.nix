@@ -12,13 +12,13 @@ assert trackerSearch -> (python3 != null);
 with lib;
 mkDerivation rec {
   pname = "qbittorrent";
-  version = "4.4.2";
+  version = "4.4.3.1";
 
   src = fetchFromGitHub {
     owner = "qbittorrent";
     repo = "qBittorrent";
     rev = "release-${version}";
-    sha256 = "sha256-xBNN9YYKMDcoL1wvERjlAjV8vb2GVgwwlHtb5y0+f+8=";
+    sha256 = "sha256-byA6bzGdigmVptUFdgBjyg6Oimn5L6l1DDOuuBjwO0s=";
   };
 
   enableParallelBuilding = true;

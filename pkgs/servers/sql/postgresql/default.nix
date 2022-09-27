@@ -15,7 +15,7 @@ let
       , this, self, newScope, buildEnv
 
       # source specification
-      , version, sha256, psqlSchema,
+      , version, hash, psqlSchema,
 
       # for tests
       nixosTests, thisAttr
@@ -31,7 +31,7 @@ let
 
     src = fetchurl {
       url = "mirror://postgresql/source/v${version}/${pname}-${version}.tar.bz2";
-      inherit sha256;
+      inherit hash;
     };
 
     hardeningEnable = lib.optionals (!stdenv.cc.isClang) [ "pie" ];
@@ -202,9 +202,9 @@ let
 in self: {
 
   postgresql_10 = self.callPackage generic {
-    version = "10.21";
+    version = "10.22";
     psqlSchema = "10.0"; # should be 10, but changing it is invasive
-    sha256 = "sha256-0yGYhW1Sqab11QZC74ZoesBYvW78pcntV754CElvRdE=";
+    hash = "sha256-lVl3VVxp3xpk9EuB1KGYfrdKu9GHBXn1rZ2UYTPdjk0=";
     this = self.postgresql_10;
     thisAttr = "postgresql_10";
     inherit self;
@@ -212,9 +212,9 @@ in self: {
   };
 
   postgresql_11 = self.callPackage generic {
-    version = "11.16";
+    version = "11.17";
     psqlSchema = "11.1"; # should be 11, but changing it is invasive
-    sha256 = "sha256-LdnhEfCllJ7nyswGXOoPshCSkpuuMQzgW/AbT/xRA6U=";
+    hash = "sha256-bphJY64HZeYVd5lRA6fmWU2w8L0BUorBI+DeSmpMtMQ=";
     this = self.postgresql_11;
     thisAttr = "postgresql_11";
     inherit self;

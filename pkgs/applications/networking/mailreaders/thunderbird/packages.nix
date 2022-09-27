@@ -1,16 +1,16 @@
 { stdenv, lib, buildMozillaMach, callPackage, fetchurl, fetchpatch, nixosTests }:
 
 rec {
-  thunderbird = thunderbird-91;
+  thunderbird = thunderbird-102;
   thunderbird-91 = (buildMozillaMach rec {
     pname = "thunderbird";
-    version = "91.12.0";
+    version = "91.13.1";
     application = "comm/mail";
     applicationName = "Mozilla Thunderbird";
     binaryName = pname;
     src = fetchurl {
       url = "mirror://mozilla/thunderbird/releases/${version}/source/thunderbird-${version}.source.tar.xz";
-      sha512 = "1c0200a84ccc4124127d472713d72c4ff7ece8d61ad120d5c45c732a3ab4f86a2edfea23a8bf26e4739d24956654aec30e7bc59a28af17fbbf10f3d67466649a";
+      sha512 = "ca1bf821e6ca010c554fc111157af60e627ace7a0d43785ba39b260cd0606480dd5736c188c49ef6c3f1bda4b4c6870767b75e483241e7fd5a4290d689017e73";
     };
     extraPatches = [
       # The file to be patched is different from firefox's `no-buildconfig-ffx90.patch`.
@@ -38,13 +38,13 @@ rec {
   };
   thunderbird-102 = (buildMozillaMach rec {
     pname = "thunderbird";
-    version = "102.0.3";
+    version = "102.3.0";
     application = "comm/mail";
     applicationName = "Mozilla Thunderbird";
     binaryName = pname;
     src = fetchurl {
       url = "mirror://mozilla/thunderbird/releases/${version}/source/thunderbird-${version}.source.tar.xz";
-      sha512 = "ac9f22935ef558890c95cf7fbbbe32a5bb1b7140acb10088ed0d037d1ca5c6e11695c131eb40844807003b77e83b1dd2d9008df420ec394fed5008d5c4c6c3cb";
+      sha512 = "9b9908d9f7b1281df5b2c74a25211973e25d9b780f05b9550c89e5aeb8b39070c517a1a33d0d84a33ed26dbcef99058308b76c056bd4e34987c32f0600e3882e";
     };
     extraPatches = [
       # The file to be patched is different from firefox's `no-buildconfig-ffx90.patch`.
@@ -62,7 +62,7 @@ rec {
       license = licenses.mpl20;
     };
     updateScript = callPackage ./update.nix {
-      attrPath = "thunderbird-unwrapped";
+      attrPath = "thunderbird-102-unwrapped";
     };
   }).override {
     geolocationSupport = false;
