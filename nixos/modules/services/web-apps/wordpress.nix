@@ -97,7 +97,7 @@ let
 
         fontsDir = mkOption {
           type = types.path;
-          default = "/var/lib/wordpress/${name}/uploads";
+          default = "/var/lib/wordpress/${name}/fonts";
           description = ''
             This directory is used to download fonts from a remote location, e.g.
             to host google fonts locally.
