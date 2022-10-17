@@ -322,7 +322,7 @@ def update_plugins():
         {'name': 'discourse-voting'},
         {'name': 'discourse-whos-online'},
         {'name': 'discourse-yearly-review'},
-        {'name': 'discourse-zendesk-plugin'}
+        # {'name': 'discourse-zendesk-plugin'}
     ]
 
     for plugin in plugins:

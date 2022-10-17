@@ -6,8 +6,8 @@ mkDiscoursePlugin {
   src = fetchFromGitHub {
     owner = "discourse";
     repo = "discourse-saml";
-    rev = "e095be116d7570252a769d8bd78235e295d742b3";
-    sha256 = "sha256-LSMkBUj+00LgQl3KehqgsgT8+zlwsoHeJW0pcV9tTWM=";
+    rev = "e43b770cc9492d5ab08a3efef762511831e22fb5";
+    sha256 = "sha256-qgJb/f1dk37t02g5j1Ded9+hSAfjLeMXbTCC3sYSNBQ=";
   };
   meta = with lib; {
     homepage = "https://github.com/discourse/discourse-saml";

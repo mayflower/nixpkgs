@@ -5,10 +5,10 @@
     platforms = [];
     source = {
       remotes = ["https://rubygems.org"];
-      sha256 = "1dkirzlhrcqh49hsa41xbk0p2yra2f4fmvmsw5y9mpk64nb173qm";
+      sha256 = "11zfs0l8y2a6gpf0krm91d0ap2mnf04qky89dyzxwaspqxqgj174";
       type = "gem";
     };
-    version = "2.5.3";
+    version = "2.8.0";
   };
   ice_cube = {
     groups = ["default"];

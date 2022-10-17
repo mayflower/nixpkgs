@@ -6,8 +6,8 @@ mkDiscoursePlugin {
   src = fetchFromGitHub {
     owner = "paviliondev";
     repo = "discourse-events";
-    rev = "e291d766d06feb71a93de8de5cba0be9c0657f25";
-    sha256 = "sha256-aTNES7qVWLxRBNTSgRYW8c2eQJjP7IpZCSc5d8pDNls=";
+    rev = "0bd84303f441b01e8244d2d3a87f9f6c6d5b0601";
+    sha256 = "sha256-zV071KWnq6P9MVkTEd5FmccbK3eEia4+eq3+tnJWLPw=";
   };
   meta = with lib; {
     homepage = "https://github.com/paviliondev/discourse-events";
