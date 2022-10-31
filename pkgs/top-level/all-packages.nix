@@ -8651,7 +8651,7 @@ with pkgs;
   grocy = callPackage ../servers/grocy { };
 
   inherit (callPackage ../servers/nextcloud {})
-    nextcloud22 nextcloud23 nextcloud24;
+    nextcloud22 nextcloud23 nextcloud24 nextcloud25;
 
   nextcloud-client = libsForQt5.callPackage ../applications/networking/nextcloud-client { };
 
@@ -21011,6 +21011,8 @@ with pkgs;
 
   tomlcpp = callPackage ../development/libraries/tomlcpp { };
 
+  tomlplusplus = callPackage ../development/libraries/tomlplusplus { };
+
   tokyocabinet = callPackage ../development/libraries/tokyo-cabinet { };
 
   tokyotyrant = callPackage ../development/libraries/tokyo-tyrant { };
@@ -28551,6 +28553,8 @@ with pkgs;
 
   onlyoffice-bin = callPackage ../applications/office/onlyoffice-bin { };
 
+  opcr-policy = callPackage ../development/tools/opcr-policy { };
+
   open-policy-agent = callPackage ../development/tools/open-policy-agent { };
 
   openshift = callPackage ../applications/networking/cluster/openshift { };
@@ -32212,6 +32216,8 @@ with pkgs;
 
   polymc = libsForQt5.callPackage ../games/polymc { };
 
+  prismlauncher = libsForQt5.callPackage ../games/prismlauncher { };
+
   pong3d = callPackage ../games/pong3d { };
 
   pokerth = libsForQt5.callPackage ../games/pokerth {
@@ -34943,6 +34949,8 @@ with pkgs;
   unixcw = libsForQt5.callPackage ../applications/radio/unixcw { };
 
   vault = callPackage ../tools/security/vault { };
+
+  vault-medusa = callPackage ../tools/security/vault-medusa { };
 
   vault-bin = callPackage ../tools/security/vault/vault-bin.nix { };
 
