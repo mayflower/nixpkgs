@@ -5,8 +5,8 @@ mkDiscoursePlugin {
   src = fetchFromGitHub {
     owner = "discourse";
     repo = "discourse-lti";
-    rev = "1fdfbeb799584b531c9f86efaff135d0c1e2ff10";
-    sha256 = "sha256-qmxp/ysbCuaTaG0Vr1+pZAo+C/WB8OZEuFxV+25eKhU=";
+    rev = "48d0f2d27ea528db4a29bf7be490a982c947ea25";
+    sha256 = "sha256-j0ke4cCb9HlsmrIKGtXrYjVedDCabV1Amfia8zZX4kQ=";
   };
   meta = with lib; {
     homepage = "https://github.com/discourse/discourse-lti";
