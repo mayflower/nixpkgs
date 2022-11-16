@@ -284,7 +284,6 @@ def update_plugins():
     plugins = [
         {'name': 'discourse-adplugin'},
         {'name': 'discourse-akismet'},
-        {'name': 'discourse-apple-auth'},
         {'name': 'discourse-assign'},
         {'name': 'discourse-automation'},
         {'name': 'discourse-bbcode-color'},
@@ -295,7 +294,6 @@ def update_plugins():
         {'name': 'discourse-checklist'},
         {'name': 'discourse-data-explorer'},
         {'name': 'discourse-docs'},
-        {'name': 'discourse-events', 'owner': 'paviliondev'},
         {'name': 'discourse-follow'},
         {'name': 'discourse-footnote'},
         {'name': 'discourse-gamification'},
@@ -303,11 +301,9 @@ def update_plugins():
         {'name': 'discourse-graphviz'},
         {'name': 'discourse-ldap-auth', 'owner': 'jonmbake'},
         {'name': 'discourse-linkedin-auth'},
-        {'name': 'discourse-lti'},
         {'name': 'discourse-math'},
         {'name': 'discourse-migratepassword', 'owner': 'discoursehosting'},
         {'name': 'discourse-openid-connect'},
-        {'name': 'discourse-patreon'},
         {'name': 'discourse-policy'},
         {'name': 'discourse-prometheus'},
         {'name': 'discourse-push-notifications'},
@@ -322,7 +318,6 @@ def update_plugins():
         {'name': 'discourse-voting'},
         {'name': 'discourse-whos-online'},
         {'name': 'discourse-yearly-review'},
-        # {'name': 'discourse-zendesk-plugin'}
     ]
 
     for plugin in plugins:
