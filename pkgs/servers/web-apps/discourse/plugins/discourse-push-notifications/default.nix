@@ -5,8 +5,8 @@ mkDiscoursePlugin {
   src = fetchFromGitHub {
     owner = "discourse";
     repo = "discourse-push-notifications";
-    rev = "7035f0fdf202d48ecc60e738fc437d40fd2cde73";
-    sha256 = "sha256-Fml55AIQcWMSzNyubyi4GZEHzPgtAYKbWNK7SQMF4tI=";
+    rev = "87ffbf00e2c218ec42f69589ccfb17a78f6ad140";
+    sha256 = "sha256-bXujBuJSMVrsJHGWnNi189IqvbjorhjYQ8ufP4ocI2A=";
   };
   meta = with lib; {
     homepage = "https://github.com/discourse/discourse-push-notifications";

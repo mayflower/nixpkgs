@@ -16,10 +16,10 @@
     platforms = [];
     source = {
       remotes = ["https://rubygems.org"];
-      sha256 = "08k2237h8scznck4bdn04h33b495ca2kc0sh60kwzqn42s13m5cl";
+      sha256 = "1wyz9ab0mzi84gpf81fs19vrixglmmxi25k6n1mn9h141qmsp590";
       type = "gem";
     };
-    version = "2.7.0";
+    version = "2.7.1";
   };
   faraday-net_http = {
     groups = ["default"];

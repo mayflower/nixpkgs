@@ -5,8 +5,8 @@ mkDiscoursePlugin {
   src = fetchFromGitHub {
     owner = "discourse";
     repo = "discourse-gamification";
-    rev = "a0fd3386ba0cc413470029d493e39241c1321ac9";
-    sha256 = "sha256-J81y1B/UC5+ErdTu7VlRXmjuScP0DMGZfHNW72BDPxE=";
+    rev = "81846ed5b608588289a89fad204ec162f0988592";
+    sha256 = "sha256-f0Loa9IBfowiuiNeQjiFuILgzsQ+mTleNkWjGSpr23M=";
   };
   meta = with lib; {
     homepage = "https://github.com/discourse/discourse-gamification";
