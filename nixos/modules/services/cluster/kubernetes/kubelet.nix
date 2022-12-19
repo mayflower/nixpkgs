@@ -196,6 +196,12 @@ in
       type = bool;
     };
 
+    rootDir = mkOption {
+      description = lib.mdDoc "Directory path for managing kubelet files (volume mounts,etc).";
+      default = "/var/lib/kubelet";
+      type = path;
+    };
+
     port = mkOption {
       description = lib.mdDoc "Kubernetes kubelet info server listening port.";
       default = 10250;
@@ -256,6 +262,10 @@ in
         "net.ipv4.ip_forward"                 = 1;
         "net.bridge.bridge-nf-call-ip6tables" = 1;
       };
+
+      systemd.tmpfiles.rules = [
+        "d ${cfg.rootDir} 0755 kubernetes kubernetes -"
+      ];
 
       systemd.services.kubelet = {
         description = "Kubernetes Kubelet Service";
@@ -320,7 +330,7 @@ in
             --register-node=${boolToString cfg.registerNode} \
             ${optionalString (taints != "")
               "--register-with-taints=${taints}"} \
-            --root-dir=${top.dataDir} \
+            --root-dir=${cfg.rootDir} \
             ${optionalString (cfg.tlsCertFile != null)
               "--tls-cert-file=${cfg.tlsCertFile}"} \
             ${optionalString (cfg.tlsKeyFile != null)
@@ -330,7 +340,7 @@ in
             --cgroup-driver=systemd \
             ${cfg.extraOpts}
           '';
-          WorkingDirectory = top.dataDir;
+          WorkingDirectory = cfg.rootDir;
         };
         unitConfig = {
           StartLimitIntervalSec = 0;

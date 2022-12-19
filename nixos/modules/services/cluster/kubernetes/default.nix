@@ -291,7 +291,6 @@ in {
         "d /opt/cni/bin 0755 root root -"
         "d /run/kubernetes 0755 kubernetes kubernetes -"
         "d /var/lib/kubernetes 0755 kubernetes kubernetes -"
-        "d /var/lib/kubelet/plugins_registry 0755 kubernetes kubernetes -"
       ];
 
       users.users.kubernetes = {
