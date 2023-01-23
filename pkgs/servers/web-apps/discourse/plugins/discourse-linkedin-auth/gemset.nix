@@ -5,10 +5,10 @@
     platforms = [];
     source = {
       remotes = ["https://rubygems.org"];
-      sha256 = "1wyz9ab0mzi84gpf81fs19vrixglmmxi25k6n1mn9h141qmsp590";
+      sha256 = "1f20vjx0ywx0zdb4dfx4cpa7kd51z6vg7dw5hs35laa45dy9g9pj";
       type = "gem";
     };
-    version = "2.7.1";
+    version = "2.7.4";
   };
   faraday-net_http = {
     groups = ["default"];
@@ -35,10 +35,10 @@
     platforms = [];
     source = {
       remotes = ["https://rubygems.org"];
-      sha256 = "0kcmnx6rgjyd7sznai9ccns2nh7p7wnw3mi8a7vf2wkm51azwddq";
+      sha256 = "1x8zp1a2pnngxh7631s0kn0r665qkwzfp16kifmp93r4zj6ci8v8";
       type = "gem";
     };
-    version = "2.5.0";
+    version = "2.6.0";
   };
   multi_xml = {
     groups = ["default"];
@@ -67,10 +67,10 @@
     platforms = [];
     source = {
       remotes = ["https://rubygems.org"];
-      sha256 = "0013azz7kz2q6dy8131b1q5xwl7qa9nz5iqpn8i3ccn9br7j7xxz";
+      sha256 = "15xjsxis357np7dy1lak39x1n8g8wxljb08wplw5i4gxi743zr7j";
       type = "gem";
     };
-    version = "2.1.0";
+    version = "2.1.1";
   };
   omniauth-linkedin-oauth2 = {
     dependencies = ["omniauth-oauth2"];
@@ -99,10 +99,10 @@
     platforms = [];
     source = {
       remotes = ["https://rubygems.org"];
-      sha256 = "0g7zbq1rdm8qz9lciypnldz1n82y1b5zxcghvyy88iiaigbfiqqg";
+      sha256 = "1mq71mp22nw014979jqayxkm2kv2p9nzg0n0xdkfj5v6g0mh9q3g";
       type = "gem";
     };
-    version = "3.0.1";
+    version = "3.0.4.1";
   };
   rack-protection = {
     dependencies = ["rack"];
@@ -110,10 +110,10 @@
     platforms = [];
     source = {
       remotes = ["https://rubygems.org"];
-      sha256 = "1kljmw1lhzqjcwnwadr5m2khii0h2lsah447zb9vgirrv5jszg9h";
+      sha256 = "1a12m1mv8dc0g90fs1myvis8vsgr427k1arg1q4a9qlfw6fqyhis";
       type = "gem";
     };
-    version = "3.0.4";
+    version = "3.0.5";
   };
   ruby2_keywords = {
     groups = ["default"];

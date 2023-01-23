@@ -10,4 +10,4 @@ DEPENDENCIES
   stripe (= 5.29.0)
 
 BUNDLED WITH
-   2.3.25
+   2.3.26
