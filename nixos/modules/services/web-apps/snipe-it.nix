@@ -454,8 +454,7 @@ in {
 
           # A placeholder file for invalid barcodes
           invalid_barcode_location="${cfg.dataDir}/public/uploads/barcodes/invalid_barcode.gif"
-          if [ ! -e "$invalid_barcode_location" ]
-          then
+          if [ ! -e "$invalid_barcode_location" ]; then
               cp ${snipe-it}/share/snipe-it/invalid_barcode.gif "$invalid_barcode_location"
           fi
         '';

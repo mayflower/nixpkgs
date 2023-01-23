@@ -121,19 +121,19 @@
       sourceVersion = {
         major = "3";
         minor = "9";
-        patch = "15";
+        patch = "16";
         suffix = "";
       };
-      sha256 = "sha256-Etr/aAlSjZ9hVCFpUEI8njDw5HM2y1fGqgtDh91etLI=";
+      sha256 = "sha256-It3cCZJG3SdgZlVh6K23OU6gzEOnJoTGSA+TgPd4ZDk=";
     };
     python310 = {
       sourceVersion = {
         major = "3";
         minor = "10";
-        patch = "8";
+        patch = "9";
         suffix = "";
       };
-      sha256 = "sha256-ajDs3lnEcEgBPrWmWMm13sJ3ID0nk2Z/V433Zx9/A/M=";
+      sha256 = "sha256-WuA+MIJgFkuro5kh/bTb+ObQPYI1qTnUWCsz8LXkaoM=";
     };
   };
 
@@ -145,9 +145,9 @@ in {
       major = "2";
       minor = "7";
       patch = "18";
-      suffix = ".5"; # ActiveState's Python 2 extended support
+      suffix = ".6"; # ActiveState's Python 2 extended support
     };
-    sha256 = "sha256-f5A0go0mUEv8cXuXo0ZRNfGwNPjnDhP7KqhkETOoqsw=";
+    sha256 = "sha256-+I0QOBkuTHMIQz71lgNn1X1vjPsjJMtFbgC0xcGTwWY=";
     inherit (darwin) configd;
     inherit passthruFun;
   };
