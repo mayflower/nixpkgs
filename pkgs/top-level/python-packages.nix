@@ -4133,6 +4133,8 @@ self: super: with self; {
 
   hatch-fancy-pypi-readme = callPackage ../development/python-modules/hatch-fancy-pypi-readme { };
 
+  hatch-jupyter-builder = callPackage ../development/python-modules/hatch-jupyter-builder { };
+
   hatch-vcs = callPackage ../development/python-modules/hatch-vcs { };
 
   hatch-nodejs-version = callPackage ../development/python-modules/hatch-nodejs-version { };
@@ -4204,6 +4206,10 @@ self: super: with self; {
   hiredis = callPackage ../development/python-modules/hiredis { };
 
   hiro = callPackage ../development/python-modules/hiro { };
+
+  hist = callPackage ../development/python-modules/hist { };
+
+  histoprint = callPackage ../development/python-modules/histoprint { };
 
   hiyapyco = callPackage ../development/python-modules/hiyapyco { };
 
@@ -6456,6 +6462,8 @@ self: super: with self; {
   };
 
   opencensus = callPackage ../development/python-modules/opencensus { };
+
+  opencensus-context = callPackage ../development/python-modules/opencensus-context { };
 
   opencv3 = toPythonModule (pkgs.opencv3.override {
     enablePython = true;
@@ -8997,6 +9005,8 @@ self: super: with self; {
 
   python-dbusmock = callPackage ../development/python-modules/python-dbusmock { };
 
+  python-decouple = callPackage ../development/python-modules/python-decouple { };
+
   pythondialog = callPackage ../development/python-modules/pythondialog { };
 
   python-didl-lite = callPackage ../development/python-modules/python-didl-lite { };
@@ -11524,6 +11534,8 @@ self: super: with self; {
   uharfbuzz = callPackage ../development/python-modules/uharfbuzz {
     inherit (pkgs.darwin.apple_sdk.frameworks) ApplicationServices;
   };
+
+  uhi = callPackage ../development/python-modules/uhi { };
 
   ujson = callPackage ../development/python-modules/ujson { };
 

@@ -25,4 +25,4 @@ DEPENDENCIES
   rubyntlm (= 0.3.4)
 
 BUNDLED WITH
-   2.3.26
+   2.4.6

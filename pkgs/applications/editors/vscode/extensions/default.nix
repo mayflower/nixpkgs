@@ -708,8 +708,13 @@ let
           version = "2.2.6";
           sha256 = "sha256-1yZeyLrXuubhKzobWcd00F/CdU824uJDTkB6qlHkJlQ=";
         };
-        meta = {
-          license = lib.licenses.mit;
+        meta = with lib; {
+          changelog = "https://marketplace.visualstudio.com/items/dbaeumer.vscode-eslint/changelog";
+          description = "Integrates ESLint JavaScript into VS Code.";
+          downloadPage = "https://marketplace.visualstudio.com/items?itemName=dbaeumer.vscode-eslint";
+          homepage = "https://github.com/Microsoft/vscode-eslint";
+          license = licenses.mit;
+          maintainers = with maintainers; [ datafoo ];
         };
       };
 
@@ -730,8 +735,8 @@ let
         mktplcRef = {
           name = "vscode-markdownlint";
           publisher = "DavidAnson";
-          version = "0.48.1";
-          sha256 = "sha256-3TpZGvas+pfabHayaA6Yd9nOO2MbfXbCvCiTcbja9Vo=";
+          version = "0.49.0";
+          sha256 = "sha256-Mh/OoRK410aXEr3sK2CYFDsXGSqFT+JOWi9jHOdK01Y=";
         };
         meta = with lib; {
           changelog = "https://marketplace.visualstudio.com/items/DavidAnson.vscode-markdownlint/changelog";
@@ -966,8 +971,8 @@ let
         mktplcRef = {
           name = "prettier-vscode";
           publisher = "esbenp";
-          version = "9.10.3";
-          sha256 = "sha256-BTuTTElPYRtbzQvUC3iMYlj7NDkGSDa/IppOGBXjfUM=";
+          version = "9.10.4";
+          sha256 = "sha256-khtyB0Qbm+iuM1GsAaF32YRv1VBTIy7daeCKdgwCIC8=";
         };
         meta = with lib; {
           changelog = "https://marketplace.visualstudio.com/items/esbenp.prettier-vscode/changelog";
@@ -1406,8 +1411,8 @@ let
         mktplcRef = {
           name = "elixir-ls";
           publisher = "JakeBecker";
-          version = "0.12.0";
-          sha256 = "sha256-ZwdGcsvmEKDH5ZAkKiLEV/3ru74BittnxibMWbdkaco=";
+          version = "0.13.0";
+          sha256 = "sha256-1uaLFTMvkcYrYAt9qDdISJneKxHo9qsris70iowGW2s=";
         };
         meta = with lib; {
           changelog = "https://marketplace.visualstudio.com/items/JakeBecker.elixir-ls/changelog";
@@ -1686,6 +1691,23 @@ let
           sha256 = "sha256-eaiR30HjPCpOLUKQqiQ2Oqj+XY+JNnV47bM5KD2Mouk=";
         };
         meta.license = lib.licenses.mit;
+      };
+
+      matthewpi.caddyfile-support = buildVscodeMarketplaceExtension {
+        mktplcRef = {
+          name = "caddyfile-support";
+          publisher = "matthewpi";
+          version = "0.2.4";
+          sha256 = "sha256-7D7fNlI55MxD6M8ml/dzBAMwCGCEkC+9aKhreZCVMv4=";
+        };
+        meta = {
+          description = "Rich Caddyfile support for Visual Studio Code";
+          downloadPage = "https://marketplace.visualstudio.com/items?itemName=matthewpi.caddyfile-support";
+          homepage = "https://github.com/caddyserver/vscode-caddyfile";
+          changelog = "https://marketplace.visualstudio.com/items/matthewpi.caddyfile-support/changelog";
+          license = lib.licenses.mit;
+          maintainers = with lib.maintainers; [ matthewpi ];
+        };
       };
 
       mattn.lisp = buildVscodeMarketplaceExtension {
@@ -2517,8 +2539,8 @@ let
         mktplcRef = {
           name = "code-spell-checker";
           publisher = "streetsidesoftware";
-          version = "2.12.0";
-          sha256 = "sha256-Dhd0QVWdCCvdGKuu8OB4KrBS0XUHWLzRSyreAf7sGLU=";
+          version = "2.17.1";
+          sha256 = "sha256-gQSAq63fqniHmA9T0nKpUAzo+kpSCZzblr6FQ33LIPI=";
         };
         meta = with lib; {
           changelog = "https://marketplace.visualstudio.com/items/streetsidesoftware.code-spell-checker/changelog";
