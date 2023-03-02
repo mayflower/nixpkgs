@@ -6,8 +6,8 @@ mkDiscoursePlugin {
   src = fetchFromGitHub {
     owner = "discourse";
     repo = "discourse-linkedin-auth";
-    rev = "f61edd0a64ae9366dbeccbabf549cff4330117c6";
-    sha256 = "sha256-5Fl24IzxDcG+eRRY+E/kfoSdHEAZcU9xWEg3rSmK2dU=";
+    rev = "2d370ef73cdd494a98419ca1fda2ced6540bd03d";
+    sha256 = "sha256-9hmPW5N7Bq0fV3JvatabChVZWJnmOYt7zU32GhC17iU=";
   };
   meta = with lib; {
     homepage = "https://github.com/discourse/discourse-linkedin-auth";

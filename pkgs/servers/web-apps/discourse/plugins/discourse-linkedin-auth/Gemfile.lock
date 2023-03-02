@@ -6,7 +6,7 @@ GEM
       ruby2_keywords (>= 0.0.4)
     faraday-net_http (3.0.2)
     hashie (5.0.0)
-    jwt (2.6.0)
+    jwt (2.7.0)
     multi_xml (0.6.0)
     oauth2 (2.0.9)
       faraday (>= 0.17.3, < 3.0)
@@ -40,4 +40,4 @@ DEPENDENCIES
   omniauth-linkedin-oauth2 (= 1.0.0)
 
 BUNDLED WITH
-   2.3.26
+   2.4.6

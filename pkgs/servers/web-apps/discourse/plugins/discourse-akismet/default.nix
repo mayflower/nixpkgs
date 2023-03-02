@@ -5,8 +5,8 @@ mkDiscoursePlugin {
   src = fetchFromGitHub {
     owner = "discourse";
     repo = "discourse-akismet";
-    rev = "ba0feb61d798349c2343ec30a42f7372bc5e16ab";
-    sha256 = "sha256-5cGE3YoTyWxhnxbARcgiRj043Em+mdzVOQhxUX0XQx4=";
+    rev = "56939aa6a19833282ee2c755491f14b535396d31";
+    sha256 = "sha256-+rf00n2hQ0GTq7iEKypQ/QnfwTFsgKC2QUiqKp0alUk=";
   };
   meta = with lib; {
     homepage = "https://github.com/discourse/discourse-akismet";

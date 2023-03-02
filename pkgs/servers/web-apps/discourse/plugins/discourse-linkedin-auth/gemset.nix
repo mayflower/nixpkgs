@@ -35,10 +35,10 @@
     platforms = [];
     source = {
       remotes = ["https://rubygems.org"];
-      sha256 = "1x8zp1a2pnngxh7631s0kn0r665qkwzfp16kifmp93r4zj6ci8v8";
+      sha256 = "09yj3z5snhaawh2z1w45yyihzmh57m6m7dp8ra8gxavhj5kbiq5p";
       type = "gem";
     };
-    version = "2.6.0";
+    version = "2.7.0";
   };
   multi_xml = {
     groups = ["default"];
