@@ -7704,6 +7704,8 @@ with pkgs;
 
   pxz = callPackage ../tools/compression/pxz { };
 
+  hagrid = callPackage ../servers/web-apps/hagrid {};
+
   haguichi = callPackage ../tools/networking/haguichi { };
 
   hans = callPackage ../tools/networking/hans { };
