@@ -2399,6 +2399,8 @@ with pkgs;
     electron = electron_13;
   };
 
+  biscuit-cli = callPackage ../tools/security/biscuit-cli { };
+
   bit = callPackage ../applications/version-management/git-and-tools/bit { };
 
   bitwarden = callPackage ../tools/security/bitwarden { };
@@ -3943,7 +3945,7 @@ with pkgs;
 
   element-desktop = callPackage ../applications/networking/instant-messengers/element/element-desktop.nix {
     inherit (darwin.apple_sdk.frameworks) Security AppKit CoreServices;
-    electron = electron_20;
+    electron = electron_23;
   };
   element-desktop-wayland = writeScriptBin "element-desktop" ''
     #!/bin/sh
@@ -8643,7 +8645,9 @@ with pkgs;
 
   mautrix-telegram = recurseIntoAttrs (callPackage ../servers/mautrix-telegram { });
 
-  mautrix-whatsapp = callPackage ../servers/mautrix-whatsapp { };
+  mautrix-whatsapp = callPackage ../servers/mautrix-whatsapp {
+    buildGoModule = buildGo120Module;
+  };
 
   mcfly = callPackage ../tools/misc/mcfly { };
 
@@ -9625,7 +9629,7 @@ with pkgs;
   grocy = callPackage ../servers/grocy { };
 
   inherit (callPackage ../servers/nextcloud {})
-    nextcloud23 nextcloud24 nextcloud25;
+    nextcloud23 nextcloud24 nextcloud25 nextcloud26;
 
   nextcloud23Packages = ( callPackage ../servers/nextcloud/packages {
     apps = lib.importJSON ../servers/nextcloud/packages/23.json;
@@ -9635,6 +9639,9 @@ with pkgs;
   });
   nextcloud25Packages = ( callPackage ../servers/nextcloud/packages {
     apps = lib.importJSON ../servers/nextcloud/packages/25.json;
+  });
+  nextcloud26Packages = ( callPackage ../servers/nextcloud/packages {
+    apps = lib.importJSON ../servers/nextcloud/packages/26.json;
   });
 
   nextcloud-client = libsForQt5.callPackage ../applications/networking/nextcloud-client { };
@@ -16382,7 +16389,8 @@ with pkgs;
     electron_19
     electron_20
     electron_21
-    electron_22;
+    electron_22
+    electron_23;
 
   autobuild = callPackage ../development/tools/misc/autobuild { };
 
@@ -24602,7 +24610,10 @@ with pkgs;
 
   systemd-journal2gelf = callPackage ../tools/system/systemd-journal2gelf { };
 
-  tailscale = callPackage ../servers/tailscale { };
+  tailscale = callPackage ../servers/tailscale {
+    # Version 1.38.1 requires Go >= 1.20
+    buildGoModule = buildGo120Module;
+  };
 
   tailspin = callPackage ../tools/misc/tailspin { };
 
@@ -28633,6 +28644,7 @@ with pkgs;
     dlm = callPackage ../applications/display-managers/greetd/dlm.nix { };
     greetd = callPackage ../applications/display-managers/greetd { };
     gtkgreet = callPackage ../applications/display-managers/greetd/gtkgreet.nix { };
+    regreet = callPackage ../applications/display-managers/greetd/regreet.nix { };
     tuigreet = callPackage ../applications/display-managers/greetd/tuigreet.nix { };
     wlgreet = callPackage ../applications/display-managers/greetd/wlgreet.nix { };
   };
@@ -29931,6 +29943,8 @@ with pkgs;
   kubernetes = callPackage ../applications/networking/cluster/kubernetes { };
   kubectl = callPackage ../applications/networking/cluster/kubernetes/kubectl.nix { };
   kubectl-convert = kubectl.convert;
+
+  kubernetes-metrics-server = callPackage ../applications/networking/cluster/kubernetes-metrics-server { };
 
   kubemqctl = callPackage ../applications/networking/cluster/kubemqctl { };
 
@@ -32754,7 +32768,8 @@ with pkgs;
 
   qpdfview = libsForQt5.callPackage ../applications/misc/qpdfview {};
 
-  qtile = callPackage ../applications/window-managers/qtile { };
+  qtile-unwrapped = callPackage ../applications/window-managers/qtile { };
+  qtile = callPackage ../applications/window-managers/qtile/wrapper.nix { };
 
   vimgolf = callPackage ../games/vimgolf { };
 
@@ -37160,7 +37175,7 @@ with pkgs;
     gtk2 = gtk2-x11;
   };
 
-  qMasterPassword = qt6Packages.callPackage ../applications/misc/qMasterPassword { };
+  qMasterPassword = libsForQt5.callPackage ../applications/misc/qMasterPassword { };
 
   qtrvsim = libsForQt5.callPackage ../applications/science/computer-architecture/qtrvsim { };
 

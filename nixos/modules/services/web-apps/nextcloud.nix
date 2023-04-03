@@ -204,7 +204,7 @@ in {
     package = mkOption {
       type = types.package;
       description = lib.mdDoc "Which package to use for the Nextcloud instance.";
-      relatedPackages = [ "nextcloud24" "nextcloud25" ];
+      relatedPackages = [ "nextcloud24" "nextcloud25" "nextcloud26" ];
     };
     phpPackage = mkOption {
       type = types.package;
@@ -958,6 +958,9 @@ in {
           '';
           serviceConfig.Type = "oneshot";
           serviceConfig.User = "nextcloud";
+          # On Nextcloud ≥ 26, it is not necessary to patch the database files to prevent
+          # an automatic creation of the database user.
+          environment.NC_setup_create_db_user = lib.mkIf (nextcloudGreaterOrEqualThan "26") "false";
         };
         nextcloud-cron = {
           after = [ "nextcloud-setup.service" ];
@@ -1118,7 +1121,7 @@ in {
           ${optionalString (cfg.nginx.recommendedHttpHeaders) ''
             add_header X-Content-Type-Options nosniff;
             add_header X-XSS-Protection "1; mode=block";
-            add_header X-Robots-Tag none;
+            add_header X-Robots-Tag "noindex, nofollow";
             add_header X-Download-Options noopen;
             add_header X-Permitted-Cross-Domain-Policies none;
             add_header X-Frame-Options sameorigin;
