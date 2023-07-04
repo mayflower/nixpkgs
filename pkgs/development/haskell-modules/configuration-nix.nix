@@ -290,11 +290,14 @@ self: super: builtins.intersectAttrs super {
     src = assert super.nix-serve-ng.version == "1.0.0";
       # Workaround missing files in sdist
       # https://github.com/aristanetworks/nix-serve-ng/issues/10
+      #
+      # Workaround for libstore incompatibility with Nix 2.13
+      # https://github.com/aristanetworks/nix-serve-ng/issues/22
       pkgs.fetchFromGitHub {
         repo = "nix-serve-ng";
         owner = "aristanetworks";
-        rev = "433f70f4daae156b84853f5aaa11987aa5ce7277";
-        sha256 = "0mqp67z5mi8rsjahdh395n7ppf0b65k8rd3pvnl281g02rbr69y2";
+        rev = "dabf46d65d8e3be80fa2eacd229eb3e621add4bd";
+        hash = "sha256-SoJJ3rMtDMfUzBSzuGMY538HDIj/s8bPf8CjIkpqY2w=";
       };
   } (addPkgconfigDepend pkgs.boost.dev super.nix-serve-ng);
 
@@ -907,9 +910,6 @@ self: super: builtins.intersectAttrs super {
   # Pass the correct libarchive into the package.
   streamly-archive = super.streamly-archive.override { archive = pkgs.libarchive; };
 
-  # Pass the correct lmdb into the package.
-  streamly-lmdb = super.streamly-lmdb.override { lmdb = pkgs.lmdb; };
-
   hlint = overrideCabal (drv: {
     postInstall = ''
       install -Dm644 data/hlint.1 -t "$out/share/man/man1"
@@ -1246,4 +1246,7 @@ self: super: builtins.intersectAttrs super {
   # Disable checks to break dependency loop with SCalendar
   scalendar = dontCheck super.scalendar;
 
+  # Sydtest has a brittle test suite that will only work with the exact
+  # versions that it ships with.
+  sydtest = dontCheck super.sydtest;
 }

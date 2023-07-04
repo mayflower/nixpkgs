@@ -282431,8 +282431,6 @@ self: {
        testToolDepends = [ sydtest-discover ];
        description = "A modern testing framework for Haskell with good defaults and advanced testing features";
        license = "unknown";
-       hydraPlatforms = lib.platforms.none;
-       broken = true;
      }) {};
 
   "sydtest_0_15_0_0" = callPackage

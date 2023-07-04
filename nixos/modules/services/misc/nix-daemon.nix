@@ -641,7 +641,7 @@ in
         '';
         description = lib.mdDoc ''
           Configuration for Nix, see
-          <https://nixos.org/manual/nix/stable/#sec-conf-file> or
+          <https://nixos.org/manual/nix/stable/command-ref/conf-file.html> or
           {manpage}`nix.conf(5)` for available options.
           The value declared here will be translated directly to the key-value pairs Nix expects.
 
@@ -649,7 +649,7 @@ in
           to view the current value. By default it is empty.
 
           Nix configurations defined under {option}`nix.*` will be translated and applied to this
-          option. In addition, configuration specified in {option}`nix.extraOptions` which will be appended
+          option. In addition, configuration specified in {option}`nix.extraOptions` will be appended
           verbatim to the resulting config file.
         '';
       };

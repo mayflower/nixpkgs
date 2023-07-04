@@ -178,6 +178,11 @@ in mkLicense lset) ({
     fullName = ''BSD 3-clause "New" or "Revised" License'';
   };
 
+  bsd3Clear = {
+    spdxId = "BSD-3-Clause-Clear";
+    fullName = "BSD 3-Clause Clear License";
+  };
+
   bsdOriginal = {
     spdxId = "BSD-4-Clause";
     fullName = ''BSD 4-clause "Original" or "Old" License'';
@@ -745,6 +750,12 @@ in mkLicense lset) ({
   mspl = {
     spdxId = "MS-PL";
     fullName = "Microsoft Public License";
+  };
+
+  mulan-psl2 = {
+    spdxId = "MulanPSL-2.0";
+    fullName = "Mulan Permissive Software License, Version 2";
+    url = "https://license.coscl.org.cn/MulanPSL2";
   };
 
   nasa13 = {
