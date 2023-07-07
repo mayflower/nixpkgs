@@ -5,10 +5,10 @@
     platforms = [];
     source = {
       remotes = ["https://rubygems.org"];
-      sha256 = "1c7k5i6531z5il4q1jnbrv7x7zcl3bgnxp5fzl71rzigk6zn53ym";
+      sha256 = "1cjsf26656996hv48wgv2mkwxf0fy1qc68ikgzq7mzfq2mmvmayk";
       type = "gem";
     };
-    version = "7.0.5";
+    version = "7.0.6";
   };
   concurrent-ruby = {
     groups = ["default"];
@@ -36,10 +36,10 @@
     platforms = [];
     source = {
       remotes = ["https://rubygems.org"];
-      sha256 = "0ic7i5z88zcaqnpzprf7saimq2f6sad57g5mkkqsrqrcd6h3mx06";
+      sha256 = "1kg9wh7jlc9zsr3hkhpzkbn0ynf4np5ap9m2d8xdrb8shy0y6pmb";
       type = "gem";
     };
-    version = "5.18.0";
+    version = "5.18.1";
   };
   rrule = {
     dependencies = ["activesupport"];

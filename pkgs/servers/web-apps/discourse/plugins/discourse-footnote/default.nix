@@ -5,8 +5,8 @@ mkDiscoursePlugin {
   src = fetchFromGitHub {
     owner = "discourse";
     repo = "discourse-footnote";
-    rev = "0c93e3034721b297c6d212e7e4624a223d13354e";
-    sha256 = "sha256-HNZIeUK+RJFVGAGoyW/V0Ckb57BBGfxGchvmoxeuNuY=";
+    rev = "f7b08b8e41181bf92bf8489c305238ce0c9baf2a";
+    sha256 = "sha256-QRTtBSTDwIDMF18xIht7mh/DldEQ1MvTjfOrkdmCj0I=";
   };
   meta = with lib; {
     homepage = "https://github.com/discourse/discourse-footnote";

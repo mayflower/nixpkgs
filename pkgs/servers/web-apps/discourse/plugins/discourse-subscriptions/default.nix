@@ -6,8 +6,8 @@ mkDiscoursePlugin {
   src = fetchFromGitHub {
     owner = "discourse";
     repo = "discourse-subscriptions";
-    rev = "e365ced5312f970ec7b232040ccf09782c151529";
-    sha256 = "sha256-c5eARk7egL9vMfFlF0Qs9n/g2800Phjm1JZDGiIRW/o=";
+    rev = "00e5bc16140ea45a7a147300a5822ad2f964a3c4";
+    sha256 = "sha256-egViDyKNT8I/vX3yBhZlzx3r8JOe5H/pcs1ykZXxGXU=";
   };
   meta = with lib; {
     homepage = "https://github.com/discourse/discourse-subscriptions";

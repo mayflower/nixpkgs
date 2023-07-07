@@ -31,7 +31,6 @@ in
   discourse-patreon = callPackage ./discourse-patreon {};
   discourse-policy = callPackage ./discourse-policy {};
   discourse-prometheus = callPackage ./discourse-prometheus {};
-  discourse-push-notifications = callPackage ./discourse-push-notifications {};
   discourse-reactions = callPackage ./discourse-reactions {};
   discourse-saml = callPackage ./discourse-saml {};
   discourse-saved-searches = callPackage ./discourse-saved-searches {};

@@ -38,7 +38,7 @@
 , fixup_yarn_lock
 , nodePackages
 , nodejs_16
-, dart-sass-embedded
+, dart-sass
 , jq
 , moreutils
 
@@ -46,13 +46,13 @@
 }@args:
 
 let
-  version = "3.1.0.beta4";
+  version = "3.1.0.beta5";
 
   src = fetchFromGitHub {
     owner = "discourse";
     repo = "discourse";
     rev = "v${version}";
-    sha256 = "sha256-22GXFYPjPYL20amR4xFB4L/dCp32H4Z3uf0GLGEghUE=";
+    sha256 = "sha256-jS0RmPfME5L4WTC9RrcG/8wensxgUSnj07Tk/UR2kxM=";
   };
 
   ruby = ruby_3_2;
@@ -191,16 +191,10 @@ let
           };
           sass-embedded = gems.sass-embedded // {
             dontBuild = false;
-            # `sass-embedded` depends on `dart-sass-embedded` and tries to
-            # fetch that as `.tar.gz` from GitHub releases. That `.tar.gz`
-            # can also be specified via `SASS_EMBEDDED`. But instead of
-            # compressing our `dart-sass-embedded` just to decompress it
-            # again, we simply patch the Rakefile to symlink that path.
-            patches = [
-              ./rubyEnv/sass-embedded-static.patch
-            ];
             postPatch = ''
-              export SASS_EMBEDDED=${dart-sass-embedded}/bin
+              substituteInPlace ext/sass/Rakefile \
+                --replace \'dart-sass/sass\' \'${dart-sass}/bin/sass\' \
+                --replace ' => %w[dart-sass]' ""
             '';
           };
         };
@@ -216,7 +210,7 @@ let
 
     yarnOfflineCache = fetchYarnDeps {
       yarnLock = src + "/app/assets/javascripts/yarn.lock";
-      sha256 = "0a20kns4irdpzzx2dvdjbi0m3s754gp737q08z5nlcnffxqvykrk";
+      sha256 = "0n57q4yy0sg5m7m2snzgd44c6d1m95m2p03xbzlrghvd2zhh84hk";
     };
 
     nativeBuildInputs = runtimeDeps ++ [

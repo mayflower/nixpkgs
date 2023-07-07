@@ -2,20 +2,14 @@ diff --git a/ext/sass/Rakefile b/ext/sass/Rakefile
 index 77ced01..1e60ab0 100644
 --- a/ext/sass/Rakefile
 +++ b/ext/sass/Rakefile
-@@ -18,15 +18,7 @@ file 'protoc.exe' do |t|
+@@ -18,9 +18,7 @@ file 'protoc.exe' do |t|
  end
  
- file 'sass_embedded' do |t|
--  archive = fetch(ENV.fetch(t.name.upcase) { Configuration.default_sass_embedded })
+ file 'dart-sass' do |t|
+-  archive = fetch(ENV.fetch(t.name.tr('-', '_').upcase) { Configuration.default_dart_sass })
 -  unarchive archive
 -  rm archive
--
--  if ENV.key?('NIX_BINTOOLS')
--    sh 'patchelf',
--       '--set-interpreter', File.read("#{ENV.fetch('NIX_BINTOOLS')}/nix-support/dynamic-linker").chomp,
--       (['sass_embedded/src/dart', 'sass_embedded/dart-sass-embedded'].find { |exe| File.exist?(exe) })
--  end
-+  symlink(ENV.fetch(t.name.upcase), 'sass_embedded')
++  symlink(ENV.fetch(t.name.tr('-', '_').upcase), 'dart-sass')
  end
  
- file 'embedded.rb' => %w[sass_embedded] do |t|
+ file 'cli.rb' => %w[dart-sass] do |t|
