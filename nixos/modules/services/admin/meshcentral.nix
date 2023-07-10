@@ -24,7 +24,7 @@ in with lib; {
     };
     secrets = mkOption {
       type = types.submodule {
-        freeformType = let t = with types; attrsOf (oneOf [ t str ]); in t;
+        freeformType = let t = with types; attrsOf (oneOf [ t str ]); in t // { description = "injectable secrets"; };
       };
       example = literalExpression ''
         {
