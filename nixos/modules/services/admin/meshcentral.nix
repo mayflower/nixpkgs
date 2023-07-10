@@ -3,6 +3,16 @@ let
   cfg = config.services.meshcentral;
   configFormat = pkgs.formats.json {};
   configFile = configFormat.generate "meshcentral-config.json" cfg.settings;
+  gatherSecrets = prefix: lib.foldlAttrs
+    (acc: k: v:
+      let path = prefix ++ [ k ]; in
+      acc ++ (if lib.isAttrs v then gatherSecrets path v else lib.singleton {
+        inherit path;
+        id = lib.concatStrings path;
+        filepath = v;
+      }))
+    [ ];
+  secretsToLoad = gatherSecrets [ ] cfg.secrets;
 in with lib; {
   options.services.meshcentral = with types; {
     enable = mkEnableOption (lib.mdDoc "MeshCentral computer management server");
@@ -11,6 +21,22 @@ in with lib; {
       type = types.package;
       default = pkgs.meshcentral;
       defaultText = literalExpression "pkgs.meshcentral";
+    };
+    secrets = mkOption {
+      type = types.submodule {
+        freeformType = let t = with types; attrsOf (oneOf [ t str ]); in t;
+      };
+      example = literalExpression ''
+        {
+          domains."".authStrategies.oidc.clientsecret = "/path/to/oidc-client-secret";
+        }
+      '';
+      description = lib.mdDoc ''
+        Secrets in the same JSON schema as the config itself. The values are paths to secret-files.
+        The _content_ of the file is being injected into the JSON path of the configuration file.
+        I.e. in the example, `domains."".authStrategies.oidc.clientsecret` in the final configfile would
+        have the value of `/path/to/oidc-client-secret`.
+      '';
     };
     settings = mkOption {
       description = lib.mdDoc ''
@@ -36,14 +62,27 @@ in with lib; {
     };
   };
   config = mkIf cfg.enable {
-    services.meshcentral.settings.settings.autoBackup.backupPath = lib.mkDefault "/var/lib/meshcentral/backups";
+    services.meshcentral.settings = lib.mkMerge ([
+      { settings.autoBackup.backupPath = lib.mkDefault "/var/lib/meshcentral/backups"; }
+    ] ++ lib.forEach secretsToLoad ({ id, path, ... }: lib.setAttrByPath path "@secret_${id}@"));
     systemd.services.meshcentral = {
       wantedBy = ["multi-user.target"];
       serviceConfig = {
-        ExecStart = "${cfg.package}/bin/meshcentral --datapath /var/lib/meshcentral --configfile ${configFile}";
+        ExecStart = "${cfg.package}/bin/meshcentral --datapath /var/lib/meshcentral --configfile /var/lib/meshcentral/meshcentral-config.json";
+        ExecStartPre = "${pkgs.writeShellScript "meshcentral-init-secrets" ''
+          cp -v "${configFile}" ''${STATE_DIRECTORY}/meshcentral-config.json
+          chmod u+w ''${STATE_DIRECTORY}/meshcentral-config.json
+          ${lib.concatMapStrings ({ id, ... }: ''
+            ${pkgs.replace-secret}/bin/replace-secret \
+              '@secret_${id}@' \
+              ''${CREDENTIALS_DIRECTORY}/${id} \
+              ''${STATE_DIRECTORY}/meshcentral-config.json
+          '') secretsToLoad}
+        ''}";
         DynamicUser = true;
         StateDirectory = "meshcentral";
         CacheDirectory = "meshcentral";
+        LoadCredential = map ({ id, filepath, ... }: "${id}:${filepath}") secretsToLoad;
       };
     };
   };
