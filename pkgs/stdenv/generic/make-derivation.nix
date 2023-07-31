@@ -479,7 +479,26 @@ else let
   checkedEnv =
     let
       overlappingNames = lib.attrNames (builtins.intersectAttrs env derivationArg);
+      name = attrs.name or "${attrs.pname}-${attrs.version}";
     in
+    assert lib.assertMsg (__structuredAttrs -> lib.isList (attrs.buildFlags or [])) "${name}: buildFlags is not a list";
+    assert lib.assertMsg (__structuredAttrs -> lib.isList configureFlags) "${name}: configureFlags is not a list";
+    assert lib.assertMsg (__structuredAttrs -> lib.isList cmakeFlags) "${name}: cmakeFlags is not a list";
+    assert lib.assertMsg (__structuredAttrs -> lib.isList (attrs.makeFlags or [])) "${name}: makeFlags is not a list";
+    assert lib.assertMsg (__structuredAttrs -> lib.isList (attrs.checkFlags or [])) "${name}: checkFlags is not a list";
+    assert lib.assertMsg (__structuredAttrs -> lib.isList (attrs.patchFlags or [])) "${name}: patchFlags is not a list";
+    assert lib.assertMsg (__structuredAttrs -> lib.isList (attrs.installFlags or [])) "${name}: installFlags is not a list";
+    assert lib.assertMsg (__structuredAttrs -> lib.isList (attrs.installTargets or [])) "${name}: installTargets is not a list";
+    assert lib.assertMsg (__structuredAttrs -> !(attrs ? CPATH)) "${name}: CPATH is not in env";
+    assert lib.assertMsg (__structuredAttrs -> !(attrs ? LIBRARY_PATH)) "${name}: LIBRARY_PATH is not in env";
+    assert lib.assertMsg (__structuredAttrs -> !(attrs ? CFLAGS)) "${name}: CFLAGS is not in env";
+    assert lib.assertMsg (__structuredAttrs -> !(attrs ? CXXFLAGS)) "${name}: CXXFLAGS is not in env";
+    assert lib.assertMsg (__structuredAttrs -> !(attrs ? LDFLAGS)) "${name}: LDFLAGS is not in env";
+    assert lib.assertMsg (__structuredAttrs -> !(attrs ? NIX_LDFLAGS)) "${name}: NIX_LDFLAGS is not in env";
+    assert lib.assertMsg (__structuredAttrs -> !(attrs ? NIX_CFLAGS_COMPILE)) "${name}: NIX_CFLAGS_COMPILE is not in env";
+    assert lib.assertMsg (__structuredAttrs -> !(attrs ? NIX_CFLAGS_LINK)) "${name}: NIX_CFLAGS_LINK is not in env";
+    assert lib.assertMsg (__structuredAttrs -> !(attrs ? NIX_NO_SELF_RPATH)) "${name}: NIX_NO_SELF_RPATH is not in env";
+    assert lib.assertMsg (__structuredAttrs -> !(attrs ? NIX_DONT_SET_RPATH)) "${name}: NIX_DONT_SET_RPATH is not in env";
     assert lib.assertMsg envIsExportable
       "When using structured attributes, `env` must be an attribute set of environment variables.";
     assert lib.assertMsg (overlappingNames == [ ])
