@@ -29,12 +29,14 @@ in stdenv.mkDerivation rec {
     hash = "sha256-upb5lWqhC1jRegzTncIz5e21v4Pw912FyVn217HucFs=";
   };
 
-  NIX_LDFLAGS = lib.optionalString stdenv.isSunOS "-lsocket -lnsl";
+  env = {
+    NIX_LDFLAGS = lib.optionalString stdenv.isSunOS "-lsocket -lnsl";
 
-  # we must set these so that the generated files (e.g. w3mhelp.cgi) contain
-  # the correct paths.
-  PERL = "${perl}/bin/perl";
-  MAN = "${man}/bin/man";
+    # we must set these so that the generated files (e.g. w3mhelp.cgi) contain
+    # the correct paths.
+    PERL = "${perl}/bin/perl";
+    MAN = "${man}/bin/man";
+  };
 
   makeFlags = [ "AR=${stdenv.cc.bintools.targetPrefix}ar" ];
 
