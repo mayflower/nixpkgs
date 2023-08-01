@@ -86,8 +86,8 @@ stdenv.mkDerivation (finalAttrs: {
     ++ lib.optionals withLibsecret [ glib libsecret ];
 
   # required to support pthread_cancel()
-  NIX_LDFLAGS = lib.optionalString (stdenv.cc.isGNU && stdenv.hostPlatform.libc == "glibc") "-lgcc_s"
-              + lib.optionalString (stdenv.isFreeBSD) "-lthr";
+  env.NIX_LDFLAGS = lib.optionalString (stdenv.cc.isGNU && stdenv.hostPlatform.libc == "glibc") "-lgcc_s"
+              + lib.optionalString (stdenv.isFreeBSD) " -lthr";
 
   configureFlags = [
     "ac_cv_prog_CURL_CONFIG=${lib.getDev curl}/bin/curl-config"
