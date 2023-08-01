@@ -46,13 +46,13 @@
 }@args:
 
 let
-  version = "3.1.0.beta5";
+  version = "3.1.0";
 
   src = fetchFromGitHub {
     owner = "discourse";
     repo = "discourse";
     rev = "v${version}";
-    sha256 = "sha256-jS0RmPfME5L4WTC9RrcG/8wensxgUSnj07Tk/UR2kxM=";
+    sha256 = "sha256-Iv7VSnK8nZDpmIwIRPedSWlftABKuMOQ4MXDGpjuWrY=";
   };
 
   ruby = ruby_3_2;
@@ -210,7 +210,7 @@ let
 
     yarnOfflineCache = fetchYarnDeps {
       yarnLock = src + "/app/assets/javascripts/yarn.lock";
-      sha256 = "0n57q4yy0sg5m7m2snzgd44c6d1m95m2p03xbzlrghvd2zhh84hk";
+      sha256 = "0sclrv3303dgg3r08dwhd1yvi3pvlnvnikn300vjsh6c71fnzhnj";
     };
 
     nativeBuildInputs = runtimeDeps ++ [
