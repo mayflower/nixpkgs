@@ -31,9 +31,6 @@
 # Checks meson.is_cross_build(), so even canExecute isn't enough.
 , enableDocumentation ? stdenv.hostPlatform == stdenv.buildPlatform && plugins == null
 , hotdoc
-# TODO: required for case-insensitivity hack below
-, yq
-, moreutils
 }:
 
 let
@@ -98,6 +95,8 @@ let
     [
       "csound" # tests have weird failure on x86, does not currently work on arm or darwin
       "livesync" # tests have suspicious intermittent failure, see https://gitlab.freedesktop.org/gstreamer/gst-plugins-rs/-/issues/357
+    ] ++ lib.optionals stdenv.isAarch64 [
+      "raptorq" # pointer alignment failure in tests on aarch64
     ] ++ lib.optionals stdenv.isDarwin [
       "reqwest" # tests hang on darwin
       "threadshare" # tests cannot bind to localhost on darwin
@@ -118,7 +117,7 @@ in
 
 stdenv.mkDerivation rec {
   pname = "gst-plugins-rs";
-  version = "0.10.8";
+  version = "0.10.10";
 
   outputs = [ "out" "dev" ];
 
@@ -127,14 +126,25 @@ stdenv.mkDerivation rec {
     owner = "gstreamer";
     repo = "gst-plugins-rs";
     rev = version;
-    hash = "sha256-UxmfyqbQwkQjwHiARRpFJiGsrsNjv6V129lIHPk7gRk=";
+    hash = "sha256-ZsE1Pz2N0XSQFDyIeEUg9+eFN94mdSmge2Tvw57RLZ4=";
     # TODO: temporary workaround for case-insensitivity problems with color-name crate - https://github.com/annymosse/color-name/pull/2
-    nativeBuildInputs = [ yq moreutils ];
     postFetch = ''
-      tomlq --toml-output '.package |= map(if .name == "color-name"
-        then (.source = "git+https://github.com/lilyinstarlight/color-name#cac0ed5b7d2e0682c08c9bfd13089d5494e81b9a" | del(.checksum))
-        else .
-      end)' $out/Cargo.lock | sponge $out/Cargo.lock
+      sedSearch="$(cat <<\EOF | sed -ze 's/\n/\\n/g'
+      \[\[package\]\]
+      name = "color-name"
+      version = "\([^"\n]*\)"
+      source = "registry+https://github.com/rust-lang/crates.io-index"
+      checksum = "[^"\n]*"
+      EOF
+      )"
+      sedReplace="$(cat <<\EOF | sed -ze 's/\n/\\n/g'
+      [[package]]
+      name = "color-name"
+      version = "\1"
+      source = "git+https://github.com/lilyinstarlight/color-name#cac0ed5b7d2e0682c08c9bfd13089d5494e81b9a"
+      EOF
+      )"
+      sed -i -ze "s|$sedSearch|$sedReplace|g" $out/Cargo.lock
     '';
   };
 
@@ -146,7 +156,7 @@ stdenv.mkDerivation rec {
       "ffv1-0.0.0" = "sha256-af2VD00tMf/hkfvrtGrHTjVJqbl+VVpLaR0Ry+2niJE=";
       "flavors-0.2.0" = "sha256-zBa0X75lXnASDBam9Kk6w7K7xuH9fP6rmjWZBUB5hxk=";
       "gdk4-0.6.6" = "sha256-TI4F9MjIpxFEZItoewP/Zem1vM4MsKNJTzfgah1vjmI=";
-      "gstreamer-0.20.6" = "sha256-IyzqCQ5oQt5QgFp6liGyDaFhteCceR1KPzJCE4R6zus=";
+      "gstreamer-0.20.7" = "sha256-ALM2WyVpVBGtXimjAfzr2c5DKaoQgysGY76oxenRz9E=";
     };
   };
 

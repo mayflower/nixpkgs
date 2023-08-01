@@ -41,7 +41,7 @@ let
               else x;
         in
           makeDerivationExtensible
-            (self: let super = rattrs self; in super // f self super);
+            (self: let super = rattrs self; in super // (if builtins.isFunction f0 || f0?__functor then f self super else f0));
 
       finalPackage =
         mkDerivationSimple overrideAttrs args;
@@ -62,7 +62,7 @@ let
                 f0 self super
               else x;
         in
-          makeDerivationExtensible (self: attrs // f self attrs))
+          makeDerivationExtensible (self: attrs // (if builtins.isFunction f0 || f0?__functor then f self attrs else f0)))
       attrs;
 
   mkDerivationSimple = overrideAttrs:
