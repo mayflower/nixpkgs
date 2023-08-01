@@ -49,6 +49,7 @@ let
 
     structuredAttrsByDefault = mkMassRebuild {
       feature = "set `__structuredAttrs` to true by default";
+      default = true;
     };
 
     enableParallelBuildingByDefault = mkMassRebuild {
