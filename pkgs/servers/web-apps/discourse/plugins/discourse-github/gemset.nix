@@ -16,10 +16,10 @@
     platforms = [];
     source = {
       remotes = ["https://rubygems.org"];
-      sha256 = "1fa3y42bhz2ahp33labk8sfw1al9wrr1pkar6i8w9mdpsccygzg4";
+      sha256 = "187clqhp9mv5mnqmjlfdp57svhsg1bggz84ak8v333j9skrnrgh9";
       type = "gem";
     };
-    version = "2.7.5";
+    version = "2.7.10";
   };
   faraday-net_http = {
     groups = ["default"];
@@ -47,10 +47,10 @@
     platforms = [];
     source = {
       remotes = ["https://rubygems.org"];
-      sha256 = "0hz0bx2qs2pwb0bwazzsah03ilpf3aai8b7lk7s35jsfzwbkjq35";
+      sha256 = "0n9j7mczl15r3kwqrah09cxj8hxdfawiqxa60kga2bmxl9flfz9k";
       type = "gem";
     };
-    version = "5.0.1";
+    version = "5.0.3";
   };
   ruby2_keywords = {
     groups = ["default"];

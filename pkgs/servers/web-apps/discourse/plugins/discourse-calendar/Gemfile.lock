@@ -9,7 +9,7 @@ GEM
     concurrent-ruby (1.2.2)
     i18n (1.14.1)
       concurrent-ruby (~> 1.0)
-    minitest (5.18.1)
+    minitest (5.19.0)
     rrule (0.4.4)
       activesupport (>= 2.3)
     tzinfo (2.0.6)
