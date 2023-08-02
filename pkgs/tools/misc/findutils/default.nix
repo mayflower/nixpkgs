@@ -40,11 +40,9 @@ stdenv.mkDerivation rec {
     "--localstatedir=/var/cache"
   ];
 
-  CFLAGS = lib.optionals stdenv.isDarwin [
-    # TODO: Revisit upstream issue https://savannah.gnu.org/bugs/?59972
-    # https://github.com/Homebrew/homebrew-core/pull/69761#issuecomment-770268478
-    "-D__nonnull\\(params\\)="
-  ];
+  # TODO: Revisit upstream issue https://savannah.gnu.org/bugs/?59972
+  # https://github.com/Homebrew/homebrew-core/pull/69761#issuecomment-770268478
+  env.CFLAGS = lib.optionalString stdenv.isDarwin "-D__nonnull\\(params\\)=";
 
   postInstall = ''
     moveToOutput bin/locate $locate
