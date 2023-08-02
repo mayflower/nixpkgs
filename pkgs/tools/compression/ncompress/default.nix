@@ -12,7 +12,7 @@ stdenv.mkDerivation rec {
   };
 
   makeFlags = [ "PREFIX=$(out)" ];
-  installTargets = "install_core";
+  installTargets = [ "install_core" ];
 
   postInstall = ''
     mv $out/bin/uncompress $out/bin/uncompress-ncompress
