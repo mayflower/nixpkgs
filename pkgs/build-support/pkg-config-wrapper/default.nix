@@ -49,7 +49,7 @@ stdenv.mkDerivation {
   dontUnpack = true;
 
   # Additional flags passed to pkg-config.
-  addFlags = lib.optional stdenv.targetPlatform.isStatic "--static";
+  env.addFlags = lib.optionalString stdenv.targetPlatform.isStatic "--static";
 
   installPhase =
     ''
