@@ -51,11 +51,13 @@ stdenv.mkDerivation (finalAttrs: {
 
   configureFlags = [ "--bindir=$(dev)/bin" "--enable-freetype-config" ];
 
-  # native compiler to generate building tool
-  CC_BUILD = "${buildPackages.stdenv.cc}/bin/cc";
+  env = {
+    # native compiler to generate building tool
+    CC_BUILD = "${buildPackages.stdenv.cc}/bin/cc";
 
-  # The asm for armel is written with the 'asm' keyword.
-  CFLAGS = lib.optionalString stdenv.isAarch32 "-std=gnu99";
+    # The asm for armel is written with the 'asm' keyword.
+    CFLAGS = lib.optionalString stdenv.isAarch32 "-std=gnu99";
+  };
 
   enableParallelBuilding = true;
 
