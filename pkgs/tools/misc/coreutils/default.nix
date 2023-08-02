@@ -137,17 +137,19 @@ stdenv.mkDerivation rec {
     && !(stdenv.hostPlatform.libc == "musl" && stdenv.hostPlatform.isAarch64)
     && !stdenv.isAarch32;
 
-  # Prevents attempts of running 'help2man' on cross-built binaries.
-  PERL = if isCross then "missing" else null;
 
   enableParallelBuilding = true;
 
-  NIX_LDFLAGS = optionalString selinuxSupport "-lsepol";
-  FORCE_UNSAFE_CONFIGURE = optionalString stdenv.hostPlatform.isSunOS "1";
-  env.NIX_CFLAGS_COMPILE = toString ([]
-    # Work around a bogus warning in conjunction with musl.
-    ++ optional stdenv.hostPlatform.isMusl "-Wno-error"
-    ++ optional stdenv.hostPlatform.isAndroid "-D__USE_FORTIFY_LEVEL=0");
+  env = {
+    # Prevents attempts of running 'help2man' on cross-built binaries.
+    PERL = optionalString isCross "missing";
+    NIX_LDFLAGS = optionalString selinuxSupport "-lsepol";
+    FORCE_UNSAFE_CONFIGURE = optionalString stdenv.hostPlatform.isSunOS "1";
+    NIX_CFLAGS_COMPILE = toString ([]
+      # Work around a bogus warning in conjunction with musl.
+      ++ optional stdenv.hostPlatform.isMusl "-Wno-error"
+      ++ optional stdenv.hostPlatform.isAndroid "-D__USE_FORTIFY_LEVEL=0");
+  };
 
   # Works around a bug with 8.26:
   # Makefile:3440: *** Recursive variable 'INSTALL' references itself (eventually).  Stop.
