@@ -76,7 +76,7 @@ stdenv.mkDerivation rec {
 
   makefile = "unix/Makefile";
 
-  NIX_LDFLAGS = "-lbz2" + lib.optionalString enableNLS " -lnatspec";
+  env.NIX_LDFLAGS = "-lbz2" + lib.optionalString enableNLS " -lnatspec";
 
   buildFlags = [
     "generic"
