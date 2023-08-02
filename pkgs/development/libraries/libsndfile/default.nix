@@ -40,7 +40,7 @@ stdenv.mkDerivation rec {
     '';
 
   # Needed on Darwin.
-  NIX_CFLAGS_LINK = "-logg -lvorbis";
+  env.NIX_CFLAGS_LINK = "-logg -lvorbis";
 
   doCheck = true;
   preCheck = ''
