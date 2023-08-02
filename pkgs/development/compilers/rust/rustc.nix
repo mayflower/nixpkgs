@@ -43,21 +43,22 @@ in stdenv.mkDerivation rec {
   # See: https://github.com/NixOS/nixpkgs/pull/56540#issuecomment-471624656
   stripDebugList = [ "bin" ];
 
-  # The Rust pkg-config crate does not support prefixed pkg-config executables[1],
-  # but it does support checking these idiosyncratic PKG_CONFIG_${TRIPLE}
-  # environment variables.
-  # [1]: https://github.com/rust-lang/pkg-config-rs/issues/53
-  "PKG_CONFIG_${builtins.replaceStrings ["-"] ["_"] (rust.toRustTarget stdenv.buildPlatform)}" =
-    "${pkgsBuildHost.stdenv.cc.targetPrefix}pkg-config";
+  env = {
+    # The Rust pkg-config crate does not support prefixed pkg-config executables[1],
+    # but it does support checking these idiosyncratic PKG_CONFIG_${TRIPLE}
+    # environment variables.
+    # [1]: https://github.com/rust-lang/pkg-config-rs/issues/53
+    "PKG_CONFIG_${builtins.replaceStrings ["-"] ["_"] (rust.toRustTarget stdenv.buildPlatform)}" =
+      "${pkgsBuildHost.stdenv.cc.targetPrefix}pkg-config";
+        NIX_LDFLAGS = toString (
+         # when linking stage1 libstd: cc: undefined reference to `__cxa_begin_catch'
+         optional (stdenv.isLinux && !withBundledLLVM) "--push-state --as-needed -lstdc++ --pop-state"
+      ++ optional (stdenv.isDarwin && !withBundledLLVM) "-lc++ -lc++abi"
+      ++ optional stdenv.isDarwin "-rpath ${llvmSharedForHost}/lib");
 
-  NIX_LDFLAGS = toString (
-       # when linking stage1 libstd: cc: undefined reference to `__cxa_begin_catch'
-       optional (stdenv.isLinux && !withBundledLLVM) "--push-state --as-needed -lstdc++ --pop-state"
-    ++ optional (stdenv.isDarwin && !withBundledLLVM) "-lc++ -lc++abi"
-    ++ optional stdenv.isDarwin "-rpath ${llvmSharedForHost}/lib");
-
-  # Increase codegen units to introduce parallelism within the compiler.
-  RUSTFLAGS = "-Ccodegen-units=10";
+    # Increase codegen units to introduce parallelism within the compiler.
+    RUSTFLAGS = "-Ccodegen-units=10";
+  };
 
   # We need rust to build rust. If we don't provide it, configure will try to download it.
   # Reference: https://github.com/rust-lang/rust/blob/master/src/bootstrap/configure.py
