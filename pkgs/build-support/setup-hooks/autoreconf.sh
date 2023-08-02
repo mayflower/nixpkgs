@@ -2,6 +2,12 @@ preConfigurePhases="${preConfigurePhases:-} autoreconfPhase"
 
 autoreconfPhase() {
     runHook preAutoreconf
-    autoreconf ${autoreconfFlags:---install --force --verbose}
+
+    if [ -n "$__structuredAttrs" ]; then
+        defaultFlags=(--install --force --verbose)
+        autoreconf "${autoreconfFlags[@]:-"${defaultFlags[@]}"}"
+    else
+        autoreconf ${autoreconfFlags:---install --force --verbose}
+    fi
     runHook postAutoreconf
 }
