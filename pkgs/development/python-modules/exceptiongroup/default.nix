@@ -25,7 +25,7 @@ buildPythonPackage rec {
     flit-scm
   ];
 
-  SETUPTOOLS_SCM_PRETEND_VERSION = version;
+  env.SETUPTOOLS_SCM_PRETEND_VERSION = version;
 
   doCheck = pythonAtLeast "3.11"; # infinite recursion with pytest
 
