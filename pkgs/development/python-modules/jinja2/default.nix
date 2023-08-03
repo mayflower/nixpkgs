@@ -51,7 +51,7 @@ buildPythonPackage rec {
     # Avoid failure due to deprecation warning
     # Fixed in https://github.com/python/cpython/pull/28153
     # Remove after cpython 3.9.8
-    "-p no:warnings"
+    "-p" "no:warnings"
   ];
 
   meta = with lib; {
