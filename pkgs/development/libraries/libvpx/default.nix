@@ -176,9 +176,7 @@ stdenv.mkDerivation rec {
   buildInputs = [ ]
     ++ optionals unitTestsSupport [ coreutils curl ];
 
-  NIX_LDFLAGS = [
-    "-lpthread" # fixes linker errors
-  ];
+  env.NIX_LDFLAGS = "-lpthread"; # fixes linker errors
 
   enableParallelBuilding = true;
 
