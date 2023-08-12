@@ -4,16 +4,7 @@
 
 with python3.pkgs;
 
-let
-  psycopg2_dj2 = psycopg2.overrideAttrs (a: (rec {
-    version = "2.8.6";
-    src = fetchPypi {
-      inherit version;
-      inherit (a) pname;
-      sha256 = "fb23f6c71107c37fd667cb4ea363ddeb936b348bbd6449278eb92c189699f543";
-    };
-  }));
-in buildPythonPackage rec {
+buildPythonPackage rec {
   pname = "HyperKitty";
   version = "1.3.7";
   disabled = pythonOlder "3.8";
@@ -47,7 +38,7 @@ in buildPythonPackage rec {
     flufl_lock
     mistune
     networkx
-    psycopg2_dj2
+    psycopg2
     python-dateutil
     robot-detection
   ];
