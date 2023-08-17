@@ -168,8 +168,8 @@ in lib.makeExtensible (self: {
   };
 
   nix_2_13 = common {
-    version = "2.13.3";
-    hash = "sha256-jUc2ccTR8f6MGY2pUKgujm+lxSPNGm/ZAP+toX+nMNc=";
+    version = "2.13.5";
+    hash = "sha256-yHZMgMs/6/aQUwfMwmPUQov17JMGS7squLJsjmucnLc=";
   };
 
   nix_2_14 = common {
@@ -178,13 +178,18 @@ in lib.makeExtensible (self: {
   };
 
   nix_2_15 = common {
-    version = "2.15.1";
-    hash = "sha256-o7bxsNeq2LF6/dTl+lT2k50bSItkID80/uoZYVtlxro=";
+    version = "2.15.2";
+    hash = "sha256-0BxVsvp4JfliYu4EdpZ/zPYOt9Qn5w9Ix5r0sagZZ7o=";
   };
 
   nix_2_16 = common {
     version = "2.16.1";
     hash = "sha256-/XCWa2osNFIpPC5MkxlX6qTZf/DaTLwS3LWN0SRFiuU=";
+  };
+
+  nix_2_17 = common {
+    version = "2.17.0";
+    hash = "sha256-QMYAkdtU+g9HlZKtoJ+AI6TbWzzovKGnPZJHfZdclc8=";
   };
 
   # The minimum Nix version supported by Nixpkgs

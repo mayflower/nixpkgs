@@ -25,8 +25,8 @@
       # and it will be too much painful for our users to recompile them
       # for no real reason.
       # Remove them for 23.11.
-      "nodejs-16.20.1"
-      "openssl-1.1.1u"
+      "nodejs-16.20.2"
+      "openssl-1.1.1v"
     ];
   }; }
 }:
