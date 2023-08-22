@@ -291,13 +291,11 @@ in
             }
           '') cfg.seedDockerImages}
 
-          ${optionalString (cfg.cni.config != [] || cfg.cni.configDir != null) ''
-            rm /opt/cni/bin/* || true
-            ${concatMapStrings (package: ''
-              echo "Linking cni package: ${package}"
-              ln -fs ${package}/bin/* /opt/cni/bin
-            '') cfg.cni.packages}
-          ''}
+          rm /opt/cni/bin/* || true
+          ${concatMapStrings (package: ''
+            echo "Linking cni package: ${package}"
+            ln -fs ${package}/bin/* /opt/cni/bin
+          '') cfg.cni.packages}
         '';
         serviceConfig = {
           Slice = "kubernetes.slice";
@@ -349,8 +347,7 @@ in
         };
       };
 
-      # include cni plugins if flannel is enabled
-      services.kubernetes.kubelet.cni.packages = optionals top.flannel.enable [pkgs.cni-plugins pkgs.cni-plugin-flannel];
+      services.kubernetes.kubelet.cni.packages = [pkgs.cni-plugins pkgs.cni-plugin-flannel];
 
       boot.kernelModules = ["br_netfilter" "overlay"];
 
