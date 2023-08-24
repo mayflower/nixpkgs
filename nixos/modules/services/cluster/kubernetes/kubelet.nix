@@ -291,7 +291,7 @@ in
             }
           '') cfg.seedDockerImages}
 
-          rm /opt/cni/bin/* || true
+          find /opt/cni/bin -type l -exec rm -f /opt/cni/bin/{} \;
           ${concatMapStrings (package: ''
             echo "Linking cni package: ${package}"
             ln -fs ${package}/bin/* /opt/cni/bin
