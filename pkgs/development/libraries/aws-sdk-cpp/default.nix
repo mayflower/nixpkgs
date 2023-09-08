@@ -79,8 +79,6 @@ stdenv.mkDerivation rec {
 
   # propagation is needed for Security.framework to be available when linking
   propagatedBuildInputs = [ aws-crt-cpp ];
-  # Ensure the linker is using atomic when compiling for RISC-V, otherwise fails
-  LDFLAGS = lib.optionalString stdenv.hostPlatform.isRiscV "-latomic";
 
   cmakeFlags = [
     "-DBUILD_DEPS=OFF"
@@ -93,10 +91,11 @@ stdenv.mkDerivation rec {
   ] ++ lib.optional (apis != ["*"])
     "-DBUILD_ONLY=${lib.concatStringsSep ";" apis}";
 
-  env.NIX_CFLAGS_COMPILE = toString [
-    # openssl 3 generates several deprecation warnings
-    "-Wno-error=deprecated-declarations"
-  ];
+  # Ensure the linker is using atomic when compiling for RISC-V, otherwise fails
+  env.LDFLAGS = lib.optionalString stdenv.hostPlatform.isRiscV "-latomic";
+
+  # openssl 3 generates several deprecation warnings
+  env.NIX_CFLAGS_COMPILE = "-Wno-error=deprecated-declarations";
 
   postFixupHooks = [
     # This bodge is necessary so that the file that the generated -config.cmake file
