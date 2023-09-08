@@ -13,12 +13,13 @@ stdenv.mkDerivation rec {
 
   hardeningEnable = [ "pie" ];
 
+  makeFlags = [ "DESTROOT=${placeholder "out"}" "CC=${stdenv.cc.targetPrefix}cc" ];
+
   preBuild = ''
     # do not set sticky bit in /nix/store
     substituteInPlace Makefile --replace ' -o root' ' ' --replace 111 755 --replace 4755 0755
     # do not strip during install, broken on cross and we'll do ourselves as needed
     substituteInPlace Makefile --replace ' -s cron' ' cron'
-    makeFlags="DESTROOT=$out CC=$CC"
 
     # We want to ignore the $glibc/include/paths.h definition of
     # sendmail path.
