@@ -37,7 +37,7 @@ stdenv.mkDerivation rec {
     "-DCMAKE_OSX_DEPLOYMENT_TARGET=10.14" # For aligned allocation
   ];
 
-  NIX_LDFLAGS = "-lz";
+  env.NIX_LDFLAGS = "-lz";
 
   buildInputs = [
     fmt_8
