@@ -94,7 +94,7 @@ let
       "-Wno-error"
     ]);
 
-    NIX_LDFLAGS= toString (lib.optionals (!headless) [
+    env.NIX_LDFLAGS= toString (lib.optionals (!headless) [
       "-lfontconfig" "-lcups" "-lXinerama" "-lXrandr" "-lmagic"
     ] ++ lib.optionals (!headless && enableGnome2) [
       "-lgtk-x11-2.0" "-lgio-2.0" "-lgnomevfs-2" "-lgconf-2"

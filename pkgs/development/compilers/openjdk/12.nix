@@ -82,7 +82,7 @@ let
 
     env.NIX_CFLAGS_COMPILE = toString [ "-Wno-error" ];
 
-    NIX_LDFLAGS = lib.optionals (!headless) [
+    env.NIX_LDFLAGS = lib.optionals (!headless) [
       "-lfontconfig" "-lcups" "-lXinerama" "-lXrandr" "-lmagic"
     ] ++ lib.optionals (!headless && enableGnome2) [
       "-lgtk-3" "-lgio-2.0" "-lgnomevfs-2" "-lgconf-2"

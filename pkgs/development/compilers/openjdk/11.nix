@@ -85,7 +85,7 @@ let
     # when building jtreg
     env.NIX_CFLAGS_COMPILE = "-Wformat";
 
-    NIX_LDFLAGS = toString (lib.optionals (!headless) [
+    env.NIX_LDFLAGS = toString (lib.optionals (!headless) [
       "-lfontconfig" "-lcups" "-lXinerama" "-lXrandr" "-lmagic"
     ] ++ lib.optionals (!headless && enableGnome2) [
       "-lgtk-3" "-lgio-2.0" "-lgnomevfs-2" "-lgconf-2"
