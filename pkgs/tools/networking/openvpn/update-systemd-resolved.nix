@@ -25,10 +25,10 @@ stdenv.mkDerivation rec {
     ./update-systemd-resolved.patch
   ];
 
-  PREFIX = "${placeholder "out"}/libexec/openvpn";
+  env.PREFIX = "${placeholder "out"}/libexec/openvpn";
 
   postInstall = ''
-    substituteInPlace ${PREFIX}/update-systemd-resolved \
+    substituteInPlace ''${PREFIX}/update-systemd-resolved \
       --subst-var-by PATH ${lib.makeBinPath [ coreutils iproute2 runtimeShell systemd util-linux ]}
   '';
 
