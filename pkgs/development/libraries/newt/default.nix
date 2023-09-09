@@ -28,7 +28,7 @@ stdenv.mkDerivation rec {
   nativeBuildInputs = [ python ];
   buildInputs = [ slang popt ];
 
-  NIX_LDFLAGS = "-lncurses";
+  env.NIX_LDFLAGS = "-lncurses";
 
   preConfigure = ''
     # If CPP is set explicitly, configure and make will not agree about which
