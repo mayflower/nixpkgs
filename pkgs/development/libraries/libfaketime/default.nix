@@ -32,10 +32,11 @@ stdenv.mkDerivation rec {
     substituteInPlace src/faketime.c --replace @DATE_CMD@ ${coreutils}/bin/date
   '';
 
-  PREFIX = placeholder "out";
-  LIBDIRNAME = "/lib";
-
-  env.NIX_CFLAGS_COMPILE = lib.optionalString stdenv.cc.isClang "-Wno-error=cast-function-type -Wno-error=format-truncation";
+  env = {
+    PREFIX = placeholder "out";
+    LIBDIRNAME = "/lib";
+    NIX_CFLAGS_COMPILE = lib.optionalString stdenv.cc.isClang "-Wno-error=cast-function-type -Wno-error=format-truncation";
+  };
 
   nativeCheckInputs = [ perl ];
 
