@@ -89,32 +89,26 @@ stdenv.mkDerivation rec {
     ./go_no_vendor_checks-1.16.patch
   ];
 
-  GOOS = stdenv.targetPlatform.parsed.kernel.name;
-  GOARCH = goarch stdenv.targetPlatform;
-  # GOHOSTOS/GOHOSTARCH must match the building system, not the host system.
-  # Go will nevertheless build a for host system that we will copy over in
-  # the install phase.
-  GOHOSTOS = stdenv.buildPlatform.parsed.kernel.name;
-  GOHOSTARCH = goarch stdenv.buildPlatform;
+  env = {
+    GOOS = stdenv.targetPlatform.parsed.kernel.name;
+    GOARCH = goarch stdenv.targetPlatform;
+    # GOHOSTOS/GOHOSTARCH must match the building system, not the host system.
+    # Go will nevertheless build a for host system that we will copy over in
+    # the install phase.
+    GOHOSTOS = stdenv.buildPlatform.parsed.kernel.name;
+    GOHOSTARCH = goarch stdenv.buildPlatform;
 
-  # {CC,CXX}_FOR_TARGET must be only set for cross compilation case as go expect those
-  # to be different from CC/CXX
-  CC_FOR_TARGET =
-    if isCross then
-      "${targetCC}/bin/${targetCC.targetPrefix}cc"
-    else
-      null;
-  CXX_FOR_TARGET =
-    if isCross then
-      "${targetCC}/bin/${targetCC.targetPrefix}c++"
-    else
-      null;
+    GOARM = toString (lib.intersectLists [ (stdenv.hostPlatform.parsed.cpu.version or "") ] [ "5" "6" "7" ]);
+    GO386 = "softfloat"; # from Arch: don't assume sse2 on i686
+    CGO_ENABLED = 1;
 
-  GOARM = toString (lib.intersectLists [ (stdenv.hostPlatform.parsed.cpu.version or "") ] [ "5" "6" "7" ]);
-  GO386 = "softfloat"; # from Arch: don't assume sse2 on i686
-  CGO_ENABLED = 1;
-
-  GOROOT_BOOTSTRAP = if useGccGoBootstrap then goBootstrap else "${goBootstrap}/share/go";
+    GOROOT_BOOTSTRAP = if useGccGoBootstrap then goBootstrap else "${goBootstrap}/share/go";
+  } // (lib.optionalAttrs isCross {
+    # {CC,CXX}_FOR_TARGET must be only set for cross compilation case as go expect those
+    # to be different from CC/CXX
+    CC_FOR_TARGET = "${targetCC}/bin/${targetCC.targetPrefix}cc";
+    CXX_FOR_TARGET = "${targetCC}/bin/${targetCC.targetPrefix}c++";
+  });
 
   buildPhase = ''
     runHook preBuild
@@ -144,13 +138,13 @@ stdenv.mkDerivation rec {
   '' + (if (stdenv.buildPlatform.system != stdenv.hostPlatform.system) then ''
     mv bin/*_*/* bin
     rmdir bin/*_*
-    ${lib.optionalString (!(GOHOSTARCH == GOARCH && GOOS == GOHOSTOS)) ''
-      rm -rf pkg/${GOHOSTOS}_${GOHOSTARCH} pkg/tool/${GOHOSTOS}_${GOHOSTARCH}
+    ${lib.optionalString (!(env.GOHOSTARCH == env.GOARCH && env.GOOS == env.GOHOSTOS)) ''
+      rm -rf pkg/''${GOHOSTOS}_''${GOHOSTARCH} pkg/tool/''${GOHOSTOS}_''${GOHOSTARCH}
     ''}
   '' else lib.optionalString (stdenv.hostPlatform.system != stdenv.targetPlatform.system) ''
     rm -rf bin/*_*
-    ${lib.optionalString (!(GOHOSTARCH == GOARCH && GOOS == GOHOSTOS)) ''
-      rm -rf pkg/${GOOS}_${GOARCH} pkg/tool/${GOOS}_${GOARCH}
+    ${lib.optionalString (!(env.GOHOSTARCH == env.GOARCH && env.GOOS == env.GOHOSTOS)) ''
+      rm -rf pkg/''${GOOS}_''${GOARCH} pkg/tool/''${GOOS}_''${GOARCH}
     ''}
   '');
 
