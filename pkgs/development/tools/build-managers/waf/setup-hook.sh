@@ -16,9 +16,18 @@ wafConfigurePhase() {
       export PKGCONFIG="${PKG_CONFIG}"
     fi
 
+
     local flagsArray=(
         $prefixFlag
-        $wafConfigureFlags "${wafConfigureFlagsArray[@]}"
+    )
+
+    if [ -n "$__structuredAttrs" ]; then
+        flagsArray+=("${wafConfigureFlags[@]}" "${wafConfigureFlagsArray[@]}")
+    else
+        flagsArray+=(${wafConfigureFlags} "${wafConfigureFlagsArray[@]}")
+    fi
+
+    flagsArray+=(
         ${configureTargets:-configure}
     )
 
