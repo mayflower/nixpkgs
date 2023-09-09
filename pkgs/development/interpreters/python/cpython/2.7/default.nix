@@ -253,17 +253,19 @@ in with passthru; stdenv.mkDerivation ({
 
     inherit src patches buildInputs nativeBuildInputs preConfigure configureFlags;
 
-    LDFLAGS = lib.optionalString (!stdenv.isDarwin) "-lgcc_s";
-    inherit (mkPaths buildInputs) C_INCLUDE_PATH LIBRARY_PATH;
+    env = {
+      LDFLAGS = lib.optionalString (!stdenv.isDarwin) "-lgcc_s";
+      inherit (mkPaths buildInputs) C_INCLUDE_PATH LIBRARY_PATH;
 
-    env.NIX_CFLAGS_COMPILE = lib.optionalString (stdenv.targetPlatform.system == "x86_64-darwin") "-msse2"
-      + lib.optionalString stdenv.hostPlatform.isMusl " -DTHREAD_STACK_SIZE=0x100000";
-    DETERMINISTIC_BUILD = 1;
+      NIX_CFLAGS_COMPILE = lib.optionalString (stdenv.targetPlatform.system == "x86_64-darwin") "-msse2"
+        + lib.optionalString stdenv.hostPlatform.isMusl " -DTHREAD_STACK_SIZE=0x100000";
+      DETERMINISTIC_BUILD = 1;
+    };
 
     setupHook = python-setup-hook sitePackages;
 
     postPatch = lib.optionalString (x11Support && (tix != null)) ''
-          substituteInPlace "Lib/lib-tk/Tix.py" --replace "os.environ.get('TIX_LIBRARY')" "os.environ.get('TIX_LIBRARY') or '${tix}/lib'"
+      substituteInPlace "Lib/lib-tk/Tix.py" --replace "os.environ.get('TIX_LIBRARY')" "os.environ.get('TIX_LIBRARY') or '${tix}/lib'"
     '';
 
     postInstall =
