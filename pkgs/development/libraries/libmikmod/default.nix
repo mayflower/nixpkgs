@@ -20,7 +20,7 @@ in stdenv.mkDerivation rec {
 
   outputs = [ "out" "dev" "man" ];
 
-  NIX_LDFLAGS = optionalString stdenv.isLinux "-lasound";
+  env.NIX_LDFLAGS = optionalString stdenv.isLinux "-lasound";
 
   postInstall = ''
     moveToOutput bin/libmikmod-config "$dev"
