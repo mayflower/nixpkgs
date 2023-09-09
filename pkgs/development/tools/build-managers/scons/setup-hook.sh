@@ -1,3 +1,10 @@
+if [ -z "$__structuredAttrs" ]; then
+    buildFlags=(${buildFlags[*]})
+    sconsFlags=(${sconsFlags[*]})
+    installFlags=(${installFlags[*]})
+    installTargets=(${installTargets[*]})
+fi
+
 sconsBuildPhase() {
     runHook preBuild
 
@@ -6,13 +13,13 @@ sconsBuildPhase() {
     fi
 
     if [ -z "${dontAddPrefix:-}" ] && [ -n "$prefix" ]; then
-        buildFlags="${prefixKey:-prefix=}$prefix $buildFlags"
+        buildFlags=("${prefixKey:-prefix=}$prefix" "${buildFlags[@]}")
     fi
 
     local flagsArray=(
       ${enableParallelBuilding:+-j${NIX_BUILD_CORES}}
-      $sconsFlags ${sconsFlagsArray[@]}
-      $buildFlags ${buildFlagsArray[@]}
+      "${sconsFlags[@]}" "${sconsFlagsArray[@]}"
+      "${buildFlags[@]}" "${buildFlagsArray[@]}"
     )
 
     echoCmd 'build flags' "${flagsArray[@]}"
@@ -29,14 +36,14 @@ sconsInstallPhase() {
     fi
 
     if [ -z "${dontAddPrefix:-}" ] && [ -n "$prefix" ]; then
-        installFlags="${prefixKey:-prefix=}$prefix $installFlags"
+        installFlags=("${prefixKey:-prefix=}$prefix" "${installFlags[@]}")
     fi
 
     local flagsArray=(
         ${enableParallelInstalling:+-j${NIX_BUILD_CORES}}
-        $sconsFlags ${sconsFlagsArray[@]}
-        $installFlags ${installFlagsArray[@]}
-        ${installTargets:-install}
+        "${sconsFlags[@]}" "${sconsFlagsArray[@]}"
+        "${installFlags[@]}" "${installFlagsArray[@]}"
+        "${installTargets[@]:-install}"
     )
 
     echoCmd 'install flags' "${flagsArray[@]}"
