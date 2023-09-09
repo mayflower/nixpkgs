@@ -78,8 +78,12 @@ stdenv.mkDerivation rec {
       sha256 = "sha256-qCw132TCSaZrkISmtDb8Q8ufyt8sAJdwACkvfwuoi/0=";
     })
   ];
-  CFLAGS = [ "-fstack-protector-strong" ]
-    ++ lib.optional stdenv.hostPlatform.isPower "-mlong-double-64";
+
+  env = {
+    CFLAGS = "-fstack-protector-strong"
+      + lib.optionalString stdenv.hostPlatform.isPower " -mlong-double-64";
+    NIX_DONT_SET_RPATH = true;
+  };
 
   configureFlags = [
     "--enable-shared"
@@ -94,8 +98,6 @@ stdenv.mkDerivation rec {
   dontDisableStatic = true;
   dontAddStaticConfigureFlags = true;
   separateDebugInfo = true;
-
-  NIX_DONT_SET_RPATH = true;
 
   preBuild = ''
     ${lib.optionalString (stdenv.targetPlatform.libc == "musl" && stdenv.targetPlatform.isx86_32)
