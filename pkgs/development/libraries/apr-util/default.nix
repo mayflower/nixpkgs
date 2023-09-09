@@ -22,7 +22,7 @@ stdenv.mkDerivation rec {
   patches = [ ./fix-libxcrypt-build.patch ]
     ++ lib.optional stdenv.isFreeBSD ./include-static-dependencies.patch;
 
-  NIX_CFLAGS_LINK = [ "-lcrypt" ];
+  env.NIX_CFLAGS_LINK = "-lcrypt";
 
   outputs = [ "out" "dev" ];
   outputBin = "dev";
