@@ -61,7 +61,7 @@ rec {
       if stdenv.hostPlatform.isDarwin
       then throw "Cannot build fully static binaries on Darwin/macOS"
       else (mkDerivationSuper args).overrideAttrs(finalAttrs: {
-        NIX_CFLAGS_LINK = toString (finalAttrs.NIX_CFLAGS_LINK or "") + " -static";
+        env = (finalAttrs.env or {}) // { NIX_CFLAGS_LINK = toString (finalAttrs.env.NIX_CFLAGS_LINK or "") + " -static"; };
       } // lib.optionalAttrs (!(finalAttrs.dontAddStaticConfigureFlags or false)) {
         configureFlags = (finalAttrs.configureFlags or []) ++ [
             "--disable-shared" # brrr...
@@ -97,8 +97,9 @@ rec {
     extraBuildInputs = [ pkgs.buildPackages.darwin.CF ];
     mkDerivationFromStdenv = withOldMkDerivation old (stdenv: mkDerivationSuper: args:
     (mkDerivationSuper args).overrideAttrs (finalAttrs: {
-      NIX_CFLAGS_LINK = toString (finalAttrs.NIX_CFLAGS_LINK or "")
+      env = (finalAttrs.env or {}) // { NIX_CFLAGS_LINK = toString (finalAttrs.env.NIX_CFLAGS_LINK or "")
         + lib.optionalString (stdenv.cc.isGNU or false) " -static-libgcc";
+      };
       nativeBuildInputs = (finalAttrs.nativeBuildInputs or [])
         ++ lib.optionals stdenv.hasCC [
           (pkgs.buildPackages.makeSetupHook {
@@ -185,7 +186,7 @@ rec {
   useGoldLinker = stdenv:
     stdenv.override (old: {
       mkDerivationFromStdenv = extendMkDerivationArgs old (args: {
-        NIX_CFLAGS_LINK = toString (args.NIX_CFLAGS_LINK or "") + " -fuse-ld=gold";
+        env = (args.env or {}) // { NIX_CFLAGS_LINK = toString (args.env.NIX_CFLAGS_LINK or "") + " -fuse-ld=gold"; };
       });
     });
 
@@ -207,7 +208,7 @@ rec {
     # https://github.com/rui314/mold#how-to-use
     } // lib.optionalAttrs (stdenv.cc.isClang || (stdenv.cc.isGNU && lib.versionAtLeast stdenv.cc.version "12")) {
     mkDerivationFromStdenv = extendMkDerivationArgs old (args: {
-      NIX_CFLAGS_LINK = toString (args.NIX_CFLAGS_LINK or "") + " -fuse-ld=mold";
+      env = (args.env or {}) // { NIX_CFLAGS_LINK = toString (args.env.NIX_CFLAGS_LINK or "") + " -fuse-ld=mold"; };
     });
   });
 
