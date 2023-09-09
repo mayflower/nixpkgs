@@ -53,7 +53,7 @@ stdenv.mkDerivation rec {
     lib.optionals (stdenv.isLinux && stdenv.isAarch64) [ "--disable-seccomp" ]
   ;
 
-  NIX_CFLAGS_LINK = lib.optionalString stdenv.cc.isGNU "-lgcc_s";
+  env.NIX_CFLAGS_LINK = lib.optionalString stdenv.cc.isGNU "-lgcc_s";
 
   postPatch = ''
     substituteInPlace contrib/client-tools/torify \
