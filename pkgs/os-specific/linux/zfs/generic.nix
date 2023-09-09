@@ -118,7 +118,7 @@ stdenv'.mkDerivation {
     ++ optional (buildUser && enablePython) python3;
 
   # for zdb to get the rpath to libgcc_s, needed for pthread_cancel to work
-  NIX_CFLAGS_LINK = "-lgcc_s";
+  env.NIX_CFLAGS_LINK = "-lgcc_s";
 
   hardeningDisable = [ "fortify" "stackprotector" "pic" ];
 
