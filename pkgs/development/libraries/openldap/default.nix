@@ -88,8 +88,12 @@ stdenv.mkDerivation rec {
   ];
 
   postBuild = ''
-    for module in $extraContribModules; do
-      make $makeFlags CC=$CC -C contrib/slapd-modules/$module
+    if [ -z "$__structuredAttrs" ]; then
+      makeFlags=("''${makeFlags[*]}")
+      extraContribModules=("''${extraContribModules[*]}")
+    fi
+    for module in "''${extraContribModules[@]}"; do
+      make "''${makeFlags[@]}" CC=$CC -C contrib/slapd-modules/$module
     done
   '';
 
@@ -116,8 +120,12 @@ stdenv.mkDerivation rec {
   ];
 
   postInstall = ''
-    for module in $extraContribModules; do
-      make $installFlags install -C contrib/slapd-modules/$module
+    if [ -z "$__structuredAttrs" ]; then
+      installFlags=("''${installFlags[*]}")
+      extraContribModules=("''${extraContribModules[*]}")
+    fi
+    for module in "''${extraContribModules[@]}"; do
+      make "''${installFlags[@]}" install -C contrib/slapd-modules/$module
     done
     chmod +x "$out"/lib/*.{so,dylib}
   '';
