@@ -49,19 +49,19 @@ let
     hostPlatformSystem = pkgs.stdenv.hostPlatform.system;
     detectvirt = "${config.systemd.package}/bin/systemd-detect-virt";
     btrfs = "${pkgs.btrfs-progs}/bin/btrfs";
-    inherit (config.system.nixos-generate-config) configuration desktopConfiguration;
+    inherit (config.system.nixos-generate-config) configuration;
+    desktopConfiguration = toString (config.system.nixos-generate-config.desktopConfiguration);
     xserverEnabled = config.services.xserver.enable;
     manPage = ./manpages/nixos-generate-config.8;
   };
 
   inherit (pkgs) nixos-option;
 
-  nixos-version = makeProg {
+  nixos-version = makeProg ({
     name = "nixos-version";
     src = ./nixos-version.sh;
     inherit (pkgs) runtimeShell;
     inherit (config.system.nixos) version codeName revision;
-    inherit (config.system) configurationRevision;
     json = builtins.toJSON ({
       nixosVersion = config.system.nixos.version;
     } // optionalAttrs (config.system.nixos.revision != null) {
@@ -70,7 +70,9 @@ let
       configurationRevision = config.system.configurationRevision;
     });
     manPage = ./manpages/nixos-version.8;
-  };
+  } // optionalAttrs (config.system.configurationRevision != null) {
+    inherit (config.system) configurationRevision;
+  });
 
   nixos-enter = makeProg {
     name = "nixos-enter";
