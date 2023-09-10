@@ -35,7 +35,7 @@
 # IE: programs coupled with the compiler
 , allowGoReference ? false
 
-, CGO_ENABLED ? go.CGO_ENABLED
+, CGO_ENABLED ? go.env.CGO_ENABLED
 
 # needed for buildFlags{,Array} warning
 , buildFlags ? ""
@@ -78,18 +78,23 @@ let
       ++ (lib.optional (!dontRenameImports) govers) ++ nativeBuildInputs;
     buildInputs = buildInputs;
 
-    inherit (go) GOOS GOARCH GO386;
+    env = {
+      inherit (go.env) GOOS GOARCH GO386;
 
-    GOHOSTARCH = go.GOHOSTARCH or null;
-    GOHOSTOS = go.GOHOSTOS or null;
+      GOHOSTARCH = go.env.GOHOSTARCH or null;
+      GOHOSTOS = go.env.GOHOSTOS or null;
 
-    inherit CGO_ENABLED enableParallelBuilding;
+      inherit CGO_ENABLED;
 
-    GO111MODULE = "off";
-    GOTOOLCHAIN = "local";
-    GOFLAGS = lib.optionals (!allowGoReference) [ "-trimpath" ];
+      GO111MODULE = "off";
+      GOTOOLCHAIN = "local";
 
-    GOARM = toString (lib.intersectLists [(stdenv.hostPlatform.parsed.cpu.version or "")] ["5" "6" "7"]);
+      GOARM = toString (lib.intersectLists [(stdenv.hostPlatform.parsed.cpu.version or "")] ["5" "6" "7"]);
+    } // (lib.optionalAttrs (!allowGoReference) {
+      GOFLAGS = "-trimpath";
+    });
+
+    inherit enableParallelBuilding;
 
     configurePhase = args.configurePhase or (''
       runHook preConfigure
@@ -149,8 +154,12 @@ let
       runHook renameImports
 
       exclude='\(/_\|examples\|Godeps\|testdata'
-      if [[ -n "$excludedPackages" ]]; then
-        IFS=' ' read -r -a excludedArr <<<$excludedPackages
+      if [[ -n "''${excludedPackages[*]}" ]]; then
+        if [ -z $__structuredAttrs ]; then
+          IFS=' ' read -r -a excludedArr <<<$excludedPackages
+        else
+          excludedArr=("''${excludedPackages[@]}")
+        fi
         printf -v excludedAlternates '%s\\|' "''${excludedArr[@]}"
         excludedAlternates=''${excludedAlternates%\\|} # drop final \| added by printf
         exclude+='\|'"$excludedAlternates"
@@ -163,14 +172,15 @@ let
         . $TMPDIR/buildFlagsArray
 
         declare -a flags
-        flags+=($buildFlags "''${buildFlagsArray[@]}")
-        flags+=(''${tags:+-tags=''${tags// /,}})
-        flags+=(''${ldflags:+-ldflags="$ldflags"})
+        flags+=("''${buildFlags[@]}" "''${buildFlagsArray[@]}")
+        tagsString=''${tags[*]:+-tags=''${tags[*]}}
+        flags+=(''${tagsString// /,})
+        flags+=(''${ldflags[*]:+-ldflags="''${ldflags[*]}"})
         flags+=("-p" "$NIX_BUILD_CORES")
 
         if [ "$cmd" = "test" ]; then
           flags+=(-vet=off)
-          flags+=($checkFlags)
+          flags+=("''${checkFlags[@]}")
         fi
 
         local OUT
@@ -189,8 +199,8 @@ let
       getGoDirs() {
         local type;
         type="$1"
-        if [ -n "$subPackages" ]; then
-          echo "$subPackages" | sed "s,\(^\| \),\1$goPackagePath/,g"
+        if [ -n "''${subPackages[*]}" ]; then
+          echo ''${subPackages[*]} | sed "s,\(^\| \),\1$goPackagePath/,g"
         else
           pushd "$NIX_BUILD_TOP/go/src" >/dev/null
           find "$goPackagePath" -type f -name \*$type.go -exec dirname {} \; | grep -v "/vendor/" | sort | uniq | grep -v "$exclude"
@@ -208,7 +218,7 @@ let
         touch $TMPDIR/buildFlagsArray
       fi
       if [ -z "$enableParallelBuilding" ]; then
-          export NIX_BUILD_CORES=1
+        export NIX_BUILD_CORES=1
       fi
       for pkg in $(getGoDirs ""); do
         echo "Building subPackage $pkg"
@@ -217,7 +227,7 @@ let
     '' + lib.optionalString (stdenv.hostPlatform != stdenv.buildPlatform) ''
       # normalize cross-compiled builds w.r.t. native builds
       (
-        dir=$NIX_BUILD_TOP/go/bin/${go.GOOS}_${go.GOARCH}
+        dir=$NIX_BUILD_TOP/go/bin/${go.env.GOOS}_${go.env.GOARCH}
         if [[ -n "$(shopt -s nullglob; echo $dir/*)" ]]; then
           mv $dir/* $dir/..
         fi

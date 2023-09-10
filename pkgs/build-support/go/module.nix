@@ -190,8 +190,12 @@ let
       runHook preBuild
 
       exclude='\(/_\|examples\|Godeps\|testdata'
-      if [[ -n "$excludedPackages" ]]; then
-        IFS=' ' read -r -a excludedArr <<<$excludedPackages
+      if [[ -n "''${excludedPackages[*]}" ]]; then
+        if [ -z $__structuredAttrs ]; then
+          IFS=' ' read -r -a excludedArr <<<$excludedPackages
+        else
+          excludedArr=("''${excludedPackages[@]}")
+        fi
         printf -v excludedAlternates '%s\\|' "''${excludedArr[@]}"
         excludedAlternates=''${excludedAlternates%\\|} # drop final \| added by printf
         exclude+='\|'"$excludedAlternates"
@@ -257,7 +261,7 @@ let
     '' + lib.optionalString (stdenv.hostPlatform != stdenv.buildPlatform) ''
       # normalize cross-compiled builds w.r.t. native builds
       (
-        dir=$GOPATH/bin/${go.GOOS}_${go.GOARCH}
+        dir=$GOPATH/bin/${go.env.GOOS}_${go.env.GOARCH}
         if [[ -n "$(shopt -s nullglob; echo $dir/*)" ]]; then
           mv $dir/* $dir/..
         fi
