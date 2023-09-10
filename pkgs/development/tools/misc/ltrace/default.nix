@@ -29,7 +29,11 @@ stdenv.mkDerivation rec {
       for p in $(grep '^Patch[0-9]\+:' ${fedora}/ltrace.spec | awk '{ print $2 }'); do
         fedorapatches="$fedorapatches ${fedora}/$p"
       done
-      patches="$fedorapatches $patches"
+      if [ -n "$__structuredAttrs" ]; then
+        patches=( $fedorapatches $patches )
+      else
+        patches="$fedorapatches $patches"
+      fi
     '';
 
   # Cherry-pick extra patches for recent glibc support in the test suite.
