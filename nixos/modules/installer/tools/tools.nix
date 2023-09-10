@@ -6,16 +6,19 @@
 with lib;
 
 let
-  makeProg = args: pkgs.substituteAll (args // {
-    dir = "bin";
-    isExecutable = true;
-    nativeBuildInputs = [
-      pkgs.installShellFiles
-    ];
-    postInstall = ''
+  makeProg = args@{ src, name, manPage, ... }: pkgs.runCommand
+    name
+    {
+      inherit src;
+      env = builtins.removeAttrs args [ "src" "name" ];
+      nativeBuildInputs = [ pkgs.installShellFiles ];
+    }
+    ''
+      mkdir -p "$out"/bin
+      substituteAll $src "$out"/bin/"$name"
+      chmod +x "$out"/bin/"$name"
       installManPage ${args.manPage}
     '';
-  });
 
   nixos-build-vms = makeProg {
     name = "nixos-build-vms";
