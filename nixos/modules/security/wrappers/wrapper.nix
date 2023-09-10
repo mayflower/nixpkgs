@@ -6,13 +6,13 @@ stdenv.mkDerivation {
   buildInputs = [ linuxHeaders ];
   dontUnpack = true;
   hardeningEnable = [ "pie" ];
-  CFLAGS = [
+  env.CFLAGS = toString ([
     ''-DWRAPPER_DIR="${parentWrapperDir}"''
   ] ++ (if debug then [
     "-Werror" "-Og" "-g"
   ] else [
     "-Wall" "-O2"
-  ]);
+  ]));
   dontStrip = debug;
   installPhase = ''
     mkdir -p $out/bin
