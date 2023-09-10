@@ -53,7 +53,7 @@ buildPythonPackage rec {
 
   pythonImportsCheck = [ "compressor" ];
 
-  DJANGO_SETTINGS_MODULE = "compressor.test_settings";
+  env.DJANGO_SETTINGS_MODULE = "compressor.test_settings";
 
   meta = with lib; {
     description = "Compresses linked and inline JavaScript or CSS into single cached files";
