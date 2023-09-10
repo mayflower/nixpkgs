@@ -10,7 +10,8 @@ let
     src = ./stage-2-init.sh;
     shellDebug = "${pkgs.bashInteractive}/bin/bash";
     shell = "${pkgs.bash}/bin/bash";
-    inherit (config.boot) readOnlyNixStore systemdExecutable extraSystemdUnitPaths;
+    inherit (config.boot) readOnlyNixStore systemdExecutable;
+    extraSystemdUnitPaths = toString config.boot.extraSystemdUnitPaths;
     inherit (config.system.nixos) distroName;
     isExecutable = true;
     inherit useHostResolvConf;
