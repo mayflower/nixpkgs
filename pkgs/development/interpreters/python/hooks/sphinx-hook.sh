@@ -30,10 +30,18 @@ buildSphinxPhase() {
         exit 1
     fi
 
-    if [ -n "${sphinxBuilders-}" ]; then
-        eval "__sphinxBuilders=($sphinxBuilders)"
+    if [ -z "$__structuredAttrs" ]; then
+        if [ -n "${sphinxBuilders-}" ]; then
+            eval "__sphinxBuilders=($sphinxBuilders)"
+        else
+            __sphinxBuilders=(html)
+        fi
     else
-        __sphinxBuilders=(html)
+        if [[ ${sphinxBuilders[@]:+${sphinxBuilders[@]}} ]]; then
+            __sphinxBuilders=("${sphinxBuilders[@]}")
+        else
+            __sphinxBuilders=(html)
+        fi
     fi
 
     for __builder in "${__sphinxBuilders[@]}"; do
