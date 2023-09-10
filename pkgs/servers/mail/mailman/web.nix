@@ -35,7 +35,7 @@ buildPythonPackage rec {
   doCheck = false;
 
   makeWrapperArgs = [
-    "--suffix PATH : ${lib.makeBinPath [ sassc ]}"
+    "--suffix" "PATH" ":" (lib.makeBinPath [ sassc ])
   ];
 
   meta = with lib; {
