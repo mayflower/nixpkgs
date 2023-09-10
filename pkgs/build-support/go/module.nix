@@ -32,7 +32,7 @@
   # IE: programs coupled with the compiler
 , allowGoReference ? false
 
-, CGO_ENABLED ? go.CGO_ENABLED
+, CGO_ENABLED ? go.env.CGO_ENABLED
 
 , meta ? { }
 
@@ -62,8 +62,10 @@ let
     nativeBuildInputs = (args.nativeBuildInputs or [ ]) ++ [ go git cacert ];
 
     inherit (args) src;
-    inherit (go) GOOS GOARCH;
-    inherit GO111MODULE GOTOOLCHAIN;
+    env = {
+      inherit (go.env) GOOS GOARCH;
+      inherit GO111MODULE GOTOOLCHAIN;
+    };
 
     # The following inheritence behavior is not trivial to expect, and some may
     # argue it's not ideal. Changing it may break vendor hashes in Nixpkgs and
@@ -149,10 +151,14 @@ let
   package = stdenv.mkDerivation (args // {
     nativeBuildInputs = [ go ] ++ nativeBuildInputs;
 
-    inherit (go) GOOS GOARCH;
+    env = {
+      inherit (go.env) GOOS GOARCH;
 
-    GOFLAGS = lib.optionals (!proxyVendor) [ "-mod=vendor" ] ++ lib.optionals (!allowGoReference) [ "-trimpath" ];
-    inherit CGO_ENABLED enableParallelBuilding GO111MODULE GOTOOLCHAIN;
+      GOFLAGS = toString (lib.optional (!proxyVendor) "-mod=vendor" ++ lib.optional (!allowGoReference) "-trimpath");
+      inherit CGO_ENABLED GO111MODULE GOTOOLCHAIN;
+    };
+
+    inherit enableParallelBuilding;
 
     configurePhase = args.configurePhase or (''
       runHook preConfigure
@@ -198,14 +204,15 @@ let
         . $TMPDIR/buildFlagsArray
 
         declare -a flags
-        flags+=($buildFlags "''${buildFlagsArray[@]}")
-        flags+=(''${tags:+-tags=''${tags// /,}})
-        flags+=(''${ldflags:+-ldflags="$ldflags"})
+        flags+=("''${buildFlags[@]}" "''${buildFlagsArray[@]}")
+        tagsString=''${tags[*]:+-tags=''${tags[*]}}
+        flags+=(''${tagsString// /,})
+        flags+=(''${ldflags[*]:+-ldflags="''${ldflags[*]}"})
         flags+=("-p" "$NIX_BUILD_CORES")
 
         if [ "$cmd" = "test" ]; then
           flags+=(-vet=off)
-          flags+=($checkFlags)
+          flags+=("''${checkFlags[@]}")
         fi
 
         local OUT
@@ -224,8 +231,8 @@ let
       getGoDirs() {
         local type;
         type="$1"
-        if [ -n "$subPackages" ]; then
-          echo "$subPackages" | sed "s,\(^\| \),\1./,g"
+        if [ -n "''${subPackages[*]}" ]; then
+          echo ''${subPackages[*]} | sed "s,\(^\| \),\1./,g"
         else
           find . -type f -name \*$type.go -exec dirname {} \; | grep -v "/vendor/" | sort --unique | grep -v "$exclude"
         fi
