@@ -31,7 +31,7 @@ buildPythonPackage rec {
     wheel
   ];
 
-  SETUPTOOLS_SCM_PRETEND_VERSION = version;
+  env.SETUPTOOLS_SCM_PRETEND_VERSION = version;
 
   buildInputs = [
     pytest
