@@ -316,13 +316,15 @@ let
     inherit (config.system.build) earlyMountScript;
 
     inherit (config.boot.initrd) checkJournalingFS verbose
-      preLVMCommands preDeviceCommands postDeviceCommands postMountCommands preFailCommands kernelModules;
+      preLVMCommands preDeviceCommands postDeviceCommands postMountCommands preFailCommands;
 
-    resumeDevices = map (sd: if sd ? device then sd.device else "/dev/disk/by-label/${sd.label}")
+    kernelModules = toString config.boot.initrd.kernelModules;
+
+    resumeDevices = toString (map (sd: if sd ? device then sd.device else "/dev/disk/by-label/${sd.label}")
                     (filter (sd: hasPrefix "/dev/" sd.device && !sd.randomEncryption.enable
                              # Don't include zram devices
                              && !(hasPrefix "/dev/zram" sd.device)
-                            ) config.swapDevices);
+                            ) config.swapDevices));
 
     fsInfo =
       let f = fs: [ fs.mountPoint (if fs.device != null then fs.device else "/dev/disk/by-label/${fs.label}") fs.fsType (builtins.concatStringsSep "," fs.options) ];
