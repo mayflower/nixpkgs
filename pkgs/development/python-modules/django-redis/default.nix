@@ -50,7 +50,7 @@ buildPythonPackage {
     "django_redis"
   ];
 
-  DJANGO_SETTINGS_MODULE = "tests.settings.sqlite";
+  env.DJANGO_SETTINGS_MODULE = "tests.settings.sqlite";
 
   preCheck = ''
     ${pkgs.redis}/bin/redis-server &
