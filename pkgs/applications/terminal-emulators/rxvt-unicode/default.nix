@@ -87,8 +87,10 @@ stdenv.mkDerivation {
     (enableFeature unicode3Support "unicode3")
   ] ++ optional emojiSupport "--enable-wide-glyphs";
 
-  LDFLAGS = [ "-lfontconfig" "-lXrender" "-lpthread" ];
-  CFLAGS = [ "-I${freetype.dev}/include/freetype2" ];
+  env = {
+    LDFLAGS = "-lfontconfig -lXrender -lpthread";
+    CFLAGS = "-I${freetype.dev}/include/freetype2";
+  };
 
   preConfigure =
     ''
