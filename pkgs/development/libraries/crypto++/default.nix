@@ -40,7 +40,7 @@ stdenv.mkDerivation rec {
 
   enableParallelBuilding = true;
   hardeningDisable = [ "fortify" ];
-  CXXFLAGS = lib.optionals (withOpenMP) [ "-fopenmp" ];
+  env.CXXFLAGS = lib.optionalString (withOpenMP) "-fopenmp";
 
   doCheck = true;
 
