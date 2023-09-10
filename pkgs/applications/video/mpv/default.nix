@@ -122,7 +122,7 @@ in stdenv'.mkDerivation (finalAttrs: {
     patchShebangs version.* ./TOOLS/
   '';
 
-  NIX_LDFLAGS = lib.optionalString x11Support "-lX11 -lXext ";
+  env.NIX_LDFLAGS = lib.optionalString x11Support "-lX11 -lXext ";
 
   preConfigure = lib.optionalString swiftSupport ''
     # Ensure we reference 'lib' (not 'out') of Swift.
