@@ -59,7 +59,7 @@ buildPythonPackage rec {
   ] ++ passthru.optional-dependencies.pook;
 
   # Skip http tests
-  SKIP_TRUE_HTTP = true;
+  env.SKIP_TRUE_HTTP = true;
 
   disabledTestPaths = [
     # Requires a live Redis instance
