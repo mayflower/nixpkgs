@@ -210,8 +210,6 @@ stdenv.mkDerivation rec {
     substituteInPlace cmake/QtAutoDetect.cmake --replace "/usr/bin/xcrun" "${xcbuild}/bin/xcrun"
   '';
 
-  fix_qt_builtin_paths = ../hooks/fix-qt-builtin-paths.sh;
-  fix_qt_module_paths = ../hooks/fix-qt-module-paths.sh;
   preHook = ''
     . "$fix_qt_builtin_paths"
     . "$fix_qt_module_paths"
@@ -236,10 +234,14 @@ stdenv.mkDerivation rec {
     "-DQT_FEATURE_cxx17_filesystem=OFF"
   ] ++ lib.optional (qttranslations != null) "-DINSTALL_TRANSLATIONSDIR=${qttranslations}/translations";
 
-  NIX_LDFLAGS = toString (lib.optionals stdenv.isDarwin [
-    # Undefined symbols for architecture arm64: "___gss_c_nt_hostbased_service_oid_desc"
-    "-framework GSS"
-  ]);
+  env = {
+    NIX_LDFLAGS = toString (lib.optionals stdenv.isDarwin [
+      # Undefined symbols for architecture arm64: "___gss_c_nt_hostbased_service_oid_desc"
+      "-framework GSS"
+    ]);
+    fix_qt_builtin_paths = ../hooks/fix-qt-builtin-paths.sh;
+    fix_qt_module_paths = ../hooks/fix-qt-module-paths.sh;
+  };
 
   outputs = [ "out" "dev" ];
 
