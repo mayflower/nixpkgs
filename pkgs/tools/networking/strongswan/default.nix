@@ -98,7 +98,7 @@ stdenv.mkDerivation rec {
     echo "include /etc/ipsec.secrets" >> $out/etc/ipsec.secrets
   '';
 
-  NIX_LDFLAGS = lib.optionalString stdenv.cc.isGNU "-lgcc_s" ;
+  env.NIX_LDFLAGS = lib.optionalString stdenv.cc.isGNU "-lgcc_s" ;
 
   passthru.tests = { inherit (nixosTests) strongswan-swanctl; };
 
