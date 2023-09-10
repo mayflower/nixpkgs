@@ -53,12 +53,14 @@ edk2 = stdenv.mkDerivation {
   depsBuildBuild = [ buildPackages.stdenv.cc buildPackages.util-linux buildPackages.bash ];
   strictDeps = true;
 
-  # trick taken from https://src.fedoraproject.org/rpms/edk2/blob/08f2354cd280b4ce5a7888aa85cf520e042955c3/f/edk2.spec#_319
-  ${"GCC5_${targetArch}_PREFIX"}=stdenv.cc.targetPrefix;
+  makeFlags = [ "-C" "BaseTools" ];
 
-  makeFlags = [ "-C BaseTools" ];
+  env = {
+    NIX_CFLAGS_COMPILE = "-Wno-return-type" + lib.optionalString (stdenv.cc.isGNU) " -Wno-error=stringop-truncation";
 
-  env.NIX_CFLAGS_COMPILE = "-Wno-return-type" + lib.optionalString (stdenv.cc.isGNU) " -Wno-error=stringop-truncation";
+    # trick taken from https://src.fedoraproject.org/rpms/edk2/blob/08f2354cd280b4ce5a7888aa85cf520e042955c3/f/edk2.spec#_319
+    ${"GCC5_${targetArch}_PREFIX"}=stdenv.cc.targetPrefix;
+  };
 
   hardeningDisable = [ "format" "fortify" ];
 
