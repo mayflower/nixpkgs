@@ -10,7 +10,7 @@ let
     hash = "sha256-Vp8U49fp0FowIuSSvbrMWjAKG2oDO1o0qO4izSnTR3U=";
   };
 
-  CGO_ENABLED = 0;
+  env.CGO_ENABLED = 0;
 
   meta = with lib; {
     description = "Distributed reliable key-value store for the most critical data of a distributed system";
@@ -23,7 +23,9 @@ let
   etcdserver = buildGoModule rec {
     pname = "etcdserver";
 
-    inherit CGO_ENABLED meta src version;
+    inherit meta src version;
+
+    env = { inherit (env) CGO_ENABLED; };
 
     vendorHash = "sha256-vu5VKHnDbvxSd8qpIFy0bA88IIXLaQ5S8dVUJEwnKJA=";
 
@@ -43,7 +45,9 @@ let
   etcdutl = buildGoModule rec {
     pname = "etcdutl";
 
-    inherit CGO_ENABLED meta src version;
+    inherit meta src version;
+
+    env = { inherit (env) CGO_ENABLED; };
 
     vendorHash = "sha256-i60rKCmbEXkdFOZk2dTbG5EtYKb5eCBSyMcsTtnvATs=";
 
@@ -53,7 +57,9 @@ let
   etcdctl = buildGoModule rec {
     pname = "etcdctl";
 
-    inherit CGO_ENABLED meta src version;
+    inherit meta src version;
+
+    env = { inherit (env) CGO_ENABLED; };
 
     vendorHash = "sha256-awl/4kuOjspMVEwfANWK0oi3RId6ERsFkdluiRaaXlA=";
 
