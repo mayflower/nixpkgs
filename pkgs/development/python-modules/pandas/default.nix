@@ -191,14 +191,6 @@ buildPythonPackage rec {
 
   __darwinAllowLocalNetworking = true;
 
-  pytestFlagsArray = [
-    # https://github.com/pandas-dev/pandas/blob/main/test_fast.sh
-    "--skip-db"
-    "--skip-slow"
-    "--skip-network"
-    "-m" "'not single_cpu and not slow_arm'"
-    "--numprocesses" "4"
-  ];
 
   disabledTests = [
     # AssertionError: Did not see expected warning of class 'FutureWarning'
@@ -216,6 +208,15 @@ buildPythonPackage rec {
     export HOME=$TMPDIR
     export LC_ALL="en_US.UTF-8"
     cd $out/${python.sitePackages}/pandas
+
+    # https://github.com/pandas-dev/pandas/blob/main/test_fast.sh
+    pytestFlagsArray=(
+      "--skip-db"
+      "--skip-slow"
+      "--skip-network"
+      "-m" "not single_cpu and not slow_arm"
+      "--numprocesses" "4"
+    );
   ''
   # TODO: Get locale and clipboard support working on darwin.
   #       Until then we disable the tests.
