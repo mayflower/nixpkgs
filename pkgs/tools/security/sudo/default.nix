@@ -69,8 +69,8 @@ stdenv.mkDerivation rec {
         #undef _PATH_MV
         #define _PATH_MV "${coreutils}/bin/mv"
       EOF
-      makeFlags="install_uid=$(id -u) install_gid=$(id -g)"
-      installFlags="sudoers_uid=$(id -u) sudoers_gid=$(id -g) sysconfdir=$out/etc rundir=$TMPDIR/dummy vardir=$TMPDIR/dummy DESTDIR=/"
+      makeFlags=("install_uid=$(id -u)" "install_gid=$(id -g)")
+      installFlags=("sudoers_uid=$(id -u)" "sudoers_gid=$(id -g)" "sysconfdir=$out/etc" "rundir=$TMPDIR/dummy" "vardir=$TMPDIR/dummy DESTDIR=/")
     '';
 
   depsBuildBuild = [ buildPackages.stdenv.cc ];
