@@ -90,12 +90,13 @@ let
 
 in
 
-stdenv.mkDerivation ((builtins.removeAttrs attrs ["source"]) // {
-  inherit ruby;
+stdenv.mkDerivation ((builtins.removeAttrs attrs ["source" "ruby"]) // {
   inherit dontBuild;
   inherit dontStrip;
   inherit suffix;
   gemType = type;
+
+  env.ruby = ruby;
 
   nativeBuildInputs = [
     ruby makeWrapper
