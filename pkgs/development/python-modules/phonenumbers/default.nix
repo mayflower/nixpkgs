@@ -21,13 +21,13 @@ buildPythonPackage rec {
     pytestCheckHook
   ];
 
-  pytestFlagsArray = [
-    "tests/*.py"
-  ];
-
   pythonImportsCheck = [
     "phonenumbers"
   ];
+
+  preCheck = ''
+    pytestFlagsArray=(tests/*.py)
+  '';
 
   meta = with lib; {
     description = "Python module for handling international phone numbers";
