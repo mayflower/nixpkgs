@@ -500,9 +500,9 @@ else let
     assert lib.assertMsg (__structuredAttrs -> !(attrs ? NIX_NO_SELF_RPATH)) "${name}: NIX_NO_SELF_RPATH is not in env";
     assert lib.assertMsg (__structuredAttrs -> !(attrs ? NIX_DONT_SET_RPATH)) "${name}: NIX_DONT_SET_RPATH is not in env";
     assert lib.assertMsg envIsExportable
-      "When using structured attributes, `env` must be an attribute set of environment variables.";
+      "${name}: When using structured attributes, `env` must be an attribute set of environment variables.";
     assert lib.assertMsg (overlappingNames == [ ])
-      "The ‘env’ attribute set cannot contain any attributes passed to derivation. The following attributes are overlapping: ${lib.concatStringsSep ", " overlappingNames}";
+      "${name}: The ‘env’ attribute set cannot contain any attributes passed to derivation. The following attributes are overlapping: ${lib.concatStringsSep ", " overlappingNames}";
     lib.mapAttrs
       (n: v: assert lib.assertMsg (lib.isString v || lib.isPath v || lib.isBool v || lib.isInt v || lib.isDerivation v)
         "${name}: The ‘env’ attribute set can only contain derivation, path, string, boolean or integer attributes. The ‘${n}’ attribute is of type ${builtins.typeOf v}."; v)
