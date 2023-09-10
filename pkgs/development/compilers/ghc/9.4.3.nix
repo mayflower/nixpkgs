@@ -218,7 +218,7 @@ stdenv.mkDerivation (rec {
   postPatch = "patchShebangs .";
 
   # GHC needs the locale configured during the Haddock phase.
-  LANG = "en_US.UTF-8";
+  env.LANG = "en_US.UTF-8";
 
   # GHC is a bit confused on its cross terminology.
   # TODO(@sternenseemann): investigate coreutils dependencies and pass absolute paths
