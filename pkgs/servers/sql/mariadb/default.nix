@@ -234,8 +234,10 @@ let
         rm -r "$out"/OFF
       '';
 
-      CXXFLAGS = lib.optionalString stdenv.hostPlatform.isi686 "-fpermissive";
-      NIX_LDFLAGS = lib.optionalString stdenv.hostPlatform.isRiscV "-latomic";
+      env = {
+        CXXFLAGS = lib.optionalString stdenv.hostPlatform.isi686 "-fpermissive";
+        NIX_LDFLAGS = lib.optionalString stdenv.hostPlatform.isRiscV "-latomic";
+      };
     });
   in
     server // {
