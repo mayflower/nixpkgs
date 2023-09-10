@@ -10,7 +10,7 @@ runCommand "fonts.conf"
       ++ lib.optionals stdenv.isDarwin [ "/System/Library/Fonts" "/Library/Fonts" "~/Library/Fonts" ];
   }
   ''
-    xsltproc --stringparam fontDirectories "$fontDirectories" \
+    xsltproc --stringparam fontDirectories "''${fontDirectories[*]}" \
       --path ${fontconfig.out}/share/xml/fontconfig \
       ${./make-fonts-conf.xsl} ${fontconfig.out}/etc/fonts/fonts.conf \
       > $out
