@@ -24,7 +24,11 @@ buildPythonPackage rec {
     hash = "sha256-aVnXCrTh+0Ip+FgYWN7hLw8N3iQCmXSywhReD5RTUfI=";
   };
 
-  SETUPTOOLS_SCM_PRETEND_VERSION = version;
+  env = {
+    # for lz4.steam
+    PYLZ4_EXPERIMENTAL = true;
+    SETUPTOOLS_SCM_PRETEND_VERSION = version;
+  };
 
   postPatch = ''
     sed -i '/pytest-cov/d' setup.py
@@ -46,9 +50,6 @@ buildPythonPackage rec {
     psutil
     pytestCheckHook
   ];
-
-  # for lz4.steam
-  PYLZ4_EXPERIMENTAL = true;
 
   # prevent local lz4 directory from getting imported as it lacks native extensions
   preCheck = ''
