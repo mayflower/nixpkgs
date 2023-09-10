@@ -61,9 +61,7 @@ python3Packages.buildPythonApplication rec {
     (if stdenv.isLinux then pyfuse3 else llfuse)
   ];
 
-  makeWrapperArgs = [
-    ''--prefix PATH ':' "${openssh}/bin"''
-  ];
+  makeWrapperArgs = [ "--prefix" "PATH" ":" "${openssh}/bin" ];
 
   postInstall = ''
     installShellCompletion --cmd borg \
