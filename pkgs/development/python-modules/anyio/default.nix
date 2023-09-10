@@ -74,10 +74,12 @@ buildPythonPackage rec {
     uvloop
   ] ++ passthru.optional-dependencies.trio;
 
-  pytestFlagsArray = [
-    "-W" "ignore::trio.TrioDeprecationWarning"
-    "-m" "'not network'"
-  ];
+  preCheck = ''
+    pytestFlagsArray=(
+      "-W" "ignore::trio.TrioDeprecationWarning"
+      "-m" "not network"
+    )
+  '';
 
   disabledTests = [
     # INTERNALERROR> AttributeError: 'NonBaseMultiError' object has no attribute '_exceptions'. Did you mean: 'exceptions'?
