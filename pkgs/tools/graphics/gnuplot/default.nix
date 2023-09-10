@@ -51,7 +51,7 @@ in
     (if aquaterm then "--with-aquaterm" else "--without-aquaterm")
   ] ++ lib.optional withCaca "--with-caca";
 
-  CXXFLAGS = lib.optionalString (stdenv.isDarwin && withQt) "-std=c++11";
+  env.CXXFLAGS = lib.optionalString (stdenv.isDarwin && withQt) "-std=c++11";
 
   # we'll wrap things ourselves
   dontWrapGApps = true;
