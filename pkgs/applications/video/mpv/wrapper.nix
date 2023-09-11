@@ -68,7 +68,7 @@ let
       name = "mpv-with-scripts-${mpv.version}";
 
       # TODO: don't link all mpv outputs and convert package to mpv-unwrapped?
-      paths = [ mpv.all ];
+      paths = mpv.all;
 
       nativeBuildInputs = [ makeWrapper ];
 
