@@ -189,7 +189,8 @@ stdenv.mkDerivation ((builtins.removeAttrs attrs ["source" "ruby"]) // {
     export GEM_HOME=$out/${ruby.gemPath}
     mkdir -p $GEM_HOME
 
-    echo "buildFlags: $buildFlags"
+    echo "buildFlags:"
+    printf "  %q\n" ${lib.escapeShellArgs buildFlags}
 
     ${lib.optionalString (type ==  "url") ''
     ruby ${./nix-bundle-install.rb} \
@@ -228,7 +229,7 @@ stdenv.mkDerivation ((builtins.removeAttrs attrs ["source" "ruby"]) // {
       --backtrace \
       --no-env-shebang \
       ${documentFlag} \
-      $gempkg $gemFlags -- $buildFlags
+      $gempkg $gemFlags -- ${lib.escapeShellArgs buildFlags}
 
     # looks like useless files which break build repeatability and consume space
     pushd $out/${ruby.gemPath}
