@@ -66,7 +66,7 @@ buildPythonPackage rec {
   ];
 
   pytestFlagsArray = [
-    "--ignore python2"
+    "--ignore" "python2"
   ];
 
   pythonImportsCheck = [
