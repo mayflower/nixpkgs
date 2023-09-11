@@ -27,7 +27,7 @@ let
   };
 
   epub = pkgs.runCommand "manual.epub" {
-    nativeBuildInputs = with pkgs; [ libxslt zip ];
+    nativeBuildInputs = with pkgs; [ libxslt jq zip ];
 
     epub = ''
       <book xmlns="http://docbook.org/ns/docbook"
@@ -53,15 +53,17 @@ let
       </book>
     '';
 
-    passAsFile = [ "epub" ];
+    __structuredAttrs = true;
   } ''
+    jq -r ".epub" < .attrs.json > epub
+
     mkdir scratch
     xsltproc \
       --param chapter.autolabel 0 \
       --nonet \
       --output scratch/ \
       ${pkgs.docbook_xsl_ns}/xml/xsl/docbook/epub/docbook.xsl \
-      $epubPath
+      epub
 
     echo "application/epub+zip" > mimetype
     zip -0Xq "$out" mimetype
