@@ -122,7 +122,11 @@ stdenv.mkDerivation rec {
   checkPhase = ''
     runHook preCheck
 
-    ${lib.optionalString stdenv.isDarwin "DY"}LD_LIBRARY_PATH=$PWD/lib ctest -E "($(echo "$disabledTests" | tr " " "|"))"
+    if [ -z $__structuredAttrs ]; then
+      disabledTests=(''${disabledTests[*]})
+    fi
+
+    ${lib.optionalString stdenv.isDarwin "DY"}LD_LIBRARY_PATH=$PWD/lib ctest -E "($(echo "''${disabledTests[@]}" | tr " " "|"))"
 
     runHook postCheck
   '';
