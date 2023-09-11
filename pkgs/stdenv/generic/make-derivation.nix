@@ -418,8 +418,6 @@ else let
       inherit enableParallelBuilding;
       enableParallelChecking = attrs.enableParallelChecking or true;
       enableParallelInstalling = attrs.enableParallelInstalling or true;
-    } // lib.optionalAttrs (hardeningDisable != [] || hardeningEnable != [] || stdenv.hostPlatform.isMusl) {
-      NIX_HARDENING_ENABLE = enabledHardeningOptions;
     } // lib.optionalAttrs (stdenv.hostPlatform.isx86_64 && stdenv.hostPlatform ? gcc.arch) {
       requiredSystemFeatures = attrs.requiredSystemFeatures or [] ++ [ "gccarch-${stdenv.hostPlatform.gcc.arch}" ];
     } // lib.optionalAttrs (stdenv.buildPlatform.isDarwin) {
@@ -506,7 +504,9 @@ else let
     lib.mapAttrs
       (n: v: assert lib.assertMsg (lib.isString v || lib.isPath v || lib.isBool v || lib.isInt v || lib.isDerivation v)
         "${name}: The ‘env’ attribute set can only contain derivation, path, string, boolean or integer attributes. The ‘${n}’ attribute is of type ${builtins.typeOf v}."; v)
-      env;
+      (env // lib.optionalAttrs (hardeningDisable != [] || hardeningEnable != [] || stdenv.hostPlatform.isMusl) {
+        NIX_HARDENING_ENABLE = toString enabledHardeningOptions;
+      });
 
 in
 
