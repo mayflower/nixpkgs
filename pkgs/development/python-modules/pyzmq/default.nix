@@ -39,7 +39,7 @@ buildPythonPackage rec {
   ];
 
   pytestFlagsArray = [
-    "$out/${python.sitePackages}/zmq/tests/" # Folder with tests
+    "${placeholder "out"}/${python.sitePackages}/zmq/tests/" # Folder with tests
   ];
 
   disabledTests = [
