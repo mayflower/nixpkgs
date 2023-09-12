@@ -30,7 +30,7 @@ buildPythonPackage rec {
   disabledTests = [
     "benchmark"
     # these tests require network access
-    "remote ref"
+    "remote" "ref"
     "definitions"
   ] ++ lib.optionals stdenv.isDarwin [
     "test_compile_to_code_custom_format"  # cannot import temporary module created during test
