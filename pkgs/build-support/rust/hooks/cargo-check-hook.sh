@@ -1,6 +1,10 @@
 declare -a checkFlags
 declare -a cargoTestFlags
 
+if [ -z "$__structuredAttrs" ]; then
+    checkFlags=(${checkFlags[*]})
+fi
+
 cargoCheckHook() {
     echo "Executing cargoCheckHook"
 
@@ -29,7 +33,7 @@ cargoCheckHook() {
     fi
 
     argstr="${cargoCheckProfileFlag} ${cargoCheckNoDefaultFeaturesFlag} ${cargoCheckFeaturesFlag}
-        --target @rustTargetPlatformSpec@ --frozen ${cargoTestFlags}"
+        --target @rustTargetPlatformSpec@ --frozen ${cargoTestFlags[*]}"
 
     (
         set -x
@@ -37,7 +41,7 @@ cargoCheckHook() {
               -j $NIX_BUILD_CORES \
               ${argstr} -- \
               --test-threads=${threads} \
-              ${checkFlags} \
+              "${checkFlags[@]}" \
               ${checkFlagsArray+"${checkFlagsArray[@]}"}
     )
 

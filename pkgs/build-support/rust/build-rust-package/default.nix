@@ -114,9 +114,9 @@ stdenv.mkDerivation ((removeAttrs args [ "depsExtraArgs" "cargoUpdateHook" "carg
 
   cargoCheckNoDefaultFeatures = checkNoDefaultFeatures;
 
-  cargoBuildFeatures = buildFeatures;
+  cargoBuildFeatures = toString buildFeatures;
 
-  cargoCheckFeatures = checkFeatures;
+  cargoCheckFeatures = toString checkFeatures;
 
   patchRegistryDeps = ./patch-registry-deps;
 

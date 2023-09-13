@@ -1,5 +1,9 @@
 declare -a cargoBuildFlags
 
+if [ -z "$__structuredAttrs" ]; then
+    cargoBuildFlags=(${cargoBuildFlags[*]})
+fi
+
 cargoBuildHook() {
     echo "Executing cargoBuildHook"
 
@@ -41,7 +45,7 @@ cargoBuildHook() {
         ${cargoBuildProfileFlag} \
         ${cargoBuildNoDefaultFeaturesFlag} \
         ${cargoBuildFeaturesFlag} \
-        ${cargoBuildFlags}
+        "${cargoBuildFlags[@]}"
     )
 
     if [ ! -z "${buildAndTestSubdir-}" ]; then
