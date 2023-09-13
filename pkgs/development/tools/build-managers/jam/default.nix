@@ -29,11 +29,14 @@ let
       EOF
     '';
 
-    LOCATE_TARGET = "bin.unix";
+    env.LOCATE_TARGET = "bin.unix";
 
     buildPhase = ''
       runHook preBuild
-      make $makeFlags jam0
+      if [ -z "$structuredAttrs" ]; then
+        makeFlags=(''${makeFlags[*]})
+      fi
+      make "''${makeFlags[@]}" jam0
       ./jam0 -j$NIX_BUILD_CORES -sCC=${buildPackages.stdenv.cc.targetPrefix}cc jambase.c
       ./jam0 -j$NIX_BUILD_CORES
       runHook postBuild
