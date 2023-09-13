@@ -54,15 +54,12 @@ stdenv.mkDerivation rec {
 
   cmakeFlags = [
     "-DCMAKE_BUILD_TYPE=${if debug then "Debug" else "Release"}"
+    "-DPHONON_QT_MKSPECS_INSTALL_DIR=${placeholder "dev"}/mkspecs"
+    "-DPHONON_QT_IMPORTS_INSTALL_DIR=${placeholder "bin"}/$qtQmlPrefix"
+    "-DPHONON_QT_PLUGIN_INSTALL_DIR=${placeholder "bin"}/$qtPluginPrefix/designer"
   ];
 
   dontWrapQtApps = true;
-
-  preConfigure = ''
-    cmakeFlags+=" -DPHONON_QT_MKSPECS_INSTALL_DIR=''${!outputDev}/mkspecs"
-    cmakeFlags+=" -DPHONON_QT_IMPORTS_INSTALL_DIR=''${!outputBin}/$qtQmlPrefix"
-    cmakeFlags+=" -DPHONON_QT_PLUGIN_INSTALL_DIR=''${!outputBin}/$qtPluginPrefix/designer"
-  '';
 
   postPatch = ''
     sed -i PhononConfig.cmake.in \
