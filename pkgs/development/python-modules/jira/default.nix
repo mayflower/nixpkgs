@@ -32,7 +32,7 @@ buildPythonPackage rec {
     setuptools-scm-git-archive
   ];
 
-  SETUPTOOLS_SCM_PRETEND_VERSION = version;
+  env.SETUPTOOLS_SCM_PRETEND_VERSION = version;
 
   propagatedBuildInputs = [
     defusedxml
