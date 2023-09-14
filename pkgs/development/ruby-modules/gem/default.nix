@@ -189,22 +189,28 @@ stdenv.mkDerivation ((builtins.removeAttrs attrs ["source" "ruby"]) // {
     export GEM_HOME=$out/${ruby.gemPath}
     mkdir -p $GEM_HOME
 
+    if [[ -z "$__structuredAttrs" && -n "$buildFlags" ]]; then
+      buildFlags=("''${buildFlags[@]}")
+    fi
+
     echo "buildFlags:"
-    printf "  %q\n" ${lib.escapeShellArgs buildFlags}
+    printf "  %q\n" "''${buildFlags[@]}"
+
+    buildFlagsString=$(printf "%q " "''${buildFlags[@]}")
 
     ${lib.optionalString (type ==  "url") ''
     ruby ${./nix-bundle-install.rb} \
       "path" \
       '${gemName}' \
       '${version}' \
-      '${lib.escapeShellArgs buildFlags}'
+      "$buildFlagsString"
     ''}
     ${lib.optionalString (type == "git") ''
     ruby ${./nix-bundle-install.rb} \
       "git" \
       '${gemName}' \
       '${version}' \
-      '${lib.escapeShellArgs buildFlags}' \
+      "$buildFlagsString" \
       '${attrs.source.url}' \
       '.' \
       '${attrs.source.rev}'
