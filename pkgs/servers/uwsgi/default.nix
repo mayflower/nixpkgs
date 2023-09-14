@@ -98,12 +98,25 @@ stdenv.mkDerivation (finalAttrs: {
     ++ lib.optional withCap libcap
     ++ lib.concatMap (x: x.inputs) needed;
 
-  basePlugins =  lib.concatStringsSep ","
-    (  lib.optional withPAM "pam"
-    ++ lib.optional withSystemd "systemd_logger"
-    );
+  env = {
+    basePlugins =  lib.concatStringsSep ","
+      (  lib.optional withPAM "pam"
+      ++ lib.optional withSystemd "systemd_logger"
+      );
 
-  UWSGI_INCLUDES = lib.optionalString withCap "${libcap.dev}/include";
+    UWSGI_INCLUDES = lib.optionalString withCap "${libcap.dev}/include";
+
+    # this is a hack to make the php plugin link with session.so (which on nixos is a separate package)
+    # the hack works in coordination with ./additional-php-ldflags.patch
+    UWSGICONFIG_PHP_LDFLAGS = lib.optionalString
+      (builtins.any (x: x.name == "php") needed)
+      (lib.concatStringsSep "," [
+        "-Wl"
+        "-rpath=${php-embed.extensions.session}/lib/php/extensions/"
+        "--library-path=${php-embed.extensions.session}/lib/php/extensions/"
+        "-l:session.so"
+      ]);
+  };
 
   passthru = {
     inherit python2 python3;
@@ -126,17 +139,6 @@ stdenv.mkDerivation (finalAttrs: {
 
     runHook postConfigure
   '';
-
-  # this is a hack to make the php plugin link with session.so (which on nixos is a separate package)
-  # the hack works in coordination with ./additional-php-ldflags.patch
-  UWSGICONFIG_PHP_LDFLAGS = lib.optionalString
-    (builtins.any (x: x.name == "php") needed)
-    (lib.concatStringsSep "," [
-      "-Wl"
-      "-rpath=${php-embed.extensions.session}/lib/php/extensions/"
-      "--library-path=${php-embed.extensions.session}/lib/php/extensions/"
-      "-l:session.so"
-    ]);
 
   buildPhase = ''
     runHook preBuild
