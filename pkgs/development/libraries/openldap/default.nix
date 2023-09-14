@@ -33,6 +33,7 @@ stdenv.mkDerivation rec {
   ];
 
   __darwinAllowLocalNetworking = true;
+  __structuredAttrs = true;
 
   enableParallelBuilding = true;
 
@@ -66,9 +67,9 @@ stdenv.mkDerivation rec {
     "ac_cv_func_memcmp_working=yes"
   ] ++ lib.optional stdenv.isFreeBSD "--with-pic";
 
-  env.NIX_CFLAGS_COMPILE = toString [ "-DLDAPI_SOCK=\"/run/openldap/ldapi\"" ];
+  env.NIX_CFLAGS_COMPILE = "-DLDAPI_SOCK=\"/run/openldap/ldapi\"";
 
-  makeFlags= [
+  makeFlags = [
     "CC=${stdenv.cc.targetPrefix}cc"
     "STRIP="  # Disable install stripping as it breaks cross-compiling. We strip binaries anyway in fixupPhase.
     "STRIP_OPTS="
@@ -88,11 +89,7 @@ stdenv.mkDerivation rec {
   ];
 
   postBuild = ''
-    if [ -z "$__structuredAttrs" ]; then
-      makeFlags=("''${makeFlags[*]}")
-      extraContribModules=("''${extraContribModules[*]}")
-    fi
-    for module in "''${extraContribModules[@]}"; do
+    for module in  "''${extraContribModules[@]}"; do
       make "''${makeFlags[@]}" CC=$CC -C contrib/slapd-modules/$module
     done
   '';
@@ -120,10 +117,6 @@ stdenv.mkDerivation rec {
   ];
 
   postInstall = ''
-    if [ -z "$__structuredAttrs" ]; then
-      installFlags=("''${installFlags[*]}")
-      extraContribModules=("''${extraContribModules[*]}")
-    fi
     for module in "''${extraContribModules[@]}"; do
       make "''${installFlags[@]}" install -C contrib/slapd-modules/$module
     done
