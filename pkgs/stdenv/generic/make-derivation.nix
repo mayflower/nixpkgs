@@ -285,6 +285,7 @@ else let
       (lib.concatLists propagatedDependencies));
 
   envIsExportable = lib.isAttrs env && !lib.isDerivation env;
+  passthruWithEnv = passthru // { inherit env; };
 
   derivationArg =
     (removeAttrs attrs
@@ -513,52 +514,54 @@ in
 lib.extendDerivation
   validity.handled
   ({
-     # A derivation that always builds successfully and whose runtime
-     # dependencies are the original derivations build time dependencies
-     # This allows easy building and distributing of all derivations
-     # needed to enter a nix-shell with
-     #   nix-build shell.nix -A inputDerivation
-     inputDerivation = derivation (derivationArg // {
-       # Add a name in case the original drv didn't have one
-       name = derivationArg.name or "inputDerivation";
-       # This always only has one output
-       outputs = [ "out" ];
+    # A derivation that always builds successfully and whose runtime
+    # dependencies are the original derivations build time dependencies
+    # This allows easy building and distributing of all derivations
+    # needed to enter a nix-shell with
+    #   nix-build shell.nix -A inputDerivation
+    inputDerivation = derivation (derivationArg // {
+      # Add a name in case the original drv didn't have one
+      name = derivationArg.name or "inputDerivation";
+      # This always only has one output
+      outputs = [ "out" ];
 
-       # Propagate the original builder and arguments, since we override
-       # them and they might contain references to build inputs
-       _derivation_original_builder = derivationArg.builder;
-       _derivation_original_args = derivationArg.args;
+      # Propagate the original builder and arguments, since we override
+      # them and they might contain references to build inputs
+      _derivation_original_builder = derivationArg.builder;
+      _derivation_original_args = derivationArg.args;
 
-       builder = stdenv.shell;
-       # The bash builtin `export` dumps all current environment variables,
-       # which is where all build input references end up (e.g. $PATH for
-       # binaries). By writing this to $out, Nix can find and register
-       # them as runtime dependencies (since Nix greps for store paths
-       # through $out to find them)
-       args = [ "-c" ''
-         export > $out
-         for var in $passAsFile; do
-             pathVar="''${var}Path"
-             printf "%s" "$(< "''${!pathVar}")" >> $out
-         done
-       '' ];
+      builder = stdenv.shell;
+      # The bash builtin `export` dumps all current environment variables,
+      # which is where all build input references end up (e.g. $PATH for
+      # binaries). By writing this to $out, Nix can find and register
+      # them as runtime dependencies (since Nix greps for store paths
+      # through $out to find them)
+      args = [ "-c" ''
+        export > $out
+        for var in $passAsFile; do
+            pathVar="''${var}Path"
+            printf "%s" "$(< "''${!pathVar}")" >> $out
+        done
+      '' ];
 
-       # inputDerivation produces the inputs; not the outputs, so any
-       # restrictions on what used to be the outputs don't serve a purpose
-       # anymore.
-       allowedReferences = null;
-       allowedRequisites = null;
-       disallowedReferences = [ ];
-       disallowedRequisites = [ ];
-     });
+      # inputDerivation produces the inputs; not the outputs, so any
+      # restrictions on what used to be the outputs don't serve a purpose
+      # anymore.
+      allowedReferences = null;
+      allowedRequisites = null;
+      disallowedReferences = [ ];
+      disallowedRequisites = [ ];
+    });
 
-     inherit passthru overrideAttrs;
-     inherit meta;
-   } //
-   # Pass through extra attributes that are not inputs, but
-   # should be made available to Nix expressions using the
-   # derivation (e.g., in assertions).
-   passthru)
+    passthru = passthruWithEnv;
+
+    inherit overrideAttrs;
+    inherit meta;
+  } //
+  # Pass through extra attributes that are not inputs, but
+  # should be made available to Nix expressions using the
+  # derivation (e.g., in assertions).
+  passthruWithEnv)
   (derivation (derivationArg // lib.optionalAttrs envIsExportable checkedEnv));
 
 in
