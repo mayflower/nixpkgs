@@ -92,7 +92,7 @@ lib.warnIf (useHardenedMalloc != null)
   fteLibPath = lib.makeLibraryPath [ stdenv.cc.cc gmp ];
 
   # Upstream source
-  version = "12.5.3";
+  version = "12.5.5";
 
   lang = "ALL";
 
@@ -104,7 +104,7 @@ lib.warnIf (useHardenedMalloc != null)
         "https://tor.eff.org/dist/torbrowser/${version}/tor-browser-linux64-${version}_${lang}.tar.xz"
         "https://tor.calyxinstitute.org/dist/torbrowser/${version}/tor-browser-linux64-${version}_${lang}.tar.xz"
       ];
-      hash = "sha256-QF71UXZXwLjr1XugKeFWZH9RXb4xeKWZScds+xtNekI=";
+      hash = "sha256-FS1ywm/UJDZiSYPf0WHikoX/o6WGIP+lQQGFeD0g2dc=";
     };
 
     i686-linux = fetchurl {
@@ -114,7 +114,7 @@ lib.warnIf (useHardenedMalloc != null)
         "https://tor.eff.org/dist/torbrowser/${version}/tor-browser-linux32-${version}_${lang}.tar.xz"
         "https://tor.calyxinstitute.org/dist/torbrowser/${version}/tor-browser-linux32-${version}_${lang}.tar.xz"
       ];
-      hash = "sha256-xaLTYo8aJO0DzFQLSUHF12vKOEMO6hbVXQdL3PHLb8s=";
+      hash = "sha256-6ozGIQPC8QnZxS1oJ0ZEdZDMY2JkwRHs+7ZHUkqrL6U=";
     };
   };
 
