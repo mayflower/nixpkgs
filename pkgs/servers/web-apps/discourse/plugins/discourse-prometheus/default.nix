@@ -14,7 +14,6 @@
     # The metrics collector tries to run git to get the commit id but fails
     # because we don't run Discourse from a Git repository.
     ./no-git-version.patch
-    ./spec-import-fix-abi-version.patch
   ];
 
   meta = with lib; {
