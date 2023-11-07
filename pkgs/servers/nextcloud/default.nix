@@ -66,14 +66,14 @@ in {
   };
 
   nextcloud26 = generic {
-    version = "26.0.7";
-    hash = "sha256-vtJEqLlNE7YWqSdAUhZwwdZ9Q8SAR3I/sTGAv/bUjpI=";
+    version = "26.0.8";
+    hash = "sha256-ydCay0RuM2AZYIKRM/jzdutvJ5pN73CCF/xxWBiSiH8=";
     packages = nextcloud26Packages;
   };
 
   nextcloud27 = generic {
-    version = "27.1.1";
-    hash = "sha256-OpFQBWaHRnVnb6O1v64lh6g5zeQd+sUxgEOxYsExH6s=";
+    version = "27.1.3";
+    hash = "sha256-HWFJNSReSjdbSsmRwC8yNZK3U5cvhviHY/2A7X0nV5M=";
     packages = nextcloud27Packages;
   };
 

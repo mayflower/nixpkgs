@@ -285,9 +285,11 @@ let
       FRAMEBUFFER_CONSOLE = yes;
       FRAMEBUFFER_CONSOLE_DEFERRED_TAKEOVER = whenAtLeast "4.19" yes;
       FRAMEBUFFER_CONSOLE_ROTATION = yes;
+      FRAMEBUFFER_CONSOLE_DETECT_PRIMARY = yes;
       FB_GEODE            = mkIf (stdenv.hostPlatform.system == "i686-linux") yes;
       # On 5.14 this conflicts with FB_SIMPLE.
       DRM_SIMPLEDRM = whenAtLeast "5.14" no;
+      DRM_FBDEV_EMULATION = yes;
     };
 
     fonts = {
@@ -541,6 +543,9 @@ let
       PERSISTENT_KEYRINGS              = yes;
       # enable temporary caching of the last request_key() result
       KEYS_REQUEST_CACHE               = whenAtLeast "5.3" yes;
+
+      # randomized slab caches
+      RANDOM_KMALLOC_CACHES            = whenAtLeast "6.6" yes;
     } // optionalAttrs (!stdenv.hostPlatform.isAarch32) {
 
       # Detect buffer overflows on the stack
@@ -559,6 +564,8 @@ let
       KVM_AMD_SEV     = whenAtLeast "4.16" yes;
       # AMD SEV-SNP
       SEV_GUEST       = whenAtLeast "5.19" module;
+      # Shadow stacks
+      X86_USER_SHADOW_STACK = whenAtLeast "6.6" yes;
     };
 
     microcode = {

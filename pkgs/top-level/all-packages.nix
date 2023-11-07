@@ -607,6 +607,11 @@ with pkgs;
     inherit (darwin) DarwinTools;
   };
 
+  rtthost = callPackage ../development/tools/rust/rtthost {
+    inherit (darwin.apple_sdk.frameworks) AppKit;
+    inherit (darwin) DarwinTools;
+  };
+
   mix2nix = callPackage ../development/tools/mix2nix { };
 
   n98-magerun = callPackage ../development/tools/misc/n98-magerun { };
@@ -5697,7 +5702,7 @@ with pkgs;
   pn = callPackage ../tools/text/pn { };
 
   pocket-casts = callPackage ../applications/audio/pocket-casts {
-    electron = electron_22;
+    electron = electron_27;
   };
 
   portal = callPackage ../tools/misc/portal { };
@@ -7052,6 +7057,8 @@ with pkgs;
 
   ecmtools = callPackage ../tools/cd-dvd/ecm-tools { };
 
+  erofs-utils = callPackage ../tools/filesystems/erofs-utils { };
+
   e2tools = callPackage ../tools/filesystems/e2tools { };
 
   e2fsprogs = callPackage ../tools/filesystems/e2fsprogs { };
@@ -7936,7 +7943,9 @@ with pkgs;
 
   gitlab-pages = callPackage ../applications/version-management/gitlab/gitlab-pages { };
 
-  gitlab-runner = callPackage ../development/tools/continuous-integration/gitlab-runner { };
+  gitlab-runner = callPackage ../development/tools/continuous-integration/gitlab-runner {
+    buildGoModule = buildGo120Module;
+  };
 
   gitlab-shell = callPackage ../applications/version-management/gitlab/gitlab-shell { };
 
@@ -7948,9 +7957,7 @@ with pkgs;
 
   gitleaks = callPackage ../tools/security/gitleaks { };
 
-  gitaly = callPackage ../applications/version-management/gitlab/gitaly {
-    libgit2 = libgit2_1_5;
-  };
+  gitaly = callPackage ../applications/version-management/gitlab/gitaly { };
 
   gitqlient = libsForQt5.callPackage ../applications/version-management/gitqlient { };
 
@@ -11123,7 +11130,6 @@ with pkgs;
   percona-xtrabackup = percona-xtrabackup_8_0;
   percona-xtrabackup_8_0 = callPackage ../tools/backup/percona-xtrabackup/8_0.nix {
     boost = boost177;
-    openssl = openssl_1_1;
   };
 
   pick = callPackage ../tools/misc/pick { };
@@ -17762,7 +17768,8 @@ with pkgs;
     electron_23-bin
     electron_24-bin
     electron_25-bin
-    electron_26-bin;
+    electron_26-bin
+    electron_27-bin;
 
   electron = electron-bin;
   electron_9 = electron_9-bin;
@@ -17783,6 +17790,7 @@ with pkgs;
   electron_24 = electron_24-bin;
   electron_25 = electron_25-bin;
   electron_26 = electron_26-bin;
+  electron_27 = electron_27-bin;
 
   autobuild = callPackage ../development/tools/misc/autobuild { };
 
@@ -26432,9 +26440,7 @@ with pkgs;
 
   zookeeper = callPackage ../servers/zookeeper { };
 
-  zookeeper_mt = callPackage ../development/libraries/zookeeper_mt {
-    openssl = openssl_1_1;
-  };
+  zookeeper_mt = callPackage ../development/libraries/zookeeper_mt { };
 
   xqilla = callPackage ../development/tools/xqilla { stdenv = gcc10StdenvCompat; };
 
@@ -26732,8 +26738,6 @@ with pkgs;
   dsd = callPackage ../applications/radio/dsd { };
 
   dstat = callPackage ../os-specific/linux/dstat { };
-
-  erofs-utils = callPackage ../os-specific/linux/erofs-utils { };
 
   evdev-proto = callPackage ../os-specific/bsd/freebsd/evdev-proto { };
 
@@ -27101,8 +27105,6 @@ with pkgs;
   linux_5_15_hardened = linuxKernel.kernels.linux_5_15_hardened;
   linuxPackages_6_1_hardened = linuxKernel.packages.linux_6_1_hardened;
   linux_6_1_hardened = linuxKernel.kernels.linux_6_1_hardened;
-  linuxPackages_6_4_hardened = linuxKernel.packages.linux_6_4_hardened;
-  linux_6_4_hardened = linuxKernel.kernels.linux_6_4_hardened;
   linuxPackages_6_5_hardened = linuxKernel.packages.linux_6_5_hardened;
   linux_6_5_hardened = linuxKernel.kernels.linux_6_5_hardened;
 
@@ -29200,8 +29202,6 @@ with pkgs;
   adl = callPackage ../applications/video/adl { };
 
   appvm = callPackage ../applications/virtualization/appvm { };
-
-  yggdrasil = callPackage ../tools/networking/yggdrasil { };
 
   masterpdfeditor = libsForQt5.callPackage ../applications/misc/masterpdfeditor { };
 

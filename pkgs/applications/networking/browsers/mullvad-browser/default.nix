@@ -78,15 +78,19 @@ let
       ++ lib.optionals mediaSupport [ ffmpeg ]
   );
 
-  version = "12.5.5";
+  version = "13.0.1";
 
   sources = {
     x86_64-linux = fetchurl {
       urls = [
-        "https://cdn.mullvad.net/browser/${version}/mullvad-browser-linux64-${version}_ALL.tar.xz"
-        "https://github.com/mullvad/mullvad-browser/releases/download/${version}/mullvad-browser-linux64-${version}_ALL.tar.xz"
+        "https://cdn.mullvad.net/browser/${version}/mullvad-browser-linux-x86_64-${version}.tar.xz"
+        "https://github.com/mullvad/mullvad-browser/releases/download/${version}/mullvad-browser-linux-x86_64-${version}.tar.xz"
+        "https://archive.torproject.org/tor-package-archive/mullvadbrowser/${version}/mullvad-browser-linux-x86_64-${version}.tar.xz"
+        "https://dist.torproject.org/mullvadbrowser/${version}/mullvad-browser-linux-x86_64-${version}.tar.xz"
+        "https://tor.eff.org/dist/mullvadbrowser/${version}/mullvad-browser-linux-x86_64-${version}.tar.xz"
+        "https://tor.calyxinstitute.org/dist/mullvadbrowser/${version}/mullvad-browser-linux-x86_64-${version}.tar.xz"
       ];
-      hash = "sha256-ISmhKitFReHSADGygzpoKwlBOJH2HfPDEtMjTB6fMhs=";
+      hash = "sha256-VYkRHWyTAAt5P7jnNuf4s2bOv36LuqcTMMKOLRGE9FQ=";
     };
   };
 
@@ -228,7 +232,7 @@ stdenv.mkDerivation rec {
     updateScript = callPackage ../tor-browser-bundle-bin/update.nix {
       inherit pname version meta;
       baseUrl = "https://cdn.mullvad.net/browser/";
-      prefix = "mullvad-browser-";
+      name = "mullvad-browser";
     };
   };
 

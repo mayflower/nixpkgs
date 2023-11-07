@@ -774,8 +774,8 @@ let
         mktplcRef = {
           name = "vscode-markdownlint";
           publisher = "DavidAnson";
-          version = "0.51.0";
-          sha256 = "sha256-Xtr8cqcPrcrKpJBxQcY1j9Gl4CC6U3ZazS4bdBtdzUk=";
+          version = "0.52.0";
+          sha256 = "sha256-Y8qkcNEvJ/yzT8PDeErRzKGxYBNKKfbNNsJVaFDeIV4=";
         };
         meta = {
           changelog = "https://marketplace.visualstudio.com/items/DavidAnson.vscode-markdownlint/changelog";
@@ -1214,8 +1214,8 @@ let
         mktplcRef = {
           name = "vscode-firefox-debug";
           publisher = "firefox-devtools";
-          version = "2.9.8";
-          sha256 = "sha256-MCL562FPgEfhUM1KH5LMl7BblbjIkQ4UEwB67RlO5Mk=";
+          version = "2.9.10";
+          sha256 = "sha256-xuvlE8L/qjOn8Qhkv9sutn/xRbwC9V/IIfEr4Ixm1vA=";
         };
         meta = {
           changelog = "https://marketplace.visualstudio.com/items/firefox-devtools.vscode-firefox-debug/changelog";
@@ -2854,8 +2854,8 @@ let
         mktplcRef = {
           name = "svelte-vscode";
           publisher = "svelte";
-          version = "107.4.3";
-          sha256 = "sha256-z1foIJXVKmJ0G4FfO9xsjiQgmq/ZtoB3b6Ch8Nyj1zY=";
+          version = "107.12.0";
+          sha256 = "036ri011fd0cf91iwv59j57m05mxliy27ms4di2y9jlk7jzmr4s2";
         };
         meta = {
           changelog = "https://github.com/sveltejs/language-tools/releases";
