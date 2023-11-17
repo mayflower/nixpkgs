@@ -35,6 +35,7 @@
 , rsync
 , icu
 , fetchYarnDeps
+, mkYarnModules
 , yarn
 , fixup_yarn_lock
 , nodePackages
@@ -47,13 +48,13 @@
 }@args:
 
 let
-  version = "3.2.0.beta1";
+  version = "3.2.0.beta3";
 
   src = fetchFromGitHub {
     owner = "discourse";
     repo = "discourse";
     rev = "v${version}";
-    sha256 = "sha256-HVjt5rsLSuyOaQxkbiTrsYsSXj3oSWjke98QVp+tEqk=";
+    sha256 = "sha256-gW5U1DSYTqViiyVHfVpc/IAicccuRCf3xow9xpIY5sA=";
   };
 
   ruby = ruby_3_2;
@@ -206,13 +207,20 @@ let
     ];
   };
 
-  assets = stdenv.mkDerivation {
+  assets = let
+    yarnBuildDeps = mkYarnModules {
+      pname = "discourse-assets-yarn-build-deps";
+      inherit version;
+      packageJSON = src + "/package.json";
+      yarnLock = src + "/yarn.lock";
+    };
+  in stdenv.mkDerivation {
     pname = "discourse-assets";
     inherit version src;
 
     yarnOfflineCache = fetchYarnDeps {
       yarnLock = src + "/app/assets/javascripts/yarn.lock";
-      sha256 = "070h66zp8kmsigbrkh5d3jzbzvllzhbx0fa2yzx5lbpgnjhih3p2";
+      sha256 = "0ls0nc25np3pk2qc73ic81i195pqa3wb09z0l2i6ysp7f21q01wk";
     };
 
     nativeBuildInputs = runtimeDeps ++ [
@@ -254,14 +262,18 @@ let
       # tries to call `../node_modules/.bin/esbuild`, which
       # hasn't been `patchShebangs`-ed yet. So instead we just use
       # `esbuild` from `nativeBuildInputs`.
-      ./assets_esbuild_from_path.patch
+      #./assets_esbuild_from_path.patch
     ];
+
+    ESBUILD_BINARY_PATH = "${esbuild}/bin/esbuild";
 
     # We have to set up an environment that is close enough to
     # production ready or the assets:precompile task refuses to
     # run. This means that Redis and PostgreSQL has to be running and
     # database migrations performed.
     preBuild = ''
+      ln -sf ${yarnBuildDeps}/node_modules node_modules
+
       # Yarn wants a real home directory to write cache, config, etc to
       export HOME=$NIX_BUILD_TOP/fake_home
 
@@ -368,12 +380,6 @@ let
 
       # Make sure the notification email setting applies
       ./notification_email.patch
-
-      # `lib/discourse_js_processor.rb`
-      # tries to call `../node_modules/.bin/esbuild`, which
-      # hasn't been `patchShebangs`-ed yet. So instead we just use
-      # `esbuild` from `nativeBuildInputs`.
-      ./assets_esbuild_from_path.patch
     ];
 
     postPatch = ''

@@ -6,7 +6,7 @@ index 9e4533d2..e57f8a5f 100644
      "build": "ember build",
      "start": "ember serve",
      "test": "ember test",
--    "postinstall": "yarn --silent --cwd .. patch-package"
+-    "postinstall": "../run-patch-package"
 +    "postinstall": "patch-package"
    },
    "dependencies": {

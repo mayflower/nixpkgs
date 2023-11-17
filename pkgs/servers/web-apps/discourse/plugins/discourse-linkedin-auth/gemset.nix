@@ -1,14 +1,24 @@
 {
-  faraday = {
-    dependencies = ["faraday-net_http" "ruby2_keywords"];
+  base64 = {
     groups = ["default"];
     platforms = [];
     source = {
       remotes = ["https://rubygems.org"];
-      sha256 = "187clqhp9mv5mnqmjlfdp57svhsg1bggz84ak8v333j9skrnrgh9";
+      sha256 = "01qml0yilb9basf7is2614skjp8384h2pycfx86cr8023arfj98g";
       type = "gem";
     };
-    version = "2.7.10";
+    version = "0.2.0";
+  };
+  faraday = {
+    dependencies = ["base64" "faraday-net_http" "ruby2_keywords"];
+    groups = ["default"];
+    platforms = [];
+    source = {
+      remotes = ["https://rubygems.org"];
+      sha256 = "0vn7jwss2v6jhnxvjsiwbs3irjwhbx9zxn4l6fhd4rkcfyxzdnw5";
+      type = "gem";
+    };
+    version = "2.7.11";
   };
   faraday-net_http = {
     groups = ["default"];
