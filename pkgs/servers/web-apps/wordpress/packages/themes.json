@@ -6,16 +6,16 @@
     "version": "2.7"
   },
   "twentytwenty": {
-    "path": "twentytwenty/2.4",
-    "rev": "207576",
-    "sha256": "0xp2jcgsn16gv9ad8dirm7j24mi7633yrl524wi858l3m8dh4q4a",
-    "version": "2.4"
+    "path": "twentytwenty/2.5",
+    "rev": "214268",
+    "sha256": "17wwgbpdn0f33laljq957fxh7lnh7qmk9pdh628w97gf3x6yrswy",
+    "version": "2.5"
   },
   "twentytwentyone": {
-    "path": "twentytwentyone/2.0",
-    "rev": "207577",
-    "sha256": "0ypdqxfd1va9m6f3zbc0281i69br5hpvvjdqb03kk2xnmam2hjaa",
-    "version": "2.0"
+    "path": "twentytwentyone/2.1",
+    "rev": "214269",
+    "sha256": "0xqariaqm9r5w8dnp06bk3cyqpvbcc55v998lsx348lq0jpwb382",
+    "version": "2.1"
   },
   "twentytwentythree": {
     "path": "twentytwentythree/1.3",
