@@ -35,10 +35,11 @@
 , rsync
 , icu
 , fetchYarnDeps
+, mkYarnModules
 , yarn
 , fixup_yarn_lock
 , nodePackages
-, nodejs_16
+, nodejs_18
 , dart-sass
 , jq
 , moreutils
@@ -47,13 +48,13 @@
 }@args:
 
 let
-  version = "3.2.0.beta1";
+  version = "3.2.0.beta3";
 
   src = fetchFromGitHub {
     owner = "discourse";
     repo = "discourse";
     rev = "v${version}";
-    sha256 = "sha256-HVjt5rsLSuyOaQxkbiTrsYsSXj3oSWjke98QVp+tEqk=";
+    sha256 = "sha256-gW5U1DSYTqViiyVHfVpc/IAicccuRCf3xow9xpIY5sA=";
   };
 
   ruby = ruby_3_2;
@@ -66,6 +67,7 @@ let
     gnutar
     git
     brotli
+    nodejs_18
     esbuild
 
     # Misc required system utils
@@ -164,9 +166,9 @@ let
                 cd ../..
 
                 mkdir -p vendor/v8/${stdenv.hostPlatform.system}/libv8/obj/
-                ln -s "${nodejs_16.libv8}/lib/libv8.a" vendor/v8/${stdenv.hostPlatform.system}/libv8/obj/libv8_monolith.a
+                ln -s "${nodejs_18.libv8}/lib/libv8.a" vendor/v8/${stdenv.hostPlatform.system}/libv8/obj/libv8_monolith.a
 
-                ln -s ${nodejs_16.libv8}/include vendor/v8/include
+                ln -s ${nodejs_18.libv8}/include vendor/v8/include
 
                 mkdir -p ext/libv8-node
                 echo '--- !ruby/object:Libv8::Node::Location::Vendor {}' >ext/libv8-node/.location.yml
@@ -199,6 +201,10 @@ let
                 --replace ' => %w[dart-sass]' ""
             '';
           };
+          google-protobuf = gems.google-protobuf // {
+            # error: format not a string literal and no format arguments [-Werror=format-security]
+            hardeningDisable = [ "format" ];
+          };
         };
 
     groups = [
@@ -206,13 +212,21 @@ let
     ];
   };
 
-  assets = stdenv.mkDerivation {
+  assets = let
+    yarnBuildDeps = mkYarnModules {
+      pname = "discourse-assets-yarn-build-deps";
+      inherit version;
+      packageJSON = ./package.json;
+      yarnLock = ./yarn.lock;
+      yarnNix = ./yarn.nix;
+    };
+  in stdenv.mkDerivation {
     pname = "discourse-assets";
     inherit version src;
 
     yarnOfflineCache = fetchYarnDeps {
       yarnLock = src + "/app/assets/javascripts/yarn.lock";
-      sha256 = "070h66zp8kmsigbrkh5d3jzbzvllzhbx0fa2yzx5lbpgnjhih3p2";
+      sha256 = "0ls0nc25np3pk2qc73ic81i195pqa3wb09z0l2i6ysp7f21q01wk";
     };
 
     nativeBuildInputs = runtimeDeps ++ [
@@ -222,7 +236,7 @@ let
       nodePackages.terser
       nodePackages.patch-package
       yarn
-      nodejs_16
+      nodejs_18
       jq
       moreutils
       esbuild
@@ -254,8 +268,10 @@ let
       # tries to call `../node_modules/.bin/esbuild`, which
       # hasn't been `patchShebangs`-ed yet. So instead we just use
       # `esbuild` from `nativeBuildInputs`.
-      ./assets_esbuild_from_path.patch
+      #./assets_esbuild_from_path.patch
     ];
+
+    ESBUILD_BINARY_PATH = "${esbuild}/bin/esbuild";
 
     # We have to set up an environment that is close enough to
     # production ready or the assets:precompile task refuses to
@@ -278,6 +294,8 @@ let
       yarn install --offline --cwd app/assets/javascripts/discourse
 
       patchShebangs app/assets/javascripts/node_modules/
+
+      ln -sf ${yarnBuildDeps}/node_modules/esbuild app/assets/javascripts/node_modules/esbuild
 
       # Run `patch-package` AFTER the corresponding shebang inside `.bin/patch-package`
       # got patched. Otherwise this will fail with
@@ -368,12 +386,6 @@ let
 
       # Make sure the notification email setting applies
       ./notification_email.patch
-
-      # `lib/discourse_js_processor.rb`
-      # tries to call `../node_modules/.bin/esbuild`, which
-      # hasn't been `patchShebangs`-ed yet. So instead we just use
-      # `esbuild` from `nativeBuildInputs`.
-      ./assets_esbuild_from_path.patch
     ];
 
     postPatch = ''

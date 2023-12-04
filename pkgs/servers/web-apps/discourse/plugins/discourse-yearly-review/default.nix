@@ -5,8 +5,8 @@ mkDiscoursePlugin {
   src = fetchFromGitHub {
     owner = "discourse";
     repo = "discourse-yearly-review";
-    rev = "47014a8ecb96da8d45d0fe141a069010161b3087";
-    sha256 = "sha256-9OIgxRdQoYH19vb7GcTt8MxVM5N4JPzmMIsg7FQOjJs=";
+    rev = "9efe4c91a5752dc734b3c30ceb0b751d5ddc54b8";
+    sha256 = "sha256-eQD2eetk7A3+Si0PpDuHXzxriKSCzjITAK5pIsip+uk=";
   };
   meta = with lib; {
     homepage = "https://github.com/discourse/discourse-yearly-review";

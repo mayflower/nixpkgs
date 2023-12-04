@@ -5,8 +5,8 @@ mkDiscoursePlugin {
   src = fetchFromGitHub {
     owner = "discourse";
     repo = "discourse-whos-online";
-    rev = "134b258746f9fe5b4a6c2c1f7f64afbd94af35ad";
-    sha256 = "sha256-eoc6pcLXa9ZolgE72KD4jrXwOZlF2M7vBGxAT/NeqQY=";
+    rev = "0d323c3f7934ab6e7c4045ebc9dd21b70acde366";
+    sha256 = "sha256-8fdUmSH06/TGVUkXI0q34nQJ4ZlySiCONds2VMbT0eg=";
   };
   meta = with lib; {
     homepage = "https://github.com/discourse/discourse-whos-online";

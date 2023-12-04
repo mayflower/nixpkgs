@@ -1,5 +1,5 @@
 #!/usr/bin/env nix-shell
-#! nix-shell -i python3 -p bundix bundler nix-update nix-universal-prefetch python3 python3Packages.requests python3Packages.click python3Packages.click-log prefetch-yarn-deps
+#! nix-shell -i python3 -p bundix bundler nix-update nix-universal-prefetch python3 python3Packages.requests python3Packages.click python3Packages.click-log prefetch-yarn-deps yarn2nix
 from __future__ import annotations
 
 import click
@@ -258,6 +258,13 @@ def update(rev):
         f.write(content)
         f.truncate()
 
+    for fn in ['package.json', 'yarn.lock']:
+        with open(Path(__file__).parent / fn, 'w') as f:
+            f.write(repo.get_file(fn, version.tag))
+
+    yarnNix = subprocess.check_output(['yarn2nix'], text=True, cwd=Path(__file__).parent)
+    with open(Path(__file__).parent / 'yarn.nix', 'w') as f:
+        f.write(yarnNix)
 
 @cli.command()
 @click.argument('rev', default='latest')
@@ -337,7 +344,8 @@ def update_plugins():
                         for [discourse_version, plugin_rev]
                         in [line.split(':')
                             for line
-                            in compatibility_spec.splitlines()]]
+                            in compatibility_spec.splitlines()
+                            if line != ""]]
             discourse_version = DiscourseVersion(_get_current_package_version('discourse'))
             versions = list(filter(lambda ver: ver[0] >= discourse_version, versions))
             if versions == []:
