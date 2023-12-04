@@ -27,7 +27,6 @@
 
 # build time
 , autoconf
-, cargo
 , dump_syms
 , makeWrapper
 , mimalloc
@@ -37,7 +36,8 @@
 , pkgsCross # wasm32 rlbox
 , python3
 , runCommand
-, rustc
+, rustPackages_1_69
+, rustPackages_1_70
 , rust-cbindgen
 , rustPlatform
 , unzip
@@ -147,6 +147,13 @@ assert pipewireSupport -> !waylandSupport || !webrtcSupport -> throw "${pname}: 
 let
   inherit (lib) enableFeature;
 
+  rustPackages = if lib.versionAtLeast version "120" then
+    rustPackages_1_70
+  else
+    rustPackages_1_69;
+
+  inherit (rustPackages) cargo rustc;
+
   # Target the LLVM version that rustc is built with for LTO.
   llvmPackages0 = rustc.llvmPackages;
   llvmPackagesBuildBuild0 = pkgsBuildBuild.rustc.llvmPackages;
@@ -237,10 +244,18 @@ buildStdenv.mkDerivation ({
       url = "https://git.alpinelinux.org/aports/plain/community/firefox/avoid-redefinition.patch?id=2f620d205ed0f9072bbd7714b5ec1b7bf6911c12";
       hash = "sha256-fLUYaJwhrC/wF24HkuWn2PHqz7LlAaIZ1HYjRDB2w9A=";
     })
+  ] ++ lib.optionals (lib.versionAtLeast version "120" && lib.versionOlder version "122") [
+    # dbus cflags regression fix
+    # https://bugzilla.mozilla.org/show_bug.cgi?id=1864083
+    (fetchpatch {
+      url = "https://hg.mozilla.org/mozilla-central/raw-rev/f1f5f98290b3";
+      hash = "sha256-5PzVNJvPNX8irCqj1H38SFDydNJZuBHx167e1TQehaI=";
+    })
   ]
   ++ lib.optional (lib.versionOlder version "111") ./env_var_for_system_dir-ff86.patch
   ++ lib.optional (lib.versionAtLeast version "111") ./env_var_for_system_dir-ff111.patch
-  ++ lib.optional (lib.versionAtLeast version "96") ./no-buildconfig-ffx96.patch
+  ++ lib.optional (lib.versionAtLeast version "96" && lib.versionOlder version "121") ./no-buildconfig-ffx96.patch
+  ++ lib.optional (lib.versionAtLeast version "121") ./no-buildconfig-ffx121.patch
   ++ extraPatches;
 
   postPatch = ''
@@ -505,6 +520,11 @@ buildStdenv.mkDerivation ({
     # On musl we have to explicity set the rpath to include these libraries.
     LDFLAGS = "-Wl,-rpath,${placeholder "out"}/lib/${binaryName}";
   };
+
+  # workaround for clang statically linking against libstdc++
+  NIX_LDFLAGS = lib.optionals stdenv.cc.isGNU [
+    "-L${stdenv.cc.cc.lib}/lib"
+  ];
 
   # tests were disabled in configureFlags
   doCheck = false;
