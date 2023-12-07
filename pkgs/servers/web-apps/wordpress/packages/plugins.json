@@ -24,10 +24,10 @@
     "version": "2.21.08.31"
   },
   "breeze": {
-    "path": "breeze/tags/2.0.32",
-    "rev": "2995658",
-    "sha256": "0c0sh7l6cwz6hbc54gjaasdldrv8h6ynx4b75zzkj2arrmyhjjxg",
-    "version": "2.0.32"
+    "path": "breeze/tags/2.0.33",
+    "rev": "3006119",
+    "sha256": "16l7kr0abhr4fy509qb1kagl7brinjxsm9bgydijzmaiv5jvwnpv",
+    "version": "2.0.33"
   },
   "co-authors-plus": {
     "path": "co-authors-plus/tags/3.5.15",
@@ -54,10 +54,10 @@
     "version": "1.0.1"
   },
   "gutenberg": {
-    "path": "gutenberg/tags/17.1.4",
-    "rev": "3004395",
-    "sha256": "0ssjh4h4f64sn0y8k6mrgcm11j7hrhhap02rddbjp0mk7d9v87iy",
-    "version": "17.1.4"
+    "path": "gutenberg/tags/17.2.0",
+    "rev": "3006358",
+    "sha256": "1ffdcaxq3kz58ibi78pm680mv89n3va9jx2ywiq4q7hiysivv32h",
+    "version": "17.2.0"
   },
   "hello-dolly": {
     "path": "hello-dolly/tags/1.7.2",
@@ -72,10 +72,10 @@
     "version": "2.5.0"
   },
   "jetpack": {
-    "path": "jetpack/tags/12.8.1",
-    "rev": "2995420",
-    "sha256": "1i59npwwk29rsq5myl0axr1vsyfw19dyx22ckc2szkc3a4my8h40",
-    "version": "12.8.1"
+    "path": "jetpack/tags/12.9",
+    "rev": "3005881",
+    "sha256": "0m551z7g27c506i9ihklvs8hy2cpfvgz17x13zidxn93488xbzwg",
+    "version": "12.9"
   },
   "jetpack-lite": {
     "path": "jetpack-lite/tags/3.0.3",
@@ -103,9 +103,9 @@
   },
   "merge-minify-refresh": {
     "path": "merge-minify-refresh/trunk",
-    "rev": "2997367",
-    "sha256": "158i9pqn4qqa5mzn57pg4m9gsln35c0gfb8v7sg1y02hp9876shg",
-    "version": "2.2"
+    "rev": "3005564",
+    "sha256": "0jrqb0g194fh33aw8jrgq9b7xl62d5kvbdiv647cbsc21xikh2am",
+    "version": "2.6"
   },
   "opengraph": {
     "path": "opengraph/tags/1.11.2",
