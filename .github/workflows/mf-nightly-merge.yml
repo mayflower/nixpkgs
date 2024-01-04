@@ -1,0 +1,25 @@
+name: Nightly merge upstream
+
+on:
+  schedule:
+  - cron: "33 3 * * *"
+  workflow_dispatch:
+
+jobs:
+  mf-nightly-merge:
+
+    runs-on: ubuntu-latest
+    env:
+      git_user_name: github-actions
+      git_user_mail: github-actions@github.com
+    steps:
+    - uses: actions/checkout@v4
+      with:
+        repository: mayflower/nixpkgs
+        ref: mf-stable-nightly-merge
+        fetch-depth: 0
+    - uses: cachix/install-nix-action@v22
+    - run: nix run .github#nightly-merge
+      env:
+        upstream_url: https://github.com/nixos/nixpkgs.git
+        upstream_branch: nixos-23.11
