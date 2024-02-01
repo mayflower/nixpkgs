@@ -152447,8 +152447,6 @@ self: {
        executableToolDepends = [ alex happy ];
        description = "hOpenPGP-based command-line tools";
        license = lib.licenses.agpl3Plus;
-       hydraPlatforms = lib.platforms.none;
-       broken = true;
      }) {};
 
   "hopenssl" = callPackage
@@ -190472,8 +190470,7 @@ self: {
        librarySystemDepends = [ LLVM ];
        description = "FFI bindings to the LLVM compiler toolkit";
        license = lib.licenses.bsd3;
-       hydraPlatforms = lib.platforms.none;
-       broken = true;
+       maintainers = [ lib.maintainers.thielema ];
      }) {LLVM = null;};
 
   "llvm-ffi-tools" = callPackage

@@ -9796,6 +9796,20 @@ with self; {
     };
   };
 
+  FileFcntlLock = buildPerlPackage {
+    pname = "File-FcntlLock";
+    version = "0.22";
+    src = fetchurl {
+      url = "mirror://cpan/authors/id/J/JT/JTT/File-FcntlLock-0.22.tar.gz";
+      hash = "sha256-mpq7Lv/5Orc3QaEo0/cA5SUnNUbBXQTnxRxwSrCdvN8=";
+    };
+    meta = {
+      description = "File locking with fcntl(2)";
+      license = with lib.licenses; [ artistic1 ];
+      maintainers = with maintainers; [ ajs124 das_j ];
+    };
+  };
+
   FileGrep = buildPerlPackage {
     pname = "File-Grep";
     version = "0.02";
@@ -10351,10 +10365,10 @@ with self; {
 
   FinanceQuote = buildPerlPackage rec {
     pname = "Finance-Quote";
-    version = "1.58";
+    version = "1.59";
     src = fetchurl {
       url = "mirror://cpan/authors/id/B/BP/BPSCHUCK/Finance-Quote-${version}.tar.gz";
-      hash = "sha256-jN3qDTgJo2aVzuaaKGK+qs1hU1f+uv23JkGnerRna4A=";
+      hash = "sha256-mukoeazGgv9AFuHsqSScjko4y38wHnKio21fIVfxKSg=";
     };
     buildInputs = [ DateManip DateRange DateSimple DateTime DateTimeFormatISO8601 StringUtil TestKwalitee TestPerlCritic TestPod TestPodCoverage ];
     propagatedBuildInputs = [ DateManip DateTimeFormatStrptime Encode HTMLTableExtract HTMLTokeParserSimple HTMLTree HTMLTreeBuilderXPath HTTPCookies JSON IOCompress IOString LWPProtocolHttps Readonly StringUtil SpreadsheetXLSX TextTemplate TryTiny WebScraper XMLLibXML libwwwperl ];
@@ -19937,6 +19951,19 @@ with self; {
     meta = {
       description = "Establish an ISA relationship with base classes at compile time";
       license = with lib.licenses; [ artistic1 gpl1Plus ];
+    };
+  };
+
+  ParseWin32Registry = buildPerlPackage {
+    pname = "ParseWin32Registry";
+    version = "1.1";
+    src = fetchurl {
+      url = "mirror://cpan/authors/id/J/JM/JMACFARLA/Parse-Win32Registry-1.1.tar.gz";
+      hash = "sha256-wWOyAr5q17WPSEZJT/crjJqXloPKmU5DgOmsZWTcBbo=";
+    };
+    meta = with lib; {
+      description = "Module for parsing Windows Registry files";
+      license = with licenses; [ artistic1 gpl1Only ];
     };
   };
 

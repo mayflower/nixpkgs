@@ -3424,6 +3424,12 @@
     githubId = 46303707;
     name = "Christian Lütke-Stetzkamp";
   };
+  clr-cera = {
+    email = "clrcera05@gmail.com";
+    github = "clr-cera";
+    githubId = 93736542;
+    name = "Clr";
+  };
   cmacrae = {
     email = "hi@cmacr.ae";
     github = "cmacrae";
@@ -7183,6 +7189,12 @@
     github = "herberteuler";
     githubId = 1401179;
     name = "Guanpeng Xu";
+  };
+  herbetom = {
+    email = "nixos@tomherbers.de";
+    github = "herbetom";
+    githubId = 15121114;
+    name = "Tom Herbers";
   };
   hexa = {
     email = "hexa@darmstadt.ccc.de";
@@ -11734,6 +11746,12 @@
     github = "michaelBelsanti";
     githubId = 62124625;
   };
+  michaelBrunner = {
+    email = "michael.brunn3r@gmail.com";
+    name = "Michael Brunner";
+    github = "MichaelBrunn3r";
+    githubId = 19626539;
+  };
   michaelCTS = {
     email = "michael.vogel@cts.co";
     name = "Michael Vogel";
@@ -13047,6 +13065,12 @@
     keys = [{
       fingerprint = "9B1A 7906 5D2F 2B80 6C8A  5A1C 7D2A CDAF 4653 CF28";
     }];
+  };
+  ninjafb = {
+    email = "oscar@oronberg.com";
+    github = "NinjaFB";
+    githubId = 54169044;
+    name = "NinjaFB";
   };
   nintron = {
     email = "nintron@sent.com";
@@ -16386,6 +16410,12 @@
     }];
     name = "Shane Sveller";
   };
+  shard7 = {
+    email = "sh7user@gmail.com";
+    github = "shard77";
+    githubId = 106669955;
+    name = "Léon Gessner";
+  };
   shardy = {
     email = "shardul@baral.ca";
     github = "shardulbee";
@@ -17677,6 +17707,12 @@
     github = "tckmn";
     githubId = 2389333;
     name = "Andy Tockman";
+  };
+  teatwig = {
+    email = "nix@teatwig.net";
+    name = "tea";
+    github = "teatwig";
+    githubId = 18734648;
   };
   techknowlogick = {
     email = "techknowlogick@gitea.com";
@@ -20230,6 +20266,12 @@
     github = "zopieux";
     githubId = 81353;
     name = "Alexandre Macabies";
+  };
+  zoriya = {
+    email = "zoe.roux@zoriya.dev";
+    github = "zoriya";
+    githubId = 32224410;
+    name = "Zoe Roux";
   };
   zowoq = {
     github = "zowoq";

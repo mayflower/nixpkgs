@@ -1215,6 +1215,10 @@ self: super: {
         }))
       ];
 
+  hopenpgp-tools = super.hopenpgp-tools.override {
+      optparse-applicative = self.optparse-applicative_0_18_1_0;
+  };
+
   # musl fixes
   # dontCheck: use of non-standard strptime "%s" which musl doesn't support; only used in test
   unix-time = if pkgs.stdenv.hostPlatform.isMusl then dontCheck super.unix-time else super.unix-time;
@@ -2696,10 +2700,6 @@ self: super: {
   # 2023-03-13: restrictive bounds on validation-selective (>=0.1.0 && <0.2).
   # Get rid of this in the next release: https://github.com/kowainik/tomland/commit/37f16460a6dfe4606d48b8b86c13635d409442cd
   tomland = doJailbreak super.tomland;
-
-  llvm-ffi = super.llvm-ffi.override {
-    LLVM = pkgs.llvmPackages_13.libllvm;
-  };
 
   # libfuse3 fails to mount fuse file systems within the build environment
   libfuse3 = dontCheck super.libfuse3;

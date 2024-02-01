@@ -1105,7 +1105,7 @@ let
 
     mirage-crypto-pk = callPackage ../development/ocaml-modules/mirage-crypto/pk.nix { };
 
-    mirage-crypto-rng = callPackage ../development/ocaml-modules/mirage-crypto/rng.nix { mtime = mtime_1; };
+    mirage-crypto-rng = callPackage ../development/ocaml-modules/mirage-crypto/rng.nix { };
 
     mirage-crypto-rng-async = callPackage ../development/ocaml-modules/mirage-crypto/rng-async.nix { };
 
@@ -1170,6 +1170,8 @@ let
     msgpck = callPackage ../development/ocaml-modules/msgpck { };
 
     mrmime = callPackage ../development/ocaml-modules/mrmime { };
+
+    msat = callPackage ../development/ocaml-modules/msat { };
 
     mtime_1 =  callPackage ../development/ocaml-modules/mtime/1_x.nix { };
     mtime =  callPackage ../development/ocaml-modules/mtime { };
@@ -1755,7 +1757,7 @@ let
     topkg = callPackage ../development/ocaml-modules/topkg { };
 
     torch = callPackage ../development/ocaml-modules/torch {
-      inherit (pkgs.python3Packages) torch;
+      torch = pkgs.libtorch-bin;
     };
 
     trace = callPackage ../development/ocaml-modules/trace { };
