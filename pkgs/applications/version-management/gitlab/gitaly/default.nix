@@ -6,7 +6,7 @@
 }:
 
 let
-  version = "16.7.4";
+  version = "16.7.5";
   package_version = "v${lib.versions.major version}";
   gitaly_package = "gitlab.com/gitlab-org/gitaly/${package_version}";
 
@@ -18,7 +18,7 @@ let
       owner = "gitlab-org";
       repo = "gitaly";
       rev = "v${version}";
-      hash = "sha256-4wdMwLsJiQzaZ8PhQz7gYj+dzA+92NFPm0twMdr65qA=";
+      hash = "sha256-+QQDpoGS32+N+Rn+uEvt8Ksm8RULyuSxcXtxVTnnbNE=";
     };
 
     vendorHash = "sha256-btWHZMy1aBSsUVs30IqrdBCO79XQvTMXxkxYURF2Nqs=";

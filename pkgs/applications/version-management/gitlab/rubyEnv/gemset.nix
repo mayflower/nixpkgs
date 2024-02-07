@@ -4647,10 +4647,10 @@ src:
     platforms = [];
     source = {
       remotes = ["https://rubygems.org"];
-      sha256 = "1xfy4g3bwgqb1hn948aw3zfwxvak3886gxdyf0cnajzjfp9z33pq";
+      sha256 = "0vg47xx3wgg24snqc6ychb08mbcyrjmvxym9fg69cpa4xvj133fx";
       type = "gem";
     };
-    version = "1.0.2";
+    version = "1.1.1";
   };
   protocol = {
     dependencies = ["ruby_parser"];
@@ -4967,10 +4967,10 @@ src:
     platforms = [];
     source = {
       remotes = ["https://rubygems.org"];
-      sha256 = "0pj5qq4phswviw9vybvz4ql5921ddxkkmn9iywm992x0kbvhvn0f";
+      sha256 = "1myc5zs7dpzbhrz3xhvh89saf8bjbrmqmcmcv2pj5j78r79662i4";
       type = "gem";
     };
-    version = "0.9.83";
+    version = "0.9.87";
   };
   rbtrace = {
     dependencies = ["ffi" "msgpack" "optimist"];
