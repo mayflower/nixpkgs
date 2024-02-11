@@ -2,17 +2,17 @@
 
 buildGoModule rec {
   pname = "gitlab-pages";
-  version = "16.7.5";
+  version = "16.8.1";
 
   # nixpkgs-update: no auto update
   src = fetchFromGitLab {
     owner = "gitlab-org";
     repo = "gitlab-pages";
     rev = "v${version}";
-    hash = "sha256-fnKs/kqqxy7hFoYJJpV+VELnFn+Fl/d5GqiDVG/vVv4=";
+    hash = "sha256-Wj15GHm+5Xd5wq4C3dH+i94jh7pecHM6KCDugLm5YAA=";
   };
 
-  vendorHash = "sha256-NMky8v0YmN2pSeKJ7G0+DWAZvUx2JlwFbqPHvciYroM=";
+  vendorHash = "sha256-9yogTSdEij/YwWGm3gz7jMn2AZcI+o7aEnjBvJ8E3vA=";
   subPackages = [ "." ];
 
   meta = with lib; {
