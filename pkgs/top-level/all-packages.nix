@@ -8485,7 +8485,7 @@ with pkgs;
   })
     garage
       garage_0_8 garage_0_9
-      garage_0_8_6 garage_0_9_2;
+      garage_0_8_7 garage_0_9_3;
 
   garmin-plugin = callPackage ../applications/misc/garmin-plugin { };
 
@@ -26854,7 +26854,7 @@ with pkgs;
   outline = callPackage ../servers/web-apps/outline (lib.fix (super: {
     yarn2nix-moretea = yarn2nix-moretea.override { inherit (super) nodejs yarn; };
     yarn = yarn.override { inherit (super) nodejs; };
-    nodejs = nodejs_18;
+    nodejs = nodejs_20;
   }));
 
   openbgpd = callPackage ../servers/openbgpd { };
@@ -40800,7 +40800,7 @@ with pkgs;
   nix-melt = callPackage ../tools/nix/nix-melt { };
 
   nixos-option = callPackage ../tools/nix/nixos-option {
-    nix = nixVersions.nix_2_15;
+    nix = nixVersions.nix_2_18;
   };
 
   nix-pin = callPackage ../tools/package-management/nix-pin { };
@@ -41365,7 +41365,9 @@ with pkgs;
 
   valent = callPackage ../applications/misc/valent { };
 
-  vault = callPackage ../tools/security/vault { };
+  vault = callPackage ../tools/security/vault {
+    buildGoModule = buildGo120Module;
+  };
 
   vault-medusa = callPackage ../tools/security/vault-medusa { };
 
