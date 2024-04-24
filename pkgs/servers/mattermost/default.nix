@@ -8,13 +8,13 @@
 
 buildGoModule rec {
   pname = "mattermost";
-  version = "8.1.10";
+  version = "8.1.12";
 
   src = fetchFromGitHub {
     owner = "mattermost";
     repo = "mattermost";
     rev = "v${version}";
-    hash = "sha256-eloO83koCNZOR/NYzUCdKOtVdF7rk+VrZ9U2bKWkxNU=";
+    hash = "sha256-s0Ilor4fzF5ei3680Fgh1SvB+ULM10nvJ7D36qizxFg=";
   } + "/server";
 
   # this can probably be removed again in versions newer than 8.1.10
@@ -26,10 +26,10 @@ buildGoModule rec {
 
   webapp = fetchurl {
     url = "https://releases.mattermost.com/${version}/mattermost-${version}-linux-amd64.tar.gz";
-    hash = "sha256-qxFW/P+INcMKSzaGZtOOr1Mi/glgZeiKvQ+YN0qX070=";
+    hash = "sha256-t9Tn2ocPvdLPjI48wciGnh3fxnFX/32K1wHZED741qg=";
   };
 
-  vendorHash = "sha256-ZbLSxG9Gyhk7PBC2V6sMtrQNXvm+ugMfliFIHWO1VLs=";
+  vendorHash = "sha256-UL8+7MbKwPZk8GMd5lQ/f4IU8EJ1CODDtyPbVaiAHOQ=";
 
   subPackages = [ "cmd/mattermost" ];
 

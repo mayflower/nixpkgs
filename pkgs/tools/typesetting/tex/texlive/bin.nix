@@ -3,7 +3,7 @@
 , zlib, libiconv, libpng, libX11
 , freetype, gd, libXaw, icu, ghostscript, libXpm, libXmu, libXext
 , perl, perlPackages, python3Packages, pkg-config
-, libpaper, graphite2, zziplib, harfbuzz, potrace, gmp, mpfr
+, libpaper, graphite2, zziplib, harfbuzz, potrace, gmp, mpfr, mupdf
 , brotli, cairo, pixman, xorg, clisp, biber, woff2, xxHash
 , makeWrapper, shortenPerlShebang, useFixedHashes, asymptote
 , biber-ms
@@ -145,6 +145,12 @@ core = stdenv.mkDerivation rec {
     # Fix implicit `int` on `main`, which results in an error when building with clang 16.
     # This is fixed upstream and can be dropped with the 2023 release.
     ./fix-implicit-int.patch
+    (fetchpatch {
+      name = "ttfdump-CVE-2024-25262.patch";
+      url = "https://tug.org/svn/texlive/trunk/Build/source/texk/ttfdump/libttf/hdmx.c?r1=57915&r2=69520&view=patch";
+      stripLen = 2;
+      hash = "sha256-WH2kioqFAs3jaFmu4DdEUdrTf6eiymtiWTZi3vWwU7k=";
+    })
   ];
 
   hardeningDisable = [ "format" ];
@@ -310,28 +316,27 @@ chktex = stdenv.mkDerivation {
 };
 
 
-dvisvgm = stdenv.mkDerivation {
-  pname = "texlive-dvisvgm.bin";
-  inherit version;
+dvisvgm = stdenv.mkDerivation rec {
+  pname = "dvisvgm";
+  version = "3.0.4";
 
-  inherit (common) src;
+  src = assert lib.assertMsg (version == texlive.pkgs.dvisvgm.version) "dvisvgm: TeX Live version (${texlive.pkgs.dvisvgm.version}) different from source (${version}), please update dvisvgm"; fetchurl {
+    url = "https://github.com/mgieseki/dvisvgm/releases/download/${version}/dvisvgm-${version}.tar.gz";
+    hash = "sha256-iyobWqCwMVuumovkjczgA+4V8xASZQgNHFfflYGQqvE=";
+  };
 
-  patches = [
-    (fetchpatch {
-      url = "https://github.com/mgieseki/dvisvgm/commit/629544928877362d0c6d64f20695f7df3073c5eb.patch";
-      stripLen = 1;
-      extraPrefix = "texk/dvisvgm/dvisvgm-src/";
-      hash = "sha256-CBCbc/woaFeLw7aBG/kSVYc3a5Q56zbAB64kK6mRy4g=";
-    })
+  configureFlags = [
+    "--disable-manpage" # man pages are provided by the doc container
   ];
 
-  preConfigure = "cd texk/dvisvgm";
-
-  configureFlags = common.configureFlags
-    ++ [ "--with-system-kpathsea" ];
+  # PDF handling requires mutool (from mupdf) since Ghostscript 10.01
+  postPatch = ''
+    substituteInPlace src/PDFHandler.cpp \
+      --replace 'Process("mutool"' "Process(\"$(PATH="$HOST_PATH" command -v mutool)\""
+  '';
 
   nativeBuildInputs = [ pkg-config ];
-  buildInputs = [ core brotli ghostscript zlib freetype woff2 potrace xxHash ];
+  buildInputs = [ core brotli ghostscript zlib freetype woff2 potrace xxHash mupdf ];
 
   enableParallelBuilding = true;
 };

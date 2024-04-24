@@ -172,7 +172,6 @@ let
 
   # emulate split output derivation
   splitOutputs = {
-    out = out // { outputSpecified = true; };
     texmfdist = texmfdist // { outputSpecified = true; };
     texmfroot = texmfroot // { outputSpecified = true; };
   } // (lib.genAttrs pkgList.nonEnvOutputs (outName: (buildEnv {
@@ -186,10 +185,9 @@ let
     inherit meta passthru;
   }).overrideAttrs { outputs = [ outName ]; } // { outputSpecified = true; }));
 
-  passthru = lib.optionalAttrs (! __combine) (splitOutputs // {
-    all = builtins.attrValues splitOutputs;
-    outputs = [ "out" ] ++ pkgList.nonEnvOutputs;
-  }) // {
+  passthru = {
+    # these are not part of pkgList.nonEnvOutputs and must be exported in passthru
+    inherit (splitOutputs) texmfdist texmfroot;
     # This is set primarily to help find-tarballs.nix to do its job
     requiredTeXPackages = builtins.filter lib.isDerivation (pkgList.bin ++ pkgList.nonbin
       ++ lib.optionals (! __fromCombineWrapper)
@@ -436,14 +434,11 @@ let
   ;
 }).overrideAttrs (prev:
   { allowSubstitutes = true; }
-  # the outputsToInstall must be built by the main derivation for nix-profile-install to work
   // lib.optionalAttrs (! __combine) ({
-    outputs = pkgList.outputsToInstall;
+    outputs = [ "out" ] ++ pkgList.nonEnvOutputs;
     meta = prev.meta // { inherit (pkgList) outputsToInstall; };
-  } // (lib.mapAttrs'
-    (out: drv: { name = "otherOutput_" + out; value = drv; })
-    (lib.getAttrs (builtins.tail pkgList.outputsToInstall) splitOutputs)
-    )
+  } // builtins.listToAttrs
+    (map (out: { name = "otherOutput_" + out; value = splitOutputs.${out}; }) pkgList.nonEnvOutputs)
   )
 );
 in out)

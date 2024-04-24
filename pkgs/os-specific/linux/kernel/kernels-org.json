@@ -1,38 +1,38 @@
 {
     "testing": {
-        "version": "6.8-rc6",
-        "hash": "sha256:03ci53snbv917ccyjdm3xzl2fwijq5da7nkg05dpwb99wrzp8fkd"
+        "version": "6.9-rc4",
+        "hash": "sha256:11wpak03nv9cg00jiyfrk21p7mzka553ih2c2dxr0ridig6mj8b3"
     },
     "6.5": {
         "version": "6.5.13",
         "hash": "sha256:1dfbbydmayfj9npx3z0g38p574pmcx3qgs49dv0npigl48wd9yvq"
     },
     "6.1": {
-        "version": "6.1.80",
-        "hash": "sha256:0wdnyy7m9kfkl98id0gm6jzp4aa0hfy6gfkb4k4cg1wbpfpcm3jn"
+        "version": "6.1.87",
+        "hash": "sha256:092iv5w5d6kwgiyzs7zajmhdxc1w03sinvvr1dwy9bp8f9mg2ypw"
     },
     "5.15": {
-        "version": "5.15.150",
-        "hash": "sha256:1m74cwsbjwlamxh8vdg2y9jjzk0h7a40adml2p2wszwf8lmmj1gf"
+        "version": "5.15.156",
+        "hash": "sha256:0y3p7sqr8hsn0v9ybqlcmn1z150zc13yckgrymb10sck9k8na14z"
     },
     "5.10": {
-        "version": "5.10.211",
-        "hash": "sha256:1cir36s369fl6s46x16xnjg0wdlnkipsp2zhz11m9d3z205hly1s"
+        "version": "5.10.215",
+        "hash": "sha256:1af6h86flx96pszg006agpak2f9dkk2jqaazfykd7aafqdcs3747"
     },
     "5.4": {
-        "version": "5.4.270",
-        "hash": "sha256:0svnkpivv5w9b2yyg0z607b84f591d401gxvr8s7kmzdxadhcjqs"
+        "version": "5.4.274",
+        "hash": "sha256:1m4yyyv48mfkzhqms88dv1jf39zsfp88az5zpqynmm1wlhhv9iza"
     },
     "4.19": {
-        "version": "4.19.308",
-        "hash": "sha256:1j81zdx75m48rvqacw4xlcb13vkvlx0pfq4kdfxrsdfl7wfcwl9a"
+        "version": "4.19.312",
+        "hash": "sha256:0jppa4p73pssd7m3jpc7i6rgnj9gawjcgk4wmqyy87ijzrgzm553"
     },
     "6.6": {
-        "version": "6.6.19",
-        "hash": "sha256:16hk8y3pw40hahhpnpxjwhprq6hlblavr45pglpb3d62f9mpwqxm"
+        "version": "6.6.28",
+        "hash": "sha256:151kdpp25fcl5qki138jxl90h9iyk5rk0kp2xamadnz72gnid1w1"
     },
-    "6.7": {
-        "version": "6.7.7",
-        "hash": "sha256:1n8lgf814mfslca51pm3nh4icvv1lb5w5l1sxdkf5nqdax28nsr5"
+    "6.8": {
+        "version": "6.8.7",
+        "hash": "sha256:1bigq9my88d9xh647hgsy8gzval7p06hhacpxaqb71sfmwgil799"
     }
 }

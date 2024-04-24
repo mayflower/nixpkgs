@@ -39,21 +39,41 @@ let
 in
 buildGoModule rec {
   pname = "forgejo";
-  version = "1.20.6-1-unstable-2024-02-22";
+  version = "1.20.6-1-unstable-2024-04-18";
 
   src = fetchFromGitea {
     domain = "codeberg.org";
     owner = "forgejo";
     repo = "forgejo";
-    # latest commit from 1.20.x branch (2024-02-22) with 1.21.6-0's XSS fix backported.
+    # latest commit from 1.20.x branch (2024-04-18) with 1.21.6-0's and
+    # 1.21.11-0's security fixes backported.
     # coordinated with upstream in #forgejo-development:matrix.org :)
+    # https://codeberg.org/forgejo/forgejo/src/branch/v1.20/forgejo
     # https://codeberg.org/forgejo/forgejo/pulls/2443
     # https://codeberg.org/forgejo/forgejo/commit/2fe5f6f73283c2f6935ded62440a1f15ded12dcd
-    rev = "2fe5f6f73283c2f6935ded62440a1f15ded12dcd";
-    hash = "sha256-s+hYFpgQ6MJgQBRW3Ze7BIjvsc765D5sAcrtO/wmIgo=";
+    # https://codeberg.org/forgejo/forgejo/pulls/3319
+    # https://codeberg.org/forgejo/forgejo/commit/0c4a307ee2aeaaf464ed74521b1fdb12114fde60
+    rev = "0c4a307ee2aeaaf464ed74521b1fdb12114fde60";
+    hash = "sha256-S2aRSXJybrjgpN16/1vbV1CUoMc1IvUGBO2DXB1CTYE=";
+    # Forgejo has multiple different version strings that need to be provided
+    # via ldflags.  main.ForgejoVersion for example is a combination of a
+    # hardcoded gitea compatibility version string (in the Makefile) and
+    # git describe and is easiest to get by invoking the Makefile.
+    # So we do that, store it the src FOD to then extend the ldflags array
+    # in preConfigure.
+    # The `echo -e >> Makefile` is temporary and already part of the next
+    # major release.  Furthermore, the ldflags will change next major release
+    # and need to be updated accordingly.
+    leaveDotGit = true;
+    postFetch = ''
+      cd "$out"
+      echo -e 'show-version-full:\n\t@echo ''${FORGEJO_VERSION}' >> Makefile
+      make show-version-full > FULL_VERSION
+      find "$out" -name .git -print0 | xargs -0 rm -rf
+    '';
   };
 
-  vendorHash = "sha256-dgtZjsLBwblhdge3BvdbK/mN/TeZKps9K5dJbqomtjo=";
+  vendorHash = "sha256-ao2CY6LmiDQIgv/i8okWt+xGa+clHzbCEHYFUrlwox0=";
 
   subPackages = [ "." ];
 
@@ -63,11 +83,11 @@ buildGoModule rec {
   buildInputs = lib.optional pamSupport pam;
 
   patches = [
-    ./../gitea/static-root-path.patch
+    ./static-root-path.patch
   ];
 
   postPatch = ''
-    substituteInPlace modules/setting/setting.go --subst-var data
+    substituteInPlace modules/setting/server.go --subst-var data
   '';
 
   tags = lib.optional pamSupport "pam"
@@ -79,6 +99,10 @@ buildGoModule rec {
     "-X main.Version=${version}"
     "-X 'main.Tags=${lib.concatStringsSep " " tags}'"
   ];
+
+  preConfigure = ''
+    export ldflags+=" -X code.gitea.io/gitea/routers/api/forgejo/v1.ForgejoVersion=$(cat FULL_VERSION) -X main.ForgejoVersion=$(cat FULL_VERSION)"
+  '';
 
   preBuild = ''
     go run build/merge-forgejo-locales.go

@@ -20,10 +20,10 @@
       sourceVersion = {
         major = "3";
         minor = "10";
-        patch = "13";
+        patch = "14";
         suffix = "";
       };
-      hash = "sha256-XIiEhmhkDT4VKzW0U27xwjsspL0slX7x7LsFP1cd0/Y=";
+      hash = "sha256-nFBIH6qMKDIym6D8iGjQpgamgPxPYOxI0mzo4HZ1H9o=";
     };
 
     python311 = {
@@ -57,10 +57,10 @@ in {
     sourceVersion = {
       major = "3";
       minor = "8";
-      patch = "18";
+      patch = "19";
       suffix = "";
     };
-    hash = "sha256-P/txzTSaMmunsvrcfn34a6V33ZxJF+UqhAGtvadAXj8=";
+    hash = "sha256-0oB6xp9puE/UaguTu9AqT6SNPnD0soNf8PcqKIUEAHY=";
     inherit (darwin) configd;
     inherit passthruFun;
   };
@@ -70,10 +70,10 @@ in {
     sourceVersion = {
       major = "3";
       minor = "9";
-      patch = "18";
+      patch = "19";
       suffix = "";
     };
-    hash = "sha256-AVl9sBMsHPezMe/2iuCbWiNaPDyqnJRMKcrH0cTEwAo=";
+    hash = "sha256-1Iks0WGPZFjLhRIIwDDfFIJ3lgnQ85OZkb04GE+MZ54=";
     inherit (darwin) configd;
     inherit passthruFun;
   };
@@ -109,9 +109,9 @@ in {
       major = "3";
       minor = "13";
       patch = "0";
-      suffix = "a2";
+      suffix = "a6";
     };
-    hash = "sha256-ttRrRBkMTAJCHraaBC0WsMVUgb3agYxsQW3CRBE6nC0=";
+    hash = "sha256-S+85PXKygaz4HTnXRV8AA26GYZPfohpO05cP0PTLoEg=";
     inherit (darwin) configd;
     inherit passthruFun;
   };

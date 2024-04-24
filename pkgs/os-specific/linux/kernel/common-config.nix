@@ -132,7 +132,7 @@ let
       DAMON_VADDR = whenAtLeast "5.15" yes;
       DAMON_PADDR = whenAtLeast "5.16" yes;
       DAMON_SYSFS = whenAtLeast "5.18" yes;
-      DAMON_DBGFS = whenAtLeast "5.15" yes;
+      DAMON_DBGFS = whenBetween "5.15" "6.9" yes;
       DAMON_RECLAIM = whenAtLeast "5.16" yes;
       DAMON_LRU_SORT = whenAtLeast "6.0" yes;
     };
@@ -362,6 +362,8 @@ let
       DRM_AMD_DC_FP = whenAtLeast "6.4" yes;
       DRM_AMD_DC_HDCP = whenBetween "5.5" "6.4" yes;
       DRM_AMD_DC_SI = whenAtLeast "5.10" yes;
+      # Enable new firmware (and by extension NVK) for compatible hardware on Nouveau
+      DRM_NOUVEAU_GSP_DEFAULT = whenAtLeast "6.8" yes;
     } // optionalAttrs (stdenv.hostPlatform.system == "x86_64-linux") {
       # Intel GVT-g graphics virtualization supports 64-bit only
       DRM_I915_GVT = yes;
@@ -450,7 +452,7 @@ let
       EXT4_FS_SECURITY  = yes;
       EXT4_ENCRYPTION   = whenOlder "5.1" yes;
 
-      NTFS_FS            = whenAtLeast "5.15" no;
+      NTFS_FS            = whenBetween "5.15" "6.9" no;
       NTFS3_LZX_XPRESS   = whenAtLeast "5.15" yes;
       NTFS3_FS_POSIX_ACL = whenAtLeast "5.15" yes;
 
@@ -478,8 +480,8 @@ let
       F2FS_FS_COMPRESSION = whenAtLeast "5.6" yes;
       UDF_FS              = module;
 
-      NFSD_V2_ACL            = whenOlder "6.2" yes;
-      NFSD_V3                = whenOlder "5.18" yes;
+      NFSD_V2_ACL            = whenOlder "5.15" yes;
+      NFSD_V3                = whenOlder "5.15" yes;
       NFSD_V3_ACL            = yes;
       NFSD_V4                = yes;
       NFSD_V4_SECURITY_LABEL = yes;

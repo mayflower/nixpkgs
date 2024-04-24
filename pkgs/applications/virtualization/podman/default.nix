@@ -74,6 +74,7 @@ buildGoModule rec {
   patches = [
     # we intentionally don't build and install the helper so we shouldn't display messages to users about it
     ./rm-podman-mac-helper-msg.patch
+    ./buildah-CVE-2024-1753.patch
   ];
 
   vendorHash = null;
@@ -155,5 +156,6 @@ buildGoModule rec {
     changelog = "https://github.com/containers/podman/blob/v${version}/RELEASE_NOTES.md";
     license = licenses.asl20;
     maintainers = with maintainers; [ marsam ] ++ teams.podman.members;
+    mainProgram = "podman";
   };
 }
