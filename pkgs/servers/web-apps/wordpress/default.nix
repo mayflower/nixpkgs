@@ -9,7 +9,7 @@
     hash = "sha256-PwjHHRlwhEH9q94bPq34NnQv3uhm1kOpjRAu0/ECaYY=";
   };
   wordpress6_5 = {
-    version = "6.5";
-    hash = "sha256-NCRWKIrhSMC6itw2y/WJUd2LSRtnVWkmVO/b2nEJK58=";
+    version = "6.5.3";
+    hash = "sha256-UmwP+d71MR0YneVjYHcONCmAUDbQdUpb0RvU3sygymw=";
   };
 }
