@@ -1,12 +1,11 @@
-{ lib
-, makeSetupHook
-, diffutils
-, jq
-, writeShellApplication
-, moreutils
-, makeBinaryWrapper
-, cacert
-, buildPackages
+{
+  lib,
+  makeSetupHook,
+  jq,
+  writeShellApplication,
+  moreutils,
+  cacert,
+  buildPackages,
 }:
 
 let
@@ -29,7 +28,7 @@ in
   composerInstallHook = makeSetupHook
     {
       name = "composer-install-hook.sh";
-      propagatedBuildInputs = [ jq makeBinaryWrapper moreutils cacert ];
+      propagatedBuildInputs = [ jq moreutils cacert ];
       substitutions = {
         # Specify the stdenv's `diff` by abspath to ensure that the user's build
         # inputs do not cause us to find the wrong `diff`.

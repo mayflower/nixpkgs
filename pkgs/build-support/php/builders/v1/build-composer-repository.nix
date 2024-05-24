@@ -1,4 +1,9 @@
-{ callPackage, stdenvNoCC, lib, writeTextDir, fetchFromGitHub, php }:
+{
+  callPackage,
+  stdenvNoCC,
+  lib,
+  php,
+}:
 
 let
   mkComposerRepositoryOverride =
@@ -19,7 +24,7 @@ let
     let
       phpDrv = finalAttrs.php or php;
       composer = finalAttrs.composer or phpDrv.packages.composer;
-      composer-local-repo-plugin = callPackage ./pkgs/composer-local-repo-plugin.nix { };
+      composer-local-repo-plugin = callPackage ../../pkgs/composer-local-repo-plugin.nix { };
     in
     assert (lib.assertMsg (previousAttrs ? src) "mkComposerRepository expects src argument.");
     assert (lib.assertMsg (previousAttrs ? vendorHash) "mkComposerRepository expects vendorHash argument.");
@@ -83,10 +88,12 @@ let
         runHook postInstallCheck
       '';
 
-      COMPOSER_CACHE_DIR = "/dev/null";
-      COMPOSER_MIRROR_PATH_REPOS = "1";
-      COMPOSER_HTACCESS_PROTECT = "0";
-      COMPOSER_DISABLE_NETWORK = "0";
+      env = {
+        COMPOSER_CACHE_DIR = "/dev/null";
+        COMPOSER_MIRROR_PATH_REPOS = "1";
+        COMPOSER_HTACCESS_PROTECT = "0";
+        COMPOSER_DISABLE_NETWORK = "0";
+      };
 
       outputHashMode = "recursive";
       outputHashAlgo = if (finalAttrs ? vendorHash && finalAttrs.vendorHash != "") then null else "sha256";
