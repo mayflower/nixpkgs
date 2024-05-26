@@ -77,16 +77,20 @@ class DiscourseVersion:
 
 
 class DiscourseRepo:
+    gh_token = None
     version_regex = re.compile(r'^v\d+\.\d+\.\d+(\.beta\d+)?$')
     _latest_commit_sha = None
 
     def __init__(self, owner: str = 'discourse', repo: str = 'discourse'):
         self.owner = owner
         self.repo = repo
+        self.headers = None
+        if self.gh_token is not None:
+            self.headers = {'Authorization': 'token %s' % self.gh_token}
 
     @property
     def versions(self) -> Iterable[str]:
-        r = requests.get(f'https://api.github.com/repos/{self.owner}/{self.repo}/git/refs/tags').json()
+        r = requests.get(f'https://api.github.com/repos/{self.owner}/{self.repo}/git/refs/tags', headers=self.headers).json()
         tags = [x['ref'].replace('refs/tags/', '') for x in r]
 
         # filter out versions not matching version_regex
@@ -98,7 +102,7 @@ class DiscourseRepo:
     @property
     def latest_commit_sha(self) -> str:
         if self._latest_commit_sha is None:
-            r = requests.get(f'https://api.github.com/repos/{self.owner}/{self.repo}/commits?per_page=1')
+            r = requests.get(f'https://api.github.com/repos/{self.owner}/{self.repo}/commits?per_page=1', headers=self.headers)
             r.raise_for_status()
             self._latest_commit_sha = r.json()[0]['sha']
 
@@ -117,7 +121,7 @@ class DiscourseRepo:
         :param str rev: the rev to fetch at :return:
 
         """
-        r = requests.get(f'https://raw.githubusercontent.com/{self.owner}/{self.repo}/{rev}/{filepath}')
+        r = requests.get(f'https://raw.githubusercontent.com/{self.owner}/{self.repo}/{rev}/{filepath}', headers=self.headers)
         r.raise_for_status()
         return r.text
 
@@ -316,7 +320,7 @@ def update_plugins():
         {'name': 'discourse-policy'},
         {'name': 'discourse-prometheus'},
         {'name': 'discourse-reactions'},
-        {'name': 'discourse-saml'},
+        {'name': 'discourse-saml', 'keep_gemfile': False},
         {'name': 'discourse-saved-searches'},
         {'name': 'discourse-saved-searches'},
         {'name': 'discourse-solved'},
@@ -333,6 +337,7 @@ def update_plugins():
         owner = plugin.get('owner') or "discourse"
         name = plugin.get('name')
         repo_name = plugin.get('repo_name') or name
+        keep_gemfile = plugin.get('keep_gemfile') or False
 
         repo = DiscourseRepo(owner=owner, repo=repo_name)
 
@@ -446,14 +451,17 @@ def update_plugins():
                         f.write(content)
 
         if len(gemfile_text) > 0:
-            if os.path.isfile(gemfile):
+            if os.path.isfile(gemfile) and keep_gemfile is False:
                 os.remove(gemfile)
 
-            subprocess.check_output(['bundle', 'init'], cwd=rubyenv_dir)
+            if keep_gemfile is False:
+                subprocess.check_output(['bundle', 'init'], cwd=rubyenv_dir)
+
             os.chmod(gemfile, stat.S_IREAD | stat.S_IWRITE | stat.S_IRGRP | stat.S_IROTH)
 
             with open(gemfile, 'a') as f:
-                f.write(gemfile_text)
+                if keep_gemfile is False:
+                    f.write(gemfile_text)
 
             subprocess.check_output(['bundle', 'lock', '--add-platform', 'ruby'], cwd=rubyenv_dir)
             subprocess.check_output(['bundle', 'lock', '--update'], cwd=rubyenv_dir)

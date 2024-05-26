@@ -3,4 +3,4 @@
 source "https://rubygems.org"
 
 # gem "rails"
-gem "stripe", "5.29.0"
+gem "stripe", "11.1.0"

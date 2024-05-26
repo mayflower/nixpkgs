@@ -5,8 +5,8 @@ mkDiscoursePlugin {
   src = fetchFromGitHub {
     owner = "discourse";
     repo = "discourse-tooltips";
-    rev = "81fb380c4a131d693de15ec8980c2b30c04f3086";
-    sha256 = "sha256-Z2h5TfnZDq5I4ZCt2UBWduPpANeqrR4uyl4KaofI17Y=";
+    rev = "26877bede3707981ee4e12eec656fd3c4ad88f7d";
+    sha256 = "sha256-uGBdmBxqGUkxvlqhjhns3rp4ytjv0r2sqdDKHTwUE4Y=";
   };
   meta = with lib; {
     homepage = "https://github.com/discourse/discourse-tooltips";
