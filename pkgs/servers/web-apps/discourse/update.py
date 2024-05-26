@@ -105,7 +105,7 @@ class DiscourseRepo:
         return self._latest_commit_sha
 
     def get_yarn_lock_hash(self, rev: str):
-        yarnLockText = self.get_file('app/assets/javascripts/yarn.lock', rev)
+        yarnLockText = self.get_file('yarn.lock', rev)
         with tempfile.NamedTemporaryFile(mode='w') as lockFile:
             lockFile.write(yarnLockText)
             return subprocess.check_output(['prefetch-yarn-deps', lockFile.name]).decode('utf-8').strip()
@@ -242,6 +242,8 @@ def update(rev):
         with open(rubyenv_dir / fn, 'w') as f:
             f.write(repo.get_file(fn, version.tag))
 
+    # work around https://github.com/nix-community/bundix/issues/8
+    os.environ["BUNDLE_FORCE_RUBY_PLATFORM"] = "true"
     subprocess.check_output(['bundle', 'lock'], cwd=rubyenv_dir)
     _remove_platforms(rubyenv_dir)
     subprocess.check_output(['bundix'], cwd=rubyenv_dir)
@@ -342,7 +344,7 @@ def update_plugins():
             compatibility_spec = repo.get_file('.discourse-compatibility', repo.latest_commit_sha)
             versions = [(DiscourseVersion(discourse_version), plugin_rev.strip(' '))
                         for [discourse_version, plugin_rev]
-                        in [line.split(':')
+                        in [line.lstrip("< ").split(':')
                             for line
                             in compatibility_spec.splitlines() if line != '']]
             discourse_version = DiscourseVersion(_get_current_package_version('discourse'))

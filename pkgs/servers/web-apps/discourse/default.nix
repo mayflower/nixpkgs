@@ -13,7 +13,6 @@
 , gzip
 , gnutar
 , git
-, esbuild
 , cacert
 , util-linux
 , gawk
@@ -35,42 +34,24 @@
 , rsync
 , icu
 , fetchYarnDeps
-, mkYarnModules
 , yarn
 , fixup_yarn_lock
 , nodePackages
 , nodejs_18
-, jq
-, moreutils
 , terser
 
 , plugins ? []
 }@args:
 
 let
-  version = "3.2.0.beta3";
+  version = "3.3.0.beta2";
 
   src = fetchFromGitHub {
     owner = "discourse";
     repo = "discourse";
     rev = "v${version}";
-    sha256 = "sha256-gW5U1DSYTqViiyVHfVpc/IAicccuRCf3xow9xpIY5sA=";
+    sha256 = "sha256-XRhd7VUD/6D0unq9C7WTHTLOQSc2mkEJWt1WKCajNIg=";
   };
-
-  # [ERROR] Cannot start service: Host version "0.19.2" does not match binary version "0.19.7" (Discourse::Utils::CommandError)
-  esbuild_19_2 = let version = "0.19.2"; in (esbuild.override {
-    buildGoModule = args: pkgs.buildGoModule.override {} (args // {
-      inherit version;
-      src = fetchFromGitHub {
-        owner = "evanw";
-        repo = "esbuild";
-        rev = "v${version}";
-        hash = "sha256-U/CAuLl+I3wNPXYcXr9r6DdT9fywvOTt25Vyu3OKG84=";
-      };
-      vendorHash = "sha256-+BfxCyg0KkDQpHt/wycy/8CTG6YBA/VJvJFhhzUnSiQ=";
-    });
-  });
-
 
   ruby = ruby_3_2;
 
@@ -83,7 +64,6 @@ let
     git
     brotli
     nodejs_18
-    esbuild_19_2
 
     # Misc required system utils
     which
@@ -215,25 +195,13 @@ let
     ];
   };
 
-  assets = let
-    yarnBuildDeps = mkYarnModules {
-      pname = "discourse-assets-yarn-build-deps";
-      inherit version;
-      packageJSON = ./package.json;
-      yarnLock = ./yarn.lock;
-      yarnNix = ./yarn.nix;
-      offlineCache = fetchYarnDeps {
-        yarnLock = ./yarn.lock;
-        hash = "sha256-kWuX2AkPiRy6m1g6UaJOLbwPfjFVuHPkov90A+MqzBQ=";
-      };
-    };
-  in stdenv.mkDerivation {
+  assets = stdenv.mkDerivation {
     pname = "discourse-assets";
     inherit version src;
 
     yarnOfflineCache = fetchYarnDeps {
-      yarnLock = src + "/app/assets/javascripts/yarn.lock";
-      sha256 = "0ls0nc25np3pk2qc73ic81i195pqa3wb09z0l2i6ysp7f21q01wk";
+      yarnLock = src + "/yarn.lock";
+      sha256 = "14fxn99pq02w3qn2zz1gpfk4czjmi6sykvsvqji1m425fcq88gpf";
     };
 
     nativeBuildInputs = runtimeDeps ++ [
@@ -241,12 +209,7 @@ let
       redis
       nodePackages.uglify-js
       terser
-      nodePackages.patch-package
       yarn
-      nodejs_18
-      jq
-      moreutils
-      esbuild_19_2
     ];
 
     outputs = [ "out" "javascripts" ];
@@ -265,14 +228,13 @@ let
       # assets precompilation task.
       ./assets_rake_command.patch
 
-      # `app/assets/javascripts/discourse/package.json`'s postinstall
-      # hook tries to call `../node_modules/.bin/patch-package`, which
-      # hasn't been `patchShebangs`-ed yet. So instead we just use
-      # `patch-package` from `nativeBuildInputs`.
-      ./asserts_patch-package_from_path.patch
+      # Little does he know, so he decided there is no need to generate the
+      # theme-transpiler over and over again. Which at the same time allows the removal
+      # of javascript devDependencies from the runtime environment.
+      ./prebuild-theme-transpiler.patch
     ];
 
-    ESBUILD_BINARY_PATH = "${esbuild_19_2}/bin/esbuild";
+    RAILS_ENV = "production";
 
     # We have to set up an environment that is close enough to
     # production ready or the assets:precompile task refuses to
@@ -286,24 +248,17 @@ let
       yarn config --offline set yarn-offline-mirror $yarnOfflineCache
 
       # Fixup "resolved"-entries in yarn.lock to match our offline cache
-      ${fixup_yarn_lock}/bin/fixup_yarn_lock app/assets/javascripts/yarn.lock
+      ${fixup_yarn_lock}/bin/fixup_yarn_lock yarn.lock
 
       export SSL_CERT_FILE=${cacert}/etc/ssl/certs/ca-bundle.crt
 
-      find app/assets/javascripts -name package.json -print0 \
-        | xargs -0 -I {} bash -c "jq 'del(.scripts.postinstall)' -r <{} | sponge {}"
-      yarn install --offline --cwd app/assets/javascripts/discourse
+      # Install without runnning postinstall scripts
+      yarn install --offline --ignore-scripts
 
-      patchShebangs app/assets/javascripts/node_modules/
+      # Patch scripts for running postinstall
+      patchShebangs --build node_modules app/assets/javascripts
 
-      ln -sf ${yarnBuildDeps}/node_modules/esbuild app/assets/javascripts/node_modules/esbuild
-
-      # Run `patch-package` AFTER the corresponding shebang inside `.bin/patch-package`
-      # got patched. Otherwise this will fail with
-      #     /bin/sh: line 1: /build/source/app/assets/javascripts/node_modules/.bin/patch-package: cannot execute: required file not found
-      pushd app/assets/javascripts &>/dev/null
-        yarn run patch-package
-      popd &>/dev/null
+      yarn run --offline postinstall
 
       redis-server >/dev/null &
 
@@ -321,22 +276,25 @@ let
       psql 'discourse' -tAc "CREATE EXTENSION IF NOT EXISTS pg_trgm"
       psql 'discourse' -tAc "CREATE EXTENSION IF NOT EXISTS hstore"
 
-      # Create a temporary home dir to stop bundler from complaining
-      mkdir $NIX_BUILD_TOP/tmp_home
-      export HOME=$NIX_BUILD_TOP/tmp_home
+      ${lib.concatMapStringsSep "\n" (
+        p: "ln -sf ${p} plugins/${p.pluginName or ""}"
+      ) plugins}
 
-      ${lib.concatMapStringsSep "\n" (p: "ln -sf ${p} plugins/${p.pluginName or ""}") plugins}
-
-      export RAILS_ENV=production
-
-      bundle exec rake db:migrate >/dev/null
+      bundle exec rake --trace db:migrate >/dev/null
       chmod -R +w tmp
     '';
 
     buildPhase = ''
       runHook preBuild
 
-      bundle exec rake assets:precompile
+      bundle exec rake --trace assets:precompile
+
+      # lib/pretty_text.rb ctx.load tries to load devDependencies from the
+      # workspace root node_modules when the rake task themes:update is executed.
+      # Add the missing runtime dependencies with --production and remove all other
+      # devDependencies at the same time.
+      yarn add --production --offline --ignore-workspace-root-check --ignore-scripts \
+        loader.js xss
 
       runHook postBuild
     '';
@@ -350,7 +308,26 @@ let
       mv app/assets/javascripts $javascripts
       ln -sf /run/discourse/assets/javascripts/plugins $javascripts/plugins
 
+      # Since discourse is using workspaces, it needs the workspace root node_modules
+      # somewhere up the tree to resolve runtime dependencies.
+      mv node_modules $javascripts/
+
       runHook postInstall
+    '';
+
+    preFixup = ''
+      # Fix symlink workspace packages into workspace root node_modules, which
+      # surprisingly seems unnecessary, but is rather reassuring for a human observer.
+      while read -r path link ; do
+        ln -sf ''${link/app\/assets\/javascripts\//} $path
+      done < <(
+        find $javascripts/node_modules/ -maxdepth 1 -type l -printf '%p %l\n'
+        find $javascripts/node_modules/.bin/ -type l -printf '%p %l\n'
+      )
+    '';
+
+    postFixup = ''
+      patchShebangs $javascripts/node_modules
     '';
   };
 
@@ -387,6 +364,11 @@ let
 
       # Make sure the notification email setting applies
       ./notification_email.patch
+
+      # Little does he know, so he decided there is no need to generate the
+      # theme-transpiler over and over again. Which at the same time allows the removal
+      # of javascript devDependencies from the runtime environment.
+      ./prebuild-theme-transpiler.patch
     ];
 
     postPatch = ''
@@ -422,6 +404,7 @@ let
       ln -sf ${assets} $out/share/discourse/public.dist/assets
       rm -r $out/share/discourse/app/assets/javascripts
       ln -sf ${assets.javascripts} $out/share/discourse/app/assets/javascripts
+      ln -sf app/assets/javascripts/node_modules $out/share/discourse/node_modules
       ${lib.concatMapStringsSep "\n" (p: "ln -sf ${p} $out/share/discourse/plugins/${p.pluginName or ""}") plugins}
 
       runHook postInstall
