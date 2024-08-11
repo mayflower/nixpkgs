@@ -3,13 +3,15 @@ GEM
   specs:
     base64 (0.2.0)
     bigdecimal (3.1.8)
-    faraday (2.9.0)
+    faraday (2.10.1)
       faraday-net_http (>= 2.0, < 3.2)
-    faraday-net_http (3.1.0)
+      logger
+    faraday-net_http (3.1.1)
       net-http
     hashie (5.0.0)
-    jwt (2.8.1)
+    jwt (2.8.2)
       base64
+    logger (1.6.0)
     multi_xml (0.7.1)
       bigdecimal (~> 3.1)
     net-http (0.4.1)
@@ -30,7 +32,7 @@ GEM
     omniauth-oauth2 (1.8.0)
       oauth2 (>= 1.4, < 3)
       omniauth (~> 2.0)
-    rack (3.0.11)
+    rack (3.1.7)
     rack-protection (4.0.0)
       base64 (>= 0.1.0)
       rack (>= 3.0.0, < 4)
@@ -47,4 +49,4 @@ DEPENDENCIES
   omniauth-linkedin-oauth2 (= 1.0.0)
 
 BUNDLED WITH
-   2.4.22
+   2.5.9

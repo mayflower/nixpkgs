@@ -60,7 +60,7 @@ class DiscourseVersion:
 
 
 class DiscourseRepo:
-    gh_token = None
+    gh_token = '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'
     version_regex = re.compile(r'^v\d+\.\d+\.\d+(\.beta\d+)?$')
     _latest_commit_sha = None
 
@@ -304,7 +304,7 @@ def update_plugins():
         {'name': 'discourse-policy'},
         {'name': 'discourse-prometheus'},
         {'name': 'discourse-reactions'},
-        {'name': 'discourse-saml', 'keep_gemfile': False},
+        {'name': 'discourse-saml'},
         {'name': 'discourse-saved-searches'},
         {'name': 'discourse-saved-searches'},
         {'name': 'discourse-solved'},
@@ -321,7 +321,6 @@ def update_plugins():
         owner = plugin.get('owner') or "discourse"
         name = plugin.get('name')
         repo_name = plugin.get('repo_name') or name
-        keep_gemfile = plugin.get('keep_gemfile') or False
 
         if fetcher == "fetchFromGitHub":
             url = f"https://github.com/{owner}/{repo_name}"
@@ -431,6 +430,13 @@ def update_plugins():
         for line in plugin_file.splitlines():
             if 'gem ' in line:
                 line = ','.join(filter(lambda x: ":require_name" not in x, line.split(',')))
+                # plugin has conditional dependency versions
+                if (name == "discourse-saml" and line in [
+                    '  gem "ruby-saml", "1.16.0"',
+                    '  gem "omniauth-saml", "2.1.0"'
+                ]):
+                    continue
+
                 gemfile_text = gemfile_text + line + os.linesep
 
                 version_file_match = version_file_regex.match(line)
@@ -441,17 +447,15 @@ def update_plugins():
                         f.write(content)
 
         if len(gemfile_text) > 0:
-            if os.path.isfile(gemfile) and keep_gemfile is False:
+            if os.path.isfile(gemfile):
                 os.remove(gemfile)
 
-            if keep_gemfile is False:
-                subprocess.check_output(['bundle', 'init'], cwd=rubyenv_dir)
+            subprocess.check_output(['bundle', 'init'], cwd=rubyenv_dir)
 
             os.chmod(gemfile, stat.S_IREAD | stat.S_IWRITE | stat.S_IRGRP | stat.S_IROTH)
 
             with open(gemfile, 'a') as f:
-                if keep_gemfile is False:
-                    f.write(gemfile_text)
+                f.write(gemfile_text)
 
             subprocess.check_output(['bundle', 'lock', '--add-platform', 'ruby'], cwd=rubyenv_dir)
             subprocess.check_output(['bundle', 'lock', '--update'], cwd=rubyenv_dir)

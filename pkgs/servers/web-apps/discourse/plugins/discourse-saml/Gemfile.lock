@@ -3,8 +3,8 @@ GEM
   specs:
     hashie (5.0.0)
     macaddr (1.0.0)
-    mini_portile2 (2.8.6)
-    nokogiri (1.16.5)
+    mini_portile2 (2.8.7)
+    nokogiri (1.16.7)
       mini_portile2 (~> 2.8.2)
       racc (~> 1.4)
     omniauth (1.9.2)
@@ -13,10 +13,10 @@ GEM
     omniauth-saml (1.9.0)
       omniauth (~> 1.3, >= 1.3.2)
       ruby-saml (~> 1.4, >= 1.4.3)
-    racc (1.8.0)
+    racc (1.8.1)
     rack (2.2.9)
-    rexml (3.2.8)
-      strscan (>= 3.0.9)
+    rexml (3.3.4)
+      strscan
     ruby-saml (1.13.0)
       nokogiri (>= 1.10.5)
       rexml
@@ -34,4 +34,4 @@ DEPENDENCIES
   uuid (= 2.3.7)
 
 BUNDLED WITH
-   2.4.22
+   2.5.9
