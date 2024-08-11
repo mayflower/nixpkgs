@@ -1,6 +1,6 @@
 #!/usr/bin/env nix-shell
 #! nix-shell -i python3 -p "python3.withPackages (ps: with ps; [ requests click click-log packaging ])" bundix bundler nix-update nurl prefetch-yarn-deps yarn2nix
-#! nix-shell -i python3 -p python3 python3Packages.requests python3Packages.click python3Packages.click-log bundix bundler nix-update nix-universal-prefetch prefetch-yarn-deps yarn2nix
+
 from __future__ import annotations
 
 import click
