@@ -1,0 +1,161 @@
+From 2f01e06eac1b2202504b5abba669167b356452ba Mon Sep 17 00:00:00 2001
+From: Andy Schoenen <aschoenen@gitlab.com>
+Date: Tue, 19 Nov 2024 11:21:01 +0100
+Subject: [PATCH 1/5] Fix 401 errors when installing the GitLab for Jira app
+
+We assumed that the key ID to fetch public keys from the
+Atlassian CDN must be a UUID but the pattern seem to have
+changed. This MR changes the validation to allow strings
+other than valid UUIDs.
+
+Changelog: fixed
+---
+ lib/atlassian/jira_connect/jwt/asymmetric.rb       |  2 +-
+ .../atlassian/jira_connect/jwt/asymmetric_spec.rb  | 14 ++++++++++++--
+ 2 files changed, 13 insertions(+), 3 deletions(-)
+
+diff --git a/lib/atlassian/jira_connect/jwt/asymmetric.rb b/lib/atlassian/jira_connect/jwt/asymmetric.rb
+index 5daa6547a542b67..d6991bac7ce1f6a 100644
+--- a/lib/atlassian/jira_connect/jwt/asymmetric.rb
++++ b/lib/atlassian/jira_connect/jwt/asymmetric.rb
+@@ -14,7 +14,7 @@ class Asymmetric
+         ALGORITHM = 'RS256'
+         DEFAULT_PUBLIC_KEY_CDN_URL = 'https://connect-install-keys.atlassian.com'
+         PROXY_PUBLIC_KEY_PATH = '/-/jira_connect/public_keys'
+-        UUID4_REGEX = /\A[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}\z/
++        UUID4_REGEX = /^[a-zA-Z0-9-\--_.-]*$/
+ 
+         def initialize(token, verification_claims)
+           @token = token
+diff --git a/spec/lib/atlassian/jira_connect/jwt/asymmetric_spec.rb b/spec/lib/atlassian/jira_connect/jwt/asymmetric_spec.rb
+index 2d81314981062db..12277d8a02c58a2 100644
+--- a/spec/lib/atlassian/jira_connect/jwt/asymmetric_spec.rb
++++ b/spec/lib/atlassian/jira_connect/jwt/asymmetric_spec.rb
+@@ -44,8 +44,18 @@
+       it { is_expected.not_to be_valid }
+     end
+ 
+-    context 'JWT contains a key ID that is not a valid UUID4' do
+-      let(:public_key_id) { '123' }
++    context 'When public key ID is a string' do
++      let(:public_key_id) { 'generic-keypair/cs-migrations/installation-key-pair--r0d6u65570m0lc8n' }
++
++      specify do
++        expect(asymmetric_jwt).to be_valid
++
++        expect(WebMock).to have_requested(:get, install_keys_url)
++      end
++    end
++
++    context 'when public key ID contains invalid characters' do
++      let(:public_key_id) { '$#%' }
+ 
+       it { is_expected.not_to be_valid }
+     end
+-- 
+GitLab
+
+
+From 7f506d73d85e526f2c9b0fad17658b672004facf Mon Sep 17 00:00:00 2001
+From: Andy Schoenen <aschoenen@gitlab.com>
+Date: Tue, 19 Nov 2024 11:32:10 +0100
+Subject: [PATCH 2/5] Anchor regex
+
+---
+ lib/atlassian/jira_connect/jwt/asymmetric.rb | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/lib/atlassian/jira_connect/jwt/asymmetric.rb b/lib/atlassian/jira_connect/jwt/asymmetric.rb
+index d6991bac7ce1f6a..865c5e073897625 100644
+--- a/lib/atlassian/jira_connect/jwt/asymmetric.rb
++++ b/lib/atlassian/jira_connect/jwt/asymmetric.rb
+@@ -14,7 +14,7 @@ class Asymmetric
+         ALGORITHM = 'RS256'
+         DEFAULT_PUBLIC_KEY_CDN_URL = 'https://connect-install-keys.atlassian.com'
+         PROXY_PUBLIC_KEY_PATH = '/-/jira_connect/public_keys'
+-        UUID4_REGEX = /^[a-zA-Z0-9-\--_.-]*$/
++        UUID4_REGEX = /\A^[a-zA-Z0-9-\--_.-]*$\Z/
+ 
+         def initialize(token, verification_claims)
+           @token = token
+-- 
+GitLab
+
+
+From aff53b4918991e96f8345a7869c3751d8771c236 Mon Sep 17 00:00:00 2001
+From: Andy Schoenen <aschoenen@gitlab.com>
+Date: Tue, 19 Nov 2024 12:39:15 +0100
+Subject: [PATCH 3/5] Fix regex syntax
+
+---
+ lib/atlassian/jira_connect/jwt/asymmetric.rb | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/lib/atlassian/jira_connect/jwt/asymmetric.rb b/lib/atlassian/jira_connect/jwt/asymmetric.rb
+index 865c5e073897625..056b5f9cf1c0e77 100644
+--- a/lib/atlassian/jira_connect/jwt/asymmetric.rb
++++ b/lib/atlassian/jira_connect/jwt/asymmetric.rb
+@@ -14,7 +14,7 @@ class Asymmetric
+         ALGORITHM = 'RS256'
+         DEFAULT_PUBLIC_KEY_CDN_URL = 'https://connect-install-keys.atlassian.com'
+         PROXY_PUBLIC_KEY_PATH = '/-/jira_connect/public_keys'
+-        UUID4_REGEX = /\A^[a-zA-Z0-9-\--_.-]*$\Z/
++        UUID4_REGEX = %r{\A[A-Za-z0-9_\-\/]+\z}
+ 
+         def initialize(token, verification_claims)
+           @token = token
+-- 
+GitLab
+
+
+From bce063a2f6c83bae6f0dc36076d8597b11e84b87 Mon Sep 17 00:00:00 2001
+From: Andy Schoenen <asoiron@gitlab.com>
+Date: Tue, 19 Nov 2024 11:48:34 +0000
+Subject: [PATCH 4/5] Rename constant
+
+---
+ lib/atlassian/jira_connect/jwt/asymmetric.rb | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/lib/atlassian/jira_connect/jwt/asymmetric.rb b/lib/atlassian/jira_connect/jwt/asymmetric.rb
+index 056b5f9cf1c0e77..6bded103465f55f 100644
+--- a/lib/atlassian/jira_connect/jwt/asymmetric.rb
++++ b/lib/atlassian/jira_connect/jwt/asymmetric.rb
+@@ -14,7 +14,7 @@ class Asymmetric
+         ALGORITHM = 'RS256'
+         DEFAULT_PUBLIC_KEY_CDN_URL = 'https://connect-install-keys.atlassian.com'
+         PROXY_PUBLIC_KEY_PATH = '/-/jira_connect/public_keys'
+-        UUID4_REGEX = %r{\A[A-Za-z0-9_\-\/]+\z}
++        KEY_ID_REGEX = %r{\A[A-Za-z0-9_\-\/]+\z}
+ 
+         def initialize(token, verification_claims)
+           @token = token
+-- 
+GitLab
+
+
+From 0e37c4be3f9121afe312fbb3b876c10b0a4ccab8 Mon Sep 17 00:00:00 2001
+From: Andy Schoenen <asoiron@gitlab.com>
+Date: Tue, 19 Nov 2024 11:56:35 +0000
+Subject: [PATCH 5/5] Fix constant name
+
+---
+ lib/atlassian/jira_connect/jwt/asymmetric.rb | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/lib/atlassian/jira_connect/jwt/asymmetric.rb b/lib/atlassian/jira_connect/jwt/asymmetric.rb
+index 6bded103465f55f..d359cb8bcf4ebe6 100644
+--- a/lib/atlassian/jira_connect/jwt/asymmetric.rb
++++ b/lib/atlassian/jira_connect/jwt/asymmetric.rb
+@@ -61,7 +61,7 @@ def decode_token(key = nil, verify = false, **claims)
+         end
+ 
+         def retrieve_public_key(key_id)
+-          raise KeyFetchError unless UUID4_REGEX.match?(key_id)
++          raise KeyFetchError unless KEY_ID_REGEX.match?(key_id)
+ 
+           public_key = Gitlab::HTTP.try_get("#{public_key_cdn_url}/#{key_id}").try(:body)
+ 
+-- 
+GitLab
+

@@ -207,6 +207,9 @@ stdenv.mkDerivation {
   patches = [
     # Change hardcoded paths to the NixOS equivalent
     ./remove-hardcoded-locations.patch
+    # remove when patch lands. presumably 17.7
+    # https://gitlab.com/gitlab-org/gitlab/-/merge_requests/173110
+    ./fix-jira-connect.patch
   ];
 
   postPatch = ''
