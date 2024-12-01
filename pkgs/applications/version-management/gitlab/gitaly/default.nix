@@ -7,7 +7,7 @@
 }:
 
 let
-  version = "16.11.8";
+  version = "17.3.7";
   package_version = "v${lib.versions.major version}";
   gitaly_package = "gitlab.com/gitlab-org/gitaly/${package_version}";
 
@@ -21,10 +21,10 @@ let
       owner = "gitlab-org";
       repo = "gitaly";
       rev = "v${version}";
-      hash = "sha256-TF4A2tnMKBGAtgVyLCLgnmIx2GXVFPPcx8YHIsQZu9w=";
+      hash = "sha256-H//vwXzpUh1a8Lez5HTmwkF8TQVPVSefyabnEM4Wo4E=";
     };
 
-    vendorHash = "sha256-WCZF7XVW6J1zyPx8e/Mcn+HmHElAUGcEICxiF5HLzBg=";
+    vendorHash = "sha256-3Gwpf4zLg9KsmGr2bYmcHATsouKXe3W/vppGHT2B048=";
 
     ldflags = [ "-X ${gitaly_package}/internal/version.version=${version}" "-X ${gitaly_package}/internal/version.moduleVersion=${version}" ];
 
@@ -47,6 +47,9 @@ buildGoModule ({
   preConfigure = ''
     mkdir -p _build/bin
     cp -r ${auxBins}/bin/* _build/bin
+    for f in ${git}/bin/git-*; do
+      cp "$f" "_build/bin/gitaly-$(basename $f)";
+    done
   '';
 
   outputs = [ "out" ];
