@@ -3567,6 +3567,13 @@ with pkgs;
     etcDir = "/etc/ssh";
   };
 
+  opensshDSAPackages = dontRecurseIntoAttrs (callPackage ../tools/networking/openssh-dsa { });
+
+  openssh-dsa = opensshDSAPackages.openssh.override {
+    etcDir = "/etc/ssh";
+    dsaKeysSupport = true;
+  };
+
   opensshTest = openssh.tests.openssh;
 
   opensshWithKerberos = openssh.override {
