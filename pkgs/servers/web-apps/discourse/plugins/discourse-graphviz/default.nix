@@ -9,8 +9,8 @@ mkDiscoursePlugin {
   src = fetchFromGitHub {
     owner = "discourse";
     repo = "discourse-graphviz";
-    rev = "1e79eef62f7f64a36d35b1bd1f1dec86b77035a9";
-    sha256 = "sha256-6Fs9/qjQiIhT735mKC9qRDjok5GD/ABfdJu9knwVkCI=";
+    rev = "ce5d278086e9959ce02eb8d543b0577d04eda659";
+    sha256 = "sha256-ETG17LZbxk6Ja4Ycq7n5puRHf1+HNwLnWWDxkNQiaKs=";
   };
   meta = with lib; {
     homepage = "https://github.com/discourse/discourse-graphviz";
