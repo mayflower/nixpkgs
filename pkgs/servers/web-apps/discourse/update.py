@@ -10,6 +10,7 @@ import re
 import logging
 import subprocess
 import os
+import operator
 import stat
 import json
 import requests
@@ -40,6 +41,9 @@ class DiscourseVersion:
 
     def __init__(self, version: str):
         """Take either a tag or version number, calculate the other."""
+        if version.endswith('-latest'):
+            version = version.replace('-latest', '')
+
         if version.startswith('v'):
             self.tag = version
             self.version = version.lstrip('v').rstrip("-latest")
@@ -59,16 +63,20 @@ class DiscourseVersion:
 
 
 class DiscourseRepo:
+    gh_token = os.environ.get("GITHUB_TOKEN", None)
     version_regex = re.compile(r'^v\d+\.\d+\.\d+(\.beta\d+)?$')
     _latest_commit_sha = None
 
     def __init__(self, owner: str = 'discourse', repo: str = 'discourse'):
         self.owner = owner
         self.repo = repo
+        self.headers = None
+        if self.gh_token is not None:
+            self.headers = {'Authorization': 'token %s' % self.gh_token}
 
     @property
     def versions(self) -> Iterable[str]:
-        r = requests.get(f'https://api.github.com/repos/{self.owner}/{self.repo}/git/refs/tags').json()
+        r = requests.get(f'https://api.github.com/repos/{self.owner}/{self.repo}/git/refs/tags', headers=self.headers).json()
         tags = [x['ref'].replace('refs/tags/', '') for x in r]
 
         # filter out versions not matching version_regex
@@ -80,7 +88,7 @@ class DiscourseRepo:
     @property
     def latest_commit_sha(self) -> str:
         if self._latest_commit_sha is None:
-            r = requests.get(f'https://api.github.com/repos/{self.owner}/{self.repo}/commits?per_page=1')
+            r = requests.get(f'https://api.github.com/repos/{self.owner}/{self.repo}/commits?per_page=1', headers=self.headers)
             r.raise_for_status()
             self._latest_commit_sha = r.json()[0]['sha']
 
@@ -93,7 +101,7 @@ class DiscourseRepo:
         :param str rev: the rev to fetch at :return:
 
         """
-        r = requests.get(f'https://raw.githubusercontent.com/{self.owner}/{self.repo}/{rev}/{filepath}')
+        r = requests.get(f'https://raw.githubusercontent.com/{self.owner}/{self.repo}/{rev}/{filepath}', headers=self.headers)
         r.raise_for_status()
         return r.text
 
@@ -280,12 +288,37 @@ def update_mail_receiver(rev):
 def update_plugins():
     """Update plugins to their latest revision."""
     plugins = [
+        {'name': 'discourse-adplugin'},
+        {'name': 'discourse-akismet'},
+        {'name': 'discourse-apple-auth'},
+        {'name': 'discourse-assign'},
         {'name': 'discourse-bbcode-color'},
+        {'name': 'discourse-cakeday'},
+        {'name': 'discourse-calendar'},
+        {'name': 'discourse-chat-integration'},
+        {'name': 'discourse-data-explorer'},
         {'name': 'discourse-docs'},
-        {'name': 'discourse-events', 'owner': 'angusmcleod'},
+        {'name': 'discourse-follow'},
+        {'name': 'discourse-gamification'},
+        {'name': 'discourse-github'},
+        {'name': 'discourse-graphviz'},
         {'name': 'discourse-ldap-auth', 'owner': 'jonmbake'},
+        {'name': 'discourse-linkedin-auth'},
+        {'name': 'discourse-lti'},
+        {'name': 'discourse-math'},
+        {'name': 'discourse-migratepassword', 'owner': 'communiteq'},
+        {'name': 'discourse-openid-connect'},
+        {'name': 'discourse-oauth2-basic'},
+        {'name': 'discourse-patreon'},
+        {'name': 'discourse-policy'},
         {'name': 'discourse-prometheus'},
+        {'name': 'discourse-reactions'},
+        {'name': 'discourse-saml'},
         {'name': 'discourse-saved-searches'},
+        {'name': 'discourse-solved'},
+        {'name': 'discourse-subscriptions'},
+        {'name': 'discourse-tooltips'},
+        {'name': 'discourse-whos-online'},
         {'name': 'discourse-yearly-review'},
     ]
 
@@ -303,28 +336,35 @@ def update_plugins():
         repo = DiscourseRepo(owner=owner, repo=repo_name)
 
         # implement the plugin pinning algorithm laid out here:
-        # https://meta.discourse.org/t/pinning-plugin-and-theme-versions-for-older-discourse-installs/156971
+        #  https://meta.discourse.org/t/introducing-discourse-compatibility-pinned-plugin-theme-versions-for-older-discourse-versions/156971/3
         # this makes sure we don't upgrade plugins to revisions that
         # are incompatible with the packaged Discourse version
         repo_latest_commit = repo.latest_commit_sha
         try:
-            compatibility_spec = repo.get_file('.discourse-compatibility', repo_latest_commit)
-            versions = [(DiscourseVersion(discourse_version), plugin_rev.strip(' '))
-                        for [discourse_version, plugin_rev]
-                        in [line.lstrip("< ").split(':')
+            compatibility_spec = repo.get_file('.discourse-compatibility', repo.latest_commit_sha)
+            def split_compatibility_line(line):
+                op = operator.le
+                if line.startswith('< '):
+                    op = operator.lt
+                return [op] + line.lstrip("<").lstrip("=").strip().split(':')
+
+            versions = [(op, DiscourseVersion(discourse_version), plugin_rev.strip(' '))
+                        for [op, discourse_version, plugin_rev]
+                        in [split_compatibility_line(line)
                             for line
                             in compatibility_spec.splitlines() if line != '']]
             discourse_version = DiscourseVersion(_get_current_package_version('discourse'))
-            versions = list(filter(lambda ver: ver[0] >= discourse_version, versions))
+            versions = list(filter(lambda v: v[0](discourse_version, v[1]), versions))
             if versions == []:
                 rev = repo_latest_commit
             else:
-                rev = versions[0][1]
+                rev = versions[-1][2]
                 print(rev)
         except requests.exceptions.HTTPError:
             rev = repo_latest_commit
 
         filename = _nix_eval(f'builtins.unsafeGetAttrPos "src" discourse.plugins.{name}')
+        gemdir_line = "bundlerEnvArgs.gemdir = ./.;"
         if filename is None:
             filename = Path(__file__).parent / 'plugins' / name / 'default.nix'
             filename.parent.mkdir()
@@ -341,7 +381,7 @@ def update_plugins():
 
                          mkDiscoursePlugin {{
                            name = "{name}";"""[1:] + ("""
-                           bundlerEnvArgs.gemdir = ./.;""" if has_ruby_deps else "") + f"""
+                           {gemdir_line}""" if has_ruby_deps else "") + f"""
                            src = {fetcher} {{
                              owner = "{owner}";
                              repo = "{repo_name}";
@@ -391,6 +431,7 @@ def update_plugins():
             content = f.read()
             content = content.replace(prev_commit_sha, rev)
             content = content.replace(prev_hash, new_hash)
+            content = content.replace(f'  {gemdir_line}\n', '')
             f.seek(0)
             f.write(content)
             f.truncate()
@@ -403,27 +444,47 @@ def update_plugins():
         plugin_file = plugin_file.replace(",\n", ", ") # fix split lines
         for line in plugin_file.splitlines():
             if 'gem ' in line:
-                line = ','.join(filter(lambda x: ":require_name" not in x and "require_name:" not in x, line.split(',')))
+                line = ','.join(filter(lambda x: ":require_name" not in x, line.split(',')))
+                # plugin has conditional dependency versions
+                if (name == "discourse-saml" and line in [
+                    '  gem "ruby-saml", "1.16.0"',
+                    '  gem "omniauth-saml", "1.10.5"'
+                ]):
+                    continue
+
                 gemfile_text = gemfile_text + line + os.linesep
 
                 version_file_match = version_file_regex.match(line)
                 if version_file_match is not None:
-                    filename = version_file_match.groups()[0]
-                    content = repo.get_file(filename, rev)
-                    with open(rubyenv_dir / filename, 'w') as f:
+                    version_filename = version_file_match.groups()[0]
+                    content = repo.get_file(version_filename, rev)
+                    with open(rubyenv_dir / version_filename, 'w') as f:
                         f.write(content)
 
+        for f in [ gemfile, rubyenv_dir / "Gemfile.lock", rubyenv_dir / "gemset.nix" ]:
+            if os.path.isfile(f):
+                os.remove(f)
+
         if len(gemfile_text) > 0:
+            with open(filename, 'r+') as f:
+                content = f.read()
+                content = content.replace('src =', f'{gemdir_line}\n  src =')
+                f.seek(0)
+                f.write(content)
+                f.truncate()
+
             if os.path.isfile(gemfile):
                 os.remove(gemfile)
 
+            # work around https://github.com/nix-community/bundix/issues/8
+            os.environ["BUNDLE_FORCE_RUBY_PLATFORM"] = "true"
             subprocess.check_output(['bundle', 'init'], cwd=rubyenv_dir)
+
             os.chmod(gemfile, stat.S_IREAD | stat.S_IWRITE | stat.S_IRGRP | stat.S_IROTH)
 
             with open(gemfile, 'a') as f:
                 f.write(gemfile_text)
 
-            subprocess.check_output(['bundle', 'lock', '--add-platform', 'ruby'], cwd=rubyenv_dir)
             subprocess.check_output(['bundle', 'lock', '--update'], cwd=rubyenv_dir)
             _remove_platforms(rubyenv_dir)
             subprocess.check_output(['bundix'], cwd=rubyenv_dir)
