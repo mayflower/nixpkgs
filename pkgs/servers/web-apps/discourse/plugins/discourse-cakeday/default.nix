@@ -9,8 +9,8 @@ mkDiscoursePlugin {
   src = fetchFromGitHub {
     owner = "discourse";
     repo = "discourse-cakeday";
-    rev = "8c1a83c481c25deb69e9c25bb93ca667e7c251c4";
-    sha256 = "sha256-aYXh0Np0OgkU78YwbkhObUKeW1GvbxQcuLxcNNdhIac=";
+    rev = "ae320d2a585a78f3a8c06269d8abd2567b7fb65c";
+    sha256 = "sha256-RBDu9Q6EFVfW1ROMtk+6tL8/Daqfuuf/GcSGAwxv2lQ=";
   };
   meta = with lib; {
     homepage = "https://github.com/discourse/discourse-cakeday";

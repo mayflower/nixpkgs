@@ -9,8 +9,8 @@ mkDiscoursePlugin {
   src = fetchFromGitHub {
     owner = "discourse";
     repo = "discourse-apple-auth";
-    rev = "6f6d350feff54c6d7daf43fac65a7a08e5e2250d";
-    sha256 = "sha256-RY0e9sT+P6eoWg2woCQmewwGnNDA515SeBc3UsWtj3w=";
+    rev = "67b4e52425ea571eb02c96ca29ab5dec50f3a897";
+    sha256 = "sha256-Vg80Qvgt/KOkAw8/3SAJp2xTPIiM4ab34VTHOVTyw+w=";
   };
   meta = with lib; {
     homepage = "https://github.com/discourse/discourse-apple-auth";
