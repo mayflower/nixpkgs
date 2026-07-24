@@ -34,7 +34,7 @@
   brotli,
   procps,
   rsync,
-  icu,
+  icu78,
   rustPlatform,
   buildRubyGem,
   rustc,
@@ -183,7 +183,10 @@ let
     gemset = import ./rubyEnv/gemset.nix;
     gemConfig = defaultGemConfig // {
       mini_racer = attrs: {
-        buildInputs = [ icu ];
+        # Must match the ICU that nodejs-slim_22 (providing libv8) is built
+        # against, otherwise the statically linked V8 fails to resolve the
+        # versioned icu_NN:: symbols at load time (GemRequireError).
+        buildInputs = [ icu78 ];
         dontBuild = false;
         NIX_LDFLAGS = "-licui18n";
       };
